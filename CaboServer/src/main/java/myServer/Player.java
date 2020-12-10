@@ -1,9 +1,13 @@
 package myServer;
 
+import java.util.ArrayList;
+
 public class Player {
 
     private int id;
     private String name;
+    //every card the player posseses is saved here
+    private ArrayList cards = new ArrayList();
 
     public Player(int id, String name){
         this.id= id;
@@ -23,5 +27,14 @@ public class Player {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+
+    public ArrayList getCards() {
+        return cards;
+    }
+
+    public void setCards(ArrayList cards) {
+        this.cards = cards;
     }
 }

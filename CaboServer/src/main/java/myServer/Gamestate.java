@@ -6,6 +6,7 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -20,6 +21,17 @@ public class Gamestate {
     private int countPlayer = 0;
     //status of the game- see Type Defs for all 3 state
     private String state = TypeDefs.MATCHING;
+
+    //all cards of the game: (1,2,3,4,5,6,7,8,9,10,11,12) x4; 13 x2; 0x2; -1 x3
+    private ArrayList allCards = new ArrayList();
+    //all cards that have been played including the cards of the players
+    //in the beginning this arraylist contains only the cards of the player and the card which lays in the middle
+    private ArrayList playedCards = new ArrayList();
+    // cards that are still available and haven't been played yet
+    //in the beginning this list contains every card
+    private ArrayList availableCards = new ArrayList();
+
+
     //manages the connection
     private SocketHandler socketHandler;
     // contains all connected clients
@@ -216,6 +228,12 @@ public class Gamestate {
         }
     }
 
+
+    //TODO
+    // method to generate a random order of all cards
+    //method to assign 4 random cards to every player and save them in the list cards in every player object
+    // as well as the list playedCards (-> delete them in availableCards
+    //method to uncover first card which lays in the middle and save it in the list playedCards (-> delete it in availableCards
 
 
 }
