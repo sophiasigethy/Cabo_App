@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">CaboClient</string>
+    <string name="edit_message">Enter a message</string>
+    <string name="button_send">Send</string>
+    <!--string name="url">ws://195.63.134.147:8000/chat</string-->
+    <string name="url">ws://192.168.178.31:8080/chat</string>
+</resources>

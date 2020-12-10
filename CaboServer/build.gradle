@@ -1,0 +1,54 @@
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+
+
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:2.3.6.RELEASE")
+    }
+}
+
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'org.springframework.boot'
+
+jar{
+    baseName = 'CaboServer'
+    version = '0.1.0'
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '2.4.0'
+    // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-websocket
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-websocket', version: '2.4.0'
+    compile group: 'org.json', name: 'json', version: '20201115'
+    compile("org.webjars:sockjs-client:1.1.2")
+    compile("org.webjars:stomp-websocket:2.3.3-1")
+    compile("org.webjars:bootstrap:4.5.3")
+    compile("org.webjars:jquery:3.5.1")
+    compile("org.apache.tomcat.embed:tomcat-embed-jasper:9.0.40")
+    compile("org.eclipse.jdt.core.compiler:ecj:4.6.1")
+    compile("javax.websocket:javax.websocket-api:1.1")
+
+
+    // https://mvnrepository.com/artifact/org.webjars/webjars-locator
+    compile group: 'org.webjars', name: 'webjars-locator', version: '0.40'
+    // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-test
+    testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '2.4.0'
+
+}
