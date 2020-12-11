@@ -13,11 +13,14 @@ public class Application {
     public static void main(String[] args) {
         testInitializedPlayers();
         testDrawCards();
-        testDiscardCards();
-        testSpyCards();
-        testSwapWithOtherPlayer();
-        testSwapWithAvailableCards();
-        testSwapWithDiscadedCards();
+        testDiscardCard();
+
+//        testSpyCards();
+//        testSwapWithOtherPlayer();
+//        testSwapWithAvailableCards();
+//        testSwapWithDiscadedCards();
+        testGetPoint();
+        testCalcScore();
         System.out.println("================== Finished Simple Tests ===================");
         // SpringApplication.run(Application.class, args);
     }
@@ -47,7 +50,7 @@ public class Application {
         gs.cardSuiteMgr.debug();
     }
 
-    public static void testDiscardCards() {
+    public static void testDiscardCard() {
         System.out.println("=================== Test Discard Cards ===================");
 
         Gamestate gs = new Gamestate();
@@ -96,11 +99,10 @@ public class Application {
         int tonyIndex2 = gs.players.get("Tony").getCardIndexes().get(1);
 
         gs.players.get("Tony").swapWithOtherPlayer(gs.players.get("Bob"),
-                tonyIndex1, tonyIndex2, bobIndex1, bobIndex2);
+                tonyIndex1, bobIndex1);
         System.out.println("After swap: ");
         gs.players.get("Bob").debug();
         gs.players.get("Tony").debug();
-
     }
 
     public static void testSwapWithAvailableCards() {
@@ -121,7 +123,7 @@ public class Application {
         int cardIndex1 = gs.cardSuiteMgr.getCardToIndexMap().get(gs.cardSuiteMgr.getAvailableCards().get(0));
         int cardIndex2 = gs.cardSuiteMgr.getCardToIndexMap().get(gs.cardSuiteMgr.getAvailableCards().get(1));
 
-        gs.players.get("Tony").swapWithAvailableCards(tonyIndex1, tonyIndex2, cardIndex1, cardIndex2);
+        gs.players.get("Tony").swapWithAvailableCards(tonyIndex1, cardIndex1);
         System.out.println("After Swap: ");
         gs.players.get("Tony").debug();
         gs.cardSuiteMgr.debug();
@@ -129,7 +131,6 @@ public class Application {
 
     public static void testSwapWithDiscadedCards() {
         System.out.println("=========== Test SWAP With Discarded Cards ===============");
-
 
         Gamestate gs = new Gamestate();
         gs.players.put("Tony", new Player(1, "Tony", gs.cardSuiteMgr));
@@ -157,11 +158,86 @@ public class Application {
         int cardIndex1 = gs.cardSuiteMgr.getCardToIndexMap().get(gs.cardSuiteMgr.getDiscardedCards().get(0));
         int cardIndex2 = gs.cardSuiteMgr.getCardToIndexMap().get(gs.cardSuiteMgr.getDiscardedCards().get(1));
 
-        gs.players.get("Tony").swapWithDiscardedCards(tonyIndex1, tonyIndex2, cardIndex1, cardIndex2);
+        gs.players.get("Tony").swapWithDiscardedCards(tonyIndex1, cardIndex1);
         System.out.println("After Swap: ");
         gs.players.get("Tony").debug();
         gs.cardSuiteMgr.debug();
     }
+
+    public static void testGetPoint() {
+        System.out.println("======= Player Get Point ===========");
+
+        Gamestate gs = new Gamestate();
+        gs.players.put("Tony", new Player(1, "Tony", gs.cardSuiteMgr));
+        gs.players.get("Tony").drawCard();
+        gs.players.get("Tony").drawCard();
+
+        gs.players.get("Tony").debug();
+        System.out.println("Tony has points: " + gs.players.get("Tony").getPoint());
+    }
+
+    public static void testCalcScore() {
+        System.out.println("=========  Test Update Score ===========");
+        Gamestate gs = new Gamestate();
+        gs.players.put("Alice", new Player(1, "Alice", gs.cardSuiteMgr));
+        gs.players.put("Bob", new Player(2, "Bob", gs.cardSuiteMgr));
+        gs.players.put("Charile", new Player(3, "Charile", gs.cardSuiteMgr));
+        gs.players.put("Tony", new Player(4, "Tony", gs.cardSuiteMgr));
+        gs.distributeCardAtBeginning();
+
+        gs.players.get("Alice").callCabo();
+
+        gs.cardSuiteMgr.calcScores();
+        gs.players.forEach((k, v) -> {
+            v.debug();
+        });
+
+//        gs.cardSuiteMgr.calcScores();
+
+        // gs.players.
+    }
+//    public static void testDiscardCardsSuccess() {
+//        System.out.println("=================== Test Discard Cards Success ===================");
+//
+//        Gamestate gs = new Gamestate();
+//        gs.players.put("Tony", new Player(1, "Tony", gs.cardSuiteMgr));
+//        System.out.println("Tony draws: ");
+//        gs.players.get("Tony").drawCard();
+//        gs.players.get("Tony").drawCard();
+//        gs.players.get("Tony").debug();
+//        System.out.println("Tony draw: ");
+//        int [] indexes = {
+//                gs.players.get("Tony").getCardIndexes().get(0),
+//                gs.players.get("Tony").getCardIndexes().get(1)
+//        };
+//        gs.players.get("Tony").discardCards(indexes);
+//        gs.players.get("Tony").debug();
+//
+//        gs.cardSuiteMgr.debug();
+//    }
+//    public static void testDiscardCardsFailed() {
+//        System.out.println("=================== Test Discard Cards Failed ===================");
+//
+//        Gamestate gs = new Gamestate();
+//        gs.players.put("Tony", new Player(1, "Tony", gs.cardSuiteMgr));
+//        System.out.println("Tony draws: ");
+//        gs.players.get("Tony").drawCard();
+//        gs.players.get("Tony").drawCard();
+//        gs.players.get("Tony").drawCard();
+//        gs.players.get("Tony").drawCard();
+//        gs.players.get("Tony").drawCard();
+//
+//        gs.players.get("Tony").debug();
+//        System.out.println("Tony draw: ");
+//        int [] indexes = {
+//                gs.players.get("Tony").getCardIndexes().get(0),
+//                gs.players.get("Tony").getCardIndexes().get(4)
+//        };
+//        gs.players.get("Tony").discardCards(indexes);
+//        gs.players.get("Tony").debug();
+//
+//        gs.cardSuiteMgr.debug();
+//    }
 }
 
 

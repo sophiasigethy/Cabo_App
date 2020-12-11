@@ -23,7 +23,7 @@ public class Gamestate {
     private String state = TypeDefs.MATCHING;
 
     private final static int DEAL_CARD_NUMBER_AT_BEGINNING = 4;
-    public CardSuiteManager cardSuiteMgr = new CardSuiteManager();
+    public CardSuiteManager cardSuiteMgr = null;
 
     //manages the connection
     private SocketHandler socketHandler;
@@ -32,8 +32,12 @@ public class Gamestate {
     //client who sent something most recently
     private WebSocketSession currentSession;
 
-    public Gamestate() {}
+    public Gamestate() {
+        this.cardSuiteMgr = new CardSuiteManager(false);
+    }
     public Gamestate(SocketHandler socketHandler) {
+        this.cardSuiteMgr = new CardSuiteManager();
+
         this.socketHandler = socketHandler;
     }
 
