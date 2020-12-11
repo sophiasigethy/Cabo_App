@@ -3,36 +3,377 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="horizontal"
     tools:context="msp.group3.caboclient.InGameActivity">
 
     <msp.group3.caboclient.ZoomLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/zoom_layout">
-        <LinearLayout
+
+        <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:src="@drawable/baseball"
-                android:scaleType="centerCrop"
-                />
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:src="@drawable/bobsled"
-                android:scaleType="centerCrop"
-                />
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="TEST">
+            android:background="#009688"
+            android:orientation="horizontal"
+            tools:context=".GameActivity">
 
-            </Button>
-        </LinearLayout>
+            <!-- The primary full-screen view. This can be replaced with whatever view
+                 is needed to present your content, e.g. VideoView, SurfaceView,
+                 TextureView, etc. -->
+            <TextView
+                android:id="@+id/fullscreen_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:keepScreenOn="true"
+                android:text="@string/dummy_content"
+                android:textColor="@color/white"
+                android:textSize="50sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:id="@+id/player1_cards"
+                android:layout_width="match_parent"
+                android:layout_height="130dp"
+                android:layout_gravity="bottom"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:weightSum="7">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:weightSum="4">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="0dp"
+                        android:layout_weight="2"
+                        android:orientation="horizontal"
+                        android:weightSum="2">
+
+                        <ImageButton
+                            android:id="@+id/player1_card1_imageButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:padding="2dp"
+                            android:background="@android:color/transparent"
+                            android:scaleType="centerCrop"
+                            android:scaleX="1.7"
+                            android:scaleY="1.7"
+                            app:srcCompat="@drawable/ic_card_back"/>
+
+                        <ImageButton
+                            android:id="@+id/player1_card2_imageButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:padding="2dp"
+                            android:background="@android:color/transparent"
+                            android:scaleType="centerCrop"
+                            android:scaleX="1.7"
+                            android:scaleY="1.7"
+                            app:srcCompat="@drawable/ic_card_back" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="0dp"
+                        android:layout_weight="2"
+                        android:orientation="horizontal"
+                        android:weightSum="2">
+
+                        <ImageButton
+                            android:id="@+id/player1_card3_imageButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:padding="2dp"
+                            android:background="@android:color/transparent"
+                            android:scaleType="centerCrop"
+                            android:scaleX="1.7"
+                            android:scaleY="1.7"
+                            app:srcCompat="@drawable/ic_card_back" />
+
+                        <ImageButton
+                            android:id="@+id/player1_card4_imageButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:padding="2dp"
+                            android:background="@android:color/transparent"
+                            android:scaleType="centerCrop"
+                            android:scaleX="1.7"
+                            android:scaleY="1.7"
+                            app:srcCompat="@drawable/ic_card_back" />
+                    </LinearLayout>
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/player2_cards"
+                android:layout_width="match_parent"
+                android:layout_height="130dp"
+                android:layout_gravity="top"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:weightSum="7">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:weightSum="4">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="0dp"
+                        android:layout_weight="2"
+                        android:orientation="horizontal"
+                        android:weightSum="2">
+
+                        <ImageButton
+                            android:id="@+id/player2_card1_imageButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:padding="2dp"
+                            android:background="@android:color/transparent"
+                            android:scaleType="centerCrop"
+                            android:scaleX="1.7"
+                            android:scaleY="1.7"
+                            app:srcCompat="@drawable/ic_card_back" />
+                        <!--android:adjustViewBounds="true"-->/>
+
+                        <ImageButton
+                            android:id="@+id/player2_card2_imageButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:padding="2dp"
+                            android:background="@android:color/transparent"
+                            android:scaleType="centerCrop"
+                            android:scaleX="1.7"
+                            android:scaleY="1.7"
+                            app:srcCompat="@drawable/ic_card_back" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="0dp"
+                        android:layout_weight="2"
+                        android:orientation="horizontal"
+                        android:weightSum="2">
+
+                        <ImageButton
+                            android:id="@+id/player2_card3_imageButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:padding="2dp"
+                            android:background="@android:color/transparent"
+                            android:scaleType="centerCrop"
+                            android:scaleX="1.7"
+                            android:scaleY="1.7"
+                            app:srcCompat="@drawable/ic_card_back" />
+
+                        <ImageButton
+                            android:id="@+id/player2_card4_imageButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:padding="2dp"
+                            android:background="@android:color/transparent"
+                            android:scaleType="centerCrop"
+                            android:scaleX="1.7"
+                            android:scaleY="1.7"
+                            app:srcCompat="@drawable/ic_card_back" />          </LinearLayout>
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/player3_cards"
+                android:layout_width="match_parent"
+                android:layout_height="130dp"
+                android:layout_gravity="bottom"
+                android:gravity="right"
+                android:orientation="horizontal"
+                android:rotation="-30"
+                android:translationY="120dp"
+                android:weightSum="7">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:weightSum="4">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="0dp"
+                        android:layout_weight="2"
+                        android:orientation="horizontal"
+                        android:weightSum="2">
+
+                        <ImageButton
+                            android:id="@+id/player3_card1_imageButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:padding="2dp"
+                            android:background="@android:color/transparent"
+                            android:scaleType="centerCrop"
+                            android:scaleX="1.7"
+                            android:scaleY="1.7"
+                            app:srcCompat="@drawable/ic_card_back"/>                <!--android:adjustViewBounds="true"-->/>
+
+                        <ImageButton
+                            android:id="@+id/player3_card2_imageButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:padding="2dp"
+                            android:background="@android:color/transparent"
+                            android:scaleType="centerCrop"
+                            android:scaleX="1.7"
+                            android:scaleY="1.7"
+                            app:srcCompat="@drawable/ic_card_back" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="0dp"
+                        android:layout_weight="2"
+                        android:orientation="horizontal"
+                        android:weightSum="2">
+
+                        <ImageButton
+                            android:id="@+id/player3_card3_imageButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:padding="2dp"
+                            android:background="@android:color/transparent"
+                            android:scaleType="centerCrop"
+                            android:scaleX="1.7"
+                            android:scaleY="1.7"
+                            app:srcCompat="@drawable/ic_card_back" />
+
+                        <ImageButton
+                            android:id="@+id/player3_card4_imageButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:padding="2dp"
+                            android:background="@android:color/transparent"
+                            android:scaleType="centerCrop"
+                            android:scaleX="1.7"
+                            android:scaleY="1.7"
+                            app:srcCompat="@drawable/ic_card_back" />
+                    </LinearLayout>
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/player4_cards"
+                android:layout_width="match_parent"
+                android:layout_height="130dp"
+                android:layout_gravity="bottom"
+                android:gravity="left"
+                android:orientation="horizontal"
+                android:rotation="30"
+                android:translationY="120dp"
+                android:weightSum="7">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:weightSum="4">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="0dp"
+                        android:layout_weight="2"
+                        android:orientation="horizontal"
+                        android:weightSum="2">
+
+                        <ImageButton
+                            android:id="@+id/player4_card1_imageButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:padding="2dp"
+                            android:layout_weight="1"
+                            android:background="@android:color/transparent"
+                            android:scaleType="centerCrop"
+                            android:scaleX="1.7"
+                            android:scaleY="1.7"
+                            app:srcCompat="@drawable/ic_card_back"/>
+
+                        <ImageButton
+                            android:id="@+id/player4_card2_imageButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:padding="2dp"
+                            android:background="@android:color/transparent"
+                            android:scaleType="centerCrop"
+                            android:scaleX="1.7"
+                            android:scaleY="1.7"
+                            app:srcCompat="@drawable/ic_card_back" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="0dp"
+                        android:layout_weight="2"
+                        android:orientation="horizontal"
+                        android:weightSum="2">
+
+                        <ImageButton
+                            android:id="@+id/player4_card3_imageButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:padding="2dp"
+                            android:background="@android:color/transparent"
+                            android:scaleType="centerCrop"
+                            android:scaleX="1.7"
+                            android:scaleY="1.7"
+                            app:srcCompat="@drawable/ic_card_back" />
+
+                        <ImageButton
+                            android:id="@+id/player4_card4_imageButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:padding="2dp"
+                            android:background="@android:color/transparent"
+                            android:scaleType="centerCrop"
+                            android:scaleX="1.7"
+                            android:scaleY="1.7"
+                            app:srcCompat="@drawable/ic_card_back" />
+                    </LinearLayout>
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </FrameLayout>
     </msp.group3.caboclient.ZoomLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

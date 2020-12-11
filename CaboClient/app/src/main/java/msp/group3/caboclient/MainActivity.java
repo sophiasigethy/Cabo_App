@@ -59,6 +59,8 @@ public class MainActivity extends AppCompatActivity {
 
         //connects to server
         connectWebSocket();
+
+        startGame();
     }
 
     private void connectWebSocket() {
@@ -237,7 +239,7 @@ public class MainActivity extends AppCompatActivity {
      * this method switches to the InGame Activity to start the game
      */
     public void startGame(){
-        state =TypeDefs.GAMESTART;
+        state = TypeDefs.GAMESTART;
        // TODO an Pauline: hier auf andere Activity/Layout weiterleiten
         Intent intent = new Intent(MainActivity.this,InGameActivity.class);
         startActivity(intent);
