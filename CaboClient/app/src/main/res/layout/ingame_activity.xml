@@ -5,20 +5,20 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal"
+    android:background="#009688"
     tools:context="msp.group3.caboclient.InGameActivity">
 
     <msp.group3.caboclient.ZoomLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/zoom_layout"
-        android:background="@android:color/black">
+        android:id="@+id/zoom_layout">
 
-        <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:app="http://schemas.android.com/apk/res-auto"
             xmlns:tools="http://schemas.android.com/tools"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#009688"
             android:orientation="horizontal"
             tools:context=".GameActivity">
 
@@ -26,348 +26,283 @@
                  is needed to present your content, e.g. VideoView, SurfaceView,
                  TextureView, etc. -->
 
-            <LinearLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/player1_cards"
-                android:layout_width="match_parent"
-                android:layout_height="130dp"
-                android:layout_gravity="bottom"
-                android:gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:weightSum="7">
+                android:layout_marginBottom="12dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent">
 
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:weightSum="4">
+                <ImageButton
+                    android:id="@+id/player1_card1_imageButton"
+                    android:layout_width="55dp"
+                    android:layout_height="80dp"
+                    android:background="@android:color/transparent"
+                    android:padding="3dp"
+                    android:elevation="16dp"
+                    android:scaleType="fitCenter"
+                    app:layout_constraintBottom_toTopOf="@id/player1_card3_imageButton"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toLeftOf="@id/player1_card2_imageButton"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/card_back" />
 
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="0dp"
-                        android:layout_weight="2"
-                        android:orientation="horizontal"
-                        android:weightSum="2">
+                <ImageButton
+                    android:id="@+id/player1_card2_imageButton"
+                    android:layout_width="55dp"
+                    android:layout_height="80dp"
+                    android:background="@android:color/transparent"
+                    android:padding="3dp"
+                    android:elevation="16dp"
+                    android:scaleType="fitCenter"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toTopOf="@id/player1_card4_imageButton"
+                    app:layout_constraintBottom_toBottomOf="@id/player1_card1_imageButton"
+                    app:layout_constraintLeft_toRightOf="@id/player1_card1_imageButton"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:srcCompat="@drawable/card_back" />
 
-                        <ImageButton
-                            android:id="@+id/player1_card1_imageButton"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:padding="2dp"
-                            android:background="@android:color/transparent"
-                            android:scaleType="fitCenter"
-                            android:scaleX="1.6"
-                            android:scaleY="1.6"
-                            app:srcCompat="@drawable/card_back"/>
+                <ImageButton
+                    android:id="@+id/player1_card3_imageButton"
+                    android:layout_width="55dp"
+                    android:layout_height="80dp"
+                    android:background="@android:color/transparent"
+                    android:padding="3dp"
+                    android:elevation="16dp"
+                    android:scaleType="fitCenter"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toLeftOf="@id/player1_card4_imageButton"
+                    app:layout_constraintTop_toBottomOf="@id/player1_card1_imageButton"
+                    app:srcCompat="@drawable/card_back" />
 
-                        <ImageButton
-                            android:id="@+id/player1_card2_imageButton"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:padding="2dp"
-                            android:background="@android:color/transparent"
-                            android:scaleType="fitCenter"
-                            android:scaleX="1.6"
-                            android:scaleY="1.6"
-                            app:srcCompat="@drawable/card_back" />
+                <ImageButton
+                    android:id="@+id/player1_card4_imageButton"
+                    android:layout_width="55dp"
+                    android:layout_height="80dp"
+                    android:background="@android:color/transparent"
+                    android:padding="3dp"
+                    android:elevation="16dp"
+                    android:scaleType="fitCenter"
+                    app:layout_constraintBottom_toBottomOf="@id/player1_card3_imageButton"
+                    app:layout_constraintLeft_toLeftOf="@id/player1_card2_imageButton"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/player1_card2_imageButton"
+                    app:srcCompat="@drawable/card_back" />
 
-                    </LinearLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="0dp"
-                        android:layout_weight="2"
-                        android:orientation="horizontal"
-                        android:weightSum="2">
-
-                        <ImageButton
-                            android:id="@+id/player1_card3_imageButton"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:padding="2dp"
-                            android:background="@android:color/transparent"
-                            android:scaleType="fitCenter"
-                            android:scaleX="1.6"
-                            android:scaleY="1.6"
-                            app:srcCompat="@drawable/card_back" />
-
-                        <ImageButton
-                            android:id="@+id/player1_card4_imageButton"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:padding="2dp"
-                            android:background="@android:color/transparent"
-                            android:scaleType="fitCenter"
-                            android:scaleX="1.6"
-                            android:scaleY="1.6"
-                            app:srcCompat="@drawable/card_back" />
-                    </LinearLayout>
-                </LinearLayout>
-
-            </LinearLayout>
-
-            <LinearLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/player2_cards"
-                android:layout_width="match_parent"
-                android:layout_height="130dp"
-                android:layout_gravity="top"
-                android:gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:weightSum="7">
+                android:layout_marginTop="12dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent">
 
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:weightSum="4">
+                <ImageButton
+                    android:id="@+id/player2_card1_imageButton"
+                    android:layout_width="55dp"
+                    android:layout_height="80dp"
+                    android:background="@android:color/transparent"
+                    android:padding="3dp"
+                    android:elevation="16dp"
+                    android:scaleType="fitCenter"
+                    app:layout_constraintBottom_toTopOf="@id/player2_card3_imageButton"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toLeftOf="@id/player2_card2_imageButton"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/card_back" />
 
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="0dp"
-                        android:layout_weight="2"
-                        android:orientation="horizontal"
-                        android:weightSum="2">
+                <ImageButton
+                    android:id="@+id/player2_card2_imageButton"
+                    android:layout_width="55dp"
+                    android:layout_height="80dp"
+                    android:background="@android:color/transparent"
+                    android:padding="3dp"
+                    android:elevation="16dp"
+                    android:scaleType="fitCenter"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toTopOf="@id/player2_card4_imageButton"
+                    app:layout_constraintBottom_toBottomOf="@id/player2_card1_imageButton"
+                    app:layout_constraintLeft_toRightOf="@id/player2_card1_imageButton"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:srcCompat="@drawable/card_back" />
 
-                        <ImageButton
-                            android:id="@+id/player2_card1_imageButton"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:padding="2dp"
-                            android:background="@android:color/transparent"
-                            android:scaleType="fitCenter"
-                            android:scaleX="1.6"
-                            android:scaleY="1.6"
-                            app:srcCompat="@drawable/card_back" />
-                        <!--android:adjustViewBounds="true"-->/>
+                <ImageButton
+                    android:id="@+id/player2_card3_imageButton"
+                    android:layout_width="55dp"
+                    android:layout_height="80dp"
+                    android:background="@android:color/transparent"
+                    android:padding="3dp"
+                    android:elevation="16dp"
+                    android:scaleType="fitCenter"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toLeftOf="@id/player2_card4_imageButton"
+                    app:layout_constraintTop_toBottomOf="@id/player2_card1_imageButton"
+                    app:srcCompat="@drawable/card_back" />
 
-                        <ImageButton
-                            android:id="@+id/player2_card2_imageButton"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:padding="2dp"
-                            android:background="@android:color/transparent"
-                            android:scaleType="fitCenter"
-                            android:scaleX="1.6"
-                            android:scaleY="1.6"
-                            app:srcCompat="@drawable/card_back" />
+                <ImageButton
+                    android:id="@+id/player2_card4_imageButton"
+                    android:layout_width="55dp"
+                    android:layout_height="80dp"
+                    android:background="@android:color/transparent"
+                    android:padding="3dp"
+                    android:elevation="16dp"
+                    android:scaleType="fitCenter"
+                    app:layout_constraintBottom_toBottomOf="@id/player2_card3_imageButton"
+                    app:layout_constraintLeft_toLeftOf="@id/player2_card2_imageButton"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/player2_card2_imageButton"
+                    app:srcCompat="@drawable/card_back" />
 
-                    </LinearLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="0dp"
-                        android:layout_weight="2"
-                        android:orientation="horizontal"
-                        android:weightSum="2">
-
-                        <ImageButton
-                            android:id="@+id/player2_card3_imageButton"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:padding="2dp"
-                            android:background="@android:color/transparent"
-                            android:scaleType="fitCenter"
-                            android:scaleX="1.6"
-                            android:scaleY="1.6"
-                            app:srcCompat="@drawable/card_back" />
-
-                        <ImageButton
-                            android:id="@+id/player2_card4_imageButton"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:padding="2dp"
-                            android:background="@android:color/transparent"
-                            android:scaleType="fitCenter"
-                            android:scaleX="1.6"
-                            android:scaleY="1.6"
-                            app:srcCompat="@drawable/card_back"/>
-                    </LinearLayout>
-                </LinearLayout>
-
-            </LinearLayout>
-
-            <LinearLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/player3_cards"
-                android:layout_width="match_parent"
-                android:layout_height="130dp"
-                android:layout_gravity="bottom"
-                android:gravity="right"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:rotation="-30"
-                android:translationY="120dp"
-                android:weightSum="7">
+                android:layout_margin="24dp"
+                android:rotation="45"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent">
 
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:weightSum="4">
+                <ImageButton
+                    android:id="@+id/player3_card1_imageButton"
+                    android:layout_width="55dp"
+                    android:layout_height="80dp"
+                    android:background="@android:color/transparent"
+                    android:padding="3dp"
+                    android:elevation="16dp"
+                    android:scaleType="fitCenter"
+                    app:layout_constraintBottom_toTopOf="@id/player3_card3_imageButton"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toLeftOf="@id/player3_card2_imageButton"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/card_back" />
 
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="0dp"
-                        android:layout_weight="2"
-                        android:orientation="horizontal"
-                        android:weightSum="2">
+                <ImageButton
+                    android:id="@+id/player3_card2_imageButton"
+                    android:layout_width="55dp"
+                    android:layout_height="80dp"
+                    android:background="@android:color/transparent"
+                    android:padding="3dp"
+                    android:elevation="16dp"
+                    android:scaleType="fitCenter"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toTopOf="@id/player3_card4_imageButton"
+                    app:layout_constraintBottom_toBottomOf="@id/player3_card1_imageButton"
+                    app:layout_constraintLeft_toRightOf="@id/player3_card1_imageButton"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:srcCompat="@drawable/card_back" />
 
-                        <ImageButton
-                            android:id="@+id/player3_card1_imageButton"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:padding="2dp"
-                            android:background="@android:color/transparent"
-                            android:scaleType="fitCenter"
-                            android:scaleX="1.6"
-                            android:scaleY="1.6"
-                            app:srcCompat="@drawable/card_back"/>                <!--android:adjustViewBounds="true"-->/>
+                <ImageButton
+                    android:id="@+id/player3_card3_imageButton"
+                    android:layout_width="55dp"
+                    android:layout_height="80dp"
+                    android:background="@android:color/transparent"
+                    android:padding="3dp"
+                    android:elevation="16dp"
+                    android:scaleType="fitCenter"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toLeftOf="@id/player3_card4_imageButton"
+                    app:layout_constraintTop_toBottomOf="@id/player3_card1_imageButton"
+                    app:srcCompat="@drawable/card_back" />
 
-                        <ImageButton
-                            android:id="@+id/player3_card2_imageButton"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:padding="2dp"
-                            android:background="@android:color/transparent"
-                            android:scaleType="fitCenter"
-                            android:scaleX="1.6"
-                            android:scaleY="1.6"
-                            app:srcCompat="@drawable/card_back" />
+                <ImageButton
+                    android:id="@+id/player3_card4_imageButton"
+                    android:layout_width="55dp"
+                    android:layout_height="80dp"
+                    android:background="@android:color/transparent"
+                    android:padding="3dp"
+                    android:elevation="16dp"
+                    android:scaleType="fitCenter"
+                    app:layout_constraintBottom_toBottomOf="@id/player3_card3_imageButton"
+                    app:layout_constraintLeft_toLeftOf="@id/player3_card2_imageButton"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/player3_card2_imageButton"
+                    app:srcCompat="@drawable/card_back" />
 
-                    </LinearLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="0dp"
-                        android:layout_weight="2"
-                        android:orientation="horizontal"
-                        android:weightSum="2">
-
-                        <ImageButton
-                            android:id="@+id/player3_card3_imageButton"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:padding="2dp"
-                            android:background="@android:color/transparent"
-                            android:scaleType="fitCenter"
-                            android:scaleX="1.6"
-                            android:scaleY="1.6"
-                            app:srcCompat="@drawable/card_back" />
-
-                        <ImageButton
-                            android:id="@+id/player3_card4_imageButton"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:padding="2dp"
-                            android:background="@android:color/transparent"
-                            android:scaleType="fitCenter"
-                            android:scaleX="1.6"
-                            android:scaleY="1.6"
-                            app:srcCompat="@drawable/card_back" />
-                    </LinearLayout>
-                </LinearLayout>
-
-            </LinearLayout>
-
-            <LinearLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/player4_cards"
-                android:layout_width="match_parent"
-                android:layout_height="130dp"
-                android:layout_gravity="bottom"
-                android:gravity="left"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:rotation="30"
-                android:translationY="120dp"
-                android:weightSum="7">
+                android:layout_margin="24dp"
+                android:rotation="-45"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintRight_toRightOf="parent">
 
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:weightSum="4">
+                <ImageButton
+                    android:id="@+id/player4_card1_imageButton"
+                    android:layout_width="55dp"
+                    android:layout_height="80dp"
+                    android:background="@android:color/transparent"
+                    android:padding="3dp"
+                    android:elevation="16dp"
+                    android:scaleType="fitCenter"
+                    app:layout_constraintBottom_toTopOf="@id/player4_card3_imageButton"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toLeftOf="@id/player4_card2_imageButton"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/card_back" />
 
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="0dp"
-                        android:layout_weight="2"
-                        android:orientation="horizontal"
-                        android:weightSum="2">
+                <ImageButton
+                    android:id="@+id/player4_card2_imageButton"
+                    android:layout_width="55dp"
+                    android:layout_height="80dp"
+                    android:background="@android:color/transparent"
+                    android:padding="3dp"
+                    android:elevation="16dp"
+                    android:scaleType="fitCenter"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toTopOf="@id/player4_card4_imageButton"
+                    app:layout_constraintBottom_toBottomOf="@id/player4_card1_imageButton"
+                    app:layout_constraintLeft_toRightOf="@id/player4_card1_imageButton"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:srcCompat="@drawable/card_back" />
 
-                        <ImageButton
-                            android:id="@+id/player4_card1_imageButton"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:padding="2dp"
-                            android:layout_weight="1"
-                            android:background="@android:color/transparent"
-                            android:scaleType="fitCenter"
-                            android:scaleX="1.6"
-                            android:scaleY="1.6"
-                            app:srcCompat="@drawable/card_back"/>
+                <ImageButton
+                    android:id="@+id/player4_card3_imageButton"
+                    android:layout_width="55dp"
+                    android:layout_height="80dp"
+                    android:background="@android:color/transparent"
+                    android:padding="3dp"
+                    android:elevation="16dp"
+                    android:scaleType="fitCenter"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toLeftOf="@id/player4_card4_imageButton"
+                    app:layout_constraintTop_toBottomOf="@id/player4_card1_imageButton"
+                    app:srcCompat="@drawable/card_back" />
 
-                        <ImageButton
-                            android:id="@+id/player4_card2_imageButton"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:padding="2dp"
-                            android:background="@android:color/transparent"
-                            android:scaleType="fitCenter"
-                            android:scaleX="1.6"
-                            android:scaleY="1.6"
-                            app:srcCompat="@drawable/card_back" />
+                <ImageButton
+                    android:id="@+id/player4_card4_imageButton"
+                    android:layout_width="55dp"
+                    android:layout_height="80dp"
+                    android:background="@android:color/transparent"
+                    android:padding="3dp"
+                    android:elevation="16dp"
+                    android:scaleType="fitCenter"
+                    app:layout_constraintBottom_toBottomOf="@id/player4_card3_imageButton"
+                    app:layout_constraintLeft_toLeftOf="@id/player4_card2_imageButton"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/player4_card2_imageButton"
+                    app:srcCompat="@drawable/card_back" />
 
-                    </LinearLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="0dp"
-                        android:layout_weight="2"
-                        android:orientation="horizontal"
-                        android:weightSum="2">
-
-                        <ImageButton
-                            android:id="@+id/player4_card3_imageButton"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:padding="2dp"
-                            android:background="@android:color/transparent"
-                            android:scaleType="fitCenter"
-                            android:scaleX="1.6"
-                            android:scaleY="1.6"
-                            app:srcCompat="@drawable/card_back" />
-
-                        <ImageButton
-                            android:id="@+id/player4_card4_imageButton"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:padding="2dp"
-                            android:background="@android:color/transparent"
-                            android:scaleType="fitCenter"
-                            android:scaleX="1.6"
-                            android:scaleY="1.6"
-                            app:srcCompat="@drawable/card_back" />
-                    </LinearLayout>
-                </LinearLayout>
-
-            </LinearLayout>
-
-        </FrameLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </msp.group3.caboclient.ZoomLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
