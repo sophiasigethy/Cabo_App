@@ -3,7 +3,8 @@ package myServer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Collections;
-
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class CardSuiteManager {
     // reference: https://www.youtube.com/watch?v=aCo-iNedw2g
@@ -16,17 +17,29 @@ public class CardSuiteManager {
     private final static String SPY = "SPY";
     private final static String SWAP = "SWAP";
 
+    final static int CARD_NUMBER = 13 * 4;
+    private final static int DISTRIBUTION_CARD_NUMBER_AT_BEGINNING = 4;
+
+    // The cards in available pile, face-down, never exposed these cards to clients
     private ArrayList<Card> availableCards = null;
+    // The cards drawn from available card pile, they may be in discarded card pile, clients' decks.
     private ArrayList<Card> playedCards = null;
+    // The cards discarded by clients, face-up
     private ArrayList<Card> discardedCards = null;
 
+    // A mapping between the order of shuffled cards and real card value
     private HashMap<Integer, Card> indexToCardMap = null;
+    // A mapping between the real card value and the order of shuffled cards.
     private HashMap<Card, Integer> cardToIndexMap = null;
 
-    final static int CARD_NUMBER = 52;
+    // The players participated in this game
     private ArrayList<Player> players = new ArrayList<>();
 
+    // The game is terminate or not. It mean at least one client reaches more than 100 score.
     private boolean terminated = false;
+
+    // Logger handler
+    private final static Logger logger = Logger.getLogger(CardSuiteManager.class.getName());
 
     public CardSuiteManager() {
         generateSuite();
@@ -40,6 +53,7 @@ public class CardSuiteManager {
 
     public void generateSuite(boolean shouldShuffle) {
         if (this.terminated) {
+            logger.log(Level.INFO, "The game is terminated, no need to generate suites anymore.");
             this.availableCards = null;
             this.playedCards = null;
             this.discardedCards = null;
@@ -56,13 +70,15 @@ public class CardSuiteManager {
 
         this.generateCards();
         this.shuffleCards(shouldShuffle);
+        logger.log(Level.INFO, "The card suite is generated successfully.");
+
     }
     /**
      * Generate cards
      */
     private void generateCards() {
-        for (int i = 0; i <= CARD_NUMBER / 4; i ++) {
-            if (i == 0 || i == CARD_NUMBER / 4) {
+        for (int i = 0; i <= 13; i ++) {
+            if (i == 0 || i == 13) {
                 this.availableCards.add(new Card(i, SPADE));
                 this.availableCards.add(new Card(i, CLUB));
             } else if (i == 7 || i == 8) {
@@ -94,9 +110,11 @@ public class CardSuiteManager {
 
     /**
      * Shuffle cards
+     * @param shouldShuffle the flag to show whether the cards should be shuffled
      */
     private void shuffleCards(boolean shouldShuffle) {
         if (shouldShuffle) {
+            logger.log(Level.FINER, "Shuffling the cards");
             Collections.shuffle(this.availableCards);
         }
         for (int i = 0; i < this.availableCards.size(); i ++) {
@@ -106,6 +124,9 @@ public class CardSuiteManager {
         }
     }
 
+    /**
+     * Terminate the game
+     */
     public void terminate() {
         this.terminated = true;
     }
@@ -113,10 +134,14 @@ public class CardSuiteManager {
     public void addPlayer(Player player) {
         this.players.add(player);
     }
-    public ArrayList<Player> getPlayers() {
+    private ArrayList<Player> getPlayers() {
         return this.players;
     }
 
+    /**
+     * @TODO Make this function easy to extend
+     * Calculate the scores once caboed
+     */
     public void calcScores() {
         // ArrayList<Player> allPlayers = this.cardSuiteManager.getPlayers();
         // Case1: Checking the special case, (0, 0, 13, 13)
@@ -170,7 +195,7 @@ public class CardSuiteManager {
         }
 
         // Case 2: common case
-        int smallestPoint = 100000;
+        int smallestPoint = Integer.MAX_VALUE;
         for (int i = 0; i < players.size(); i ++) {
             if (smallestPoint > players.get(i).getPoint()) {
                 smallestPoint = players.get(i).getPoint();
@@ -197,7 +222,7 @@ public class CardSuiteManager {
         }
     }
     /**
-     * Debug: Simply check the implementation
+     * @Debug: Simply check the implementation
      */
     public void debug() {
         System.out.println("============== DEBUG ====================");
@@ -222,12 +247,35 @@ public class CardSuiteManager {
 
     }
 
-    public int getCardIndex() {
+    /**
+     * Draw a card from `availableCards` pile
+     * @return a card retrieve from `availableCard`
+     */
+    public Card getFirstCardFromAvailableCards() {
         Card card = this.availableCards.get(0);
-        this.availableCards.remove(0);
         this.playedCards.add(card);
+        this.availableCards.remove(0);
+        return card;
+    }
+
+    /**
+     * Retrieve the real card information by given index
+     * @return The real card of given index in the card pile this game round
+     */
+    public Card getCardByIndex(int index) {
+        return this.indexToCardMap.get(index);
+    }
+    /**
+     * Retrieve the `index` of a card by given `card`
+     * @return The index of given card in the card pile this game round
+     */
+    public int getIndexByCard(Card card) {
         return this.cardToIndexMap.get(card);
     }
+    /**
+     * Add discarded card by given card index
+     * @param index the index which corresponds to the card
+     */
     public void addDiscardedCard(int index) {
         this.discardedCards.add(this.indexToCardMap.get(index));
     }
@@ -235,6 +283,15 @@ public class CardSuiteManager {
     public ArrayList<Card> getAvailableCards() {
         return this.availableCards;
     }
+    public ArrayList<Integer> getAvailableCardIndexes() {
+        ArrayList<Integer> array = new ArrayList<>();
+
+        for (int i = 0; i < availableCards.size(); i ++) {
+            array.add(this.cardToIndexMap.get(availableCards.get(i)));
+        }
+        return array;
+    }
+
     public ArrayList<Card> getDiscardedCards() {
         return this.discardedCards;
     }
@@ -245,5 +302,15 @@ public class CardSuiteManager {
     public HashMap<Integer, Card> getIndexToCardMap() { return this.indexToCardMap; };
     public HashMap<Card, Integer> getCardToIndexMap() { return this.cardToIndexMap; }
 
-    
+    /**
+     * Distribute cards to all participated players;
+     */
+    public void distributeCardsAtBeginning() {
+        players.forEach(player -> {
+            for (int i = 0; i < DISTRIBUTION_CARD_NUMBER_AT_BEGINNING; i ++) {
+                player.drawCard();
+            }
+        });
+    }
+
 }
