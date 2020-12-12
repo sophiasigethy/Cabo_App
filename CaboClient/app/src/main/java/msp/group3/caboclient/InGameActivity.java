@@ -44,7 +44,7 @@ public class InGameActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.ingame_activity);
         zoomLayout = (ZoomLayout) findViewById(R.id.zoom_layout);
-        player1_card1 = (ImageButton) findViewById(R.id.player1_card1_imageButton);
+        instantiatePlayerCardDecks();
         ViewTreeObserver vto = zoomLayout.getViewTreeObserver();
         vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
@@ -61,9 +61,31 @@ public class InGameActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Toast.makeText(getApplicationContext(),
                         "Card 1 Player 1 is clicked", Toast.LENGTH_SHORT).show();
-                //bounds remain the same only image changes
-                //ObjectAnimator.ofFloat(player1_card1_imageButton, "scaleX", 1.0f, 2.0f).setDuration(600).start();
-                //ObjectAnimator.ofFloat(player1_card1_imageButton, "scaleY", 1.0f, 2.0f).setDuration(600).start();
+                //growCardAnimation(player1_card1);
+            }
+        });
+        player1_card2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(getApplicationContext(),
+                        "Card 1 Player 1 is clicked", Toast.LENGTH_SHORT).show();
+                //growCardAnimation(player1_card2);
+            }
+        });
+        player1_card3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(getApplicationContext(),
+                        "Card 1 Player 1 is clicked", Toast.LENGTH_SHORT).show();
+                //growCardAnimation(player1_card3);
+            }
+        });
+        player1_card4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(getApplicationContext(),
+                        "Card 1 Player 1 is clicked", Toast.LENGTH_SHORT).show();
+                //growCardAnimation(player1_card4);
             }
         });
     }
@@ -88,6 +110,14 @@ public class InGameActivity extends AppCompatActivity {
         player4_card2 = findViewById(R.id.player4_card2_imageButton);
         player4_card3 = findViewById(R.id.player4_card3_imageButton);
         player4_card4 = findViewById(R.id.player4_card4_imageButton);
+    }
+
+    private void growCardAnimation(ImageButton card){
+        //bounds remain the same only image changes
+        ObjectAnimator.ofFloat(card, "scaleX", 1.0f, 1.3f).setDuration(600).start();
+        ObjectAnimator.ofFloat(card, "scaleY", 1.0f, 1.3f).setDuration(600).start();
+        ObjectAnimator.ofFloat(card, "x", -15).setDuration(600).start();
+        ObjectAnimator.ofFloat(card, "y", -15).setDuration(600).start();
     }
 
 }
