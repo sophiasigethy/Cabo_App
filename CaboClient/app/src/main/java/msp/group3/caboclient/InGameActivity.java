@@ -1,9 +1,12 @@
 package msp.group3.caboclient;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 
 import android.animation.ObjectAnimator;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.Window;
@@ -37,6 +40,10 @@ public class InGameActivity extends AppCompatActivity {
     private ImageButton player4_card3;
     private ImageButton player4_card4;
 
+    private ImageButton chatButton;
+
+    private InGameChatFragment chatFragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,8 +51,10 @@ public class InGameActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.ingame_activity);
         zoomLayout = (ZoomLayout) findViewById(R.id.zoom_layout);
+        chatButton = (ImageButton) findViewById(R.id.chat_button);
         instantiatePlayerCardDecks();
         ViewTreeObserver vto = zoomLayout.getViewTreeObserver();
+
         vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
@@ -55,6 +64,16 @@ public class InGameActivity extends AppCompatActivity {
                 zoomLayout.setContentSize(width, height);
             }
         });
+
+        chatFragment = new InGameChatFragment();
+
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction()
+                    .setReorderingAllowed(true)
+                    .add(R.id.fragment_chat, InGameChatFragment.class, null)
+                    .hide(chatFragment)
+                    .commit();
+        }
 
         player1_card1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -86,6 +105,15 @@ public class InGameActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(),
                         "Card 1 Player 1 is clicked", Toast.LENGTH_SHORT).show();
                 //growCardAnimation(player1_card4);
+            }
+        });
+
+        chatButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(getApplicationContext(),
+                        "Open chat...", Toast.LENGTH_SHORT).show();
+                getSupportFragmentManager().beginTransaction().show(chatFragment);
             }
         });
     }
