@@ -1,18 +1,20 @@
 package msp.group3.caboclient;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
 
 import android.animation.ObjectAnimator;
-import android.app.FragmentTransaction;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * this is an example for a zoomable and scrollable layout
@@ -41,8 +43,15 @@ public class InGameActivity extends AppCompatActivity {
     private ImageButton player4_card4;
 
     private ImageButton chatButton;
+    private ImageButton settingsButton;
+    private Button caboButton;
+
+    private ImageButton playedCardsStackButton;
+    private ImageButton pickCardsStackButton;
 
     private InGameChatFragment chatFragment;
+
+    private List<ImageButton> playerCardButtons = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +61,10 @@ public class InGameActivity extends AppCompatActivity {
         setContentView(R.layout.ingame_activity);
         zoomLayout = (ZoomLayout) findViewById(R.id.zoom_layout);
         chatButton = (ImageButton) findViewById(R.id.chat_button);
+        settingsButton = (ImageButton) findViewById(R.id.settings_button);
+        caboButton = (Button) findViewById(R.id.cabo_button);
+        playedCardsStackButton = (ImageButton) findViewById(R.id.played_cards_imageButton);
+        pickCardsStackButton = (ImageButton) findViewById(R.id.pick_card_imageButton);
         instantiatePlayerCardDecks();
         ViewTreeObserver vto = zoomLayout.getViewTreeObserver();
 
@@ -66,56 +79,83 @@ public class InGameActivity extends AppCompatActivity {
         });
 
         chatFragment = new InGameChatFragment();
+        Collections.addAll(playerCardButtons, player1_card1, player1_card2, player1_card3, player1_card4,
+                player2_card1, player2_card2, player2_card3, player2_card4,
+                player3_card1, player3_card2, player3_card3, player3_card4,
+                player4_card1, player4_card2, player4_card3, player4_card4);
 
-        if (savedInstanceState == null) {
+        setAllCardsOnClickListeners();
+
+        //TODO: Chat fragment integration
+        /*if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
                     .setReorderingAllowed(true)
                     .add(R.id.fragment_chat, InGameChatFragment.class, null)
                     .hide(chatFragment)
                     .commit();
-        }
-
-        player1_card1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(getApplicationContext(),
-                        "Card 1 Player 1 is clicked", Toast.LENGTH_SHORT).show();
-                //growCardAnimation(player1_card1);
-            }
-        });
-        player1_card2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(getApplicationContext(),
-                        "Card 1 Player 1 is clicked", Toast.LENGTH_SHORT).show();
-                //growCardAnimation(player1_card2);
-            }
-        });
-        player1_card3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(getApplicationContext(),
-                        "Card 1 Player 1 is clicked", Toast.LENGTH_SHORT).show();
-                //growCardAnimation(player1_card3);
-            }
-        });
-        player1_card4.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(getApplicationContext(),
-                        "Card 1 Player 1 is clicked", Toast.LENGTH_SHORT).show();
-                //growCardAnimation(player1_card4);
-            }
-        });
+        }*/
 
         chatButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Toast.makeText(getApplicationContext(),
                         "Open chat...", Toast.LENGTH_SHORT).show();
-                getSupportFragmentManager().beginTransaction().show(chatFragment);
+                //getSupportFragmentManager().beginTransaction().show(chatFragment);
             }
         });
+
+        settingsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(getApplicationContext(),
+                        "Open settings...", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        caboButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(getApplicationContext(),
+                        "CABO!.", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        caboButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(getApplicationContext(),
+                        "CABO!", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        playedCardsStackButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(getApplicationContext(),
+                        "Discard card...", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        pickCardsStackButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(getApplicationContext(),
+                        "Pick card...", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void setAllCardsOnClickListeners(){
+        for(ImageButton cardButton : playerCardButtons){
+            cardButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Toast.makeText(getApplicationContext(),
+                            "Card clicked: "+getResources().getResourceEntryName(cardButton.getId()), Toast.LENGTH_SHORT).show();
+                    getSupportFragmentManager().beginTransaction().show(chatFragment);
+                }
+            });
+        }
     }
 
     private void instantiatePlayerCardDecks(){
