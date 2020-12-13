@@ -2,7 +2,6 @@ package myServer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 public class Player {
 
@@ -15,11 +14,6 @@ public class Player {
 
     private int score = 0;
     private boolean calledCabo = false;
-
-    public Player(CardSuiteManager mgr) {
-        this.cardSuiteManager = mgr;
-        this.cardSuiteManager.addPlayer(this);
-    }
 
     public Player(int id, String name){
         this.id= id;
@@ -52,11 +46,20 @@ public class Player {
         return this.cardIndexes;
     }
 
+    /**
+     * A play draws an index corresponding to the card from `availableCards`,
+     */
     public void drawCard() {
         if (this.calledCabo) return;
-        this.cardIndexes.add(this.cardSuiteManager.getCardIndex());
+        this.cardIndexes.add(this.cardSuiteManager.getIndexByCard(
+                this.cardSuiteManager.getFirstCardFromAvailableCards()
+        ));
     }
 
+    /**
+     * A play discard a card by given index
+     * @param index an index which associated with real card
+     */
     public void discardCard(int index) {
         if (this.calledCabo) return;
 
@@ -68,6 +71,7 @@ public class Player {
         }
         this.cardSuiteManager.addDiscardedCard(index);
     }
+
     public void discardCards(int [] indexes) {
         if (this.calledCabo) return;
 
@@ -157,18 +161,18 @@ public class Player {
         }
     }
 
-    private void swapWithPileCards(ArrayList<Card> cards, int myIndex, int otherIndex) {
+    private void swapWithPileCards(ArrayList<Card> cards, int myIndex, int otherIndex, boolean shouldUpdatePlayedCards) {
         if (this.calledCabo) return;
 
-        HashMap<Integer, Card> indexToCardMap = this.cardSuiteManager.getIndexToCardMap();
-        HashMap<Card, Integer> cardToIndexMap = this.cardSuiteManager.getCardToIndexMap();
         for (int i = 0; i < cards.size(); i ++) {
-            if (indexToCardMap.get(otherIndex) == cards.get(i)) {
-                // `otherIndex1` is really inside cards, can swap;
-                cards.set(i, indexToCardMap.get(myIndex));
-                this.cardSuiteManager.getPlayedCards().add(indexToCardMap.get(otherIndex));
-
-                this.cardSuiteManager.getPlayedCards().remove(indexToCardMap.get(myIndex));
+            if (this.cardSuiteManager.getCardByIndex(otherIndex) == cards.get(i)) {
+                // `otherIndex` is really inside cards, can swap;
+                cards.set(i, cardSuiteManager.getCardByIndex(myIndex));
+                // : It only need to be called in `availableCards`, no need for `discardedCards`
+                if (shouldUpdatePlayedCards) {
+                    this.cardSuiteManager.getPlayedCards().add(cardSuiteManager.getCardByIndex(otherIndex));
+                    this.cardSuiteManager.getPlayedCards().remove(cardSuiteManager.getCardByIndex(myIndex));
+                }
                 break;
             }
         }
@@ -181,13 +185,18 @@ public class Player {
 
     public void swapWithAvailableCards(int myIndex, int otherIndex) {
         this.swapWithPileCards(this.cardSuiteManager.getAvailableCards(),
-                myIndex, otherIndex);
+                myIndex, otherIndex, true);
     }
 
     public void swapWithDiscardedCards(int myIndex, int otherIndex) {
-        this.swapWithPileCards(this.cardSuiteManager.getAvailableCards(),
-                myIndex, otherIndex);
+        this.swapWithPileCards(this.cardSuiteManager.getDiscardedCards(),
+                myIndex, otherIndex, false);
     }
+
+    /**
+     * Get the points of all cards play obtains
+     * @return
+     */
     public int getPoint() {
         int points = 0;
         for (int i = 0; i < this.cardIndexes.size(); i++) {
@@ -195,64 +204,6 @@ public class Player {
         }
         return points;
     }
-
-//    public void swapWithOtherPlayer(Player other, int myIndex1, int myIndex2, int otherIndex1, int otherIndex2) {
-//        for (int i = 0; i < other.cardIndexes.size(); i ++) {
-//            if (otherIndex1 == other.cardIndexes.get(i)) {
-//                other.cardIndexes.set(i, myIndex1);
-//            }
-//            if (otherIndex2 == other.cardIndexes.get(i)) {
-//                other.cardIndexes.set(i, myIndex2);
-//            }
-//        }
-//        for (int i = 0; i < this.cardIndexes.size(); i ++) {
-//            if (myIndex1 == this.cardIndexes.get(i)) {
-//                this.cardIndexes.set(i, otherIndex1);
-//            }
-//            if (myIndex2 == this.cardIndexes.get(i)) {
-//                this.cardIndexes.set(i, otherIndex2);
-//            }
-//        }
-//    }
-//
-//    private void swapWithPileCards(ArrayList<Card> cards, int myIndex1, int myIndex2, int otherIndex1, int otherIndex2) {
-//        HashMap<Integer, Card> indexToCardMap = this.cardSuiteManager.getIndexToCardMap();
-//        HashMap<Card, Integer> cardToIndexMap = this.cardSuiteManager.getCardToIndexMap();
-//        for (int i = 0; i < cards.size(); i ++) {
-//            if (indexToCardMap.get(otherIndex1) == cards.get(i)) {
-//                // `otherIndex1` is really inside cards, can swap;
-//                cards.set(i, indexToCardMap.get(myIndex1));
-//                this.cardSuiteManager.getPlayedCards().add(indexToCardMap.get(otherIndex1));
-//
-//                this.cardSuiteManager.getPlayedCards().remove(indexToCardMap.get(myIndex1));
-//            }
-//            if (indexToCardMap.get(otherIndex2) == cards.get(i)) {
-//                // `otherIndex2` is really inside cards, can swap;
-//                cards.set(i, indexToCardMap.get(myIndex2));
-//                this.cardSuiteManager.getPlayedCards().add(indexToCardMap.get(otherIndex2));
-//                this.cardSuiteManager.getPlayedCards().remove(indexToCardMap.get(myIndex2));
-//
-//            }
-//        }
-//        for (int i = 0; i < this.cardIndexes.size(); i ++) {
-//            if (myIndex1 == this.cardIndexes.get(i)) {
-//                this.cardIndexes.set(i, otherIndex1);
-//            }
-//            if (myIndex2 == this.cardIndexes.get(i)) {
-//                this.cardIndexes.set(i, otherIndex2);
-//            }
-//        }
-//    }
-//
-//    public void swapWithAvailableCards(int myIndex1, int myIndex2, int otherIndex1, int otherIndex2) {
-//        this.swapWithPileCards(this.cardSuiteManager.getAvailableCards(),
-//                myIndex1, myIndex2, otherIndex1, otherIndex2);
-//    }
-//
-//    public void swapWithDiscardedCards(int myIndex1, int myIndex2, int otherIndex1, int otherIndex2) {
-//        this.swapWithPileCards(this.cardSuiteManager.getDiscardedCards(),
-//                myIndex1, myIndex2, otherIndex1, otherIndex2);
-//    }
 
     public void debug() {
         System.out.println("============== DEBUG ====================");
@@ -264,6 +215,10 @@ public class Player {
         System.out.println("=====================================");
 
     }
+
+    /**
+     * Call cabo
+     */
     public void callCabo() {
         this.calledCabo = true;
     }
@@ -276,6 +231,7 @@ public class Player {
     public void setScore(int score) {
         this.score = score;
     }
+
     public int getScore() {
         return this.score;
     }

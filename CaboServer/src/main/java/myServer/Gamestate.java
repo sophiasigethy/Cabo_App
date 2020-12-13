@@ -22,7 +22,6 @@ public class Gamestate {
     //status of the game- see Type Defs for all 3 state
     private String state = TypeDefs.MATCHING;
 
-    private final static int DEAL_CARD_NUMBER_AT_BEGINNING = 4;
     public CardSuiteManager cardSuiteMgr = null;
 
     //manages the connection
@@ -32,9 +31,6 @@ public class Gamestate {
     //client who sent something most recently
     private WebSocketSession currentSession;
 
-    public Gamestate() {
-        this.cardSuiteMgr = new CardSuiteManager(false);
-    }
     public Gamestate(SocketHandler socketHandler) {
         this.cardSuiteMgr = new CardSuiteManager();
 
@@ -230,15 +226,8 @@ public class Gamestate {
      * Distribute cards to all participated players;
      */
     void distributeCardAtBeginning() {
-        players.forEach((k, player) -> {
-            for (int i = 0; i < DEAL_CARD_NUMBER_AT_BEGINNING; i ++) {
-                player.drawCard();
-            }
-        });
+        cardSuiteMgr.distributeCardsAtBeginning();
     }
-    /**
-     *
-     */
 }
 
 
