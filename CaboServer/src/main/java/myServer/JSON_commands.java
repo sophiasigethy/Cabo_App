@@ -115,14 +115,24 @@ public class JSON_commands {
 
     }
 
-    public static JSONObject cards(Player self) throws JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
+    public static JSONObject cardIndexes(Player self) throws JsonProcessingException {
         JSONObject jmsg = new JSONObject();
         ArrayList<Integer> cardIndexes = self.getCardIndexes();
 
         JSONArray array = new JSONArray();
         for(int i = 0; i < cardIndexes.size(); i++) {
             array.put(cardIndexes.get(i));
+        }
+        jmsg.put("cardIndexes", array);
+        return jmsg;
+    }
+    public static JSONObject cards(Player self) throws JsonProcessingException {
+        JSONObject jmsg = new JSONObject();
+        ArrayList<Card> cards = self.getCards();
+
+        JSONArray array = new JSONArray();
+        for(int i = 0; i < cards.size(); i++) {
+            array.put(cards.get(i));
         }
         jmsg.put("cardIndexes", array);
         return jmsg;
@@ -165,7 +175,25 @@ public class JSON_commands {
         jmsg.put(Integer.toString(other.getId()), arr2);
         return jmsg;
     }
+    public static JSONObject swapWithOtherPlayer(Player self, Player other, Card selfCard, Card otherCard) throws JsonProcessingException {
+        JSONObject jmsg = new JSONObject();
+        self.swapWithOtherPlayer(other, selfCard, otherCard);
 
+        ArrayList<Card> cards1 = self.getCards();
+        ArrayList<Card> cards2 = other.getCards();
+
+        JSONArray arr1 = new JSONArray();
+        for (int i = 0; i < cards1.size(); i++) {
+            arr1.put(cards1.get(i));
+        }
+        JSONArray arr2 = new JSONArray();
+        for (int i = 0; i < cards2.size(); i++) {
+            arr2.put(cards2.get(i));
+        }
+        jmsg.put(Integer.toString(self.getId()), arr1);
+        jmsg.put(Integer.toString(other.getId()), arr2);
+        return jmsg;
+    }
     public static JSONObject swapWithAvailableCards(CardSuiteManager mgr, Player self,
                                                     int selfIndex, int otherIndex) throws JsonProcessingException {
         JSONObject jmsg = new JSONObject();
@@ -185,6 +213,31 @@ public class JSON_commands {
         }
         jmsg.put(Integer.toString(self.getId()), arr1);
         jmsg.put("availableCardIndexes", arr2);
+        jmsg.put("self", arr1);
+
+        return jmsg;
+    }
+
+    public static JSONObject swapWithAvailableCards(CardSuiteManager mgr, Player self,
+                                                    Card selfCard, Card otherCard) throws JsonProcessingException {
+        JSONObject jmsg = new JSONObject();
+        self.swapWithAvailableCards(selfCard, otherCard);
+
+        ArrayList<Card> cards = self.getCards();
+
+        JSONArray arr1 = new JSONArray();
+        for (int i = 0; i < cards.size(); i++) {
+            arr1.put(cards.get(i));
+        }
+
+        ArrayList<Card> availableCards = mgr.getAvailableCards();
+        JSONArray arr2 = new JSONArray();
+        for (int i = 0; i < availableCards.size(); i++) {
+            arr1.put(availableCards.get(i));
+        }
+        jmsg.put(Integer.toString(self.getId()), arr1);
+        jmsg.put("availableCards", arr2);
+        jmsg.put("self", arr1);
 
         return jmsg;
     }
@@ -209,7 +262,32 @@ public class JSON_commands {
         }
         jmsg.put(Integer.toString(self.getId()), arr1);
         jmsg.put("discardedCards", arr2);
+        jmsg.put("self", arr1);
 
+        return jmsg;
+    }
+
+    public static JSONObject swapWithDiscardedCards(CardSuiteManager mgr, Player self,
+                                                    Card selfCard, Card otherCard) throws JsonProcessingException {
+        JSONObject jmsg = new JSONObject();
+        self.swapWithDiscardedCards(selfCard, otherCard);
+
+        ArrayList<Card> cards = self.getCards();
+
+        JSONArray arr1 = new JSONArray();
+        for (int i = 0; i < cards.size(); i++) {
+            arr1.put(cards.get(i));
+        }
+
+        ArrayList<Card> discardedCards = mgr.getDiscardedCards();
+        JSONArray arr2 = new JSONArray();
+        for (int i = 0; i < discardedCards.size(); i++) {
+            ObjectMapper mapper = new ObjectMapper();
+            arr2.put(mapper.writeValueAsString(discardedCards.get(i)));
+        }
+        jmsg.put(Integer.toString(self.getId()), arr1);
+        jmsg.put("discardedCards", arr2);
+        jmsg.put("self", arr1);
         return jmsg;
     }
 }
