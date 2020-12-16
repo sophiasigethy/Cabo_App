@@ -111,7 +111,6 @@ public class PlayerAndCardSuiteManagerTest {
         assertEquals(this.tony.getCardIndexes().size(), 1);
         assertEquals(this.tony.getCardIndexes().get(0), discardedCardIndex);
         assertEquals(this.cardSuiteManager.getIndexByCard(this.cardSuiteManager.getDiscardedCards().get(0)), tonyCardIndex);
-
     }
 
     @Test

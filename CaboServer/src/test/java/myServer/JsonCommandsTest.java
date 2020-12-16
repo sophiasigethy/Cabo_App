@@ -24,10 +24,24 @@ public class JsonCommandsTest {
         tony.drawCard();
         tony.drawCard();
         tony.drawCard();
-        bob.drawCard();
+        // bob.drawCard();
         tony.drawCard();
 
         JSONObject obj = JSON_commands.cards(tony);
+        // System.out.println("obj: " + obj);
+
+        JSONObject expectedObj = new JSONObject("{\"cardIndexes\":[\"<Card: 0, SPADE>\",\"<Card: 0, CLUB>\",\"<Card: 1, SPADE>\",\"<Card: 1, CLUB>\"]}");
+        assertEquals(obj.toString(), expectedObj.toString());
+    }
+    @Test
+    public void testCardIndexes() throws JsonProcessingException {
+        tony.drawCard();
+        tony.drawCard();
+        tony.drawCard();
+        bob.drawCard();
+        tony.drawCard();
+
+        JSONObject obj = JSON_commands.cardIndexes(tony);
         JSONObject expectedObj = new JSONObject("{\"cardIndexes\":[0,1,2,4]}");
         assertEquals(obj.toString(), expectedObj.toString());
     }
@@ -87,7 +101,7 @@ public class JsonCommandsTest {
         JSONObject obj = JSON_commands.swapWithDiscardedCards(this.cardSuiteManager, tony,
             tonyCardIndex, discardedCardIndex);
 
-        JSONObject expectedObj = new JSONObject("{\"1\":[0],\"discardedCards\":[\"{\\\"type\\\":\\\"CLUB\\\",\\\"value\\\":0}\"]}");
+        JSONObject expectedObj = new JSONObject("{\"1\":[0],\"self\":[0],\"discardedCards\":[\"{\\\"type\\\":\\\"CLUB\\\",\\\"value\\\":0}\"]}");
         assertEquals(obj.toString(), expectedObj.toString());;
 
     }
