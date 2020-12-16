@@ -66,10 +66,10 @@ public class Player {
         for (int i = 0; i < this.cardIndexes.size(); i ++) {
             if (this.cardIndexes.get(i) == index) {
                 this.cardIndexes.remove(i);
+                this.cardSuiteManager.addDiscardedCard(index);
                 break;
             }
         }
-        this.cardSuiteManager.addDiscardedCard(index);
     }
 
     public void discardCards(int [] indexes) {
@@ -121,7 +121,7 @@ public class Player {
 
         for (int i = 0; i < player.cardIndexes.size(); i ++) {
             if (player.cardIndexes.get(i) == index) {
-                return this.cardSuiteManager.getIndexToCardMap().get(index);
+                return this.cardSuiteManager.getCardByIndex(index);
             }
         }
         return null;
@@ -141,7 +141,10 @@ public class Player {
      * @return
      */
     public Card spy(Player player, int index) {
-        return this.peek(player, index);
+        if (this != player) {
+            return this.peek(player, index);
+        }
+        return null;
     }
 
     public void swapWithOtherPlayer(Player other, int myIndex, int otherIndex) {
@@ -200,7 +203,7 @@ public class Player {
     public int getPoint() {
         int points = 0;
         for (int i = 0; i < this.cardIndexes.size(); i++) {
-            points += this.cardSuiteManager.getIndexToCardMap().get(this.cardIndexes.get(i)).getValue();
+            points += this.cardSuiteManager.getCardByIndex(this.cardIndexes.get(i)).getValue();
         }
         return points;
     }

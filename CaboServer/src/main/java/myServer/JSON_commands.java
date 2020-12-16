@@ -116,7 +116,6 @@ public class JSON_commands {
     }
 
     public static JSONObject cards(Player self) throws JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
         JSONObject jmsg = new JSONObject();
         ArrayList<Integer> cardIndexes = self.getCardIndexes();
 
