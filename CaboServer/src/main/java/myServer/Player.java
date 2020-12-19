@@ -1,23 +1,38 @@
 package myServer;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Player {
 
+
+
     private int id;
     private String name;
 
+   @JsonIgnore
     private ArrayList<Integer> cardIndexes = new ArrayList<>();
 
+    private ArrayList<Card> myCards = new ArrayList<>();
+
+    @JsonIgnore
     private CardSuiteManager cardSuiteManager;
 
+
+    private String status;
+
+    @JsonIgnore
     private int score = 0;
+    @JsonIgnore
     private boolean calledCabo = false;
+
 
     public Player(int id, String name){
         this.id= id;
         this.name= name;
+        this.status=TypeDefs.waiting;
     }
 
     public Player(int id, String name, CardSuiteManager mgr) {
@@ -25,6 +40,7 @@ public class Player {
         this.name = name;
         this.cardSuiteManager = mgr;
         this.cardSuiteManager.addPlayer(this);
+        this.status=TypeDefs.waiting;
     }
 
     public int getId() {
@@ -42,13 +58,8 @@ public class Player {
         this.name = name;
     }
 
-    public ArrayList<Card> getCards() {
-        ArrayList<Card> cards = new ArrayList<>();
-        for (int i = 0; i < this.cardIndexes.size(); i ++) {
-            cards.add(this.cardSuiteManager.getCardByIndex(this.cardIndexes.get(i)));
-        }
-        return cards;
-    }
+
+
 
     public ArrayList<Integer> getCardIndexes() {
         return this.cardIndexes;
@@ -262,7 +273,7 @@ public class Player {
      * Get the points of all cards play obtains
      * @return
      */
-    public int getPoint() {
+    public int calculatePoints() {
         int points = 0;
         for (int i = 0; i < this.cardIndexes.size(); i++) {
             points += this.cardSuiteManager.getCardByIndex(this.cardIndexes.get(i)).getValue();
@@ -299,5 +310,32 @@ public class Player {
 
     public int getScore() {
         return this.score;
+    }
+
+
+
+
+    public void setMyCards(ArrayList<Card> myCards) {
+        this.myCards = myCards;
+    }
+
+    public ArrayList<Card> getMyCards() {
+        updateCardList();
+        return this.myCards;
+    }
+    public void updateCardList() {
+        ArrayList<Card> cards = new ArrayList<>();
+        for (int i = 0; i < this.cardIndexes.size(); i ++) {
+            cards.add(this.cardSuiteManager.getCardByIndex(this.cardIndexes.get(i)));
+        }
+        this.myCards =cards;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

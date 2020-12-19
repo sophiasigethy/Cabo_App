@@ -64,13 +64,20 @@ public class JSON_commands {
 
     /**
      * this method returns a serialized player object
-     * @param msg
      * @return
      * @throws JSONException
      */
-    public static JSONObject newPlayer(String msg) throws JSONException {
+    public static JSONObject newPlayer(Player player) throws JSONException, JsonProcessingException {
 
-        return new JSONObject().put("newPlayer", msg);
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        JSONObject jmsg = new JSONObject();
+        JSONObject jsubmsg = new JSONObject();
+
+        jsubmsg.put("player", objectMapper.writeValueAsString(player));
+        jmsg.put("newPlayer", jsubmsg);
+
+        return jmsg;
     }
 
     /**
@@ -128,7 +135,7 @@ public class JSON_commands {
     }
     public static JSONObject cards(Player self) throws JsonProcessingException {
         JSONObject jmsg = new JSONObject();
-        ArrayList<Card> cards = self.getCards();
+        ArrayList<Card> cards = self.getMyCards();
 
         JSONArray array = new JSONArray();
         for(int i = 0; i < cards.size(); i++) {
@@ -179,8 +186,8 @@ public class JSON_commands {
         JSONObject jmsg = new JSONObject();
         self.swapWithOtherPlayer(other, selfCard, otherCard);
 
-        ArrayList<Card> cards1 = self.getCards();
-        ArrayList<Card> cards2 = other.getCards();
+        ArrayList<Card> cards1 = self.getMyCards();
+        ArrayList<Card> cards2 = other.getMyCards();
 
         JSONArray arr1 = new JSONArray();
         for (int i = 0; i < cards1.size(); i++) {
@@ -223,7 +230,7 @@ public class JSON_commands {
         JSONObject jmsg = new JSONObject();
         self.swapWithAvailableCards(selfCard, otherCard);
 
-        ArrayList<Card> cards = self.getCards();
+        ArrayList<Card> cards = self.getMyCards();
 
         JSONArray arr1 = new JSONArray();
         for (int i = 0; i < cards.size(); i++) {
@@ -272,7 +279,7 @@ public class JSON_commands {
         JSONObject jmsg = new JSONObject();
         self.swapWithDiscardedCards(selfCard, otherCard);
 
-        ArrayList<Card> cards = self.getCards();
+        ArrayList<Card> cards = self.getMyCards();
 
         JSONArray arr1 = new JSONArray();
         for (int i = 0; i < cards.size(); i++) {
@@ -289,5 +296,35 @@ public class JSON_commands {
         jmsg.put("discardedCards", arr2);
         jmsg.put("self", arr1);
         return jmsg;
+    }
+
+    public static JSONObject sendInitialCards(Player player) throws JsonProcessingException {
+        player.getMyCards();
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        JSONObject jmsg = new JSONObject();
+        JSONObject jsubmsg = new JSONObject();
+
+        jsubmsg.put("player", objectMapper.writeValueAsString(player));
+        jmsg.put("initialCards", jsubmsg);
+
+        return jmsg;
+    }
+
+    public static JSONObject statusupdatePlayer(Player player) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        JSONObject jmsg = new JSONObject();
+        JSONObject jsubmsg = new JSONObject();
+
+        jsubmsg.put("player", objectMapper.writeValueAsString(player));
+        jmsg.put("statusupdatePlayer", jsubmsg);
+
+        return jmsg;
+    }
+
+    public static JSONObject sendNextPlayer(int id) throws JSONException {
+
+        return new JSONObject().put("nextPlayer", id);
     }
 }

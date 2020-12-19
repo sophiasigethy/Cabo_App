@@ -3,7 +3,7 @@
     <string name="edit_message">Enter a message</string>
     <string name="button_send">Send</string>
     <!--string name="url">ws://195.63.134.147:8000/chat</string-->
-    <string name="url">ws://192.168.2.125:8080/chat</string>
+    <string name="url">ws://192.168.178.27:8080/chat</string>
     <string name="dummy_content">dummy_content</string>
     <string name="start_game">Start Game</string>
     <string name="cancel">Cancel</string>

@@ -120,12 +120,12 @@ public class PlayerAndCardSuiteManagerTest {
         this.tony.drawCard();   // 1
         this.tony.drawCard();   // 1
 
-        assertEquals(this.tony.getPoint(), 2);
+        assertEquals(this.tony.calculatePoints(), 2);
     }
     @Test
     public void testCallCaboSuccess() {
         this.cardSuiteManager.distributeCardsAtBeginning();
-        if (this.tony.getPoint() <= this.bob.getPoint()) {
+        if (this.tony.calculatePoints() <= this.bob.calculatePoints()) {
             this.tony.callCabo();
         } else {
             this.bob.callCabo();
@@ -133,19 +133,19 @@ public class PlayerAndCardSuiteManagerTest {
 
         this.cardSuiteManager.calcScores();
 
-        if (this.tony.getPoint() < this.bob.getPoint()) {
+        if (this.tony.calculatePoints() < this.bob.calculatePoints()) {
             assertEquals(this.tony.getScore(), 0);
-            assertEquals(this.bob.getScore(), this.bob.getPoint());
+            assertEquals(this.bob.getScore(), this.bob.calculatePoints());
         } else {
             assertEquals(this.bob.getScore(), 0);
-            assertEquals(this.tony.getScore(), this.tony.getPoint());
+            assertEquals(this.tony.getScore(), this.tony.calculatePoints());
         }
     }
 
     @Test
     public void testCallCaboFailed() {
         this.cardSuiteManager.distributeCardsAtBeginning();
-        if (this.tony.getPoint() > this.bob.getPoint()) {
+        if (this.tony.calculatePoints() > this.bob.calculatePoints()) {
             this.tony.callCabo();
         } else {
             this.bob.callCabo();
@@ -153,12 +153,12 @@ public class PlayerAndCardSuiteManagerTest {
 
         this.cardSuiteManager.calcScores();
 
-        if (this.tony.getPoint() > this.bob.getPoint()) {
-            assertEquals(this.tony.getScore(), this.tony.getPoint() + 10);
-            assertEquals(this.bob.getScore(), this.bob.getPoint());
+        if (this.tony.calculatePoints() > this.bob.calculatePoints()) {
+            assertEquals(this.tony.getScore(), this.tony.calculatePoints() + 10);
+            assertEquals(this.bob.getScore(), this.bob.calculatePoints());
         } else {
-            assertEquals(this.bob.getScore(), this.bob.getPoint() + 10);
-            assertEquals(this.tony.getScore(), this.tony.getPoint());
+            assertEquals(this.bob.getScore(), this.bob.calculatePoints() + 10);
+            assertEquals(this.tony.getScore(), this.tony.calculatePoints());
         }
     }
 }

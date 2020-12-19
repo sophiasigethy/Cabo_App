@@ -1,14 +1,10 @@
-package myServer;
+package msp.group3.caboclient;
 
 public class Card {
 
+
     private String type;
     private int value;
-
-    public void setChoice(String choice) {
-        this.choice = choice;
-    }
-
     // NOTE: The special effects of a card, such as `spy`, `peek`, `swap`
     private String choice;
 
@@ -77,7 +73,12 @@ public class Card {
                 this.type == c.type &&
                 this.choice == c.choice;
     }
+
     public String getChoice() {
         return choice;
+    }
+
+    public void setChoice(String choice) {
+        this.choice = choice;
     }
 }

@@ -6,9 +6,10 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 
@@ -16,7 +17,7 @@ public class Gamestate {
 
     // contains websocketsession-id and the associated player object
     public HashMap<String, Player> players = new HashMap<String, Player>();
-    private final int MAX_PLAYER = 4;
+    private final int MAX_PLAYER = 2;
     // determines how many players are already registered
     private int countPlayer = 0;
     //status of the game- see Type Defs for all 3 state
@@ -66,6 +67,8 @@ public class Gamestate {
             countPlayer--;
             players.remove(session.getId());
         }
+        //TODO remove player from cardsuit player list
+        //cardSuiteMgr.getPlayers().remove();
     }
 
     /**
@@ -88,19 +91,37 @@ public class Gamestate {
                 socketHandler.sendMessage(session, JSON_commands.usernameInUse(name));
             } else {
                 addPlayer(session, name);
+                sendOtherPlayers();
                 if (isMaxPlayer()) {
                     //sends gamestart and players start to play cabo
                     sendToAll(JSON_commands.statusupdateServer(state));
+                    //send 4 cards to every client
+                    distributeCardAtBeginning();
+                    sendInitialCards();
                 } else {
                     //send status update to inform client that system is waiting for other players
                     socketHandler.sendMessage(session, JSON_commands.statusupdateServer(state));
-                    sendOtherPlayers();
+                    //sendOtherPlayers();
                 }
             }
         }
         // client sent chat message
         if(jsonObject.has("chatMessage")) {
             sendToAll(jsonObject);
+        }
+
+        if(jsonObject.has("statusupdate")) {
+            String status = jsonObject.get("statusupdate").toString();
+            if (status.equalsIgnoreCase(TypeDefs.readyForGamestart)){
+                getPlayerBySessionId(session.getId()).setStatus(TypeDefs.readyForGamestart);
+                if (checkIfEveryoneReady()){
+                    //send which player's turn it is
+                    int nextPlayerId= getFirstPlayer();
+                    updatePlayerStatus(nextPlayerId);
+                    sendStatusupdatePlayer();
+                    sendNextPlayer(nextPlayerId);
+                }
+            }
         }
     }
 
@@ -118,12 +139,11 @@ public class Gamestate {
      */
     private void addPlayer(WebSocketSession webSocketSession, String name) throws IOException {
         this.countPlayer++;
-        Player mitspieler = new Player(generateId(), name, cardSuiteMgr);
-        this.players.put(webSocketSession.getId(), mitspieler);
+        Player newPlayer = new Player(generateId(), name, cardSuiteMgr);
+        this.players.put(webSocketSession.getId(), newPlayer);
         //player is informed that he can join the game
-        socketHandler.sendMessage(webSocketSession, JSON_commands.Welcome(mitspieler));
-        String message = mitspieler.getName() + " joined the game";
-        informOtherPlayers(JSON_commands.newPlayer(message));
+        socketHandler.sendMessage(webSocketSession, JSON_commands.Welcome(newPlayer));
+        informOtherPlayers(JSON_commands.newPlayer(newPlayer));
     }
 
     /**
@@ -132,11 +152,18 @@ public class Gamestate {
      * @throws IOException
      */
     public void informOtherPlayers(JSONObject jsonObject) throws IOException {
-        for (int i = 0; i < sessions.size(); i++) {
+        for ( Map.Entry<String, Player> entry : players.entrySet()) {
+            String key = entry.getKey();
+            if (!key.equalsIgnoreCase(currentSession.getId())) {
+                socketHandler.sendMessage(getSessionBySessionId(key), jsonObject);
+            }
+
+        }
+        /*for (int i = 0; i < sessions.size(); i++) {
             if (!sessions.get(i).getId().equalsIgnoreCase(currentSession.getId())) {
                 socketHandler.sendMessage(sessions.get(i), jsonObject);
             }
-        }
+        }*/
     }
 
     /**
@@ -225,8 +252,78 @@ public class Gamestate {
     /**
      * Distribute cards to all participated players;
      */
-    void distributeCardAtBeginning() {
+    public void distributeCardAtBeginning() {
         cardSuiteMgr.distributeCardsAtBeginning();
+    }
+
+    public void sendInitialCards() throws IOException {
+        for ( Map.Entry<String, Player> entry : players.entrySet()) {
+            String key = entry.getKey();
+            Player player = entry.getValue();
+            player.updateCardList();
+            socketHandler.sendMessage(getSessionBySessionId(key), JSON_commands.sendInitialCards(player));
+        }
+    }
+
+    public WebSocketSession getSessionBySessionId(String id){
+        for (WebSocketSession session: sessions) {
+            if (id.equalsIgnoreCase(session.getId())){
+                return session;
+            }
+        }
+        return null;
+    }
+
+    public Player getPlayerBySessionId(String sessionId){
+        for ( Map.Entry<String, Player> entry : players.entrySet()) {
+            String key = entry.getKey();
+            Player player = entry.getValue();
+            if (key.equalsIgnoreCase(sessionId)){
+                return player;
+            }
+
+        }
+        return null;
+    }
+
+    public int getFirstPlayer(){
+        Random random= new Random();
+        int start= random.nextInt(MAX_PLAYER+1);
+        if (start==0){
+            return  getFirstPlayer();
+        }
+        return start;
+    }
+
+    public void sendStatusupdatePlayer() throws IOException {
+        for (WebSocketSession session: sessions) {
+            socketHandler.sendMessage(session, JSON_commands.statusupdatePlayer(getPlayerBySessionId(session.getId())));
+        }
+    }
+
+    public void sendNextPlayer(int id) throws IOException {
+        for (WebSocketSession session: sessions) {
+            socketHandler.sendMessage(session, JSON_commands.sendNextPlayer(id));
+        }
+    }
+
+    public void updatePlayerStatus(int currentPlayerId){
+       for (Player player: players.values()){
+            if (player.getId()==currentPlayerId){
+                player.setStatus(TypeDefs.playing);
+            }else{
+                player.setStatus(TypeDefs.waiting);
+            }
+       }
+    }
+
+    public boolean checkIfEveryoneReady(){
+        for (Player player: players.values()){
+            if (!player.getStatus().equalsIgnoreCase(TypeDefs.readyForGamestart)){
+                return false;
+            }
+        }
+        return true;
     }
 }
 
