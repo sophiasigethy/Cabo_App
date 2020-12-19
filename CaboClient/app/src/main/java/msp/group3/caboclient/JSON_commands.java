@@ -33,5 +33,9 @@ public class JSON_commands {
         return new JSONObject().put("chatMessage", message);
     }
 
+    public static JSONObject statusupdate(String status) throws JSONException {
+        return new JSONObject().put("statusupdate", status);
+    }
+
 
 }
