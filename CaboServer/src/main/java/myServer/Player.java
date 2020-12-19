@@ -55,6 +55,13 @@ public class Player {
     }
 
     /**
+     * Does a player run out of his cards ?
+     * @return
+     */
+    public boolean hasNoCards() {
+        return this.cardIndexes.size() == 0;
+    }
+    /**
      * A play draws an index corresponding to the card from `availableCards`,
      */
     public void drawCard() {
@@ -107,6 +114,14 @@ public class Player {
 
         }
     }
+    public void discardCards(Card [] cards) {
+        int [] indexes = new int[cards.length];
+        for (int i = 0; i < cards.length; i ++) {
+            indexes[i] = this.cardSuiteManager.getIndexByCard(cards[i]);
+        }
+        this.discardCards(indexes);
+    }
+
     public void tryDiscardTwoCards(int index1, int index2) {
         int [] indexes = {index1, index2};
         this.discardCards(indexes);

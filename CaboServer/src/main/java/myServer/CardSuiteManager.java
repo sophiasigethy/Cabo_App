@@ -180,8 +180,8 @@ public class CardSuiteManager {
                         Player _player = players.get(k);
                         if (k != i) {
                             _player.setScore(_player.getScore() + 50);
-                            if (_player.getScore() == 100) {
-                                _player.setScore(50);
+                            if (_player.getScore() == 100 || _player.getScore() == 50) {
+                                _player.setScore(_player.getScore() / 2);
                              }
                             if (_player.getScore() > 100) {
                                  this.terminate();
@@ -205,7 +205,8 @@ public class CardSuiteManager {
             Player player = this.players.get(i);
             if (player.getCalledCabo()) {
                 if (smallestPoint != player.getPoint()) {
-                    player.setScore(player.getPoint() + 10 + player.getScore());
+                    // NOTE: call cabo, but not win, the point is doubled
+                    player.setScore(player.getPoint() * 2 + player.getScore());
                 } else {
                     // get zero score this time
                 }
@@ -213,8 +214,8 @@ public class CardSuiteManager {
                 player.setScore(player.getScore() + player.getPoint());
 
             }
-            if (player.getScore() == 100) {
-                player.setScore(50);
+            if (player.getScore() == 100 || player.getScore() == 50) {
+                player.setScore(player.getScore()/2);
             }
             if (player.getScore() > 100) {
                 this.terminate();
