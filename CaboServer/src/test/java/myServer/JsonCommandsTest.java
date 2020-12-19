@@ -24,19 +24,40 @@ public class JsonCommandsTest {
         tony.drawCard();
         tony.drawCard();
         tony.drawCard();
+        // bob.drawCard();
         tony.drawCard();
 
         JSONObject obj = JSON_commands.cards(tony);
-        JSONObject expectedObj = new JSONObject("{\"cardIndexes\":[0,1,2,3]}");
+        // System.out.println("obj: " + obj);
+
+        JSONObject expectedObj = new JSONObject("{\"cardIndexes\":[\"<Card: 0, SPADE>\",\"<Card: 0, CLUB>\",\"<Card: 1, SPADE>\",\"<Card: 1, CLUB>\"]}");
+        assertEquals(obj.toString(), expectedObj.toString());
+    }
+    @Test
+    public void testCardIndexes() throws JsonProcessingException {
+        tony.drawCard();
+        tony.drawCard();
+        tony.drawCard();
+        bob.drawCard();
+        tony.drawCard();
+
+        JSONObject obj = JSON_commands.cardIndexes(tony);
+        JSONObject expectedObj = new JSONObject("{\"cardIndexes\":[0,1,2,4]}");
         assertEquals(obj.toString(), expectedObj.toString());
     }
 
     @Test
     public void testPeek() throws JsonProcessingException {
         tony.drawCard();
-        int tonyCardIndex = tony.getCardIndexes().get(0);
+        tony.drawCard();
+        tony.drawCard();
+        tony.drawCard();
+        tony.drawCard();
+        tony.drawCard();
+
+        int tonyCardIndex = tony.getCardIndexes().get(2);
         JSONObject obj = JSON_commands.peek(tony, tonyCardIndex);
-        JSONObject expectedObj = new JSONObject("{\"peekedCard\":\"{\\\"type\\\":\\\"SPADE\\\",\\\"value\\\":0}\"}");
+        JSONObject expectedObj = new JSONObject("{\"peekedCard\":\"{\\\"type\\\":\\\"SPADE\\\",\\\"value\\\":1}\"}");
 
         assertEquals(obj.toString(), expectedObj.toString());
     }
@@ -53,17 +74,17 @@ public class JsonCommandsTest {
 
     @Test
     public void testSwapWithOtherPlayer() throws JsonProcessingException {
-        this.tony.drawCard();
-        this.bob.drawCard();
+        this.tony.drawCard(); // tonyId: 1, cardIndex: 0
+        this.bob.drawCard();  // bobId: 2,  cardIndex: 1
 
         int tonyCardIndex = this.tony.getCardIndexes().get(0);
         int bobCardIndex = this.bob.getCardIndexes().get(0);
-        Card tonyOriginalCard = this.cardSuiteManager.getCardByIndex(tonyCardIndex);
-        Card bobOriginalCard = this.cardSuiteManager.getCardByIndex(bobCardIndex);
 
         // Tony swaps his with Bob
         JSONObject obj = JSON_commands.swapWithOtherPlayer(tony, bob, tonyCardIndex, bobCardIndex);
 
+        // tonyId: 1, cardIndex: 1
+        // bobId:  2, cardIndex: 0
         JSONObject expectedObj = new JSONObject("{\"1\":[1],\"2\":[0]}");
         assertEquals(obj.toString(), expectedObj.toString());;
     }
@@ -80,7 +101,7 @@ public class JsonCommandsTest {
         JSONObject obj = JSON_commands.swapWithDiscardedCards(this.cardSuiteManager, tony,
             tonyCardIndex, discardedCardIndex);
 
-        JSONObject expectedObj = new JSONObject("{\"1\":[0],\"discardedCards\":[\"{\\\"type\\\":\\\"CLUB\\\",\\\"value\\\":0}\"]}");
+        JSONObject expectedObj = new JSONObject("{\"1\":[0],\"self\":[0],\"discardedCards\":[\"{\\\"type\\\":\\\"CLUB\\\",\\\"value\\\":0}\"]}");
         assertEquals(obj.toString(), expectedObj.toString());;
 
     }

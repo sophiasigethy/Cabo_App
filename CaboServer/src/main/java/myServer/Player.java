@@ -42,6 +42,14 @@ public class Player {
         this.name = name;
     }
 
+    public ArrayList<Card> getCards() {
+        ArrayList<Card> cards = new ArrayList<>();
+        for (int i = 0; i < this.cardIndexes.size(); i ++) {
+            cards.add(this.cardSuiteManager.getCardByIndex(this.cardIndexes.get(i)));
+        }
+        return cards;
+    }
+
     public ArrayList<Integer> getCardIndexes() {
         return this.cardIndexes;
     }
@@ -66,10 +74,10 @@ public class Player {
         for (int i = 0; i < this.cardIndexes.size(); i ++) {
             if (this.cardIndexes.get(i) == index) {
                 this.cardIndexes.remove(i);
+                this.cardSuiteManager.addDiscardedCard(index);
                 break;
             }
         }
-        this.cardSuiteManager.addDiscardedCard(index);
     }
 
     public void discardCards(int [] indexes) {
@@ -112,6 +120,7 @@ public class Player {
 
     /**
      * Peek a card from given player and its card index
+     * No need to invoke this method if client part already knows the detailed card information
      * @param player the player to be peeked
      * @param index the card index to be peeked
      * @return
@@ -121,29 +130,52 @@ public class Player {
 
         for (int i = 0; i < player.cardIndexes.size(); i ++) {
             if (player.cardIndexes.get(i) == index) {
-                return this.cardSuiteManager.getIndexToCardMap().get(index);
+                return this.cardSuiteManager.getCardByIndex(index);
             }
         }
         return null;
     }
+    private Card peek(Player player, Card card) {
+        if (this.calledCabo) return null;
+
+        return card;
+    }
     /**
      * Peek a card
+     * No need to invoke this method if client part already knows the detailed card information
      * @param index
      */
     public Card peek(int index) {
         return this.peek(this, index);
     }
-
+    public Card peek(Card card) {
+        return this.peek(this, card);
+    }
     /**
      * Spy a player's card
+     * No need to invoke this method if client part already knows the detailed card information
      * @param player
      * @param index
      * @return
      */
     public Card spy(Player player, int index) {
-        return this.peek(player, index);
+        if (this != player) {
+            return this.peek(player, index);
+        }
+        return null;
     }
-
+    public Card spy(Player player, Card card) {
+        if (this != player)
+            return this.peek(player, card);
+        return null;
+    }
+    /**
+     * Swap with other player.
+     * No need to invoke this method if client part already knows the detailed card information
+     * @param other
+     * @param myIndex
+     * @param otherIndex
+     */
     public void swapWithOtherPlayer(Player other, int myIndex, int otherIndex) {
         if (this.calledCabo) return;
 
@@ -160,7 +192,20 @@ public class Player {
             }
         }
     }
-
+    public void swapWithOtherPlayer(Player other, Card myCard, Card otherCard) {
+        if (this.calledCabo) return;
+        int myIndex = this.cardSuiteManager.getIndexByCard(myCard);
+        int otherIndex = this.cardSuiteManager.getIndexByCard(otherCard);
+        this.swapWithOtherPlayer(other, myIndex, otherIndex);
+    }
+    /**
+     * Swap with card pile
+     * No need to invoke this method if client part already knows the detailed card information
+     * @param cards
+     * @param myIndex
+     * @param otherIndex
+     * @param shouldUpdatePlayedCards
+     */
     private void swapWithPileCards(ArrayList<Card> cards, int myIndex, int otherIndex, boolean shouldUpdatePlayedCards) {
         if (this.calledCabo) return;
 
@@ -182,17 +227,37 @@ public class Player {
             }
         }
     }
-
+    private void swapWithPileCards(ArrayList<Card> cards, Card myCard, Card otherCard, boolean shouldUpdatePlayedCards) {
+        int myIndex = this.cardSuiteManager.getIndexByCard(myCard);
+        int otherIndex = this.cardSuiteManager.getIndexByCard(otherCard);
+        this.swapWithPileCards(cards, myIndex, otherIndex, shouldUpdatePlayedCards);
+    }
+    /**
+     * Swap with available card pile
+     * No need to invoke this method if client part already knows the detailed card information
+     * @param myIndex
+     * @param otherIndex
+     */
     public void swapWithAvailableCards(int myIndex, int otherIndex) {
         this.swapWithPileCards(this.cardSuiteManager.getAvailableCards(),
                 myIndex, otherIndex, true);
     }
-
+    public void swapWithAvailableCards(Card myCard, Card otherCard) {
+        this.swapWithPileCards(this.cardSuiteManager.getAvailableCards(), myCard, otherCard, true);
+    }
+    /**
+     * Swap with discarded card pile
+     * No need to invoke this method if client part already knows the detailed card information
+     * @param myIndex
+     * @param otherIndex
+     */
     public void swapWithDiscardedCards(int myIndex, int otherIndex) {
         this.swapWithPileCards(this.cardSuiteManager.getDiscardedCards(),
                 myIndex, otherIndex, false);
     }
-
+    public void swapWithDiscardedCards(Card myCard, Card otherCard) {
+        this.swapWithPileCards(this.cardSuiteManager.getDiscardedCards(), myCard, otherCard, false);
+    }
     /**
      * Get the points of all cards play obtains
      * @return
@@ -200,7 +265,7 @@ public class Player {
     public int getPoint() {
         int points = 0;
         for (int i = 0; i < this.cardIndexes.size(); i++) {
-            points += this.cardSuiteManager.getIndexToCardMap().get(this.cardIndexes.get(i)).getValue();
+            points += this.cardSuiteManager.getCardByIndex(this.cardIndexes.get(i)).getValue();
         }
         return points;
     }
