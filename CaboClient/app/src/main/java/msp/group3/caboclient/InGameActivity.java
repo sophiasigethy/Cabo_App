@@ -70,17 +70,6 @@ public class InGameActivity extends AppCompatActivity {
         playedCardsStackButton = (ImageButton) findViewById(R.id.played_cards_imageButton);
         pickCardsStackButton = (ImageButton) findViewById(R.id.pick_card_imageButton);
         instantiatePlayerCardDecks();
-        /*ViewTreeObserver vto = zoomLayout.getViewTreeObserver();
-
-        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                zoomLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                int width = zoomLayout.getMeasuredWidth();
-                int height = zoomLayout.getMeasuredHeight();
-                zoomLayout.setContentSize(width, height);
-            }
-        });*/
 
         chatFragment = new InGameChatFragment();
         Collections.addAll(playerCardButtons, player1_card1, player1_card2, player1_card3, player1_card4,
@@ -163,7 +152,7 @@ public class InGameActivity extends AppCompatActivity {
                 public void onClick(View view) {
                     Toast.makeText(getApplicationContext(),
                             "Card clicked: "+getResources().getResourceEntryName(cardButton.getId()), Toast.LENGTH_SHORT).show();
-                    getSupportFragmentManager().beginTransaction().show(chatFragment);
+                    //growCardAnimation(cardButton);
                 }
             });
         }
