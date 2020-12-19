@@ -1,5 +1,7 @@
 package msp.group3.caboclient;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.animation.ObjectAnimator;
@@ -21,7 +23,7 @@ import java.util.List;
  */
 public class InGameActivity extends AppCompatActivity {
 
-    private ZoomLayout zoomLayout;
+    private com.otaliastudios.zoom.ZoomLayout zoomLayout;
     private ImageButton player1_card1;
     private ImageButton player1_card2;
     private ImageButton player1_card3;
@@ -45,6 +47,7 @@ public class InGameActivity extends AppCompatActivity {
     private ImageButton chatButton;
     private ImageButton settingsButton;
     private Button caboButton;
+    private Button zoomOutButton;
 
     private ImageButton playedCardsStackButton;
     private ImageButton pickCardsStackButton;
@@ -59,24 +62,14 @@ public class InGameActivity extends AppCompatActivity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.ingame_activity);
-        zoomLayout = (ZoomLayout) findViewById(R.id.zoom_layout);
+        zoomLayout = (com.otaliastudios.zoom.ZoomLayout) findViewById(R.id.zoomlayout);
         chatButton = (ImageButton) findViewById(R.id.chat_button);
         settingsButton = (ImageButton) findViewById(R.id.settings_button);
+        zoomOutButton = (Button) findViewById(R.id.zoom_out_button);
         caboButton = (Button) findViewById(R.id.cabo_button);
         playedCardsStackButton = (ImageButton) findViewById(R.id.played_cards_imageButton);
         pickCardsStackButton = (ImageButton) findViewById(R.id.pick_card_imageButton);
         instantiatePlayerCardDecks();
-        ViewTreeObserver vto = zoomLayout.getViewTreeObserver();
-
-        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                zoomLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                int width = zoomLayout.getMeasuredWidth();
-                int height = zoomLayout.getMeasuredHeight();
-                zoomLayout.setContentSize(width, height);
-            }
-        });
 
         chatFragment = new InGameChatFragment();
         Collections.addAll(playerCardButtons, player1_card1, player1_card2, player1_card3, player1_card4,
@@ -109,6 +102,13 @@ public class InGameActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Toast.makeText(getApplicationContext(),
                         "Open settings...", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        zoomOutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                zoomLayout.zoomTo(1.0f, true);
             }
         });
 
@@ -152,11 +152,12 @@ public class InGameActivity extends AppCompatActivity {
                 public void onClick(View view) {
                     Toast.makeText(getApplicationContext(),
                             "Card clicked: "+getResources().getResourceEntryName(cardButton.getId()), Toast.LENGTH_SHORT).show();
-                    getSupportFragmentManager().beginTransaction().show(chatFragment);
+                    //growCardAnimation(cardButton);
                 }
             });
         }
     }
+
 
     private void instantiatePlayerCardDecks(){
         player1_card1 = findViewById(R.id.player1_card1_imageButton);
