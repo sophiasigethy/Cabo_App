@@ -1,6 +1,8 @@
 package msp.group3.caboclient;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentTransaction;
+
 import android.animation.ObjectAnimator;
 import android.os.Bundle;
 import android.view.View;
@@ -73,6 +75,16 @@ public class InGameActivity extends AppCompatActivity {
 
     }
 
+    private void addChatFragment(){
+        // Begin the transaction
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        // Replace the contents of the container with the new fragment
+        ft.replace(R.id.fragment_chat_container, new InGameChatFragment());
+            // or ft.add(R.id.your_placeholder, new FooFragment());
+// Complete the changes added above
+        ft.commit();
+    }
+
     private void setUpOnClickListeners(){
 
         setAllCardsOnClickListeners();
@@ -82,7 +94,8 @@ public class InGameActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Toast.makeText(getApplicationContext(),
                         "Open chat...", Toast.LENGTH_SHORT).show();
-                //getSupportFragmentManager().beginTransaction().show(chatFragment);
+                addChatFragment();
+
             }
         });
 
