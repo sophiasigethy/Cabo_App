@@ -40,7 +40,8 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:background="@drawable/game_bg">
 
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -394,18 +395,36 @@
 
         <TextView
         android:id="@+id/player1_info_game"
-        android:layout_width="90dp"
+        android:layout_width="80dp"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        android:text="Player 1: 43"
+        android:text="Score: 34"
         android:textSize="10sp"
+        android:textColor="@color/white"
         android:textAlignment="center"
         android:layout_marginBottom="12dp"
         android:padding="6dp"
-        android:elevation="16dp"
+        android:elevation="8dp"
         android:background="@drawable/rounded_button"/>
+
+        <TextView
+            android:id="@+id/player1_name_game"
+            android:layout_width="90dp"
+            android:layout_height="wrap_content"
+            android:elevation="16dp"
+            android:fontFamily="sans-serif-black"
+            android:translationX="-20dp"
+            android:translationY="10dp"
+            android:padding="3dp"
+            android:text="Player 1"
+            android:textAlignment="center"
+            android:textSize="12sp"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toTopOf="@id/player1_image_game"
+            app:layout_constraintLeft_toLeftOf="@id/player1_image_game"
+            app:layout_constraintRight_toRightOf="@id/player1_image_game" />
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/player1_image_game"
@@ -429,25 +448,41 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         android:translationX="120dp"
-        android:translationY="-10dp"
-        android:layout_marginTop="16dp"
         app:layout_constraintLeft_toLeftOf="parent">
 
 
         <TextView
             android:id="@+id/player2_info_game"
-            android:layout_width="90dp"
+            android:layout_width="80dp"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
-            android:text="Player 1: 43"
+            android:text="Score: 43"
             android:textSize="10sp"
+            android:textColor="@color/white"
+            android:translationY="-10dp"
             android:textAlignment="center"
             android:layout_marginBottom="12dp"
             android:padding="6dp"
-            android:elevation="16dp"
+            android:elevation="8dp"
             android:background="@drawable/rounded_button"/>
+
+        <TextView
+            android:id="@+id/player2_name_game"
+            android:layout_width="90dp"
+            android:layout_height="wrap_content"
+            android:elevation="16dp"
+            android:fontFamily="sans-serif-black"
+            android:translationX="-20dp"
+            android:padding="3dp"
+            android:text="Player 2"
+            android:textAlignment="center"
+            android:textSize="12sp"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toTopOf="@id/player2_image_game"
+            app:layout_constraintLeft_toLeftOf="@id/player2_image_game"
+            app:layout_constraintRight_toRightOf="@id/player2_image_game" />
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/player2_image_game"
@@ -456,7 +491,6 @@
             android:src="@drawable/bobsled"
             android:elevation="16dp"
             android:translationX="-20dp"
-            android:translationY="10dp"
             app:layout_constraintStart_toStartOf="@id/player2_info_game"
             app:layout_constraintRight_toLeftOf="@id/player2_info_game"
             app:layout_constraintBottom_toTopOf="@id/player2_info_game"/>
@@ -469,26 +503,43 @@
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
         android:translationY="-10dp"
-        android:translationX="30dp"
         android:layout_margin="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintStart_toStartOf="parent">
 
 
         <TextView
             android:id="@+id/player3_info_game"
-            android:layout_width="90dp"
+            android:layout_width="80dp"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
-            android:text="Player 1: 43"
+            android:text="Score: 43"
             android:textSize="10sp"
+            android:textColor="@color/white"
             android:textAlignment="center"
             android:layout_marginBottom="12dp"
             android:padding="6dp"
-            android:elevation="16dp"
+            android:elevation="8dp"
             android:background="@drawable/rounded_button"/>
+
+        <TextView
+            android:id="@+id/player3_name_game"
+            android:layout_width="90dp"
+            android:layout_height="wrap_content"
+            android:elevation="16dp"
+            android:fontFamily="sans-serif-black"
+            android:translationX="-20dp"
+            android:translationY="10dp"
+            android:padding="3dp"
+            android:text="Player 3"
+            android:textAlignment="center"
+            android:textSize="12sp"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toTopOf="@id/player3_image_game"
+            app:layout_constraintLeft_toLeftOf="@id/player3_image_game"
+            app:layout_constraintRight_toRightOf="@id/player3_image_game" />
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/player3_image_game"
@@ -510,25 +561,44 @@
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
         android:translationY="-10dp"
+        android:translationX="30dp"
         android:layout_margin="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintEnd_toEndOf="parent">
 
 
         <TextView
             android:id="@+id/player4_info_game"
-            android:layout_width="90dp"
+            android:layout_width="80dp"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
-            android:text="Player 1: 43"
+            android:text="Score: 43"
             android:textSize="10sp"
+            android:textColor="@color/white"
             android:textAlignment="center"
             android:layout_marginBottom="12dp"
             android:padding="6dp"
-            android:elevation="16dp"
+            android:elevation="8dp"
             android:background="@drawable/rounded_button"/>
+
+        <TextView
+            android:id="@+id/player4_name_game"
+            android:layout_width="90dp"
+            android:layout_height="wrap_content"
+            android:elevation="16dp"
+            android:fontFamily="sans-serif-black"
+            android:translationX="-20dp"
+            android:translationY="10dp"
+            android:padding="3dp"
+            android:text="Player 4"
+            android:textAlignment="center"
+            android:textSize="12sp"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toTopOf="@id/player4_image_game"
+            app:layout_constraintLeft_toLeftOf="@id/player4_image_game"
+            app:layout_constraintRight_toRightOf="@id/player4_image_game" />
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/player4_image_game"
@@ -553,14 +623,18 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintRight_toLeftOf="@id/chat_button"/>
 
-    <Button
-        android:id="@+id/zoom_out_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <ImageButton
+        android:id="@+id/zoom_button"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
         android:text="zoom out"
-        android:layout_marginLeft="12dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_margin="12dp"
+        android:padding="8dp"
+        app:srcCompat="@drawable/zoom_out"
+        android:scaleType="centerInside"
+        android:background="@drawable/zoom_button_bg"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
     <ImageButton
         android:id="@+id/settings_button"

@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
         //connects to server
         connectWebSocket();
 
-        //startGame();
+        startGame();
     }
 
     private void connectWebSocket() {
