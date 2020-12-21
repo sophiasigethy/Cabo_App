@@ -29,11 +29,12 @@ public class InGameActivity extends AppCompatActivity {
     private Button caboButton;
     private ImageButton zoomButton;
     private int zoomBtnCount = 0;
+    private int chatButtonCount = 0;
 
     private ImageButton playedCardsStackButton;
     private ImageButton pickCardsStackButton;
 
-    private InGameChatFragment chatFragment;
+    private androidx.fragment.app.FragmentContainerView chatFragmentContainer;
 
     private List<ImageButton> playerCardButtons = new ArrayList<>();
     private List<de.hdodenhof.circleimageview.CircleImageView> playerPics = new ArrayList<>();
@@ -56,34 +57,26 @@ public class InGameActivity extends AppCompatActivity {
         playedCardsStackButton = (ImageButton) findViewById(R.id.played_cards_imageButton);
         pickCardsStackButton = (ImageButton) findViewById(R.id.pick_card_imageButton);
 
-        chatFragment = new InGameChatFragment();
-
         //TODO insert Number of Players here
         setUpPlayerStats(4);
 
         setUpOnClickListeners();
 
         //TODO: Chat fragment integration
-        /*if (savedInstanceState == null) {
+        if (savedInstanceState == null) {
+            Bundle bundle = new Bundle();
+            bundle.putInt("some_int", 0);
             getSupportFragmentManager().beginTransaction()
                     .setReorderingAllowed(true)
-                    .add(R.id.fragment_chat, InGameChatFragment.class, null)
-                    .hide(chatFragment)
+                    .add(R.id.fragment_chat, InGameChatFragment.class, bundle)
                     .commit();
-        }*/
+        }
 
+        chatFragmentContainer = findViewById(R.id.fragment_chat);
+        chatFragmentContainer.setVisibility(View.INVISIBLE);
 
     }
 
-    private void addChatFragment(){
-        // Begin the transaction
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        // Replace the contents of the container with the new fragment
-        ft.replace(R.id.fragment_chat_container, new InGameChatFragment());
-            // or ft.add(R.id.your_placeholder, new FooFragment());
-// Complete the changes added above
-        ft.commit();
-    }
 
     private void setUpOnClickListeners(){
 
@@ -92,10 +85,13 @@ public class InGameActivity extends AppCompatActivity {
         chatButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getApplicationContext(),
-                        "Open chat...", Toast.LENGTH_SHORT).show();
-                addChatFragment();
-
+                chatButtonCount++;
+                if(chatButtonCount%2==0){
+                    chatFragmentContainer.setVisibility(View.INVISIBLE);
+                }
+                else{
+                    chatFragmentContainer.setVisibility(View.VISIBLE);
+                }
             }
         });
 
