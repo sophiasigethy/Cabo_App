@@ -27,11 +27,6 @@ public class CardSuiteManager {
     // The cards discarded by clients, face-up
     private ArrayList<Card> discardedCards = null;
 
-    // A mapping between the order of shuffled cards and real card value
-    private HashMap<Integer, Card> indexToCardMap = null;
-    // A mapping between the real card value and the order of shuffled cards.
-    private HashMap<Card, Integer> cardToIndexMap = null;
-
     // The players participated in this game
     private ArrayList<Player> players = new ArrayList<>();
 
@@ -57,16 +52,11 @@ public class CardSuiteManager {
             this.availableCards = null;
             this.playedCards = null;
             this.discardedCards = null;
-            this.indexToCardMap = null;
-            this.cardToIndexMap = null;
             return;
         }
         this.availableCards = new ArrayList<>();
         this.playedCards = new ArrayList<>();
         this.discardedCards = new ArrayList<>();
-
-        this.indexToCardMap = new HashMap<>();
-        this.cardToIndexMap = new HashMap<>();
 
         this.generateCards();
         this.shuffleCards(shouldShuffle);
@@ -117,11 +107,6 @@ public class CardSuiteManager {
             logger.log(Level.FINER, "Shuffling the cards");
             Collections.shuffle(this.availableCards);
         }
-        for (int i = 0; i < this.availableCards.size(); i ++) {
-            Card card = this.availableCards.get(i);
-            indexToCardMap.put(i, card);
-            cardToIndexMap.put(card, i);
-        }
     }
 
     /**
@@ -134,7 +119,7 @@ public class CardSuiteManager {
     public void addPlayer(Player player) {
         this.players.add(player);
     }
-    private ArrayList<Player> getPlayers() {
+    public ArrayList<Player> getPlayers() {
         return this.players;
     }
 
@@ -147,16 +132,11 @@ public class CardSuiteManager {
         // Case1: Checking the special case, (0, 0, 13, 13)
         for (int i = 0; i < players.size(); i ++) {
             Player player = players.get(i);
-            if (player.getCardIndexes().size() == 4) {
-                int a = player.getCardIndexes().get(0);
-                int b = player.getCardIndexes().get(1);
-                int c = player.getCardIndexes().get(2);
-                int d = player.getCardIndexes().get(3);
-
-                Card ca = this.indexToCardMap.get(a);
-                Card cb = this.indexToCardMap.get(b);
-                Card cc = this.indexToCardMap.get(c);
-                Card cd = this.indexToCardMap.get(d);
+            if (player.getCards().size() == 4) {
+                Card ca = player.getCards().get(0);
+                Card cb = player.getCards().get(1);
+                Card cc = player.getCards().get(2);
+                Card cd = player.getCards().get(3);
 
                 boolean special = false;
                 if (ca.getValue() == cb.getValue() && (ca.getValue() == 0 || ca.getValue() == 13)) {
@@ -259,38 +239,8 @@ public class CardSuiteManager {
         return card;
     }
 
-    /**
-     * Retrieve the real card information by given index
-     * @return The real card of given index in the card pile this game round
-     */
-    public Card getCardByIndex(int index) {
-        return this.indexToCardMap.get(index);
-    }
-    /**
-     * Retrieve the `index` of a card by given `card`
-     * @return The index of given card in the card pile this game round
-     */
-    public int getIndexByCard(Card card) {
-        return this.cardToIndexMap.get(card);
-    }
-    /**
-     * Add discarded card by given card index
-     * @param index the index which corresponds to the card
-     */
-    public void addDiscardedCard(int index) {
-        this.discardedCards.add(this.indexToCardMap.get(index));
-    }
-
     public ArrayList<Card> getAvailableCards() {
         return this.availableCards;
-    }
-    public ArrayList<Integer> getAvailableCardIndexes() {
-        ArrayList<Integer> array = new ArrayList<>();
-
-        for (int i = 0; i < availableCards.size(); i ++) {
-            array.add(this.cardToIndexMap.get(availableCards.get(i)));
-        }
-        return array;
     }
 
     public ArrayList<Card> getDiscardedCards() {
@@ -299,9 +249,6 @@ public class CardSuiteManager {
     public ArrayList<Card> getPlayedCards() {
         return this.playedCards;
     }
-
-    public HashMap<Integer, Card> getIndexToCardMap() { return this.indexToCardMap; };
-    public HashMap<Card, Integer> getCardToIndexMap() { return this.cardToIndexMap; }
 
     /**
      * Distribute cards to all participated players;
