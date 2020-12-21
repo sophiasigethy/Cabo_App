@@ -5,11 +5,13 @@ import androidx.fragment.app.FragmentTransaction;
 
 import android.animation.ObjectAnimator;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,6 +42,8 @@ public class InGameActivity extends AppCompatActivity {
     private List<de.hdodenhof.circleimageview.CircleImageView> playerPics = new ArrayList<>();
     private List<TextView> playerStats = new ArrayList<>();
     private List<TextView> playerNames = new ArrayList<>();
+    private List<ImageView> cardTickMarks = new ArrayList<>();
+    private List<Integer> cardClickCounts = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -156,9 +160,19 @@ public class InGameActivity extends AppCompatActivity {
             cardButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    Log.d("NrCards", "total: "+playerCardButtons.size());
                     Toast.makeText(getApplicationContext(),
                             "Card clicked: "+getResources().getResourceEntryName(cardButton.getId()), Toast.LENGTH_SHORT).show();
                     //growCardAnimation(cardButton);
+                    int index = playerCardButtons.indexOf(cardButton);
+                    Log.d("INDEX", "Index of card: "+index);
+                    cardClickCounts.set(index, cardClickCounts.get(index)+1);
+                    if(cardClickCounts.get(index)%2==0){
+                        hideTickOnCard(cardButton);
+                    }
+                    else{
+                        showTickOnCard(cardButton);
+                    }
                 }
             });
         }
@@ -177,6 +191,17 @@ public class InGameActivity extends AppCompatActivity {
 
         Collections.addAll(playerNames, findViewById(R.id.player1_name_game), findViewById(R.id.player2_name_game), findViewById(R.id.player3_name_game), findViewById(R.id.player4_name_game));
 
+        Collections.addAll(cardTickMarks, findViewById(R.id.player1_card1_ticked), findViewById(R.id.player1_card2_ticked), findViewById(R.id.player1_card3_ticked), findViewById(R.id.player1_card4_ticked),
+                findViewById(R.id.player2_card1_ticked), findViewById(R.id.player2_card2_ticked), findViewById(R.id.player2_card3_ticked), findViewById(R.id.player2_card4_ticked),
+                findViewById(R.id.player3_card1_ticked), findViewById(R.id.player3_card2_ticked), findViewById(R.id.player3_card3_ticked), findViewById(R.id.player3_card4_ticked),
+                findViewById(R.id.player4_card1_ticked), findViewById(R.id.player4_card2_ticked), findViewById(R.id.player4_card3_ticked), findViewById(R.id.player4_card4_ticked));
+
+        Collections.addAll(cardClickCounts,0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+
+        for(int i=0; i<cardTickMarks.size(); i++){
+            cardTickMarks.get(i).setVisibility(View.INVISIBLE);
+        }
+
         for(int i=nrPlayers; i<4; i++){
             playerPics.get(i).setVisibility(View.INVISIBLE);
             playerStats.get(i).setVisibility(View.INVISIBLE);
@@ -194,6 +219,15 @@ public class InGameActivity extends AppCompatActivity {
         ObjectAnimator.ofFloat(card, "scaleY", 1.0f, 1.3f).setDuration(600).start();
         ObjectAnimator.ofFloat(card, "x", -15).setDuration(600).start();
         ObjectAnimator.ofFloat(card, "y", -15).setDuration(600).start();
+    }
+
+    private void showTickOnCard(ImageButton card){
+        int index = playerCardButtons.indexOf(card);
+        cardTickMarks.get(index).setVisibility(View.VISIBLE);
+    }
+    private void hideTickOnCard(ImageButton card){
+        int index = playerCardButtons.indexOf(card);
+        cardTickMarks.get(index).setVisibility(View.INVISIBLE);
     }
 
 }
