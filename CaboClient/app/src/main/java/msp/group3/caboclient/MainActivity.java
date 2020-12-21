@@ -1,7 +1,6 @@
 package msp.group3.caboclient;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.view.GestureDetectorCompat;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,8 +8,6 @@ import android.os.Bundle;
 import android.os.Build;
 //import android.support.v7.app.AppCompatActivity;
 import android.text.method.ScrollingMovementMethod;
-import android.util.Log;
-import android.view.GestureDetector;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -18,16 +15,12 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 
 import org.java_websocket.client.WebSocketClient;
-import org.java_websocket.drafts.Draft_17;
-import org.java_websocket.handshake.ServerHandshake;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements Communicator.CommunicatorCallback {
     private WebSocketClient mWebSocketClient;
     private String name = Build.MANUFACTURER + " " + Build.MODEL;
     private boolean start = false;
@@ -46,6 +39,8 @@ public class MainActivity extends AppCompatActivity {
     //determines if username has already been accepted by the server
     private boolean usernameAccepted = false;
 
+    private Communicator communicator;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,50 +53,14 @@ public class MainActivity extends AppCompatActivity {
         mEditText = (EditText) findViewById(R.id.editText);
 
         //connects to server
-        connectWebSocket();
+        communicator= Communicator.getInstance(this);
+        communicator.connectWebSocket();
+        mWebSocketClient= communicator.getmWebSocketClient();
 
         //startGame();
     }
 
-    private void connectWebSocket() {
-        URI uri;
-        try {
-            // change variable url in strings to your own ip adress
-            uri = new URI(getResources().getString(R.string.url));
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-            return;
-        }
-        mWebSocketClient = new WebSocketClient(uri, new Draft_17()) {
-            @Override
-            public void onOpen(ServerHandshake serverHandshake) {
-                Log.i("Websocket", "Opened");
-            }
 
-            @Override
-            public void onMessage(String s) {
-
-                try {
-                    handelTextMessage(s);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-            }
-
-            @Override
-            public void onClose(int i, String s, boolean b) {
-                Log.i("Websocket", "Closed " + s);
-            }
-
-            @Override
-            public void onError(Exception e) {
-                Log.i("Websocket", "Error " + e.getMessage());
-            }
-
-        };
-        mWebSocketClient.connect();
-    }
 
     /**
      * this method handles how to proceed when a message from the server is received:
@@ -109,9 +68,8 @@ public class MainActivity extends AppCompatActivity {
      * by using the key of the jsonObject the client knows what has been sent and how to deal with it
      *
      * @param message
-     * @throws JSONException
      */
-    private void handelTextMessage(String message) throws JSONException {
+    public void handelTextMessage(String message) throws JSONException {
         JSONObject jsonObject = new JSONObject(message);
 
         //this is received when client is allowed to join the game
@@ -308,8 +266,9 @@ public class MainActivity extends AppCompatActivity {
     public void startGame() {
         state = TypeDefs.GAMESTART;
         // TODO an Pauline: hier auf andere Activity/Layout weiterleiten
-        //Intent intent = new Intent(MainActivity.this,InGameActivity.class);
+       // Intent intent = new Intent(MainActivity.this,InGameActivity.class);
         Intent intent = new Intent(MainActivity.this,WaitingRoomActivity.class);
+
         startActivity(intent);
 
     }
