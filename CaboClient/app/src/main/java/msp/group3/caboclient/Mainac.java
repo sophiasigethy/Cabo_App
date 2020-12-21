@@ -27,8 +27,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity {
-    private WebSocketClient mWebSocketClient;
+public class Mainac extends AppCompatActivity {
+  /*  private WebSocketClient mWebSocketClient;
     private String name = Build.MANUFACTURER + " " + Build.MODEL;
     private boolean start = false;
 
@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
         //connects to server
         connectWebSocket();
 
-        //startGame();
+        startGame();
     }
 
     private void connectWebSocket() {
@@ -103,14 +103,14 @@ public class MainActivity extends AppCompatActivity {
         mWebSocketClient.connect();
     }
 
-    /**
+    *
      * this method handles how to proceed when a message from the server is received:
      * every sent message arrives right here
      * by using the key of the jsonObject the client knows what has been sent and how to deal with it
      *
      * @param message
      * @throws JSONException
-     */
+
     private void handelTextMessage(String message) throws JSONException {
         JSONObject jsonObject = new JSONObject(message);
 
@@ -243,12 +243,12 @@ public class MainActivity extends AppCompatActivity {
         showText(c);
     }
 
-    /**
+    *
      * this methods sends a JSON string to the server
      *
      * @param view
      * @throws JSONException
-     */
+
     public void sendMessage(View view) throws JSONException {
         String message = mEditText.getText().toString();
         JSONObject jsonObject;
@@ -263,9 +263,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    /**
+    *
      * this method shows the received or typed in messages in the UI
-     */
+
     private void showText(String message) {
         runOnUiThread(new Runnable() {
             @Override
@@ -288,11 +288,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /**
+    *
      * this method checks which state has been sent by the server
      *
      * @param status
-     */
+
     private void checkStatus(String status) {
         if (status.equalsIgnoreCase(TypeDefs.MATCHING)) {
             mMessage = TypeDefs.server + "We are still waiting for other players.";
@@ -302,15 +302,173 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /**
+    *
      * this method switches to the InGame Activity to start the game
-     */
+
     public void startGame() {
         state = TypeDefs.GAMESTART;
         // TODO an Pauline: hier auf andere Activity/Layout weiterleiten
-        //Intent intent = new Intent(MainActivity.this,InGameActivity.class);
-        Intent intent = new Intent(MainActivity.this,WaitingRoomActivity.class);
+        Intent intent = new Intent(Mainac.this,InGameActivity.class);
+        //Intent intent = new Intent(MainActivity.this,WaitingRoomActivity.class);
         startActivity(intent);
 
-    }
+    }*/
 }
+
+//public class MainActivity extends AppCompatActivity {
+//
+//    private TextView mTextView;
+//    private TextView mName;
+//    private EditText mEditText;
+//    //current message that was sent or typed in
+//    private String mMessage = "";
+//    //state of the game- see class Type Defs for all 3 states
+//    private String state = TypeDefs.MATCHING;
+//
+//
+//    // contains all other players
+//    private ArrayList<Player> players = new ArrayList();
+//    // player object which represent this client
+//    private Player me;
+//    //determines if username has already been accepted by the server
+//    private boolean usernameAccepted = false;
+//
+//
+//    Gamestate gamestate;
+//
+//
+//    @Override
+//    protected void onCreate(Bundle savedInstanceState) {
+//        super.onCreate(savedInstanceState);
+//        setContentView(R.layout.activity_main);
+//
+//        mTextView = (TextView) findViewById(R.id.messages);
+//        mTextView.setMovementMethod(ScrollingMovementMethod.getInstance());
+//        mName = (TextView) findViewById(R.id.name);
+//        mEditText = (EditText) findViewById(R.id.editText);
+//
+//
+//        //connects to server
+//        //connectWebSocket();
+//
+//        URI uri = null;
+//        try {
+//            uri = new URI(getResources().getString(R.string.url));
+//        } catch (URISyntaxException e) {
+//            e.printStackTrace();
+//        }
+//        try {
+//            gamestate = new Gamestate(uri, this);
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//
+//        //startGame();
+//
+//        processExtraData();
+//    }
+//
+//    public void processExtraData() {
+//
+//
+//        String key = "";
+//
+//
+//        //Intent intent = getIntent();
+//        key = getIntent().getStringExtra("key");
+//        if (key != null) {
+//            switch (key) {
+//                case "Willkommen":
+//                    //showMessage("Willkommen in Catan!");
+//                    break;
+//                case "myID":
+//                    //myid = intent.getIntExtra("id", 0);
+//                    break;
+//                case "myId":
+//                    // showText("teeeeeeest");
+//                    //myid = intent.getIntExtra("id", 0);
+//                    break;
+//            }
+//        }
+//    }
+//
+//
+//    public void showCards(Player me) {
+//        String c = "";
+//        for (int i = 0; i < me.getMyCards().size(); i++) {
+//
+//            c = c + me.getMyCards().get(i) + " ";
+//
+//        }
+//        mMessage = c;
+//        showText(c);
+//    }
+//
+//    public void showNextPlayer(int id, Player me, ArrayList<Player> players) {
+//        String c = "";
+//        if (id == me.getId()) {
+//            c = "MY TURN";
+//        } else {
+//            for (Player player : players) {
+//                if (player.getId() == id) {
+//                    c = player.getName() + " turn";
+//                }
+//            }
+//        }
+//        showText(c);
+//    }
+//
+//
+//    // * this method shows the received or typed in messages in the UI
+//    // *
+//
+//    public void showText(String message) {
+//        runOnUiThread(new Runnable() {
+//            @Override
+//            public void run() {
+//                // mTextView.setText(mTextView.getText() + "\n" + getTextMessage());
+//                mTextView.setText(mTextView.getText() + "\n" + message);
+//                if (mTextView.getLayout() != null) {
+//                    final int scrollAmount = mTextView.getLayout().getLineTop(mTextView.getLineCount()) - mTextView.getHeight();
+//                    // if there is no need to scroll, scrollAmount will be <=0
+//                    if (scrollAmount > 0)
+//                        mTextView.scrollTo(0, scrollAmount);
+//                    else
+//                        mTextView.scrollTo(0, 0);
+//                }
+//            }
+//        });
+//        if (mMessage.contains("That username is already in use")) {
+//            // start = false;
+//            mName.setText(" \n");
+//        }
+//    }
+//
+//
+//    private void checkStatus(String status) {
+//        if (status.equalsIgnoreCase(TypeDefs.MATCHING)) {
+//            mMessage = TypeDefs.server + "We are still waiting for other players.";
+//        }
+//        if (status.equalsIgnoreCase(TypeDefs.GAMESTART)) {
+//            startGame();
+//        }
+//    }
+//
+//
+//    /**
+//     * this method switches to the InGame Activity to start the game
+//     */
+//
+//    public void startGame() {
+//        state = TypeDefs.GAMESTART;
+//        // TODO an Pauline: hier auf andere Activity/Layout weiterleiten
+//        Intent intent = new Intent(MainActivity.this, InGameActivity.class);
+//        //Intent intent = new Intent(MainActivity.this,WaitingRoomActivity.class);
+//        startActivity(intent);
+//
+//    }
+//}
+//
+//
+//
+//

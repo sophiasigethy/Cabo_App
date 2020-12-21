@@ -1,7 +1,9 @@
 package msp.group3.caboclient;
 
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.animation.ObjectAnimator;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
@@ -10,6 +12,9 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import org.java_websocket.client.WebSocketClient;
+import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -73,7 +78,7 @@ public class InGameActivity extends AppCompatActivity {
 
     }
 
-    private void setUpOnClickListeners(){
+    private void setUpOnClickListeners() {
 
         setAllCardsOnClickListeners();
 
@@ -97,11 +102,10 @@ public class InGameActivity extends AppCompatActivity {
         zoomButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(zoomBtnCount%2==0){
+                if (zoomBtnCount % 2 == 0) {
                     zoomLayout.zoomTo(1.3f, true);
                     zoomButton.setImageResource(R.drawable.zoom_in);
-                }
-                else{
+                } else {
                     zoomLayout.zoomTo(1.0f, true);
                     zoomButton.setImageResource(R.drawable.zoom_out);
                 }
@@ -140,22 +144,28 @@ public class InGameActivity extends AppCompatActivity {
                         "Pick card...", Toast.LENGTH_SHORT).show();
             }
         });
+
+        try {
+            processExtraData();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
-    private void setAllCardsOnClickListeners(){
-        for(ImageButton cardButton : playerCardButtons){
+    private void setAllCardsOnClickListeners() {
+        for (ImageButton cardButton : playerCardButtons) {
             cardButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Toast.makeText(getApplicationContext(),
-                            "Card clicked: "+getResources().getResourceEntryName(cardButton.getId()), Toast.LENGTH_SHORT).show();
+                            "Card clicked: " + getResources().getResourceEntryName(cardButton.getId()), Toast.LENGTH_SHORT).show();
                     //growCardAnimation(cardButton);
                 }
             });
         }
     }
 
-    private void setUpPlayerStats(int nrPlayers){
+    private void setUpPlayerStats(int nrPlayers) {
 
         Collections.addAll(playerCardButtons, findViewById(R.id.player1_card1_imageButton), findViewById(R.id.player1_card2_imageButton), findViewById(R.id.player1_card3_imageButton), findViewById(R.id.player1_card4_imageButton),
                 findViewById(R.id.player2_card1_imageButton), findViewById(R.id.player2_card2_imageButton), findViewById(R.id.player2_card3_imageButton), findViewById(R.id.player2_card4_imageButton),
@@ -168,23 +178,64 @@ public class InGameActivity extends AppCompatActivity {
 
         Collections.addAll(playerNames, findViewById(R.id.player1_name_game), findViewById(R.id.player2_name_game), findViewById(R.id.player3_name_game), findViewById(R.id.player4_name_game));
 
-        for(int i=nrPlayers; i<4; i++){
+        for (int i = nrPlayers; i < 4; i++) {
             playerPics.get(i).setVisibility(View.INVISIBLE);
             playerStats.get(i).setVisibility(View.INVISIBLE);
             playerNames.get(i).setVisibility(View.INVISIBLE);
         }
 
-        for(int i=nrPlayers*4; i<16; i++){
+        for (int i = nrPlayers * 4; i < 16; i++) {
             playerCardButtons.get(i).setVisibility(View.INVISIBLE);
         }
     }
 
-    private void growCardAnimation(ImageButton card){
+    private void growCardAnimation(ImageButton card) {
         //bounds remain the same only image changes
         ObjectAnimator.ofFloat(card, "scaleX", 1.0f, 1.3f).setDuration(600).start();
         ObjectAnimator.ofFloat(card, "scaleY", 1.0f, 1.3f).setDuration(600).start();
         ObjectAnimator.ofFloat(card, "x", -15).setDuration(600).start();
         ObjectAnimator.ofFloat(card, "y", -15).setDuration(600).start();
     }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        try {
+            processExtraData();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * created by Alain Feimer
+     * bearbeitet und vervollständigt by Iris Turba (siehe unten)
+     * Hier werden die vom Gamestate gesendeten Intents verarbeitet
+     * Durch ihren eindeutige zugewiesenen key können sie schnell identifizeiert werden
+     */
+    public void processExtraData() throws JSONException {
+        Intent intent = getIntent();
+        String key = intent.getStringExtra("key");
+        if (key!=null){
+        switch (key) {
+            case "Willkommen":
+                //showMessage("Willkommen in Catan!");
+                break;
+            case "myID":
+                Toast.makeText(this, "This is my Toast message!",
+                        Toast.LENGTH_LONG).show();
+                //myid = intent.getIntExtra("id", 0);
+                //MainActivity.mWebSocketClient.send(JSON_commands.statusupdate(TypeDefs.readyForGamestart).toString());
+                break;
+            case "test2":
+                Toast.makeText(this, "client!",
+                        Toast.LENGTH_LONG).show();
+                //myid = intent.getIntExtra("id", 0);
+
+                break;
+        }}
+    }
+
 
 }
