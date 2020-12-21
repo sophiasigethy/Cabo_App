@@ -17,7 +17,7 @@ public class Gamestate {
 
     // contains websocketsession-id and the associated player object
     public HashMap<String, Player> players = new HashMap<String, Player>();
-    private final int MAX_PLAYER = 1;
+    private final int MAX_PLAYER = 2;
     // determines how many players are already registered
     private int countPlayer = 0;
     //status of the game- see Type Defs for all 3 state

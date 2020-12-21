@@ -23,11 +23,7 @@ public class Communicator {
     private WebSocketClient mWebSocketClient;
 
     private CommunicatorCallback loginActivity;
-    private Activity activity;
-
-
     private static Communicator instance;
-    private boolean started= false;
 
     public interface CommunicatorCallback extends Serializable {
        public void handelTextMessage(String message) throws JSONException;
@@ -46,7 +42,7 @@ public class Communicator {
     public Communicator(Activity activity) {
 
             loginActivity = (CommunicatorCallback)activity;
-            this.activity=activity;
+
 
     }
 
@@ -54,7 +50,7 @@ public class Communicator {
         URI uri;
         try {
             // change variable url in strings to your own ip adress
-            uri = new URI("ws://192.168.178.27:8080/chat");
+            uri = new URI(TypeDefs.URI);
         } catch (URISyntaxException e) {
             e.printStackTrace();
             return;
