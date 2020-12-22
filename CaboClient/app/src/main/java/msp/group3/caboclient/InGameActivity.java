@@ -225,31 +225,22 @@ public class InGameActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * created by Alain Feimer
-     * bearbeitet und vervollständigt by Iris Turba (siehe unten)
-     * Hier werden die vom Gamestate gesendeten Intents verarbeitet
-     * Durch ihren eindeutige zugewiesenen key können sie schnell identifizeiert werden
-     */
+
     public void processExtraData() throws JSONException {
         Intent intent = getIntent();
         String key = intent.getStringExtra("key");
         if (key!=null){
         switch (key) {
             case "Willkommen":
-                //showMessage("Willkommen in Catan!");
+
                 break;
             case "myID":
                 Toast.makeText(this, "This is my Toast message!",
                         Toast.LENGTH_LONG).show();
-                //myid = intent.getIntExtra("id", 0);
-                //MainActivity.mWebSocketClient.send(JSON_commands.statusupdate(TypeDefs.readyForGamestart).toString());
                 break;
             case "test2":
                 Toast.makeText(this, "client!",
                         Toast.LENGTH_LONG).show();
-                //myid = intent.getIntExtra("id", 0);
-
                 break;
         }}
     }
