@@ -1,16 +1,26 @@
 package msp.group3.caboclient;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.FragmentTransaction;
 
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Display;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.Animation;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.ScaleAnimation;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -48,6 +58,7 @@ public class InGameActivity extends AppCompatActivity {
     private final List<TextView> playerStats = new ArrayList<>();
     private final List<TextView> playerNames = new ArrayList<>();
     private final List<Integer> cardClickCounts = new ArrayList<>();
+    private final List<ConstraintLayout> playerOverviews = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -164,9 +175,12 @@ public class InGameActivity extends AppCompatActivity {
             cardButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Toast.makeText(getApplicationContext(),
-                            "Card clicked: "+getResources().getResourceEntryName(cardButton.getId()), Toast.LENGTH_SHORT).show();
-                    //growCardAnimation(cardButton);
+                   /* Toast.makeText(getApplicationContext(),
+                            "Card clicked: "+getResources().getResourceEntryName(cardButton.getId()), Toast.LENGTH_SHORT).show();*/
+
+                    zoomInOnSelectedCard(cardButton);
+                    animateCardTurn(cardButton);
+                    testIndicatePlayerTurn(1);
                     int index = playerCardButtons.indexOf(cardButton);
                     cardClickCounts.set(index, cardClickCounts.get(index)+1);
                     if(cardClickCounts.get(index)%2==0){
@@ -182,6 +196,7 @@ public class InGameActivity extends AppCompatActivity {
 
     private void setUpPlayerStats(int nrPlayers){
 
+        //TODO separate cards in cards per player
         Collections.addAll(playerCardButtons, findViewById(R.id.player1_card1_imageButton), findViewById(R.id.player1_card2_imageButton), findViewById(R.id.player1_card3_imageButton), findViewById(R.id.player1_card4_imageButton),
                 findViewById(R.id.player2_card1_imageButton), findViewById(R.id.player2_card2_imageButton), findViewById(R.id.player2_card3_imageButton), findViewById(R.id.player2_card4_imageButton),
                 findViewById(R.id.player3_card1_imageButton), findViewById(R.id.player3_card2_imageButton), findViewById(R.id.player3_card3_imageButton), findViewById(R.id.player3_card4_imageButton),
@@ -194,6 +209,8 @@ public class InGameActivity extends AppCompatActivity {
         Collections.addAll(playerNames, findViewById(R.id.player1_name_game), findViewById(R.id.player2_name_game), findViewById(R.id.player3_name_game), findViewById(R.id.player4_name_game));
 
         Collections.addAll(cardClickCounts,0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+
+        Collections.addAll(playerOverviews, findViewById(R.id.player1_stats_game), findViewById(R.id.player2_stats_game), findViewById(R.id.player3_stats_game), findViewById(R.id.player4_stats_game));
 
         for(int i=nrPlayers; i<4; i++){
             playerPics.get(i).setVisibility(View.INVISIBLE);
@@ -212,6 +229,106 @@ public class InGameActivity extends AppCompatActivity {
         ObjectAnimator.ofFloat(card, "scaleY", 1.0f, 1.3f).setDuration(600).start();
         ObjectAnimator.ofFloat(card, "x", -15).setDuration(600).start();
         ObjectAnimator.ofFloat(card, "y", -15).setDuration(600).start();
+    }
+
+    private void animateCardTurn(ImageButton cardButton){
+        final ObjectAnimator oa1 = ObjectAnimator.ofFloat(cardButton, "scaleX", 1f, 0f);
+        final ObjectAnimator oa2 = ObjectAnimator.ofFloat(cardButton, "scaleX", 0f, 1f);
+        oa1.setInterpolator(new DecelerateInterpolator());
+        oa2.setInterpolator(new AccelerateDecelerateInterpolator());
+        oa1.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                cardButton.setImageResource(R.drawable.card_clubs_2);
+                oa2.start();
+            }
+        });
+        oa1.start();
+    }
+
+    private void zoomInOnSelectedCard(ImageButton cardButton){
+        int[] location = new int[2];
+        cardButton.getLocationOnScreen(location);
+        int x = location[0];
+        int y = location[1];
+
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int width = size.x;
+        int height = size.y;
+        Log.d("-----------PAN", "x: "+zoomLayout.getPanX()/zoomLayout.getZoom()+ " y: "+zoomLayout.getPanY()/zoomLayout.getZoom());
+        Log.d("-----------SCREEN", "x: "+width+ " y: "+height);
+        Log.d("-----------CARD POSITION", "x: "+x+ " y: "+y);
+        //zoomLayout.panTo( 2*width-zoomLayout.getScaledPanX()+x, 2*height-zoomLayout.getScaledPanY()+y, true);
+    }
+
+    //TODO replace resources
+    private int getCardResource(Card card){
+        switch(card.getValue()){
+            case -1: return R.drawable.card_joker_1;
+            case 0: return R.drawable.card_hearts_k;
+            case 1: return R.drawable.card_hearts_a;
+            case 2: return R.drawable.card_clubs_2;
+            case 3: return R.drawable.card_clubs_3;
+            case 4: return R.drawable.card_clubs_4;
+            case 5: return R.drawable.card_clubs_5;
+            case 6: return R.drawable.card_clubs_6;
+            case 7: return R.drawable.card_clubs_7;
+            case 8: return R.drawable.card_clubs_8;
+            case 9: return R.drawable.card_clubs_9;
+            case 10: return R.drawable.card_clubs_10;
+            case 11: return R.drawable.card_clubs_j;
+            case 12: return R.drawable.card_clubs_q;
+            case 13: return R.drawable.card_clubs_k;
+        }
+        return 0;
+    }
+
+    private void initiateCardAction(Card pickedCard){
+        switch(pickedCard.getValue()){
+            case 7: initiatePeekAction();
+            case 8: initiatePeekAction();
+            case 9: initiateSpyAction();
+            case 10: initiateSpyAction();
+            case 11: initiateBlindSwapAction();
+            case 12: initiateBlindSwapAction();
+            case 13: initiatePeekAndSwapAction();
+        }
+    }
+
+    //TODO
+    private void initiatePeekAndSwapAction() {
+    }
+
+    //TODO
+    private void initiateBlindSwapAction() {
+    }
+
+    //TODO
+    private void initiateSpyAction() {
+    }
+
+    //TODO
+    private void initiatePeekAction() {
+    }
+
+    private void indicatePlayerTurn(Player player){
+        scaleView(playerOverviews.get(player.getId()-1), 1.2f);
+    }
+    private void testIndicatePlayerTurn(int i){
+        scaleView(playerOverviews.get(i-1), 1.2f);
+    }
+
+    public void scaleView(View v, float factor) {
+        Animation anim = new ScaleAnimation(
+                1f, factor, // Start and end values for the X axis scaling
+                1f, factor,
+                Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0f); // Pivot point of Y scaling
+        anim.setFillAfter(true); // Needed to keep the result of the animation
+        anim.setDuration(1000);
+        v.startAnimation(anim);
     }
 
     @Override
