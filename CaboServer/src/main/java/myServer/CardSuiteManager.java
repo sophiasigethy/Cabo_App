@@ -28,7 +28,7 @@ public class CardSuiteManager {
     private ArrayList<Card> discardedCards = null;
 
     // The players participated in this game
-    private ArrayList<Player> players = new ArrayList<>();
+    private final ArrayList<Player> players = new ArrayList<>();
 
     // The game is terminate or not. It mean at least one client reaches more than 100 score.
     private boolean terminated = false;
@@ -37,18 +37,15 @@ public class CardSuiteManager {
     private final static Logger logger = Logger.getLogger(CardSuiteManager.class.getName());
 
     public CardSuiteManager() {
-        generateSuite();
+        generateCards(true);
     }
     public CardSuiteManager(boolean shouldShuffle) {
-        generateSuite(shouldShuffle);
-    }
-    public void generateSuite() {
-        this.generateSuite(true);
+        generateCards(shouldShuffle);
     }
 
-    public void generateSuite(boolean shouldShuffle) {
+    public void generateCards(boolean shouldShuffle) {
         if (this.terminated) {
-            logger.log(Level.INFO, "The game is terminated, no need to generate suites anymore.");
+            logger.log(Level.INFO, "The game is terminated, no need to generate cards anymore.");
             this.availableCards = null;
             this.playedCards = null;
             this.discardedCards = null;
@@ -58,15 +55,15 @@ public class CardSuiteManager {
         this.playedCards = new ArrayList<>();
         this.discardedCards = new ArrayList<>();
 
-        this.generateCards();
+        this.generateUnShuffledCards();
         this.shuffleCards(shouldShuffle);
-        logger.log(Level.INFO, "The card suite is generated successfully.");
+        logger.log(Level.INFO, "The cards is generated successfully.");
 
     }
     /**
      * Generate cards
      */
-    private void generateCards() {
+    private void generateUnShuffledCards() {
         for (int i = 0; i <= 13; i ++) {
             if (i == 0 || i == 13) {
                 this.availableCards.add(new Card(i, SPADE));
@@ -96,6 +93,7 @@ public class CardSuiteManager {
                 this.availableCards.add(new Card(i, DIAMOND));
             }
         }
+        logger.log(Level.FINER, "Generate plain cards successfully.");
     }
 
     /**
@@ -106,6 +104,8 @@ public class CardSuiteManager {
         if (shouldShuffle) {
             logger.log(Level.FINER, "Shuffling the cards");
             Collections.shuffle(this.availableCards);
+        } else {
+            logger.log(Level.FINER, "We don't want to shuffle the cards");
         }
     }
 
@@ -232,10 +232,9 @@ public class CardSuiteManager {
      * Draw a card from `availableCards` pile
      * @return a card retrieve from `availableCard`
      */
-    public Card getFirstCardFromAvailableCards() {
-        Card card = this.availableCards.get(0);
+    public Card takeFirstCardFromAvailableCards() {
+        Card card = this.availableCards.remove(0);
         this.playedCards.add(card);
-        this.availableCards.remove(0);
         return card;
     }
 
@@ -255,6 +254,7 @@ public class CardSuiteManager {
      */
     public void distributeCardsAtBeginning() {
         players.forEach(player -> {
+            player.reset();
             for (int i = 0; i < DISTRIBUTION_CARD_NUMBER_AT_BEGINNING; i ++) {
                 player.drawCard();
             }

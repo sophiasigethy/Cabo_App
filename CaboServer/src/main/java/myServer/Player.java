@@ -8,6 +8,7 @@ public class Player {
     private int id;
     private String name;
 
+    // The cards belong to this player
     private ArrayList<Card> cards = new ArrayList<>();
     private CardSuiteManager cardSuiteManager;
 
@@ -49,7 +50,7 @@ public class Player {
         this.calledCabo = false;
     }
     /**
-     * Retrieve player's cards
+     * Get player's cards
      */
     public ArrayList<Card> getCards() {
         return this.cards;
@@ -68,7 +69,7 @@ public class Player {
     public void drawCard() {
         if (this.calledCabo) return;
 
-        this.cards.add(this.cardSuiteManager.getFirstCardFromAvailableCards());
+        this.cards.add(this.cardSuiteManager.takeFirstCardFromAvailableCards());
     }
 
     /**
@@ -104,13 +105,13 @@ public class Player {
         if (this.calledCabo) return;
 
         for (int i = 0; i < other.cards.size(); i ++) {
-            if (otherCard == other.cards.get(i)) {
+            if (otherCard.equals(other.cards.get(i))) {
                 other.cards.set(i, myCard);
                 break;
             }
         }
         for (int i = 0; i < this.cards.size(); i ++) {
-            if (myCard == this.cards.get(i)) {
+            if (myCard.equals(this.cards.get(i))) {
                 this.cards.set(i, otherCard);
                 break;
             }
@@ -133,10 +134,10 @@ public class Player {
             if (swapped) {
                 break;
             }
-            if (otherCard == cardsToSwap.get(i)) {
+            if (otherCard.equals(cardsToSwap.get(i))) {
                 // `otherCard` is really inside cards, can swap;
                 for (int j = 0; j < this.cards.size(); j ++) {
-                    if (myCard == this.cards.get(j)) {
+                    if (myCard.equals(this.cards.get(j))) {
                         // `myCard` is really inside cards, can swap
                         this.cards.set(j, otherCard);
                         cardsToSwap.set(i, myCard);
@@ -197,7 +198,7 @@ public class Player {
     public void setScore(int score) {
         this.score = score;
     }
-
+//
     public int getScore() {
         return this.score;
     }
