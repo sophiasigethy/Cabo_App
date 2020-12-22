@@ -20,11 +20,15 @@ public class JSON_commands {
      * @return
      * @throws JSONException
      */
-    public static JSONObject answerServer(String msg) throws JSONException {
+    public static JSONObject notAccepted(String msg) throws JSONException {
 
-        return new JSONObject().put("Serverantwort", msg);
+        return new JSONObject().put("notAccepted", msg);
     }
 
+    public static JSONObject accepted(String msg) throws JSONException {
+
+        return new JSONObject().put("accepted", msg);
+    }
     /**
      * this is sent to the client when client can participate in the game
      * @param text
@@ -324,7 +328,23 @@ public class JSON_commands {
     }
 
     public static JSONObject sendNextPlayer(int id) throws JSONException {
-
         return new JSONObject().put("nextPlayer", id);
     }
+
+    public static JSONObject startGame(String text) throws JSONException {
+        return new JSONObject().put("startGame", text);
+    }
+
+    public static JSONObject removePlayer(Player player) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        JSONObject jmsg = new JSONObject();
+        JSONObject jsubmsg = new JSONObject();
+
+        jsubmsg.put("player", objectMapper.writeValueAsString(player));
+        jmsg.put("removePlayer", jsubmsg);
+
+        return jmsg;
+    }
+
 }

@@ -22,17 +22,17 @@ public class Communicator {
 
     private WebSocketClient mWebSocketClient;
 
-    private CommunicatorCallback loginActivity;
+    private CommunicatorCallback activity;
     private static Communicator instance;
 
     public interface CommunicatorCallback extends Serializable {
-       public void handelTextMessage(String message) throws JSONException;
+        public void handelTextMessage(String message) throws JSONException;
     }
 
 
-    public static Communicator getInstance(Activity activity){
-        if (instance==null){
-            instance= new Communicator(activity);
+    public static Communicator getInstance(Activity activity) {
+        if (instance == null) {
+            instance = new Communicator(activity);
         }
 
         return instance;
@@ -41,9 +41,7 @@ public class Communicator {
 
     public Communicator(Activity activity) {
 
-            loginActivity = (CommunicatorCallback)activity;
-
-
+        this.activity = (CommunicatorCallback) activity;
     }
 
     public void connectWebSocket() {
@@ -59,27 +57,21 @@ public class Communicator {
             @Override
             public void onOpen(ServerHandshake serverHandshake) {
                 Log.i("Websocket", "Opened");
+                /*try {
+                    activity.handelTextMessage("startMatching");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }*/
             }
 
             @Override
             public void onMessage(String s) {
 
-                    if (loginActivity instanceof MainActivity){
-                        try {
-                            loginActivity.handelTextMessage(s);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }else{
-                        if (loginActivity instanceof WaitingRoomActivity){
-                            try {
-                                loginActivity.handelTextMessage(s);
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                        }
-
-                    }
+                try {
+                    activity.handelTextMessage(s);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
 
 
             }
@@ -112,11 +104,9 @@ public class Communicator {
     }
 
 
-    public void setLoginActivity(CommunicatorCallback loginActivity) {
-        this.loginActivity = loginActivity;
+    public void setActivity(CommunicatorCallback activity) {
+        this.activity = activity;
     }
-
-
 
 
 }
