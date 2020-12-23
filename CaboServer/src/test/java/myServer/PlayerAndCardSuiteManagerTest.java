@@ -37,7 +37,8 @@ public class PlayerAndCardSuiteManagerTest {
         System.out.println("drawnCard"+drawnCard);
 
         Card topCardOnAvailableCards = this.cardSuiteManager.getAvailableCards().get(0);
-        assertNotEquals(tonyCard, topCardOnAvailableCards);//Does tony really draw the first Card from AvailableCards?
+        //Does tony really draw the first Card from AvailableCards?
+        assertNotEquals(tonyCard, topCardOnAvailableCards);
         System.out.println("topCardOnAvailableCards"+topCardOnAvailableCards);
     }
 
@@ -45,10 +46,6 @@ public class PlayerAndCardSuiteManagerTest {
     public void testDiscardCard() {
         this.tony.drawCard();
        Card card = this.tony.getCards().get(0);
-//        System.out.println("String"+card);
-//        for(int i=0;i< tony.getCards().size();i++){
-//            System.out.println("tonycard"+tony.getCards().get(i));
-//        }
 
         ArrayList<Card> cardsToDiscard = new ArrayList<>();
         cardsToDiscard.add(card);
@@ -129,18 +126,18 @@ public class PlayerAndCardSuiteManagerTest {
         this.tony.drawCard();   // 0
         this.tony.drawCard();   // 1
         this.tony.drawCard();   // 1
-
-        assertEquals(this.tony.getPoint(), 2);
-       for(int i=0;i<tony.getCards().size();i++){
-           System.out.println("each card is"+tony.getCards().get(i));
-       }
-       System.out.println("Get Point is" + tony.getPoint());
+        assertEquals(this.tony.calculatePoints(), 2);
+        for(int i=0;i<tony.getCards().size();i++){
+            System.out.println("each card is"+tony.getCards().get(i));
+        }
+        System.out.println("Get Point is" + tony.calculatePoints());
+        assertEquals(this.tony.calculatePoints(), 2);
     }
 
     @Test
     public void testCallCaboSuccess() {
         this.cardSuiteManager.distributeCardsAtBeginning();
-        if (this.tony.getPoint() <= this.bob.getPoint()) {
+        if (this.tony.calculatePoints() <= this.bob.calculatePoints()) {
             this.tony.callCabo();
         } else {
             this.bob.callCabo();
@@ -148,19 +145,19 @@ public class PlayerAndCardSuiteManagerTest {
 
         this.cardSuiteManager.calcScores();
 
-        if (this.tony.getPoint() < this.bob.getPoint()) {
+        if (this.tony.calculatePoints() < this.bob.calculatePoints()) {
             assertEquals(this.tony.getScore(), 0);
-            assertEquals(this.bob.getScore(), this.bob.getPoint());
+            assertEquals(this.bob.getScore(), this.bob.calculatePoints());
         } else {
             assertEquals(this.bob.getScore(), 0);
-            assertEquals(this.tony.getScore(), this.tony.getPoint());
+            assertEquals(this.tony.getScore(), this.tony.calculatePoints());
         }
     }
 
     @Test
     public void testCallCaboFailed() {
         this.cardSuiteManager.distributeCardsAtBeginning();
-        if (this.tony.getPoint() > this.bob.getPoint()) {
+        if (this.tony.calculatePoints() > this.bob.calculatePoints()) {
             this.tony.callCabo();
         } else {
             this.bob.callCabo();
@@ -168,12 +165,12 @@ public class PlayerAndCardSuiteManagerTest {
 
         this.cardSuiteManager.calcScores();
 
-        if (this.tony.getPoint() > this.bob.getPoint()) {
-            assertEquals(this.tony.getScore(), this.tony.getPoint() * 2);
-            assertEquals(this.bob.getScore(), this.bob.getPoint());
+        if (this.tony.calculatePoints() > this.bob.calculatePoints()) {
+            assertEquals(this.tony.getScore(), this.tony.calculatePoints() * 2);
+            assertEquals(this.bob.getScore(), this.bob.calculatePoints());
         } else {
-            assertEquals(this.bob.getScore(), this.bob.getPoint() * 2);
-            assertEquals(this.tony.getScore(), this.tony.getPoint());
+            assertEquals(this.bob.getScore(), this.bob.calculatePoints() * 2);
+            assertEquals(this.tony.getScore(), this.tony.calculatePoints());
         }
     }
 }

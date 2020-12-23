@@ -8,14 +8,7 @@ import java.util.logging.Logger;
 
 public class CardSuiteManager {
     // reference: https://www.youtube.com/watch?v=aCo-iNedw2g
-    private final static String SPADE = "SPADE";
-    private final static String CLUB = "CLUB";
-    private final static String HEART = "HEART";
-    private final static String DIAMOND = "DIAMOND";
 
-    private final static String PEEK = "PEEK";
-    private final static String SPY = "SPY";
-    private final static String SWAP = "SWAP";
 
     final static int CARD_NUMBER = 13 * 4;
     private final static int DISTRIBUTION_CARD_NUMBER_AT_BEGINNING = 4;
@@ -66,31 +59,31 @@ public class CardSuiteManager {
     private void generateUnShuffledCards() {
         for (int i = 0; i <= 13; i ++) {
             if (i == 0 || i == 13) {
-                this.availableCards.add(new Card(i, SPADE));
-                this.availableCards.add(new Card(i, CLUB));
+                this.availableCards.add(new Card(i, TypeDefs.SPADE));
+                this.availableCards.add(new Card(i, TypeDefs.CLUB));
             } else if (i == 7 || i == 8) {
                 // NOTE: 7 or 8: 'peek'
-                this.availableCards.add(new Card(i, SPADE, PEEK));
-                this.availableCards.add(new Card(i, CLUB, PEEK));
-                this.availableCards.add(new Card(i, HEART, PEEK));
-                this.availableCards.add(new Card(i, DIAMOND, PEEK));
+                this.availableCards.add(new Card(i, TypeDefs.SPADE, TypeDefs.PEEK));
+                this.availableCards.add(new Card(i, TypeDefs.CLUB, TypeDefs.PEEK));
+                this.availableCards.add(new Card(i, TypeDefs.HEART, TypeDefs.PEEK));
+                this.availableCards.add(new Card(i, TypeDefs.DIAMOND, TypeDefs.PEEK));
             } else if (i == 9 || i == 10) {
                 // NOTE: 9 or 10: 'spy'
-                this.availableCards.add(new Card(i, SPADE, SPY));
-                this.availableCards.add(new Card(i, CLUB, SPY));
-                this.availableCards.add(new Card(i, HEART, SPY));
-                this.availableCards.add(new Card(i, DIAMOND, SPY));
+                this.availableCards.add(new Card(i, TypeDefs.SPADE, TypeDefs.SPY));
+                this.availableCards.add(new Card(i, TypeDefs.CLUB, TypeDefs.SPY));
+                this.availableCards.add(new Card(i, TypeDefs.HEART, TypeDefs.SPY));
+                this.availableCards.add(new Card(i, TypeDefs.DIAMOND, TypeDefs.SPY));
             } else if (i == 11 || i == 12) {
                 // 11 or 12: 'swap'
-                this.availableCards.add(new Card(i, SPADE, SWAP));
-                this.availableCards.add(new Card(i, CLUB, SWAP));
-                this.availableCards.add(new Card(i, HEART, SWAP));
-                this.availableCards.add(new Card(i, DIAMOND, SWAP));
+                this.availableCards.add(new Card(i, TypeDefs.SPADE, TypeDefs.SWAP));
+                this.availableCards.add(new Card(i, TypeDefs.CLUB, TypeDefs.SWAP));
+                this.availableCards.add(new Card(i, TypeDefs.HEART, TypeDefs.SWAP));
+                this.availableCards.add(new Card(i, TypeDefs.DIAMOND, TypeDefs.SWAP));
             } else {
-                this.availableCards.add(new Card(i, SPADE));
-                this.availableCards.add(new Card(i, CLUB));
-                this.availableCards.add(new Card(i, HEART));
-                this.availableCards.add(new Card(i, DIAMOND));
+                this.availableCards.add(new Card(i, TypeDefs.SPADE));
+                this.availableCards.add(new Card(i, TypeDefs.CLUB));
+                this.availableCards.add(new Card(i, TypeDefs.HEART));
+                this.availableCards.add(new Card(i, TypeDefs.DIAMOND));
             }
         }
         logger.log(Level.FINER, "Generate plain cards successfully.");
@@ -177,21 +170,20 @@ public class CardSuiteManager {
         // Case 2: common case
         int smallestPoint = Integer.MAX_VALUE;
         for (int i = 0; i < players.size(); i ++) {
-            if (smallestPoint > players.get(i).getPoint()) {
-                smallestPoint = players.get(i).getPoint();
+            if (smallestPoint > players.get(i).calculatePoints()) {
+                smallestPoint = players.get(i).calculatePoints();
             }
         }
         for (int i = 0; i < players.size(); i ++) {
             Player player = this.players.get(i);
             if (player.getCalledCabo()) {
-                if (smallestPoint != player.getPoint()) {
-                    // NOTE: call cabo, but not win, the point is doubled
-                    player.setScore(player.getPoint() * 2 + player.getScore());
+                if (smallestPoint != player.calculatePoints()) {
+                    player.setScore(player.calculatePoints() * 2 + player.getScore());
                 } else {
                     // get zero score this time
                 }
             } else {
-                player.setScore(player.getScore() + player.getPoint());
+                player.setScore(player.getScore() + player.calculatePoints());
 
             }
             if (player.getScore() == 100 || player.getScore() == 50) {

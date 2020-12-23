@@ -4,6 +4,11 @@ public class Card {
 
     private String type;
     private int value;
+
+    public void setChoice(String choice) {
+        this.choice = choice;
+    }
+
     // NOTE: The special effects of a card, such as `spy`, `peek`, `swap`
     private String choice;
 
@@ -71,5 +76,8 @@ public class Card {
         return this.value == c.value &&
                 this.type == c.type &&
                 this.choice == c.choice;
+    }
+    public String getChoice() {
+        return choice;
     }
 }

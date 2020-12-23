@@ -33,5 +33,17 @@ public class JSON_commands {
         return new JSONObject().put("chatMessage", message);
     }
 
+    public static JSONObject statusupdate(String status) throws JSONException {
+        return new JSONObject().put("statusupdate", status);
+    }
+
+    public static JSONObject sendWelcomeMessage(String message) throws JSONException {
+        return new JSONObject().put("welcomeMessage", message);
+    }
+
+    public static JSONObject startGameForAll(String message) throws JSONException {
+        return new JSONObject().put("startGameForAll", message);
+    }
+
 
 }

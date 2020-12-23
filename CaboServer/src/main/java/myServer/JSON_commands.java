@@ -20,11 +20,15 @@ public class JSON_commands {
      * @return
      * @throws JSONException
      */
-    public static JSONObject answerServer(String msg) throws JSONException {
+    public static JSONObject notAccepted(String msg) throws JSONException {
 
-        return new JSONObject().put("Serverantwort", msg);
+        return new JSONObject().put("notAccepted", msg);
     }
 
+    public static JSONObject accepted(String msg) throws JSONException {
+
+        return new JSONObject().put("accepted", msg);
+    }
     /**
      * this is sent to the client when client can participate in the game
      * @param text
@@ -64,13 +68,20 @@ public class JSON_commands {
 
     /**
      * this method returns a serialized player object
-     * @param msg
      * @return
      * @throws JSONException
      */
-    public static JSONObject newPlayer(String msg) throws JSONException {
+    public static JSONObject newPlayer(Player player) throws JSONException, JsonProcessingException {
 
-        return new JSONObject().put("newPlayer", msg);
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        JSONObject jmsg = new JSONObject();
+        JSONObject jsubmsg = new JSONObject();
+
+        jsubmsg.put("player", objectMapper.writeValueAsString(player));
+        jmsg.put("newPlayer", jsubmsg);
+
+        return jmsg;
     }
 
     /**
@@ -118,6 +129,53 @@ public class JSON_commands {
         JSONObject jmsg = new JSONObject();
         ObjectMapper objectMapper = new ObjectMapper();
         jmsg.put("gameState", objectMapper.writeValueAsString(mgr));
+
         return jmsg;
     }
+
+    public static JSONObject sendInitialCards(Player player) throws JsonProcessingException {
+        player.getMyCards();
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        JSONObject jmsg = new JSONObject();
+        JSONObject jsubmsg = new JSONObject();
+
+        jsubmsg.put("player", objectMapper.writeValueAsString(player));
+        jmsg.put("initialCards", jsubmsg);
+
+        return jmsg;
+    }
+
+    public static JSONObject statusupdatePlayer(Player player) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        JSONObject jmsg = new JSONObject();
+        JSONObject jsubmsg = new JSONObject();
+
+        jsubmsg.put("player", objectMapper.writeValueAsString(player));
+        jmsg.put("statusupdatePlayer", jsubmsg);
+
+        return jmsg;
+    }
+
+    public static JSONObject sendNextPlayer(int id) throws JSONException {
+        return new JSONObject().put("nextPlayer", id);
+    }
+
+    public static JSONObject startGame(String text) throws JSONException {
+        return new JSONObject().put("startGame", text);
+    }
+
+    public static JSONObject removePlayer(Player player) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        JSONObject jmsg = new JSONObject();
+        JSONObject jsubmsg = new JSONObject();
+
+        jsubmsg.put("player", objectMapper.writeValueAsString(player));
+        jmsg.put("removePlayer", jsubmsg);
+
+        return jmsg;
+    }
+
 }
