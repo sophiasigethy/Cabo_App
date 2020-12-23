@@ -18,7 +18,7 @@ public class Player {
 
     private String status;
 
-    // @JsonIgnore
+    @JsonIgnore
     private int score = 0;
     @JsonIgnore
     private boolean calledCabo = false;
