@@ -22,6 +22,8 @@ public class Communicator {
 
     private WebSocketClient mWebSocketClient;
 
+    private int test=0;
+
     private CommunicatorCallback activity;
     private static Communicator instance;
 
