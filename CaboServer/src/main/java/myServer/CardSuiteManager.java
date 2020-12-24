@@ -20,13 +20,8 @@ public class CardSuiteManager {
     // The cards discarded by clients, face-up
     private ArrayList<Card> discardedCards = null;
 
-    // A mapping between the order of shuffled cards and real card value
-    private HashMap<Integer, Card> indexToCardMap = null;
-    // A mapping between the real card value and the order of shuffled cards.
-    private HashMap<Card, Integer> cardToIndexMap = null;
-
     // The players participated in this game
-    private ArrayList<Player> players = new ArrayList<>();
+    private final ArrayList<Player> players = new ArrayList<>();
 
     // The game is terminate or not. It mean at least one client reaches more than 100 score.
     private boolean terminated = false;
@@ -35,41 +30,33 @@ public class CardSuiteManager {
     private final static Logger logger = Logger.getLogger(CardSuiteManager.class.getName());
 
     public CardSuiteManager() {
-        generateSuite();
+        generateCards(true);
     }
     public CardSuiteManager(boolean shouldShuffle) {
-        generateSuite(shouldShuffle);
-    }
-    public void generateSuite() {
-        this.generateSuite(true);
+        generateCards(shouldShuffle);
     }
 
-    public void generateSuite(boolean shouldShuffle) {
+    public void generateCards(boolean shouldShuffle) {
         if (this.terminated) {
-            logger.log(Level.INFO, "The game is terminated, no need to generate suites anymore.");
+            logger.log(Level.INFO, "The game is terminated, no need to generate cards anymore.");
             this.availableCards = null;
             this.playedCards = null;
             this.discardedCards = null;
-            this.indexToCardMap = null;
-            this.cardToIndexMap = null;
             return;
         }
         this.availableCards = new ArrayList<>();
         this.playedCards = new ArrayList<>();
         this.discardedCards = new ArrayList<>();
 
-        this.indexToCardMap = new HashMap<>();
-        this.cardToIndexMap = new HashMap<>();
-
-        this.generateCards();
+        this.generateUnShuffledCards();
         this.shuffleCards(shouldShuffle);
-        logger.log(Level.INFO, "The card suite is generated successfully.");
+        logger.log(Level.INFO, "The cards is generated successfully.");
 
     }
     /**
      * Generate cards
      */
-    private void generateCards() {
+    private void generateUnShuffledCards() {
         for (int i = 0; i <= 13; i ++) {
             if (i == 0 || i == 13) {
                 this.availableCards.add(new Card(i, TypeDefs.SPADE));
@@ -99,6 +86,7 @@ public class CardSuiteManager {
                 this.availableCards.add(new Card(i, TypeDefs.DIAMOND));
             }
         }
+        logger.log(Level.FINER, "Generate plain cards successfully.");
     }
 
     /**
@@ -109,11 +97,8 @@ public class CardSuiteManager {
         if (shouldShuffle) {
             logger.log(Level.FINER, "Shuffling the cards");
             Collections.shuffle(this.availableCards);
-        }
-        for (int i = 0; i < this.availableCards.size(); i ++) {
-            Card card = this.availableCards.get(i);
-            indexToCardMap.put(i, card);
-            cardToIndexMap.put(card, i);
+        } else {
+            logger.log(Level.FINER, "We don't want to shuffle the cards");
         }
     }
 
@@ -140,16 +125,11 @@ public class CardSuiteManager {
         // Case1: Checking the special case, (0, 0, 13, 13)
         for (int i = 0; i < players.size(); i ++) {
             Player player = players.get(i);
-            if (player.getCardIndexes().size() == 4) {
-                int a = player.getCardIndexes().get(0);
-                int b = player.getCardIndexes().get(1);
-                int c = player.getCardIndexes().get(2);
-                int d = player.getCardIndexes().get(3);
-
-                Card ca = this.indexToCardMap.get(a);
-                Card cb = this.indexToCardMap.get(b);
-                Card cc = this.indexToCardMap.get(c);
-                Card cd = this.indexToCardMap.get(d);
+            if (player.getCards().size() == 4) {
+                Card ca = player.getCards().get(0);
+                Card cb = player.getCards().get(1);
+                Card cc = player.getCards().get(2);
+                Card cd = player.getCards().get(3);
 
                 boolean special = false;
                 if (ca.getValue() == cb.getValue() && (ca.getValue() == 0 || ca.getValue() == 13)) {
@@ -173,8 +153,8 @@ public class CardSuiteManager {
                         Player _player = players.get(k);
                         if (k != i) {
                             _player.setScore(_player.getScore() + 50);
-                            if (_player.getScore() == 100) {
-                                _player.setScore(50);
+                            if (_player.getScore() == 100 || _player.getScore() == 50) {
+                                _player.setScore(_player.getScore() / 2);
                              }
                             if (_player.getScore() > 100) {
                                  this.terminate();
@@ -198,7 +178,7 @@ public class CardSuiteManager {
             Player player = this.players.get(i);
             if (player.getCalledCabo()) {
                 if (smallestPoint != player.calculatePoints()) {
-                    player.setScore(player.calculatePoints() + 10 + player.getScore());
+                    player.setScore(player.calculatePoints() * 2 + player.getScore());
                 } else {
                     // get zero score this time
                 }
@@ -206,8 +186,8 @@ public class CardSuiteManager {
                 player.setScore(player.getScore() + player.calculatePoints());
 
             }
-            if (player.getScore() == 100) {
-                player.setScore(50);
+            if (player.getScore() == 100 || player.getScore() == 50) {
+                player.setScore(player.getScore()/2);
             }
             if (player.getScore() > 100) {
                 this.terminate();
@@ -244,45 +224,14 @@ public class CardSuiteManager {
      * Draw a card from `availableCards` pile
      * @return a card retrieve from `availableCard`
      */
-    public Card getFirstCardFromAvailableCards() {
-        Card card = this.availableCards.get(0);
+    public Card takeFirstCardFromAvailableCards() {
+        Card card = this.availableCards.remove(0);
         this.playedCards.add(card);
-        this.availableCards.remove(0);
         return card;
-    }
-
-    /**
-     * Retrieve the real card information by given index
-     * @return The real card of given index in the card pile this game round
-     */
-    public Card getCardByIndex(int index) {
-        return this.indexToCardMap.get(index);
-    }
-    /**
-     * Retrieve the `index` of a card by given `card`
-     * @return The index of given card in the card pile this game round
-     */
-    public int getIndexByCard(Card card) {
-        return this.cardToIndexMap.get(card);
-    }
-    /**
-     * Add discarded card by given card index
-     * @param index the index which corresponds to the card
-     */
-    public void addDiscardedCard(int index) {
-        this.discardedCards.add(this.indexToCardMap.get(index));
     }
 
     public ArrayList<Card> getAvailableCards() {
         return this.availableCards;
-    }
-    public ArrayList<Integer> getAvailableCardIndexes() {
-        ArrayList<Integer> array = new ArrayList<>();
-
-        for (int i = 0; i < availableCards.size(); i ++) {
-            array.add(this.cardToIndexMap.get(availableCards.get(i)));
-        }
-        return array;
     }
 
     public ArrayList<Card> getDiscardedCards() {
@@ -292,14 +241,12 @@ public class CardSuiteManager {
         return this.playedCards;
     }
 
-    public HashMap<Integer, Card> getIndexToCardMap() { return this.indexToCardMap; };
-    public HashMap<Card, Integer> getCardToIndexMap() { return this.cardToIndexMap; }
-
     /**
      * Distribute cards to all participated players;
      */
     public void distributeCardsAtBeginning() {
         players.forEach(player -> {
+            player.reset();
             for (int i = 0; i < DISTRIBUTION_CARD_NUMBER_AT_BEGINNING; i ++) {
                 player.drawCard();
             }

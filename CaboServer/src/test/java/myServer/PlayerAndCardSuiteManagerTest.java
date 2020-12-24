@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -16,35 +17,40 @@ public class PlayerAndCardSuiteManagerTest {
     @BeforeEach
     void setUp() {
         this.cardSuiteManager = new CardSuiteManager(false);
-        this.tony = new Player(1, "Tony", this.cardSuiteManager);
+         this.tony = new Player(1, "Tony", this.cardSuiteManager);
         this.bob = new Player(2, "Bob", this.cardSuiteManager);
     }
 
     @AfterEach
     void tearDown() {}
 
-
     @Test
     public void testDrawCard() {
         this.tony.drawCard();
-        ArrayList<Integer> cards = this.tony.getCardIndexes();
-        assertEquals(cards.size(), 1);
+        ArrayList<Card> cards = this.tony.getCards();
+        assertEquals(cards.size(),1);
+        System.out.println("tony"+tony.getCards().get(0));
 
         Card drawnCard = this.cardSuiteManager.getPlayedCards().get(0);
-        Card tonyCard = this.cardSuiteManager.getCardByIndex(cards.get(0));
+        Card tonyCard = cards.get(0);
         assertEquals(drawnCard, tonyCard);
+        System.out.println("drawnCard"+drawnCard);
 
         Card topCardOnAvailableCards = this.cardSuiteManager.getAvailableCards().get(0);
+        //Does tony really draw the first Card from AvailableCards?
         assertNotEquals(tonyCard, topCardOnAvailableCards);
+        System.out.println("topCardOnAvailableCards"+topCardOnAvailableCards);
     }
 
     @Test
     public void testDiscardCard() {
         this.tony.drawCard();
-        Card card = this.cardSuiteManager.getCardByIndex(this.tony.getCardIndexes().get(0));
+       Card card = this.tony.getCards().get(0);
 
-        this.tony.discardCard(0);
-        ArrayList<Integer>  cards = this.tony.getCardIndexes();
+        ArrayList<Card> cardsToDiscard = new ArrayList<>();
+        cardsToDiscard.add(card);
+        this.tony.tryDiscardCards(cardsToDiscard);
+        ArrayList<Card> cards = this.tony.getCards();
 
         assertEquals(cards.size(), 0);
         ArrayList<Card> discardedCards = this.cardSuiteManager.getDiscardedCards();
@@ -53,49 +59,44 @@ public class PlayerAndCardSuiteManagerTest {
     }
 
     @Test
-    public void testSpyCards() {
-        this.bob.drawCard();
-        int bobCardIndex = this.bob.getCardIndexes().get(0);
-        Card spiedCard = this.tony.spy(this.bob, bobCardIndex);
-        Card bobCard = this.cardSuiteManager.getCardByIndex(bobCardIndex);
-        assertEquals(spiedCard, bobCard);
-    }
-
-    @Test
     public void testSwapWithOtherPlayer() {
         this.tony.drawCard();
         this.bob.drawCard();
 
-        int tonyCardIndex = this.tony.getCardIndexes().get(0);
-        int bobCardIndex = this.bob.getCardIndexes().get(0);
-        Card tonyOriginalCard = this.cardSuiteManager.getCardByIndex(tonyCardIndex);
-        Card bobOriginalCard = this.cardSuiteManager.getCardByIndex(bobCardIndex);
+        Card tonyCard = this.tony.getCards().get(0);
+        Card bobCard = this.bob.getCards().get(0);
 
-        this.tony.swapWithOtherPlayer(this.bob, tonyCardIndex, bobCardIndex);
+        this.tony.swapWithOtherPlayer(this.bob, tonyCard, bobCard);
 
-        int tonyNewCardIndex = this.tony.getCardIndexes().get(0);
-        int bobNewCardIndex = this.bob.getCardIndexes().get(0);
+        Card tonyNewCard = this.tony.getCards().get(0);
+        Card bobNewCard = this.bob.getCards().get(0);
 
-        Card tonyNewCard = this.cardSuiteManager.getCardByIndex(tonyNewCardIndex);
-        Card bobNewCard = this.cardSuiteManager.getCardByIndex(bobNewCardIndex);
-
-        assertEquals(tonyOriginalCard, bobNewCard);
-        assertEquals(bobOriginalCard, tonyNewCard);
+        assertEquals(tonyCard, bobNewCard);
+        assertEquals(bobCard, tonyNewCard);
+        System.out.println("tonyCard"+tonyCard);
+        System.out.println("bobCard"+bobCard);
+        System.out.println("swap with other");
+        System.out.println("tonyNewCard"+tonyCard);
+        System.out.println("bobNewCard"+bobCard);
     }
     @Test
     public void testSwapWithAvailableCards() {
         this.tony.drawCard();
 
-        int tonyCardIndex = this.tony.getCardIndexes().get(0);
-        int availableCardIndex = this.cardSuiteManager.getIndexByCard(cardSuiteManager.getAvailableCards().get(0));
-        this.tony.swapWithAvailableCards(tonyCardIndex, availableCardIndex);
+        Card tonyCard = this.tony.getCards().get(0);
+        Card availableCard = cardSuiteManager.getAvailableCards().get(0);
+        this.tony.swapWithAvailableCards(tonyCard, availableCard);
+        System.out.println("tonyCard"+tonyCard);
+        System.out.println("availableCard"+availableCard);
 
-        assertEquals(this.tony.getCardIndexes().get(0), availableCardIndex);
-        assertEquals(cardSuiteManager.getAvailableCardIndexes().get(0), tonyCardIndex);
-
+        assertEquals(this.tony.getCards().get(0), availableCard);
+        assertEquals(cardSuiteManager.getAvailableCards().get(0), tonyCard);
+        System.out.println("after swap with availableCards");
+        System.out.println("tonyCard"+tony.getCards().get(0));
+        System.out.println("availableCard"+cardSuiteManager.getAvailableCards().get(0));
         // Since Tony swaps his card with available cards, now the `tonyCardIndex` goes into `availableCards`
         // and `availableCardIndex` goes into `playedCards`
-        assertEquals(this.cardSuiteManager.getCardByIndex(availableCardIndex),
+        assertEquals(availableCard,
             this.cardSuiteManager.getPlayedCards().get(0));
     }
     @Test
@@ -103,14 +104,20 @@ public class PlayerAndCardSuiteManagerTest {
         this.tony.drawCard();
         this.tony.drawCard();
 
-        int discardedCardIndex = this.tony.getCardIndexes().get(0);
-        int tonyCardIndex = this.tony.getCardIndexes().get(1);
-
-        this.tony.discardCard(discardedCardIndex);
-        this.tony.swapWithDiscardedCards(tonyCardIndex, discardedCardIndex);
-        assertEquals(this.tony.getCardIndexes().size(), 1);
-        assertEquals(this.tony.getCardIndexes().get(0), discardedCardIndex);
-        assertEquals(this.cardSuiteManager.getIndexByCard(this.cardSuiteManager.getDiscardedCards().get(0)), tonyCardIndex);
+        Card discardedCard = this.tony.getCards().get(0);
+        Card tonyCard = this.tony.getCards().get(1);
+        System.out.println("discardedCard"+discardedCard);
+        System.out.println("tonyCard"+tonyCard);
+        ArrayList<Card> discardedCards = new ArrayList<>();
+        discardedCards.add(discardedCard);
+        this.tony.tryDiscardCards(discardedCards);
+        this.tony.swapWithDiscardedCards(tonyCard, discardedCard);
+        assertEquals(this.tony.getCards().size(), 1);
+        assertEquals(this.tony.getCards().get(0), discardedCard);
+        assertEquals(this.cardSuiteManager.getDiscardedCards().get(0), tonyCard);
+        System.out.println("after swap with DiscardedCards");
+        System.out.println("discardedCard"+cardSuiteManager.getDiscardedCards().get(0));
+        System.out.println("tonyCard"+tony.getCards().get(0));
     }
 
     @Test
@@ -119,9 +126,14 @@ public class PlayerAndCardSuiteManagerTest {
         this.tony.drawCard();   // 0
         this.tony.drawCard();   // 1
         this.tony.drawCard();   // 1
-
+        assertEquals(this.tony.calculatePoints(), 2);
+        for(int i=0;i<tony.getCards().size();i++){
+            System.out.println("each card is"+tony.getCards().get(i));
+        }
+        System.out.println("Get Point is" + tony.calculatePoints());
         assertEquals(this.tony.calculatePoints(), 2);
     }
+
     @Test
     public void testCallCaboSuccess() {
         this.cardSuiteManager.distributeCardsAtBeginning();
@@ -154,10 +166,10 @@ public class PlayerAndCardSuiteManagerTest {
         this.cardSuiteManager.calcScores();
 
         if (this.tony.calculatePoints() > this.bob.calculatePoints()) {
-            assertEquals(this.tony.getScore(), this.tony.calculatePoints() + 10);
+            assertEquals(this.tony.getScore(), this.tony.calculatePoints() * 2);
             assertEquals(this.bob.getScore(), this.bob.calculatePoints());
         } else {
-            assertEquals(this.bob.getScore(), this.bob.calculatePoints() + 10);
+            assertEquals(this.bob.getScore(), this.bob.calculatePoints() * 2);
             assertEquals(this.tony.getScore(), this.tony.calculatePoints());
         }
     }
