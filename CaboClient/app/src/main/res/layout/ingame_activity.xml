@@ -438,6 +438,72 @@
             app:layout_constraintRight_toLeftOf="@id/player1_info_game"
             app:layout_constraintBottom_toTopOf="@id/player1_info_game"/>
 
+        <ImageButton
+            android:id="@+id/player1_emoji"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            app:srcCompat="@drawable/emoji_happy"
+            android:scaleType="fitCenter"
+            android:background="@android:color/transparent"
+            app:layout_constraintLeft_toRightOf="@id/player1_image_game"
+            app:layout_constraintTop_toTopOf="@id/player1_image_game"
+            android:translationX="-20dp"/>
+
+        <LinearLayout
+            android:id="@+id/emoji_selection_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toTopOf="@id/player1_emoji"
+            app:layout_constraintLeft_toLeftOf="@id/player1_image_game"
+            app:layout_constraintRight_toRightOf="@id/player1_image_game"
+            android:background="@drawable/rounded_button"
+            android:padding="12dp"
+            android:layout_marginBottom="12dp">
+
+            <ImageButton
+                android:id="@+id/emoji_happy_button"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:scaleType="fitCenter"
+                android:background="@android:color/transparent"
+                app:srcCompat="@drawable/emoji_happy"
+                android:layout_marginRight="12dp"/>
+            <ImageButton
+                android:id="@+id/emoji_very_happy_button"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:scaleType="fitCenter"
+                android:background="@android:color/transparent"
+                app:srcCompat="@drawable/emoji_very_happy"
+                android:layout_marginRight="12dp"/>
+            <ImageButton
+                android:id="@+id/emoji_tongue_button"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:scaleType="fitCenter"
+                android:background="@android:color/transparent"
+                app:srcCompat="@drawable/emoji_tounge"
+                android:layout_marginRight="12dp"/>
+            <ImageButton
+                android:id="@+id/emoji_shocked"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:scaleType="fitCenter"
+                android:background="@android:color/transparent"
+                app:srcCompat="@drawable/emoji_shocked"
+                android:layout_marginRight="12dp"/>
+            <ImageButton
+                android:id="@+id/emoji_angry"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:scaleType="fitCenter"
+                android:background="@android:color/transparent"
+                app:srcCompat="@drawable/emoji_angry"/>
+
+
+        </LinearLayout>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 
@@ -494,6 +560,17 @@
             app:layout_constraintStart_toStartOf="@id/player2_info_game"
             app:layout_constraintRight_toLeftOf="@id/player2_info_game"
             app:layout_constraintBottom_toTopOf="@id/player2_info_game"/>
+
+        <ImageButton
+            android:id="@+id/player2_emoji"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            app:srcCompat="@drawable/emoji_happy"
+            android:scaleType="fitCenter"
+            android:background="@android:color/transparent"
+            app:layout_constraintLeft_toRightOf="@id/player2_image_game"
+            app:layout_constraintTop_toTopOf="@id/player2_image_game"
+            android:translationX="-20dp"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -552,6 +629,17 @@
             app:layout_constraintStart_toStartOf="@id/player3_info_game"
             app:layout_constraintRight_toLeftOf="@id/player3_info_game"
             app:layout_constraintBottom_toTopOf="@id/player3_info_game"/>
+
+        <ImageButton
+            android:id="@+id/player3_emoji"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            app:srcCompat="@drawable/emoji_happy"
+            android:scaleType="fitCenter"
+            android:background="@android:color/transparent"
+            app:layout_constraintLeft_toRightOf="@id/player3_image_game"
+            app:layout_constraintTop_toTopOf="@id/player3_image_game"
+            android:translationX="-20dp"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -612,13 +700,23 @@
             app:layout_constraintRight_toLeftOf="@id/player4_info_game"
             app:layout_constraintBottom_toTopOf="@id/player4_info_game"/>
 
+        <ImageButton
+            android:id="@+id/player4_emoji"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            app:srcCompat="@drawable/emoji_happy"
+            android:scaleType="fitCenter"
+            android:background="@android:color/transparent"
+            app:layout_constraintLeft_toRightOf="@id/player4_image_game"
+            app:layout_constraintTop_toTopOf="@id/player4_image_game"
+            android:translationX="-20dp"/>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <ImageButton
         android:id="@+id/zoom_button"
         android:layout_width="36dp"
         android:layout_height="36dp"
-        android:text="zoom out"
         android:layout_margin="12dp"
         android:padding="8dp"
         app:srcCompat="@drawable/zoom_out"
@@ -626,6 +724,70 @@
         android:background="@drawable/zoom_button_bg"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />
+
+    <Button
+        android:id="@+id/peek_button"
+        android:layout_width="70dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="12dp"
+        android:padding="8dp"
+        android:text="PEEK"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:translationX="-100dp"/>
+    <Button
+        android:id="@+id/spy_button"
+        android:layout_width="70dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="12dp"
+        android:padding="8dp"
+        android:text="SPY"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:translationX="-100dp"/>
+    <Button
+        android:id="@+id/switch_button"
+        android:layout_width="70dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="12dp"
+        android:padding="8dp"
+        android:text="PEEK"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:translationX="-100dp"/>
+
+    <TextView
+        android:id="@+id/update_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:text="This is an update..."
+        android:fontFamily="sans-serif-black"
+        android:textColor="@color/white"
+        android:padding="12dp"
+        />
+
+    <LinearLayout
+        android:id="@+id/picked_card_button_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/update_text"
+        app:layout_constraintStart_toStartOf="parent"
+        android:padding="16dp"
+        android:layout_marginLeft="12dp"
+        android:background="@drawable/rounded_button">
+
+        <ImageView
+            android:id="@+id/picked_card_big_imageview"
+            android:layout_width="120dp"
+            android:layout_height="180dp"
+            app:srcCompat="@drawable/card_back"
+            />
+    </LinearLayout>
 
     <ImageButton
         android:id="@+id/settings_button"

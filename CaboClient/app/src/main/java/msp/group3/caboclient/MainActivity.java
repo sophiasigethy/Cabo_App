@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
         communicator.connectWebSocket();
         mWebSocketClient= communicator.getmWebSocketClient();
 
-        //startGame();
+        startGame();
     }
 
 
@@ -266,8 +266,8 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
     public void startGame() {
         state = TypeDefs.GAMESTART;
         // TODO an Pauline: hier auf andere Activity/Layout weiterleiten
-       // Intent intent = new Intent(MainActivity.this,InGameActivity.class);
-        Intent intent = new Intent(MainActivity.this,WaitingRoomActivity.class);
+        Intent intent = new Intent(MainActivity.this,InGameActivity.class);
+        //Intent intent = new Intent(MainActivity.this,WaitingRoomActivity.class);
 
         startActivity(intent);
 

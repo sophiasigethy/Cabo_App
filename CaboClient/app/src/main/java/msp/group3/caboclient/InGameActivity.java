@@ -2,14 +2,12 @@ package msp.group3.caboclient;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.fragment.app.FragmentTransaction;
 
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.util.Log;
@@ -24,10 +22,10 @@ import android.view.animation.ScaleAnimation;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.java_websocket.client.WebSocketClient;
 import org.json.JSONException;
 
 import java.util.ArrayList;
@@ -45,8 +43,21 @@ public class InGameActivity extends AppCompatActivity {
     private ImageButton settingsButton;
     private Button caboButton;
     private ImageButton zoomButton;
+    private Button peekButton;
+    private Button spyButton;
+    private Button switchButton;
+    private LinearLayout pickedCardButtonContainer;
+    private ImageView pickedCardBigImageview;
+    private ImageButton ownEmojiButton;
+    private LinearLayout emojiSelectionContainer;
+    private ImageButton happyEmojiButton;
+    private ImageButton veryHappyEmojiButton;
+    private ImageButton tongueEmojiButton;
+    private ImageButton shockedEmojiButton;
+    private ImageButton angryEmojiButton;
     private int zoomBtnCount = 0;
     private int chatButtonCount = 0;
+
 
     private ImageButton playedCardsStackButton;
     private ImageButton pickCardsStackButton;
@@ -73,6 +84,24 @@ public class InGameActivity extends AppCompatActivity {
         settingsButton = (ImageButton) findViewById(R.id.settings_button);
         zoomButton = (ImageButton) findViewById(R.id.zoom_button);
         caboButton = (Button) findViewById(R.id.cabo_button);
+        peekButton = (Button) findViewById(R.id.peek_button);
+        peekButton.setVisibility(View.INVISIBLE);
+        spyButton = (Button) findViewById(R.id.spy_button);
+        spyButton.setVisibility(View.INVISIBLE);
+        switchButton = (Button) findViewById(R.id.switch_button);
+        switchButton.setVisibility(View.INVISIBLE);
+        pickedCardButtonContainer = (LinearLayout) findViewById(R.id.picked_card_button_container);
+        pickedCardButtonContainer.setVisibility(View.INVISIBLE);
+        pickedCardBigImageview = (ImageView) findViewById(R.id.picked_card_big_imageview);
+        ownEmojiButton = (ImageButton) findViewById(R.id.player1_emoji);
+        emojiSelectionContainer = (LinearLayout) findViewById(R.id.emoji_selection_container);
+        emojiSelectionContainer.setVisibility(View.INVISIBLE);
+        happyEmojiButton = (ImageButton) findViewById(R.id.emoji_happy_button);
+        veryHappyEmojiButton = (ImageButton) findViewById(R.id.emoji_very_happy_button);
+        tongueEmojiButton = (ImageButton) findViewById(R.id.emoji_tongue_button);
+        shockedEmojiButton = (ImageButton) findViewById(R.id.emoji_shocked);
+        angryEmojiButton = (ImageButton) findViewById(R.id.emoji_angry);
+
         playedCardsStackButton = (ImageButton) findViewById(R.id.played_cards_imageButton);
         pickCardsStackButton = (ImageButton) findViewById(R.id.pick_card_imageButton);
 
@@ -158,16 +187,64 @@ public class InGameActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Toast.makeText(getApplicationContext(),
                         "Discard card...", Toast.LENGTH_SHORT).show();
+                makePickedCardContainerDisappear();
             }
         });
 
         pickCardsStackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getApplicationContext(),
-                        "Pick card...", Toast.LENGTH_SHORT).show();
+                showPickedCardInContainer();
             }
         });
+
+        ownEmojiButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                emojiSelectionContainer.setVisibility(View.VISIBLE);
+            }
+        });
+
+        happyEmojiButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ownEmojiButton.setImageResource(R.drawable.emoji_happy);
+                emojiSelectionContainer.setVisibility(View.INVISIBLE);
+            }
+        });
+
+        veryHappyEmojiButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ownEmojiButton.setImageResource(R.drawable.emoji_very_happy);
+                emojiSelectionContainer.setVisibility(View.INVISIBLE);
+            }
+        });
+
+        tongueEmojiButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ownEmojiButton.setImageResource(R.drawable.emoji_tounge);
+                emojiSelectionContainer.setVisibility(View.INVISIBLE);
+            }
+        });
+
+        shockedEmojiButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ownEmojiButton.setImageResource(R.drawable.emoji_shocked);
+                emojiSelectionContainer.setVisibility(View.INVISIBLE);
+            }
+        });
+
+        angryEmojiButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ownEmojiButton.setImageResource(R.drawable.emoji_angry);
+                emojiSelectionContainer.setVisibility(View.INVISIBLE);
+            }
+        });
+
     }
 
     private void setAllCardsOnClickListeners(){
@@ -179,15 +256,18 @@ public class InGameActivity extends AppCompatActivity {
                             "Card clicked: "+getResources().getResourceEntryName(cardButton.getId()), Toast.LENGTH_SHORT).show();*/
 
                     zoomInOnSelectedCard(cardButton);
-                    animateCardTurn(cardButton);
                     testIndicatePlayerTurn(1);
                     int index = playerCardButtons.indexOf(cardButton);
-                    cardClickCounts.set(index, cardClickCounts.get(index)+1);
+
                     if(cardClickCounts.get(index)%2==0){
                         cardButton.setSelected(false);
+                        animateCardTurn(cardButton);
+                        cardClickCounts.set(index, cardClickCounts.get(index)+1);
                     }
                     else{
                         cardButton.setSelected(true);
+                        animateCardTurnBack(cardButton);
+                        cardClickCounts.set(index, cardClickCounts.get(index)+1);
                     }
                 }
             });
@@ -231,6 +311,7 @@ public class InGameActivity extends AppCompatActivity {
         ObjectAnimator.ofFloat(card, "y", -15).setDuration(600).start();
     }
 
+    //TODO insert actual image of card depending on value
     private void animateCardTurn(ImageButton cardButton){
         final ObjectAnimator oa1 = ObjectAnimator.ofFloat(cardButton, "scaleX", 1f, 0f);
         final ObjectAnimator oa2 = ObjectAnimator.ofFloat(cardButton, "scaleX", 0f, 1f);
@@ -245,6 +326,45 @@ public class InGameActivity extends AppCompatActivity {
             }
         });
         oa1.start();
+    }
+
+    private void animateCardTurnBack(ImageButton cardButton){
+        final ObjectAnimator oa1 = ObjectAnimator.ofFloat(cardButton, "scaleX", 1f, 0f);
+        final ObjectAnimator oa2 = ObjectAnimator.ofFloat(cardButton, "scaleX", 0f, 1f);
+        oa1.setInterpolator(new DecelerateInterpolator());
+        oa2.setInterpolator(new AccelerateDecelerateInterpolator());
+        oa1.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                cardButton.setImageResource(R.drawable.card_back);
+                oa2.start();
+            }
+        });
+        oa1.start();
+    }
+
+    //TODO put card as parameter
+    private void showPickedCardInContainer(){
+        pickedCardButtonContainer.setVisibility(View.VISIBLE);
+        final ObjectAnimator oa1 = ObjectAnimator.ofFloat(pickedCardBigImageview, "scaleX", 1f, 0f);
+        final ObjectAnimator oa2 = ObjectAnimator.ofFloat(pickedCardBigImageview, "scaleX", 0f, 1f);
+        oa1.setInterpolator(new DecelerateInterpolator());
+        oa2.setInterpolator(new AccelerateDecelerateInterpolator());
+        oa1.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                pickedCardBigImageview.setImageResource(R.drawable.card_hearts_8);
+                oa2.start();
+            }
+        });
+        oa1.start();
+    }
+
+    private void makePickedCardContainerDisappear(){
+        pickedCardButtonContainer.setVisibility(View.INVISIBLE);
+        pickedCardBigImageview.setImageResource(R.drawable.card_back);
     }
 
     private void zoomInOnSelectedCard(ImageButton cardButton){
@@ -329,6 +449,15 @@ public class InGameActivity extends AppCompatActivity {
         anim.setFillAfter(true); // Needed to keep the result of the animation
         anim.setDuration(1000);
         v.startAnimation(anim);
+    }
+
+    private void displayDiscardedCard(Card card){
+        playedCardsStackButton.setImageResource(getCardResource(card));
+    }
+
+    //TODO display picked Card to User
+    private void displayPickedCard(Card card){
+
     }
 
     @Override
