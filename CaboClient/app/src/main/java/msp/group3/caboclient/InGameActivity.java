@@ -474,6 +474,13 @@ public class InGameActivity extends AppCompatActivity {
         }
     }
 
+    private void deactivateAllOnCardClickListeners(){
+        deactivatePlayer1OnClickListeners();
+        deactivatePlayer2OnClickListeners();
+        deactivatePlayer3OnClickListeners();
+        deactivatePlayer4OnClickListeners();
+    }
+
     private void deactivatePlayer1OnClickListeners(){
         for(ImageButton cardButton : player1CardButtons){
             cardButton.setOnClickListener(null);
@@ -684,6 +691,7 @@ public class InGameActivity extends AppCompatActivity {
                 for(ImageButton card : selectedCards){
                     animateCardTurn(card);
                 }
+                updateText.setText("Do you want to swap?");
                 peekButton.setVisibility(View.INVISIBLE);
                 switchButton.setVisibility(View.VISIBLE);
                 switchButton.setOnClickListener(new View.OnClickListener() {
@@ -693,6 +701,9 @@ public class InGameActivity extends AppCompatActivity {
                             animateCardTurnBack(card);
                         }
                         playSwapAnimation();
+                        updateText.setVisibility(View.INVISIBLE);
+                        switchButton.setVisibility(View.INVISIBLE);
+                        deactivateAllOnCardClickListeners();
                     }
                 });
                 nrCardsSelected = 0;
@@ -741,6 +752,9 @@ public class InGameActivity extends AppCompatActivity {
                 }
                 nrCardsSelected = 0;
                 playSwapAnimation();
+                updateText.setVisibility(View.INVISIBLE);
+                switchButton.setVisibility(View.INVISIBLE);
+                deactivateAllOnCardClickListeners();
             }
         });
     }
@@ -761,6 +775,7 @@ public class InGameActivity extends AppCompatActivity {
 
 
         spyButton.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View view) {
                 for(ImageButton cardButton : player2CardButtons){
@@ -784,6 +799,8 @@ public class InGameActivity extends AppCompatActivity {
                         spyButton.setVisibility(View.INVISIBLE);
                     }
                 }
+                updateText.setVisibility(View.INVISIBLE);
+                deactivateAllOnCardClickListeners();
                 nrCardsSelected = 0;
             }
         });
@@ -804,6 +821,8 @@ public class InGameActivity extends AppCompatActivity {
                         peekButton.setVisibility(View.INVISIBLE);
                     }
                 }
+                updateText.setVisibility(View.INVISIBLE);
+                deactivateAllOnCardClickListeners();
                 nrCardsSelected = 0;
             }
         });
@@ -819,6 +838,7 @@ public class InGameActivity extends AppCompatActivity {
             }
 
             public void onFinish() {
+                updateText.setVisibility(View.INVISIBLE);
                 updateText.setVisibility(View.INVISIBLE);
                 timerText.setVisibility(View.INVISIBLE);
                 animateCardTurnBack(cardButton);
