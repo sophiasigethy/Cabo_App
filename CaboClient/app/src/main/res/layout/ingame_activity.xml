@@ -66,6 +66,18 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/card_stack" />
 
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/tap_pick_animationView"
+                android:layout_width="180dp"
+                android:layout_height="180dp"
+                app:lottie_rawRes="@raw/select"
+                app:lottie_autoPlay="true"
+                app:lottie_loop="true"
+                app:layout_constraintTop_toTopOf="@id/pick_card_imageButton"
+                app:layout_constraintBottom_toBottomOf="@id/pick_card_imageButton"
+                app:layout_constraintLeft_toLeftOf="@id/pick_card_imageButton"
+                app:layout_constraintRight_toRightOf="@id/pick_card_imageButton"/>
+
             <ImageButton
                 android:id="@+id/played_cards_imageButton"
                 android:layout_width="55dp"
@@ -713,6 +725,28 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <ImageView
+        android:id="@+id/card_swap_animationView_bg"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        app:srcCompat="@drawable/card_swap_bg"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"/>
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/card_swap_animationView"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        app:lottie_rawRes="@raw/card_swap"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"/>
+
     <ImageButton
         android:id="@+id/zoom_button"
         android:layout_width="36dp"
@@ -736,17 +770,19 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         android:translationX="-100dp"/>
-    <TextView
-        android:id="@+id/timer_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="time"
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/timer_animationView"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        app:lottie_rawRes="@raw/timer"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
         android:translationX="-100dp"
-        android:fontFamily="sans-serif-black"
-        android:textColor="@color/white"
         app:layout_constraintBottom_toTopOf="@id/peek_button"
         app:layout_constraintLeft_toLeftOf="@id/peek_button"
-        app:layout_constraintRight_toRightOf="@id/peek_button"/>
+        app:layout_constraintRight_toRightOf="@id/peek_button" />
+
     <Button
         android:id="@+id/spy_button"
         android:layout_width="70dp"

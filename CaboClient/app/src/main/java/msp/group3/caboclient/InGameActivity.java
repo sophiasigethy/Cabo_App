@@ -57,7 +57,11 @@ public class InGameActivity extends AppCompatActivity {
     private ImageButton shockedEmojiButton;
     private ImageButton angryEmojiButton;
     private TextView updateText;
-    private TextView timerText;
+    private com.airbnb.lottie.LottieAnimationView cardSwapAnimation;
+    private com.airbnb.lottie.LottieAnimationView tapPickCardAnimation;
+    private com.airbnb.lottie.LottieAnimationView timerAnimation;
+
+    private ImageView cardSwapBg;
     private int zoomBtnCount = 0;
     private int chatButtonCount = 0;
     private int nrCardsSelected = 0;
@@ -119,8 +123,14 @@ public class InGameActivity extends AppCompatActivity {
         angryEmojiButton = (ImageButton) findViewById(R.id.emoji_angry);
         updateText = (TextView) findViewById(R.id.update_text);
         updateText.setVisibility(View.INVISIBLE);
-        timerText = (TextView) findViewById(R.id.timer_text);
-        timerText.setVisibility(View.INVISIBLE);
+        cardSwapAnimation = findViewById(R.id.card_swap_animationView);
+        cardSwapAnimation.setVisibility(View.INVISIBLE);
+        cardSwapBg = findViewById(R.id.card_swap_animationView_bg);
+        cardSwapBg.setVisibility(View.INVISIBLE);
+        tapPickCardAnimation = findViewById(R.id.tap_pick_animationView);
+        tapPickCardAnimation.setVisibility(View.INVISIBLE);
+        timerAnimation = findViewById(R.id.timer_animationView);
+        timerAnimation.setVisibility(View.INVISIBLE);
 
         playedCardsStackButton = (ImageButton) findViewById(R.id.played_cards_imageButton);
         pickCardsStackButton = (ImageButton) findViewById(R.id.pick_card_imageButton);
@@ -153,7 +163,7 @@ public class InGameActivity extends AppCompatActivity {
         setPlayer3CardsOnClickListeners();
         setPlayer4CardsOnClickListeners();*/
 
-        initiatePeekAndSwapAction();
+        initiatePeekAction();
 
 
         chatButton.setOnClickListener(new View.OnClickListener() {
@@ -280,7 +290,6 @@ public class InGameActivity extends AppCompatActivity {
                 public void onClick(View view) {
 
                     zoomInOnSelectedCard(cardButton);
-                    testIndicatePlayerTurn(1);
 
                     if(cardButton.isSelected()){
                         nrCardsSelected--;
@@ -759,10 +768,24 @@ public class InGameActivity extends AppCompatActivity {
         });
     }
 
-    //TODO
     private void playSwapAnimation() {
         Toast.makeText(getApplicationContext(),
                 "Blind Swapping Cards", Toast.LENGTH_SHORT).show();
+        cardSwapAnimation.setVisibility(View.VISIBLE);
+        cardSwapBg.setVisibility(View.VISIBLE);
+        cardSwapAnimation.playAnimation();
+        new CountDownTimer(2000, 1000) {
+
+            public void onTick(long millisUntilFinished) {
+            }
+
+            public void onFinish() {
+                cardSwapAnimation.playAnimation();
+                cardSwapAnimation.setVisibility(View.INVISIBLE);
+                cardSwapBg.setVisibility(View.INVISIBLE);
+            }
+
+        }.start();
     }
 
     private void initiateSpyAction() {
@@ -829,18 +852,21 @@ public class InGameActivity extends AppCompatActivity {
     }
 
     private void setCountdownTimer(ImageButton cardButton){
+        updateText.setText("Please remember the card");
+        timerAnimation.setVisibility(View.VISIBLE);
+        timerAnimation.playAnimation();
+
         new CountDownTimer(10000, 1000) {
 
             public void onTick(long millisUntilFinished) {
-                updateText.setText("Please remember the card");
-                timerText.setVisibility(View.VISIBLE);
-                timerText.setText("Time: " + millisUntilFinished / 1000+"s");
+
             }
 
             public void onFinish() {
+                timerAnimation.setVisibility(View.INVISIBLE);
+                timerAnimation.cancelAnimation();
                 updateText.setVisibility(View.INVISIBLE);
                 updateText.setVisibility(View.INVISIBLE);
-                timerText.setVisibility(View.INVISIBLE);
                 animateCardTurnBack(cardButton);
             }
 
