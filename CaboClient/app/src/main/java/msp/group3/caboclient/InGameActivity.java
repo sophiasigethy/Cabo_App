@@ -60,6 +60,7 @@ public class InGameActivity extends AppCompatActivity {
     private TextView timerText;
     private int zoomBtnCount = 0;
     private int chatButtonCount = 0;
+    private int nrCardsSelected = 0;
 
 
     private ImageButton playedCardsStackButton;
@@ -272,34 +273,41 @@ public class InGameActivity extends AppCompatActivity {
 
     }
 
-    private void setPlayer1CardsOnClickListeners(){
+    private void setPlayer1CardsOnClickListeners(int cardsAllowed){
         for(ImageButton cardButton : player1CardButtons){
             cardButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                   /* Toast.makeText(getApplicationContext(),
-                            "Card clicked: "+getResources().getResourceEntryName(cardButton.getId()), Toast.LENGTH_SHORT).show();*/
 
                     zoomInOnSelectedCard(cardButton);
                     testIndicatePlayerTurn(1);
 
                     if(cardButton.isSelected()){
+                        nrCardsSelected--;
                         cardButton.setSelected(false);
+                        Toast.makeText(getApplicationContext(),
+                                "Cards selected: "+nrCardsSelected, Toast.LENGTH_SHORT).show();
                     }
                     else{
                         cardButton.setSelected(true);
-                        for( ImageButton otherCard : player1CardButtons){
-                            if(otherCard != cardButton){
-                                otherCard.setSelected(false);
+                        nrCardsSelected++;
+                        if(nrCardsSelected>cardsAllowed){
+                            for( ImageButton otherCard : player1CardButtons){
+                                if(otherCard != cardButton && otherCard.isSelected()){
+                                    otherCard.setSelected(false);
+                                    nrCardsSelected--;
+                                }
                             }
                         }
+                        Toast.makeText(getApplicationContext(),
+                                "Cards selected: "+nrCardsSelected, Toast.LENGTH_SHORT).show();
                     }
                 }
             });
         }
     }
 
-    private void setPlayer2CardsOnClickListeners(){
+    private void setPlayer2CardsOnClickListeners(int cardsAllowed){
         for(ImageButton cardButton : player2CardButtons){
             cardButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -311,27 +319,39 @@ public class InGameActivity extends AppCompatActivity {
 
                     if(cardButton.isSelected()){
                         cardButton.setSelected(false);
+                        nrCardsSelected--;
                     }
                     else{
                         cardButton.setSelected(true);
-                        for( ImageButton otherCard : player2CardButtons){
-                            if(otherCard != cardButton){
-                                otherCard.setSelected(false);
+                        nrCardsSelected++;
+                        if(nrCardsSelected>cardsAllowed){
+                            for( ImageButton otherCard : player2CardButtons){
+                                if(otherCard != cardButton && otherCard.isSelected()){
+                                    otherCard.setSelected(false);
+                                    nrCardsSelected--;
+                                }
+                            }
+                            for( ImageButton otherCard : player3CardButtons){
+                                if(otherCard.isSelected()){
+                                    otherCard.setSelected(false);
+                                    nrCardsSelected--;
+                                }
+                            }
+                            for( ImageButton otherCard : player4CardButtons){
+                                if(otherCard.isSelected()){
+                                    otherCard.setSelected(false);
+                                    nrCardsSelected--;
+                                }
                             }
                         }
-                        for( ImageButton otherCard : player3CardButtons){
-                                otherCard.setSelected(false);
-                        }
-                        for( ImageButton otherCard : player4CardButtons){
-                            otherCard.setSelected(false);
-                        }
+
                     }
                 }
             });
         }
     }
 
-    private void setPlayer3CardsOnClickListeners(){
+    private void setPlayer3CardsOnClickListeners(int cardsAllowed){
         for(ImageButton cardButton : player3CardButtons){
             cardButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -343,27 +363,39 @@ public class InGameActivity extends AppCompatActivity {
 
                     if(cardButton.isSelected()){
                         cardButton.setSelected(false);
+                        nrCardsSelected--;
                     }
                     else{
                         cardButton.setSelected(true);
-                        for( ImageButton otherCard : player3CardButtons){
-                            if(otherCard != cardButton){
-                                otherCard.setSelected(false);
+                        nrCardsSelected++;
+                        if(nrCardsSelected>cardsAllowed){
+                            for( ImageButton otherCard : player3CardButtons){
+                                if(otherCard != cardButton && otherCard.isSelected()){
+                                    otherCard.setSelected(false);
+                                    nrCardsSelected--;
+                                }
+                            }
+                            for( ImageButton otherCard : player2CardButtons){
+                                if(otherCard.isSelected()){
+                                    otherCard.setSelected(false);
+                                    nrCardsSelected--;
+                                }
+                            }
+                            for( ImageButton otherCard : player4CardButtons){
+                                if(otherCard.isSelected()){
+                                    otherCard.setSelected(false);
+                                    nrCardsSelected--;
+                                }
                             }
                         }
-                        for( ImageButton otherCard : player2CardButtons){
-                            otherCard.setSelected(false);
-                        }
-                        for( ImageButton otherCard : player4CardButtons){
-                            otherCard.setSelected(false);
-                        }
+
                     }
                 }
             });
         }
     }
 
-    private void setPlayer4CardsOnClickListeners(){
+    private void setPlayer4CardsOnClickListeners(int cardsAllowed){
         for(ImageButton cardButton : player4CardButtons){
             cardButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -375,19 +407,30 @@ public class InGameActivity extends AppCompatActivity {
 
                     if(cardButton.isSelected()){
                         cardButton.setSelected(false);
+                        nrCardsSelected--;
                     }
                     else{
                         cardButton.setSelected(true);
-                        for( ImageButton otherCard : player4CardButtons){
-                            if(otherCard != cardButton){
-                                otherCard.setSelected(false);
+                        nrCardsSelected++;
+                        if(nrCardsSelected>cardsAllowed){
+                            for( ImageButton otherCard : player4CardButtons){
+                                if(otherCard != cardButton && otherCard.isSelected()){
+                                    otherCard.setSelected(false);
+                                    nrCardsSelected--;
+                                }
                             }
-                        }
-                        for( ImageButton otherCard : player3CardButtons){
-                            otherCard.setSelected(false);
-                        }
-                        for( ImageButton otherCard : player2CardButtons){
-                            otherCard.setSelected(false);
+                            for( ImageButton otherCard : player3CardButtons){
+                                if(otherCard.isSelected()){
+                                    otherCard.setSelected(false);
+                                    nrCardsSelected--;
+                                }
+                            }
+                            for( ImageButton otherCard : player2CardButtons){
+                                if(otherCard.isSelected()){
+                                    otherCard.setSelected(false);
+                                    nrCardsSelected--;
+                                }
+                            }
                         }
                     }
                 }
@@ -580,9 +623,9 @@ public class InGameActivity extends AppCompatActivity {
         spyButton.setVisibility(View.VISIBLE);
         updateText.setVisibility(View.VISIBLE);
         updateText.setText("Please choose an enemy card");
-        setPlayer2CardsOnClickListeners();
-        setPlayer3CardsOnClickListeners();
-        setPlayer4CardsOnClickListeners();
+        setPlayer2CardsOnClickListeners(1);
+        setPlayer3CardsOnClickListeners(1);
+        setPlayer4CardsOnClickListeners(1);
 
 
         spyButton.setOnClickListener(new View.OnClickListener() {
@@ -617,7 +660,7 @@ public class InGameActivity extends AppCompatActivity {
         peekButton.setVisibility(View.VISIBLE);
         updateText.setVisibility(View.VISIBLE);
         updateText.setText("Please choose one of your cards");
-        setPlayer1CardsOnClickListeners();
+        setPlayer1CardsOnClickListeners(1);
         peekButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
