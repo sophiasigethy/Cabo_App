@@ -153,7 +153,7 @@ public class InGameActivity extends AppCompatActivity {
         setPlayer3CardsOnClickListeners();
         setPlayer4CardsOnClickListeners();*/
 
-        initiateSpyAction();
+        initiatePeekAndSwapAction();
 
 
         chatButton.setOnClickListener(new View.OnClickListener() {
@@ -298,6 +298,24 @@ public class InGameActivity extends AppCompatActivity {
                                     nrCardsSelected--;
                                 }
                             }
+                            for( ImageButton otherCard : player3CardButtons){
+                                if(otherCard.isSelected()){
+                                    otherCard.setSelected(false);
+                                    nrCardsSelected--;
+                                }
+                            }
+                            for( ImageButton otherCard : player4CardButtons){
+                                if(otherCard.isSelected()){
+                                    otherCard.setSelected(false);
+                                    nrCardsSelected--;
+                                }
+                            }
+                            for( ImageButton otherCard : player2CardButtons){
+                                if(otherCard.isSelected()){
+                                    otherCard.setSelected(false);
+                                    nrCardsSelected--;
+                                }
+                            }
                         }
                         Toast.makeText(getApplicationContext(),
                                 "Cards selected: "+nrCardsSelected, Toast.LENGTH_SHORT).show();
@@ -338,6 +356,12 @@ public class InGameActivity extends AppCompatActivity {
                                 }
                             }
                             for( ImageButton otherCard : player4CardButtons){
+                                if(otherCard.isSelected()){
+                                    otherCard.setSelected(false);
+                                    nrCardsSelected--;
+                                }
+                            }
+                            for( ImageButton otherCard : player1CardButtons){
                                 if(otherCard.isSelected()){
                                     otherCard.setSelected(false);
                                     nrCardsSelected--;
@@ -387,6 +411,12 @@ public class InGameActivity extends AppCompatActivity {
                                     nrCardsSelected--;
                                 }
                             }
+                            for( ImageButton otherCard : player1CardButtons){
+                                if(otherCard.isSelected()){
+                                    otherCard.setSelected(false);
+                                    nrCardsSelected--;
+                                }
+                            }
                         }
 
                     }
@@ -426,6 +456,12 @@ public class InGameActivity extends AppCompatActivity {
                                 }
                             }
                             for( ImageButton otherCard : player2CardButtons){
+                                if(otherCard.isSelected()){
+                                    otherCard.setSelected(false);
+                                    nrCardsSelected--;
+                                }
+                            }
+                            for( ImageButton otherCard : player1CardButtons){
                                 if(otherCard.isSelected()){
                                     otherCard.setSelected(false);
                                     nrCardsSelected--;
@@ -612,13 +648,109 @@ public class InGameActivity extends AppCompatActivity {
 
     //TODO
     private void initiatePeekAndSwapAction() {
+        peekButton.setVisibility(View.VISIBLE);
+        updateText.setVisibility(View.VISIBLE);
+        updateText.setText("Please choose 2 cards");
+        setPlayer1CardsOnClickListeners(2);
+        setPlayer2CardsOnClickListeners(2);
+        setPlayer3CardsOnClickListeners(2);
+        setPlayer4CardsOnClickListeners(2);
+
+        ArrayList<ImageButton> selectedCards = new ArrayList<>();
+
+        peekButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                for(ImageButton cardButton : player1CardButtons){
+                    if(cardButton.isSelected()){
+                        selectedCards.add(cardButton);
+                    }
+                }
+                for(ImageButton cardButton : player2CardButtons){
+                    if(cardButton.isSelected()){
+                        selectedCards.add(cardButton);
+                    }
+                }
+                for(ImageButton cardButton : player3CardButtons){
+                    if(cardButton.isSelected()){
+                        selectedCards.add(cardButton);
+                    }
+                }
+                for(ImageButton cardButton : player4CardButtons){
+                    if(cardButton.isSelected()){
+                        selectedCards.add(cardButton);
+                    }
+                }
+                for(ImageButton card : selectedCards){
+                    animateCardTurn(card);
+                }
+                peekButton.setVisibility(View.INVISIBLE);
+                switchButton.setVisibility(View.VISIBLE);
+                switchButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        for(ImageButton card : selectedCards){
+                            animateCardTurnBack(card);
+                        }
+                        playSwapAnimation();
+                    }
+                });
+                nrCardsSelected = 0;
+            }
+        });
     }
 
-    //TODO
+    //TODO send selected cards to server
     private void initiateBlindSwapAction() {
+        switchButton.setVisibility(View.VISIBLE);
+        updateText.setVisibility(View.VISIBLE);
+        updateText.setText("Please choose 2 cards");
+        setPlayer1CardsOnClickListeners(2);
+        setPlayer2CardsOnClickListeners(2);
+        setPlayer3CardsOnClickListeners(2);
+        setPlayer4CardsOnClickListeners(2);
+
+        ArrayList<ImageButton> selectedCards = new ArrayList<>();
+
+        switchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                for(ImageButton cardButton : player1CardButtons){
+                    if(cardButton.isSelected()){
+                        selectedCards.add(cardButton);
+                        cardButton.setSelected(false);
+                    }
+                }
+                for(ImageButton cardButton : player2CardButtons){
+                    if(cardButton.isSelected()){
+                        selectedCards.add(cardButton);
+                        cardButton.setSelected(false);
+                    }
+                }
+                for(ImageButton cardButton : player3CardButtons){
+                    if(cardButton.isSelected()){
+                        selectedCards.add(cardButton);
+                        cardButton.setSelected(false);
+                    }
+                }
+                for(ImageButton cardButton : player4CardButtons){
+                    if(cardButton.isSelected()){
+                        selectedCards.add(cardButton);
+                        cardButton.setSelected(false);
+                    }
+                }
+                nrCardsSelected = 0;
+                playSwapAnimation();
+            }
+        });
     }
 
     //TODO
+    private void playSwapAnimation() {
+        Toast.makeText(getApplicationContext(),
+                "Blind Swapping Cards", Toast.LENGTH_SHORT).show();
+    }
+
     private void initiateSpyAction() {
         spyButton.setVisibility(View.VISIBLE);
         updateText.setVisibility(View.VISIBLE);
@@ -652,6 +784,7 @@ public class InGameActivity extends AppCompatActivity {
                         spyButton.setVisibility(View.INVISIBLE);
                     }
                 }
+                nrCardsSelected = 0;
             }
         });
     }
@@ -671,6 +804,7 @@ public class InGameActivity extends AppCompatActivity {
                         peekButton.setVisibility(View.INVISIBLE);
                     }
                 }
+                nrCardsSelected = 0;
             }
         });
     }
