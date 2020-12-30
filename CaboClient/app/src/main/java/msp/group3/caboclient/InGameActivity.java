@@ -10,6 +10,7 @@ import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.Display;
 import android.view.View;
@@ -55,6 +56,8 @@ public class InGameActivity extends AppCompatActivity {
     private ImageButton tongueEmojiButton;
     private ImageButton shockedEmojiButton;
     private ImageButton angryEmojiButton;
+    private TextView updateText;
+    private TextView timerText;
     private int zoomBtnCount = 0;
     private int chatButtonCount = 0;
 
@@ -65,10 +68,22 @@ public class InGameActivity extends AppCompatActivity {
     private androidx.fragment.app.FragmentContainerView chatFragmentContainer;
 
     private final List<ImageButton> playerCardButtons = new ArrayList<>();
+    private final List<ImageButton> player1CardButtons = new ArrayList<>();
+    private final List<ImageButton> player2CardButtons = new ArrayList<>();
+    private final List<ImageButton> player3CardButtons = new ArrayList<>();
+    private final List<ImageButton> player4CardButtons = new ArrayList<>();
+
     private final List<de.hdodenhof.circleimageview.CircleImageView> playerPics = new ArrayList<>();
     private final List<TextView> playerStats = new ArrayList<>();
     private final List<TextView> playerNames = new ArrayList<>();
     private final List<Integer> cardClickCounts = new ArrayList<>();
+    private final List<Integer> player1CardClickCounts = new ArrayList<>();
+    private final List<Integer> player2CardClickCounts = new ArrayList<>();
+    private final List<Integer> player3CardClickCounts = new ArrayList<>();
+    private final List<Integer> player4CardClickCounts = new ArrayList<>();
+
+
+
     private final List<ConstraintLayout> playerOverviews = new ArrayList<>();
 
     @Override
@@ -101,6 +116,10 @@ public class InGameActivity extends AppCompatActivity {
         tongueEmojiButton = (ImageButton) findViewById(R.id.emoji_tongue_button);
         shockedEmojiButton = (ImageButton) findViewById(R.id.emoji_shocked);
         angryEmojiButton = (ImageButton) findViewById(R.id.emoji_angry);
+        updateText = (TextView) findViewById(R.id.update_text);
+        updateText.setVisibility(View.INVISIBLE);
+        timerText = (TextView) findViewById(R.id.timer_text);
+        timerText.setVisibility(View.INVISIBLE);
 
         playedCardsStackButton = (ImageButton) findViewById(R.id.played_cards_imageButton);
         pickCardsStackButton = (ImageButton) findViewById(R.id.pick_card_imageButton);
@@ -128,7 +147,13 @@ public class InGameActivity extends AppCompatActivity {
 
     private void setUpOnClickListeners() {
 
-        setAllCardsOnClickListeners();
+        /*setPlayer1CardsOnClickListeners();
+        setPlayer2CardsOnClickListeners();
+        setPlayer3CardsOnClickListeners();
+        setPlayer4CardsOnClickListeners();*/
+
+        initiateSpyAction();
+
 
         chatButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -247,8 +272,8 @@ public class InGameActivity extends AppCompatActivity {
 
     }
 
-    private void setAllCardsOnClickListeners(){
-        for(ImageButton cardButton : playerCardButtons){
+    private void setPlayer1CardsOnClickListeners(){
+        for(ImageButton cardButton : player1CardButtons){
             cardButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -257,30 +282,151 @@ public class InGameActivity extends AppCompatActivity {
 
                     zoomInOnSelectedCard(cardButton);
                     testIndicatePlayerTurn(1);
-                    int index = playerCardButtons.indexOf(cardButton);
 
-                    if(cardClickCounts.get(index)%2==0){
+                    if(cardButton.isSelected()){
                         cardButton.setSelected(false);
-                        animateCardTurn(cardButton);
-                        cardClickCounts.set(index, cardClickCounts.get(index)+1);
                     }
                     else{
                         cardButton.setSelected(true);
-                        animateCardTurnBack(cardButton);
-                        cardClickCounts.set(index, cardClickCounts.get(index)+1);
+                        for( ImageButton otherCard : player1CardButtons){
+                            if(otherCard != cardButton){
+                                otherCard.setSelected(false);
+                            }
+                        }
                     }
                 }
             });
         }
     }
 
+    private void setPlayer2CardsOnClickListeners(){
+        for(ImageButton cardButton : player2CardButtons){
+            cardButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                   /* Toast.makeText(getApplicationContext(),
+                            "Card clicked: "+getResources().getResourceEntryName(cardButton.getId()), Toast.LENGTH_SHORT).show();*/
+
+                    zoomInOnSelectedCard(cardButton);
+
+                    if(cardButton.isSelected()){
+                        cardButton.setSelected(false);
+                    }
+                    else{
+                        cardButton.setSelected(true);
+                        for( ImageButton otherCard : player2CardButtons){
+                            if(otherCard != cardButton){
+                                otherCard.setSelected(false);
+                            }
+                        }
+                        for( ImageButton otherCard : player3CardButtons){
+                                otherCard.setSelected(false);
+                        }
+                        for( ImageButton otherCard : player4CardButtons){
+                            otherCard.setSelected(false);
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+    private void setPlayer3CardsOnClickListeners(){
+        for(ImageButton cardButton : player3CardButtons){
+            cardButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                   /* Toast.makeText(getApplicationContext(),
+                            "Card clicked: "+getResources().getResourceEntryName(cardButton.getId()), Toast.LENGTH_SHORT).show();*/
+
+                    zoomInOnSelectedCard(cardButton);
+
+                    if(cardButton.isSelected()){
+                        cardButton.setSelected(false);
+                    }
+                    else{
+                        cardButton.setSelected(true);
+                        for( ImageButton otherCard : player3CardButtons){
+                            if(otherCard != cardButton){
+                                otherCard.setSelected(false);
+                            }
+                        }
+                        for( ImageButton otherCard : player2CardButtons){
+                            otherCard.setSelected(false);
+                        }
+                        for( ImageButton otherCard : player4CardButtons){
+                            otherCard.setSelected(false);
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+    private void setPlayer4CardsOnClickListeners(){
+        for(ImageButton cardButton : player4CardButtons){
+            cardButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                   /* Toast.makeText(getApplicationContext(),
+                            "Card clicked: "+getResources().getResourceEntryName(cardButton.getId()), Toast.LENGTH_SHORT).show();*/
+
+                    zoomInOnSelectedCard(cardButton);
+
+                    if(cardButton.isSelected()){
+                        cardButton.setSelected(false);
+                    }
+                    else{
+                        cardButton.setSelected(true);
+                        for( ImageButton otherCard : player4CardButtons){
+                            if(otherCard != cardButton){
+                                otherCard.setSelected(false);
+                            }
+                        }
+                        for( ImageButton otherCard : player3CardButtons){
+                            otherCard.setSelected(false);
+                        }
+                        for( ImageButton otherCard : player2CardButtons){
+                            otherCard.setSelected(false);
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+    private void deactivatePlayer1OnClickListeners(){
+        for(ImageButton cardButton : player1CardButtons){
+            cardButton.setOnClickListener(null);
+        }
+    }
+
+    private void deactivatePlayer2OnClickListeners(){
+        for(ImageButton cardButton : player2CardButtons){
+            cardButton.setOnClickListener(null);
+        }
+    }
+
+    private void deactivatePlayer3OnClickListeners(){
+        for(ImageButton cardButton : player3CardButtons){
+            cardButton.setOnClickListener(null);
+        }
+    }
+
+    private void deactivatePlayer4OnClickListeners(){
+        for(ImageButton cardButton : player4CardButtons){
+            cardButton.setOnClickListener(null);
+        }
+    }
+
+
+
     private void setUpPlayerStats(int nrPlayers){
 
-        //TODO separate cards in cards per player
-        Collections.addAll(playerCardButtons, findViewById(R.id.player1_card1_imageButton), findViewById(R.id.player1_card2_imageButton), findViewById(R.id.player1_card3_imageButton), findViewById(R.id.player1_card4_imageButton),
-                findViewById(R.id.player2_card1_imageButton), findViewById(R.id.player2_card2_imageButton), findViewById(R.id.player2_card3_imageButton), findViewById(R.id.player2_card4_imageButton),
-                findViewById(R.id.player3_card1_imageButton), findViewById(R.id.player3_card2_imageButton), findViewById(R.id.player3_card3_imageButton), findViewById(R.id.player3_card4_imageButton),
-                findViewById(R.id.player4_card1_imageButton), findViewById(R.id.player4_card2_imageButton), findViewById(R.id.player4_card3_imageButton), findViewById(R.id.player4_card4_imageButton));
+        Collections.addAll(player1CardButtons, findViewById(R.id.player1_card1_imageButton), findViewById(R.id.player1_card2_imageButton), findViewById(R.id.player1_card3_imageButton), findViewById(R.id.player1_card4_imageButton));
+        Collections.addAll(player2CardButtons, findViewById(R.id.player2_card1_imageButton), findViewById(R.id.player2_card2_imageButton), findViewById(R.id.player2_card3_imageButton), findViewById(R.id.player2_card4_imageButton));
+        Collections.addAll(player3CardButtons, findViewById(R.id.player3_card1_imageButton), findViewById(R.id.player3_card2_imageButton), findViewById(R.id.player3_card3_imageButton), findViewById(R.id.player3_card4_imageButton));
+        Collections.addAll(player4CardButtons, findViewById(R.id.player4_card1_imageButton), findViewById(R.id.player4_card2_imageButton), findViewById(R.id.player4_card3_imageButton), findViewById(R.id.player4_card4_imageButton));
 
         Collections.addAll(playerPics, findViewById(R.id.player1_image_game), findViewById(R.id.player2_image_game), findViewById(R.id.player3_image_game), findViewById(R.id.player4_image_game));
 
@@ -288,7 +434,10 @@ public class InGameActivity extends AppCompatActivity {
 
         Collections.addAll(playerNames, findViewById(R.id.player1_name_game), findViewById(R.id.player2_name_game), findViewById(R.id.player3_name_game), findViewById(R.id.player4_name_game));
 
-        Collections.addAll(cardClickCounts,0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+        Collections.addAll(player1CardClickCounts,0, 0, 0, 0);
+        Collections.addAll(player2CardClickCounts,0, 0, 0, 0);
+        Collections.addAll(player3CardClickCounts,0, 0, 0, 0);
+        Collections.addAll(player4CardClickCounts,0, 0, 0, 0);
 
         Collections.addAll(playerOverviews, findViewById(R.id.player1_stats_game), findViewById(R.id.player2_stats_game), findViewById(R.id.player3_stats_game), findViewById(R.id.player4_stats_game));
 
@@ -428,10 +577,77 @@ public class InGameActivity extends AppCompatActivity {
 
     //TODO
     private void initiateSpyAction() {
+        spyButton.setVisibility(View.VISIBLE);
+        updateText.setVisibility(View.VISIBLE);
+        updateText.setText("Please choose an enemy card");
+        setPlayer2CardsOnClickListeners();
+        setPlayer3CardsOnClickListeners();
+        setPlayer4CardsOnClickListeners();
+
+
+        spyButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                for(ImageButton cardButton : player2CardButtons){
+                    if(cardButton.isSelected()){
+                        animateCardTurn(cardButton);
+                        setCountdownTimer(cardButton);
+                        spyButton.setVisibility(View.INVISIBLE);
+                    }
+                }
+                for(ImageButton cardButton : player3CardButtons){
+                    if(cardButton.isSelected()){
+                        animateCardTurn(cardButton);
+                        setCountdownTimer(cardButton);
+                        spyButton.setVisibility(View.INVISIBLE);
+                    }
+                }
+                for(ImageButton cardButton : player4CardButtons){
+                    if(cardButton.isSelected()){
+                        animateCardTurn(cardButton);
+                        setCountdownTimer(cardButton);
+                        spyButton.setVisibility(View.INVISIBLE);
+                    }
+                }
+            }
+        });
     }
 
-    //TODO
     private void initiatePeekAction() {
+        peekButton.setVisibility(View.VISIBLE);
+        updateText.setVisibility(View.VISIBLE);
+        updateText.setText("Please choose one of your cards");
+        setPlayer1CardsOnClickListeners();
+        peekButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                for(ImageButton cardButton : player1CardButtons){
+                    if(cardButton.isSelected()){
+                        animateCardTurn(cardButton);
+                        setCountdownTimer(cardButton);
+                        peekButton.setVisibility(View.INVISIBLE);
+                    }
+                }
+            }
+        });
+    }
+
+    private void setCountdownTimer(ImageButton cardButton){
+        new CountDownTimer(10000, 1000) {
+
+            public void onTick(long millisUntilFinished) {
+                updateText.setText("Please remember the card");
+                timerText.setVisibility(View.VISIBLE);
+                timerText.setText("Time: " + millisUntilFinished / 1000+"s");
+            }
+
+            public void onFinish() {
+                updateText.setVisibility(View.INVISIBLE);
+                timerText.setVisibility(View.INVISIBLE);
+                animateCardTurnBack(cardButton);
+            }
+
+        }.start();
     }
 
     private void indicatePlayerTurn(Player player){

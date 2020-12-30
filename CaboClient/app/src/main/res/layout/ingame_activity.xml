@@ -736,6 +736,17 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         android:translationX="-100dp"/>
+    <TextView
+        android:id="@+id/timer_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="time"
+        android:translationX="-100dp"
+        android:fontFamily="sans-serif-black"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toTopOf="@id/peek_button"
+        app:layout_constraintLeft_toLeftOf="@id/peek_button"
+        app:layout_constraintRight_toRightOf="@id/peek_button"/>
     <Button
         android:id="@+id/spy_button"
         android:layout_width="70dp"
