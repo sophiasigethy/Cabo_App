@@ -28,12 +28,14 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
 
     private Communicator communicator;
     private WebSocketClient mWebSocketClient;
+    private String myDbID;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        myDbID = getIntent().getStringExtra("dbid");
 
         mTextView = (TextView) findViewById(R.id.connecting);
 
@@ -44,6 +46,7 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
 
         //startGame();
     }
+
 
 
     /**
@@ -72,5 +75,6 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
     public void startMatching() {
         Intent intent = new Intent(MainActivity.this, WaitingRoomActivity.class);
         startActivity(intent);
+
     }
 }
