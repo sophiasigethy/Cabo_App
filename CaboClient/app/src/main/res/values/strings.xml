@@ -6,4 +6,23 @@
     <string name="dummy_content">dummy_content</string>
     <string name="start_game">Start Game</string>
     <string name="cancel">Cancel</string>
+    <string name="title_activity_login">Login</string>
+    <string name="title_activity_register">Register</string>
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="prompt_nick">Nickname</string>
+    <string name="prompt_displayname">Full name</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="action_register">Register</string>
+    <string name="welcome">"Welcome !"</string>
+    <string name="invalid_username">Not a valid username</string>
+    <string name="invalid_password">Password must be >5 characters</string>
+    <string name="login_failed">"Login failed"</string>
+    <string name="title_main_activity">Willkommen</string>
+    <string name="no_account_found">"No matching account found - Please Register"</string>
+    <string name="friend_list">"Friends"</string>
+    <string name="game_settings">"Game Settings"</string>
+    <string name="find_game">"Find Game"</string>
+    <string name="add_friend">"Add a Friend"</string>
 </resources>

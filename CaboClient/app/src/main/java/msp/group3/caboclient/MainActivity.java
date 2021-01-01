@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mTextView = (TextView) findViewById(R.id.connecting);
+        //mTextView = (TextView) findViewById(R.id.connecting);
 
         //connects to server
         communicator = Communicator.getInstance(this);
