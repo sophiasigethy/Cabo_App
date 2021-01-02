@@ -2,7 +2,9 @@ package msp.group3.caboclient;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import android.os.Build;
@@ -11,7 +13,9 @@ import android.text.method.ScrollingMovementMethod;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 
@@ -23,30 +27,26 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements Communicator.CommunicatorCallback {
 
-
-    private TextView mTextView;
-
+    private Player me;
     private Communicator communicator;
     private WebSocketClient mWebSocketClient;
-    private String myDbID;
+    private ListView friendList;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        myDbID = getIntent().getStringExtra("dbid");
-
-        //mTextView = (TextView) findViewById(R.id.connecting);
+        friendList = (ListView) findViewById(R.id.list_friends);
 
         //connects to server
         communicator = Communicator.getInstance(this);
         communicator.connectWebSocket();
         mWebSocketClient = communicator.getmWebSocketClient();
-
+        me = DatabaseOperation.getDao().getPlayerFromDB("", getApplicationContext());
+        Toast.makeText(MainActivity.this, R.string.welcome + " " + me.getName(), Toast.LENGTH_LONG);
         //startGame();
     }
-
 
 
     /**
@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
      *
      * @param message
      */
-    public void handelTextMessage(String message) throws JSONException {
+    public void handleTextMessage(String message) throws JSONException {
         JSONObject jsonObject = new JSONObject(message);
 //        if (message.equalsIgnoreCase("startMatching")) {
 //            startMatching();
@@ -66,8 +66,6 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
         }
         if (jsonObject.has("notAccepted")) {
             String mes = TypeDefs.server + jsonObject.get("notAccepted").toString();
-            mTextView.setText(mes);
-            mTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP,20);
         }
     }
 

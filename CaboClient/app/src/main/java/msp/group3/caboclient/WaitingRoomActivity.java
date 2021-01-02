@@ -102,7 +102,7 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
      * @throws JSONException
      */
     @Override
-    public void handelTextMessage(String message) throws JSONException {
+    public void handleTextMessage(String message) throws JSONException {
         JSONObject jsonObject = new JSONObject(message);
 
         //this is received when client is allowed to join the game

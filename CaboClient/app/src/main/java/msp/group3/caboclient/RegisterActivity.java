@@ -13,18 +13,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 public class RegisterActivity extends AppCompatActivity {
 
     private static final String TAG = "LOGIN";
-    private FirebaseDatabase database;
-    private DatabaseReference myRef;
-    private FirebaseAuth mAuth;
     private Player player;
 
     @Override
@@ -36,8 +30,6 @@ public class RegisterActivity extends AppCompatActivity {
         final EditText nick = findViewById(R.id.register_nick);
         final EditText password = findViewById(R.id.register_password);
         final Button loginButton = findViewById(R.id.register_btn);
-        mAuth = FirebaseAuth.getInstance();
-        database = FirebaseDatabase.getInstance();
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -57,21 +49,24 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void register(String password) {
-        mAuth.createUserWithEmailAndPassword(player.getMail(), password)
+        DatabaseOperation.getDao().getmAuth().createUserWithEmailAndPassword(player.getMail(), password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "createUserWithEmail:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
+                            FirebaseUser user = DatabaseOperation.getDao().getCurrentUser();
                             user.updateProfile(
                                     new UserProfileChangeRequest.Builder()
                                             .setDisplayName(player.getName())
                                             .build());
                             if (player.getDbID().equals(""))
                                 player.setDbID(user.getUid());
-                            addUserToDB();
+                            DatabaseOperation.getDao().addUserToDB(player);
+                            DatabaseOperation.getDao().getPlayerFromDB(player.getDbID(),
+                                    getApplicationContext());
+                            DatabaseOperation.getDao().updateLastLoggedIn(user.getUid());
                             moveToMainActivity();
                         } else {
                             // If sign in fails, display a message to the user.
@@ -82,6 +77,16 @@ public class RegisterActivity extends AppCompatActivity {
                         }
                     }
                 });
+        /*
+        SharedPreferences sharedPref = getApplicationContext().getSharedPreferences(
+                getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(String.valueOf(R.string.preference_userdbid), DatabaseOperation.getDao().getCurrentUser().getUid());
+        editor.putString(String.valueOf(R.string.preference_username), player.getName());
+        editor.putString(String.valueOf(R.string.preference_usermail), player.getMail());
+        editor.putString(String.valueOf(R.string.preference_usernick), player.getNick());
+        editor.apply();
+        */
     }
 
     private void moveToMainActivity() {
@@ -89,12 +94,5 @@ public class RegisterActivity extends AppCompatActivity {
         Intent myIntent = new Intent(RegisterActivity.this, MainActivity.class);
         myIntent.putExtra("dbid", player.getDbID());
         RegisterActivity.this.startActivity(myIntent);
-    }
-
-    private void addUserToDB() {
-        //TODO: Add check for username already in use
-        database = FirebaseDatabase.getInstance();
-        myRef = database.getReference("cabo/users");
-        myRef.child(player.getDbID()).setValue(player);
     }
 }
