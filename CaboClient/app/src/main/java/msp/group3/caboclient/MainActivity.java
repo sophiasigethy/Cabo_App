@@ -31,6 +31,7 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
     private Communicator communicator;
     private WebSocketClient mWebSocketClient;
     private ListView friendList;
+    private TextView userNameTxt;
 
 
     @Override
@@ -38,13 +39,18 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         friendList = (ListView) findViewById(R.id.list_friends);
+        userNameTxt = (TextView) findViewById(R.id.username);
 
         //connects to server
         communicator = Communicator.getInstance(this);
         communicator.connectWebSocket();
         mWebSocketClient = communicator.getmWebSocketClient();
-        me = DatabaseOperation.getDao().getPlayerFromDB("", getApplicationContext());
-        Toast.makeText(MainActivity.this, R.string.welcome + " " + me.getName(), Toast.LENGTH_LONG);
+        me = DatabaseOperation.getDao().readPlayerFromSharedPrefs(getApplicationContext());
+        if (me.getNick().equals("None"))    {
+            me.setNick(getIntent().getStringExtra("nick"));
+        }
+        Toast.makeText(MainActivity.this, R.string.welcome + " " + me.getNick(), Toast.LENGTH_LONG);
+        userNameTxt.setText("Welcome " + me.getNick());
         //startGame();
     }
 

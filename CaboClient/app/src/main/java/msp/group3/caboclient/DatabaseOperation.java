@@ -37,56 +37,11 @@ public class DatabaseOperation {
 
     }
 
-    public Player getPlayerFromDB(String dbID, Context context) {
-        // Load Player Info from firebase realtime db
-        if (dbID.isEmpty()) {
-            dbID = currentUser.getUid();
-        }
-        Player player = new Player(dbID);
-        SharedPreferences sharedPref = context.getSharedPreferences(
-                R.string.preference_file_key + "", Context.MODE_PRIVATE);
-        if (sharedPref.getString(String.valueOf(R.string.preference_userdbid), "None").equals("None")) {
-            DatabaseReference myRef = database.getReference("cabo");
-            DatabaseReference usersRef = myRef.child("users");
-            String finalDbID = dbID;
-            ValueEventListener readPlayerEvent = new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    for (DataSnapshot child : snapshot.getChildren()) {
-                        if (child.getKey().equals(finalDbID)) {
-                            player.setDbID(child.child("dbID").getValue().toString());
-                            player.setName(child.child("name").getValue().toString());
-                            player.setMail(child.child("mail").getValue().toString());
-                            player.setNick(child.child("nick").getValue().toString());
-
-                            SharedPreferences sharedPref = context.getSharedPreferences(
-                                    R.string.preference_file_key + "", Context.MODE_PRIVATE);
-                            SharedPreferences.Editor editor = sharedPref.edit();
-                            editor.putString(String.valueOf(R.string.preference_userdbid),
-                                    child.child("dbID").getValue().toString());
-                            editor.putString(String.valueOf(R.string.preference_username),
-                                    child.child("name").getValue().toString());
-                            editor.putString(String.valueOf(R.string.preference_usermail),
-                                    child.child("mail").getValue().toString());
-                            editor.putString(String.valueOf(R.string.preference_usernick),
-                                    child.child("nick").getValue().toString());
-                            editor.apply();
-                        }
-                    }
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-                }
-            };
-                usersRef.removeEventListener(readPlayerEvent);
-                usersRef.addValueEventListener(readPlayerEvent);
-        } else
-            return readPlayerFromSharedPrefs(dbID, context);
-        return player;
+    public DatabaseReference getUserRef(String dbID)    {
+        return database.getReference("cabo/users").child(dbID);
     }
 
-    private Player readPlayerFromSharedPrefs(String dbID, Context context)  {
+    public Player readPlayerFromSharedPrefs(Context context)  {
         SharedPreferences sharedPref = context.getSharedPreferences(
                 R.string.preference_file_key + "", Context.MODE_PRIVATE);
         return new Player(
@@ -98,8 +53,8 @@ public class DatabaseOperation {
     }
 
     public void updateLastLoggedIn(String dbID) {
-        DatabaseReference myRef = database.getReference("cabo/users");
-        myRef.child(dbID).child("lastLoggedIn").setValue((System.currentTimeMillis() / 1000));
+        DatabaseReference myRef = database.getReference("cabo/users").child(dbID);
+        myRef.child("lastLoggedIn").setValue((System.currentTimeMillis())+"");
     }
 
     public void addUserToDB(Player player) {

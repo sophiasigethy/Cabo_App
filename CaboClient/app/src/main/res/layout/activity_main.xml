@@ -14,8 +14,14 @@
         android:paddingRight="40dp"
         android:gravity="top">
         <TextView
+            android:id="@+id/username"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center|top"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/username"
             android:gravity="center|top"
             android:text="@string/friend_list" />
         <ListView
