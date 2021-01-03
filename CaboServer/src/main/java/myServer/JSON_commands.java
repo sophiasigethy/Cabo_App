@@ -125,13 +125,6 @@ public class JSON_commands {
         return jmsg;
 
     }
-    public static JSONObject gameState(CardSuiteManager mgr) throws JsonProcessingException {
-        JSONObject jmsg = new JSONObject();
-        ObjectMapper objectMapper = new ObjectMapper();
-        jmsg.put("gameState", objectMapper.writeValueAsString(mgr));
-
-        return jmsg;
-    }
 
     public static JSONObject sendInitialCards(Player player) throws JsonProcessingException {
         player.getMyCards();
