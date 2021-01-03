@@ -15,7 +15,23 @@
       },
       "oauth_client": [
         {
-          "client_id": "197870335964-ebgho9numa7vbod025epoctdcbu6qe4v.apps.googleusercontent.com",
+          "client_id": "197870335964-3nmgf8d6a77kg5qn7u93uv8b30mohg5f.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "msp.group3.caboclient",
+            "certificate_hash": "a01f37a4608837dbfddfbf7b3444471cb383a457"
+          }
+        },
+        {
+          "client_id": "197870335964-6jaskes3jam7ulqt091cd7lpjv1ni427.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "msp.group3.caboclient",
+            "certificate_hash": "54b7b2f0b580a564656f7f95be456cdbdcfea4c1"
+          }
+        },
+        {
+          "client_id": "197870335964-h2l1tlqei8opado5c6cqno8luac9kul5.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "msp.group3.caboclient",
