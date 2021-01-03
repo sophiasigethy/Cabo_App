@@ -438,13 +438,28 @@
             app:layout_constraintLeft_toLeftOf="@id/player1_image_game"
             app:layout_constraintRight_toRightOf="@id/player1_image_game" />
 
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/player1_highlight_animationView"
+            android:layout_width="140dp"
+            android:layout_height="140dp"
+            app:lottie_rawRes="@raw/player1_highlight"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="false"
+            android:translationX="-67dp"
+            android:translationY="47dp"
+            app:lottie_speed="0.5"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="@id/player1_info_game"
+            app:layout_constraintRight_toLeftOf="@id/player1_info_game"
+            app:layout_constraintBottom_toTopOf="@id/player1_info_game"/>
+
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/player1_image_game"
-            android:layout_width="46dp"
-            android:layout_height="46dp"
+            android:layout_width="66dp"
+            android:layout_height="66dp"
             android:src="@drawable/bobsled"
             android:elevation="16dp"
-            android:translationX="-20dp"
+            android:translationX="-30dp"
             android:translationY="10dp"
             app:layout_constraintStart_toStartOf="@id/player1_info_game"
             app:layout_constraintRight_toLeftOf="@id/player1_info_game"

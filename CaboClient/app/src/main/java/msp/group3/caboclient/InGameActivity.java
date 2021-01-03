@@ -163,7 +163,8 @@ public class InGameActivity extends AppCompatActivity {
         setPlayer3CardsOnClickListeners();
         setPlayer4CardsOnClickListeners();*/
 
-        initiatePeekAction();
+        //initiatePeekAndSwapAction();
+        initiateInitialCardLookUp();
 
 
         chatButton.setOnClickListener(new View.OnClickListener() {
@@ -294,8 +295,8 @@ public class InGameActivity extends AppCompatActivity {
                     if(cardButton.isSelected()){
                         nrCardsSelected--;
                         cardButton.setSelected(false);
-                        Toast.makeText(getApplicationContext(),
-                                "Cards selected: "+nrCardsSelected, Toast.LENGTH_SHORT).show();
+                        /*Toast.makeText(getApplicationContext(),
+                                "Cards selected: "+nrCardsSelected, Toast.LENGTH_SHORT).show();*/
                     }
                     else{
                         cardButton.setSelected(true);
@@ -326,8 +327,8 @@ public class InGameActivity extends AppCompatActivity {
                                 }
                             }
                         }
-                        Toast.makeText(getApplicationContext(),
-                                "Cards selected: "+nrCardsSelected, Toast.LENGTH_SHORT).show();
+                        /*Toast.makeText(getApplicationContext(),
+                                "Cards selected: "+nrCardsSelected, Toast.LENGTH_SHORT).show();*/
                     }
                 }
             });
@@ -516,7 +517,7 @@ public class InGameActivity extends AppCompatActivity {
 
 
 
-    private void setUpPlayerStats(int nrPlayers){
+    private void setUpPlayerStats(int nrPlayers) {
 
         Collections.addAll(player1CardButtons, findViewById(R.id.player1_card1_imageButton), findViewById(R.id.player1_card2_imageButton), findViewById(R.id.player1_card3_imageButton), findViewById(R.id.player1_card4_imageButton));
         Collections.addAll(player2CardButtons, findViewById(R.id.player2_card1_imageButton), findViewById(R.id.player2_card2_imageButton), findViewById(R.id.player2_card3_imageButton), findViewById(R.id.player2_card4_imageButton));
@@ -529,21 +530,24 @@ public class InGameActivity extends AppCompatActivity {
 
         Collections.addAll(playerNames, findViewById(R.id.player1_name_game), findViewById(R.id.player2_name_game), findViewById(R.id.player3_name_game), findViewById(R.id.player4_name_game));
 
-        Collections.addAll(player1CardClickCounts,0, 0, 0, 0);
-        Collections.addAll(player2CardClickCounts,0, 0, 0, 0);
-        Collections.addAll(player3CardClickCounts,0, 0, 0, 0);
-        Collections.addAll(player4CardClickCounts,0, 0, 0, 0);
+        Collections.addAll(player1CardClickCounts, 0, 0, 0, 0);
+        Collections.addAll(player2CardClickCounts, 0, 0, 0, 0);
+        Collections.addAll(player3CardClickCounts, 0, 0, 0, 0);
+        Collections.addAll(player4CardClickCounts, 0, 0, 0, 0);
 
         Collections.addAll(playerOverviews, findViewById(R.id.player1_stats_game), findViewById(R.id.player2_stats_game), findViewById(R.id.player3_stats_game), findViewById(R.id.player4_stats_game));
 
-        for(int i=nrPlayers; i<4; i++){
+        for (int i = nrPlayers; i < 4; i++) {
             playerPics.get(i).setVisibility(View.INVISIBLE);
             playerStats.get(i).setVisibility(View.INVISIBLE);
             playerNames.get(i).setVisibility(View.INVISIBLE);
         }
 
-        for(int i=nrPlayers*4; i<16; i++){
+        for (int i = nrPlayers * 4; i < 16; i++) {
             playerCardButtons.get(i).setVisibility(View.INVISIBLE);
+        }
+        for (int i = 0; i < nrPlayers; i++) {
+            playerStats.get(i).setVisibility(View.INVISIBLE);
         }
     }
 
@@ -769,8 +773,8 @@ public class InGameActivity extends AppCompatActivity {
     }
 
     private void playSwapAnimation() {
-        Toast.makeText(getApplicationContext(),
-                "Blind Swapping Cards", Toast.LENGTH_SHORT).show();
+       /* Toast.makeText(getApplicationContext(),
+                "Blind Swapping Cards", Toast.LENGTH_SHORT).show();*/
         cardSwapAnimation.setVisibility(View.VISIBLE);
         cardSwapBg.setVisibility(View.VISIBLE);
         cardSwapAnimation.playAnimation();
@@ -834,6 +838,7 @@ public class InGameActivity extends AppCompatActivity {
         updateText.setVisibility(View.VISIBLE);
         updateText.setText("Please choose one of your cards");
         setPlayer1CardsOnClickListeners(1);
+
         peekButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -843,6 +848,34 @@ public class InGameActivity extends AppCompatActivity {
                         setCountdownTimer(cardButton);
                         peekButton.setVisibility(View.INVISIBLE);
                     }
+                }
+                updateText.setVisibility(View.INVISIBLE);
+                deactivateAllOnCardClickListeners();
+                nrCardsSelected = 0;
+            }
+        });
+    }
+
+    private void initiateInitialCardLookUp(){
+        peekButton.setVisibility(View.VISIBLE);
+        updateText.setVisibility(View.VISIBLE);
+        updateText.setText("Select 2 of your cards to look at");
+        setPlayer1CardsOnClickListeners(2);
+
+        ArrayList<ImageButton> selectedCards = new ArrayList<>();
+
+        peekButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                for(ImageButton cardButton : player1CardButtons){
+                    if(cardButton.isSelected()){
+                        selectedCards.add(cardButton);
+                    }
+                    for(ImageButton card: selectedCards){
+                        animateCardTurn(card);
+                        setCountdownTimer(card);
+                    }
+                    peekButton.setVisibility(View.INVISIBLE);
                 }
                 updateText.setVisibility(View.INVISIBLE);
                 deactivateAllOnCardClickListeners();
