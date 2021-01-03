@@ -155,16 +155,11 @@ public class InGameActivity extends AppCompatActivity {
 
     }
 
-
     private void setUpOnClickListeners() {
 
-        /*setPlayer1CardsOnClickListeners();
-        setPlayer2CardsOnClickListeners();
-        setPlayer3CardsOnClickListeners();
-        setPlayer4CardsOnClickListeners();*/
-
         //initiatePeekAndSwapAction();
-        initiateInitialCardLookUp();
+        //initiateInitialCardLookUp();
+        //initiateSpyAction();
 
 
         chatButton.setOnClickListener(new View.OnClickListener() {
@@ -216,6 +211,7 @@ public class InGameActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Toast.makeText(getApplicationContext(),
                         "CABO!", Toast.LENGTH_SHORT).show();
+                showSpiedOnCard(player2CardButtons.get(0));
             }
         });
 
@@ -225,6 +221,10 @@ public class InGameActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(),
                         "Discard card...", Toast.LENGTH_SHORT).show();
                 makePickedCardContainerDisappear();
+                switchButton.setVisibility(View.INVISIBLE);
+                for(ImageButton cardButton : player1CardButtons){
+                    cardButton.setSelected(false);
+                }
             }
         });
 
@@ -232,6 +232,21 @@ public class InGameActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 showPickedCardInContainer();
+                playedCardsStackButton.setEnabled(true);
+                setPlayer1CardsOnClickListeners(1);
+                switchButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        playSwapAnimation();
+                        switchButton.setEnabled(false);
+                        switchButton.setVisibility(View.INVISIBLE);
+                        makePickedCardContainerDisappear();
+                        for(ImageButton cardButton : player1CardButtons){
+                            cardButton.setSelected(false);
+                        }
+                    }
+                });
+
             }
         });
 
@@ -330,6 +345,12 @@ public class InGameActivity extends AppCompatActivity {
                         /*Toast.makeText(getApplicationContext(),
                                 "Cards selected: "+nrCardsSelected, Toast.LENGTH_SHORT).show();*/
                     }
+                    if(pickedCardButtonContainer.getVisibility()==View.VISIBLE && nrCardsSelected==cardsAllowed){
+                        switchButton.setVisibility(View.VISIBLE);
+                    }
+                    if(nrCardsSelected==cardsAllowed){
+                        peekButton.setEnabled(true);
+                    }
                 }
             });
         }
@@ -379,6 +400,10 @@ public class InGameActivity extends AppCompatActivity {
                             }
                         }
 
+                    }
+                    if(nrCardsSelected==cardsAllowed){
+                        spyButton.setEnabled(true);
+                        peekButton.setEnabled(true);
                     }
                 }
             });
@@ -430,6 +455,10 @@ public class InGameActivity extends AppCompatActivity {
                         }
 
                     }
+                    if(nrCardsSelected==cardsAllowed){
+                        spyButton.setEnabled(true);
+                        peekButton.setEnabled(true);
+                    }
                 }
             });
         }
@@ -478,6 +507,10 @@ public class InGameActivity extends AppCompatActivity {
                                 }
                             }
                         }
+                    }
+                    if(nrCardsSelected==cardsAllowed){
+                        spyButton.setEnabled(true);
+                        peekButton.setEnabled(true);
                     }
                 }
             });
@@ -670,6 +703,7 @@ public class InGameActivity extends AppCompatActivity {
     private void initiatePeekAndSwapAction() {
         peekButton.setVisibility(View.VISIBLE);
         updateText.setVisibility(View.VISIBLE);
+        peekButton.setEnabled(false);
         updateText.setText("Please choose 2 cards");
         setPlayer1CardsOnClickListeners(2);
         setPlayer2CardsOnClickListeners(2);
@@ -794,6 +828,7 @@ public class InGameActivity extends AppCompatActivity {
 
     private void initiateSpyAction() {
         spyButton.setVisibility(View.VISIBLE);
+        spyButton.setEnabled(false);
         updateText.setVisibility(View.VISIBLE);
         updateText.setText("Please choose an enemy card");
         setPlayer2CardsOnClickListeners(1);
@@ -836,7 +871,8 @@ public class InGameActivity extends AppCompatActivity {
     private void initiatePeekAction() {
         peekButton.setVisibility(View.VISIBLE);
         updateText.setVisibility(View.VISIBLE);
-        updateText.setText("Please choose one of your cards");
+        updateText.setText("Please choose 1 of your cards");
+        peekButton.setEnabled(false);
         setPlayer1CardsOnClickListeners(1);
 
         peekButton.setOnClickListener(new View.OnClickListener() {
@@ -860,6 +896,7 @@ public class InGameActivity extends AppCompatActivity {
         peekButton.setVisibility(View.VISIBLE);
         updateText.setVisibility(View.VISIBLE);
         updateText.setText("Select 2 of your cards to look at");
+        peekButton.setEnabled(false);
         setPlayer1CardsOnClickListeners(2);
 
         ArrayList<ImageButton> selectedCards = new ArrayList<>();
@@ -904,6 +941,14 @@ public class InGameActivity extends AppCompatActivity {
             }
 
         }.start();
+    }
+
+    private void showSpiedOnCard(ImageButton card){
+        card.setImageResource(R.drawable.card_pressed);
+    }
+
+    private void turnCardBackToNormal(ImageButton card){
+        card.setImageResource(R.drawable.card_button);
     }
 
     private void indicatePlayerTurn(Player player){
