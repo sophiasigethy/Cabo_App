@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "197870335964-3nmgf8d6a77kg5qn7u93uv8b30mohg5f.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "msp.group3.caboclient",
+            "certificate_hash": "a01f37a4608837dbfddfbf7b3444471cb383a457"
+          }
+        },
+        {
           "client_id": "197870335964-h2l1tlqei8opado5c6cqno8luac9kul5.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
@@ -25,7 +33,7 @@
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDIXRQoIHH0CTWcSw0SKX003f24OYmL6MY"
+          "current_key": "AIzaSyBddNCl5cjZ8_HqQHJeaRzmryayfP0TmPk"
         }
       ],
       "services": {
