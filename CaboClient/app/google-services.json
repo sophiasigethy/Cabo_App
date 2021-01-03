@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "197870335964",
+    "firebase_url": "https://caboclient-1607961470012-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "caboclient-1607961470012",
+    "storage_bucket": "caboclient-1607961470012.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:197870335964:android:2d5c2da1bfb78d12e64119",
+        "android_client_info": {
+          "package_name": "msp.group3.caboclient"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "197870335964-3nmgf8d6a77kg5qn7u93uv8b30mohg5f.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "msp.group3.caboclient",
+            "certificate_hash": "a01f37a4608837dbfddfbf7b3444471cb383a457"
+          }
+        },
+        {
+          "client_id": "197870335964-6jaskes3jam7ulqt091cd7lpjv1ni427.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "msp.group3.caboclient",
+            "certificate_hash": "54b7b2f0b580a564656f7f95be456cdbdcfea4c1"
+          }
+        },
+        {
+          "client_id": "197870335964-h2l1tlqei8opado5c6cqno8luac9kul5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "msp.group3.caboclient",
+            "certificate_hash": "9720ac51c86e276c808be17fadd7227bf3b90855"
+          }
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDRg8YR-kS8wZMaX9kg1edoxEgQBBe78ig"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

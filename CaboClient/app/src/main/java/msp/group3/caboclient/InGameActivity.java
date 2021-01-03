@@ -29,6 +29,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -37,7 +38,9 @@ import java.util.List;
 /**
  * this is an example for a zoomable and scrollable layout
  */
-public class InGameActivity extends AppCompatActivity {
+public class InGameActivity extends AppCompatActivity implements Communicator.CommunicatorCallback {
+    private WebSocketClient mWebSocketClient;
+    private Communicator communicator;
 
     private com.otaliastudios.zoom.ZoomLayout zoomLayout;
 
@@ -160,6 +163,16 @@ public class InGameActivity extends AppCompatActivity {
 
         chatFragmentContainer = findViewById(R.id.fragment_chat);
         chatFragmentContainer.setVisibility(View.INVISIBLE);
+
+
+        communicator = Communicator.getInstance(this);
+        mWebSocketClient = communicator.getmWebSocketClient();
+        communicator.setActivity(this);
+        /*try {
+            communicator.sendMessage(JSON_commands.sendWelcomeMessage(TypeDefs.welcomeMessage));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }*/
 
     }
 
@@ -1021,34 +1034,36 @@ public class InGameActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * created by Alain Feimer
-     * bearbeitet und vervollständigt by Iris Turba (siehe unten)
-     * Hier werden die vom Gamestate gesendeten Intents verarbeitet
-     * Durch ihren eindeutige zugewiesenen key können sie schnell identifizeiert werden
-     */
+
     public void processExtraData() throws JSONException {
         Intent intent = getIntent();
         String key = intent.getStringExtra("key");
         if (key!=null){
         switch (key) {
             case "Willkommen":
-                //showMessage("Willkommen in Catan!");
+
                 break;
             case "myID":
                 Toast.makeText(this, "This is my Toast message!",
                         Toast.LENGTH_LONG).show();
-                //myid = intent.getIntExtra("id", 0);
-                //MainActivity.mWebSocketClient.send(JSON_commands.statusupdate(TypeDefs.readyForGamestart).toString());
                 break;
             case "test2":
                 Toast.makeText(this, "client!",
                         Toast.LENGTH_LONG).show();
-                //myid = intent.getIntExtra("id", 0);
-
                 break;
         }}
     }
 
 
+    @Override
+    public void handelTextMessage(String message) throws JSONException {
+        JSONObject jsonObject = new JSONObject(message);
+
+        if (jsonObject.has("chatMessage")) {
+                String chatText = jsonObject.get("chatMessage").toString();
+               // TODO pauline: den String chatText einfach nur anzeigen :)
+
+        }
+
+    }
 }
