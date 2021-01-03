@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.ScaleAnimation;
@@ -61,6 +62,7 @@ public class InGameActivity extends AppCompatActivity {
     private com.airbnb.lottie.LottieAnimationView tapPickCardAnimation;
     private com.airbnb.lottie.LottieAnimationView timerAnimation;
 
+
     private ImageView cardSwapBg;
     private int zoomBtnCount = 0;
     private int chatButtonCount = 0;
@@ -68,6 +70,8 @@ public class InGameActivity extends AppCompatActivity {
 
 
     private ImageButton playedCardsStackButton;
+    private ImageView playedCardsStackGlow;
+    private ImageView player1CardsGlow;
     private ImageButton pickCardsStackButton;
 
     private androidx.fragment.app.FragmentContainerView chatFragmentContainer;
@@ -81,11 +85,11 @@ public class InGameActivity extends AppCompatActivity {
     private final List<de.hdodenhof.circleimageview.CircleImageView> playerPics = new ArrayList<>();
     private final List<TextView> playerStats = new ArrayList<>();
     private final List<TextView> playerNames = new ArrayList<>();
-    private final List<Integer> cardClickCounts = new ArrayList<>();
     private final List<Integer> player1CardClickCounts = new ArrayList<>();
     private final List<Integer> player2CardClickCounts = new ArrayList<>();
     private final List<Integer> player3CardClickCounts = new ArrayList<>();
     private final List<Integer> player4CardClickCounts = new ArrayList<>();
+    private final List<com.airbnb.lottie.LottieAnimationView> playerHighlightAnimations = new ArrayList<>();
 
 
 
@@ -133,6 +137,10 @@ public class InGameActivity extends AppCompatActivity {
         timerAnimation.setVisibility(View.INVISIBLE);
 
         playedCardsStackButton = (ImageButton) findViewById(R.id.played_cards_imageButton);
+        playedCardsStackGlow = findViewById(R.id.card_glow_imageview);
+        playedCardsStackGlow.setVisibility(View.INVISIBLE);
+        player1CardsGlow = findViewById(R.id.player1_card_glow_imageview);
+        player1CardsGlow.setVisibility(View.INVISIBLE);
         pickCardsStackButton = (ImageButton) findViewById(R.id.pick_card_imageButton);
 
         //TODO insert Number of Players here
@@ -161,6 +169,8 @@ public class InGameActivity extends AppCompatActivity {
         //initiateInitialCardLookUp();
         //initiateSpyAction();
 
+        testIndicatePlayerTurn(1);
+        tapPickCardAnimation.setVisibility(View.VISIBLE);
 
         chatButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -218,6 +228,8 @@ public class InGameActivity extends AppCompatActivity {
         playedCardsStackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                player1CardsGlow.setVisibility(View.INVISIBLE);
+                playedCardsStackGlow.setVisibility(View.INVISIBLE);
                 Toast.makeText(getApplicationContext(),
                         "Discard card...", Toast.LENGTH_SHORT).show();
                 makePickedCardContainerDisappear();
@@ -225,12 +237,16 @@ public class InGameActivity extends AppCompatActivity {
                 for(ImageButton cardButton : player1CardButtons){
                     cardButton.setSelected(false);
                 }
+                deactivateAllOnCardClickListeners();
             }
         });
 
         pickCardsStackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                tapPickCardAnimation.setVisibility(View.INVISIBLE);
+                growCardGlowAnimation(playedCardsStackGlow);
+                growCardGlowAnimation(player1CardsGlow);
                 showPickedCardInContainer();
                 playedCardsStackButton.setEnabled(true);
                 setPlayer1CardsOnClickListeners(1);
@@ -238,7 +254,7 @@ public class InGameActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View view) {
                         playSwapAnimation();
-                        switchButton.setEnabled(false);
+                        deactivateAllOnCardClickListeners();
                         switchButton.setVisibility(View.INVISIBLE);
                         makePickedCardContainerDisappear();
                         for(ImageButton cardButton : player1CardButtons){
@@ -351,6 +367,8 @@ public class InGameActivity extends AppCompatActivity {
                     if(nrCardsSelected==cardsAllowed){
                         peekButton.setEnabled(true);
                     }
+                    player1CardsGlow.setVisibility(View.INVISIBLE);
+                    playedCardsStackGlow.setVisibility(View.INVISIBLE);
                 }
             });
         }
@@ -570,10 +588,14 @@ public class InGameActivity extends AppCompatActivity {
 
         Collections.addAll(playerOverviews, findViewById(R.id.player1_stats_game), findViewById(R.id.player2_stats_game), findViewById(R.id.player3_stats_game), findViewById(R.id.player4_stats_game));
 
+        Collections.addAll(playerHighlightAnimations, findViewById(R.id.player1_highlight_animationView), findViewById(R.id.player2_highlight_animationView),
+                findViewById(R.id.player3_highlight_animationView), findViewById(R.id.player4_highlight_animationView));
+
         for (int i = nrPlayers; i < 4; i++) {
             playerPics.get(i).setVisibility(View.INVISIBLE);
             playerStats.get(i).setVisibility(View.INVISIBLE);
             playerNames.get(i).setVisibility(View.INVISIBLE);
+            playerHighlightAnimations.get(i).setVisibility(View.INVISIBLE);
         }
 
         for (int i = nrPlayers * 4; i < 16; i++) {
@@ -581,15 +603,16 @@ public class InGameActivity extends AppCompatActivity {
         }
         for (int i = 0; i < nrPlayers; i++) {
             playerStats.get(i).setVisibility(View.INVISIBLE);
+            playerHighlightAnimations.get(i).setVisibility(View.INVISIBLE);
         }
     }
 
-    private void growCardAnimation(ImageButton card){
+    private void growCardGlowAnimation(ImageView card){
         //bounds remain the same only image changes
-        ObjectAnimator.ofFloat(card, "scaleX", 1.0f, 1.3f).setDuration(600).start();
-        ObjectAnimator.ofFloat(card, "scaleY", 1.0f, 1.3f).setDuration(600).start();
-        ObjectAnimator.ofFloat(card, "x", -15).setDuration(600).start();
-        ObjectAnimator.ofFloat(card, "y", -15).setDuration(600).start();
+        AlphaAnimation fade_in = new AlphaAnimation(0f, 1f);
+        fade_in.setDuration(2000);
+        fade_in.setFillAfter(true);
+        card.startAnimation(fade_in);
     }
 
     //TODO insert actual image of card depending on value
@@ -955,7 +978,12 @@ public class InGameActivity extends AppCompatActivity {
         scaleView(playerOverviews.get(player.getId()-1), 1.2f);
     }
     private void testIndicatePlayerTurn(int i){
-        scaleView(playerOverviews.get(i-1), 1.2f);
+        for(com.airbnb.lottie.LottieAnimationView animation : playerHighlightAnimations){
+            animation.setVisibility(View.INVISIBLE);
+            animation.cancelAnimation();
+        }
+        playerHighlightAnimations.get(i-1).setVisibility(View.VISIBLE);
+        playerHighlightAnimations.get(i-1).playAnimation();
     }
 
     public void scaleView(View v, float factor) {
