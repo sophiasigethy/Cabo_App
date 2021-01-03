@@ -361,7 +361,7 @@ public class InGameActivity extends AppCompatActivity {
                         /*Toast.makeText(getApplicationContext(),
                                 "Cards selected: "+nrCardsSelected, Toast.LENGTH_SHORT).show();*/
                     }
-                    if(pickedCardButtonContainer.getVisibility()==View.VISIBLE && nrCardsSelected==cardsAllowed){
+                    if(pickedCardButtonContainer.getVisibility()==View.VISIBLE){
                         switchButton.setVisibility(View.VISIBLE);
                     }
                     if(nrCardsSelected==cardsAllowed){
@@ -613,6 +613,11 @@ public class InGameActivity extends AppCompatActivity {
         fade_in.setDuration(2000);
         fade_in.setFillAfter(true);
         card.startAnimation(fade_in);
+
+        ScaleAnimation grow_in = new ScaleAnimation(0.8f, 1f, 0.8f, 1f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        grow_in.setDuration(1000);
+        grow_in.setFillAfter(true);
+        card.startAnimation(grow_in);
     }
 
     //TODO insert actual image of card depending on value
