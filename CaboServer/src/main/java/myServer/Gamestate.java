@@ -299,7 +299,7 @@ public class Gamestate {
         for (Map.Entry<String, Player> entry : players.entrySet()) {
             String key = entry.getKey();
             Player player = entry.getValue();
-            player.updateCardList();
+            //player.updateCardList();
             socketHandler.sendMessage(getSessionBySessionId(key), JSON_commands.sendInitialCards(player));
         }
     }
