@@ -103,8 +103,10 @@ public class LoginActivity extends AppCompatActivity {
                             } else {
                                 // If sign in fails, display a message to the user.
                                 Log.w(TAG, "signInWithEmail:failure", task.getException());
-                                Toast.makeText(LoginActivity.this, "No such user found",
-                                        Toast.LENGTH_SHORT).show();
+                                Toast.makeText(LoginActivity.this,
+                                        "User Authentication Failed: "
+                                                + task.getException().getMessage(),
+                                        Toast.LENGTH_LONG).show();
                                 Intent registerIntent = new Intent(
                                         LoginActivity.this, RegisterActivity.class);
                                 LoginActivity.this.startActivity(registerIntent);
