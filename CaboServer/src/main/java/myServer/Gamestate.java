@@ -6,11 +6,10 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 public class Gamestate {
@@ -24,7 +23,7 @@ public class Gamestate {
     //status of the game- see Type Defs for all 3 state
     private String state = TypeDefs.MATCHING;
 
-    public CardSuiteManager cardSuiteMgr = null;
+    // public CardSuiteManager cardSuiteMgr = null;
 
     //manages the connection
     private SocketHandler socketHandler;
@@ -34,11 +33,14 @@ public class Gamestate {
     private WebSocketSession currentSession;
 
     public Gamestate(SocketHandler socketHandler) {
-        this.cardSuiteMgr = new CardSuiteManager();
-
+        // this.cardSuiteMgr = new CardSuiteManager();
+        this.generateCards(true);
         this.socketHandler = socketHandler;
     }
-
+    public Gamestate(SocketHandler socketHandler, boolean shouldShuffle) {
+        this.generateCards(false);
+        this.socketHandler = socketHandler;
+    }
     /**
      * this method handles how to proceed when a client connects
      * -> if there are not too many players yet (MAX_PLAYER), the player will be registered, otherwise not
@@ -115,7 +117,7 @@ public class Gamestate {
                         //sends gamestart and players start to play cabo
                         sendToAll(JSON_commands.statusupdateServer(state));
                         //send 4 cards to every client
-                        distributeCardAtBeginning();
+                        distributeCardsAtBeginning();
                         sendInitialCards();
                     } else {
                         //send status update to inform client that system is waiting for other players
@@ -164,7 +166,8 @@ public class Gamestate {
      */
     private void addPlayer(WebSocketSession webSocketSession, String name) throws IOException {
         this.countPlayer++;
-        Player newPlayer = new Player(generateId(), name, cardSuiteMgr);
+        // Player newPlayer = new Player(generateId(), name, cardSuiteMgr);
+        Player newPlayer = new Player(generateId(), name, this);
         this.players.put(webSocketSession.getId(), newPlayer);
         //player is informed that he can join the game
         socketHandler.sendMessage(webSocketSession, JSON_commands.Welcome(newPlayer));
@@ -288,13 +291,6 @@ public class Gamestate {
         }
     }
 
-    /**
-     * Distribute cards to all participated players;
-     */
-    public void distributeCardAtBeginning() {
-        cardSuiteMgr.distributeCardsAtBeginning();
-    }
-
     public void sendInitialCards() throws IOException {
         for (Map.Entry<String, Player> entry : players.entrySet()) {
             String key = entry.getKey();
@@ -363,6 +359,211 @@ public class Gamestate {
             }
         }
         return true;
+    }
+
+    /*****************************************
+     * Copy and Paste from CardSuiteManager
+     ****************************************
+     */
+    // reference: https://www.youtube.com/watch?v=aCo-iNedw2g
+
+    final static int CARD_NUMBER = 13 * 4;
+    private final static int DISTRIBUTION_CARD_NUMBER_AT_BEGINNING = 4;
+
+    // The cards in available pile, face-down, never exposed these cards to clients
+    private ArrayList<Card> availableCards = null;
+    // The cards drawn from available card pile, they may be in discarded card pile, clients' decks.
+    private ArrayList<Card> playedCards = null;
+    // The cards discarded by clients, face-up
+    private ArrayList<Card> discardedCards = null;
+
+    // The game is terminate or not. It mean at least one client reaches more than 100 score.
+    private boolean terminated = false;
+
+    // Logger handler
+    private final static Logger logger = Logger.getLogger(Gamestate.class.getName());
+
+    public void generateCards(boolean shouldShuffle) {
+        if (this.terminated) {
+            logger.log(Level.INFO, "The game is terminated, no need to generate cards anymore.");
+            this.availableCards = null;
+            this.playedCards = null;
+            this.discardedCards = null;
+            return;
+        }
+        this.availableCards = new ArrayList<>();
+        this.playedCards = new ArrayList<>();
+        this.discardedCards = new ArrayList<>();
+
+        this.generateUnShuffledCards();
+        this.shuffleCards(shouldShuffle);
+        logger.log(Level.INFO, "The cards is generated successfully.");
+
+    }
+    /**
+     * Generate cards
+     */
+    private void generateUnShuffledCards() {
+        for (int i = 0; i <= 13; i ++) {
+            if (i == 0 || i == 13) {
+                this.availableCards.add(new Card(i, TypeDefs.SPADE));
+                this.availableCards.add(new Card(i, TypeDefs.CLUB));
+            } else if (i == 7 || i == 8) {
+                // NOTE: 7 or 8: 'peek'
+                this.availableCards.add(new Card(i, TypeDefs.SPADE, TypeDefs.PEEK));
+                this.availableCards.add(new Card(i, TypeDefs.CLUB, TypeDefs.PEEK));
+                this.availableCards.add(new Card(i, TypeDefs.HEART, TypeDefs.PEEK));
+                this.availableCards.add(new Card(i, TypeDefs.DIAMOND, TypeDefs.PEEK));
+            } else if (i == 9 || i == 10) {
+                // NOTE: 9 or 10: 'spy'
+                this.availableCards.add(new Card(i, TypeDefs.SPADE, TypeDefs.SPY));
+                this.availableCards.add(new Card(i, TypeDefs.CLUB, TypeDefs.SPY));
+                this.availableCards.add(new Card(i, TypeDefs.HEART, TypeDefs.SPY));
+                this.availableCards.add(new Card(i, TypeDefs.DIAMOND, TypeDefs.SPY));
+            } else if (i == 11 || i == 12) {
+                // 11 or 12: 'swap'
+                this.availableCards.add(new Card(i, TypeDefs.SPADE, TypeDefs.SWAP));
+                this.availableCards.add(new Card(i, TypeDefs.CLUB, TypeDefs.SWAP));
+                this.availableCards.add(new Card(i, TypeDefs.HEART, TypeDefs.SWAP));
+                this.availableCards.add(new Card(i, TypeDefs.DIAMOND, TypeDefs.SWAP));
+            } else {
+                this.availableCards.add(new Card(i, TypeDefs.SPADE));
+                this.availableCards.add(new Card(i, TypeDefs.CLUB));
+                this.availableCards.add(new Card(i, TypeDefs.HEART));
+                this.availableCards.add(new Card(i, TypeDefs.DIAMOND));
+            }
+        }
+        logger.log(Level.FINER, "Generate plain cards successfully.");
+    }
+
+    /**
+     * Shuffle cards
+     * @param shouldShuffle the flag to show whether the cards should be shuffled
+     */
+    private void shuffleCards(boolean shouldShuffle) {
+        if (shouldShuffle) {
+            logger.log(Level.FINER, "Shuffling the cards");
+            Collections.shuffle(this.availableCards);
+        } else {
+            logger.log(Level.FINER, "We don't want to shuffle the cards");
+        }
+    }
+
+    /**
+     * Terminate the game
+     */
+    private void terminate() {
+        this.terminated = true;
+    }
+
+    /**
+     * @TODO Make this function easy to extend
+     * Calculate the scores once caboed
+     */
+    public void calcScores() {
+        // ArrayList<Player> allPlayers = this.cardSuiteManager.getPlayers();
+        // Case1: Checking the special case, (0, 0, 13, 13)
+        for (Player player : players.values()) {
+            if (player.getCards().size() == 4) {
+                Card ca = player.getCards().get(0);
+                Card cb = player.getCards().get(1);
+                Card cc = player.getCards().get(2);
+                Card cd = player.getCards().get(3);
+
+                boolean special = false;
+                if (ca.getValue() == cb.getValue() && (ca.getValue() == 0 || ca.getValue() == 13)) {
+                    if (cc.getValue() == cd.getValue() && (cd.getValue() == 0 || cd.getValue() == 13)) {
+                        // Player has special cards (0, 0, 13, 13) or (13, 13, 0, 0)
+                        special = true;
+                    }
+                } else if (ca.getValue() == cc.getValue() && (ca.getValue() == 0 || ca.getValue() == 13)) {
+                    if (cb.getValue() == cd.getValue() && (cd.getValue() == 0 || cd.getValue() == 13)) {
+                        // Player has special cards (0, 13, 0, 13) or (13, 0, 13, 0)
+                        special = true;
+                    }
+                } else if (ca.getValue() == cd.getValue() && (ca.getValue() == 0 || ca.getValue() == 13)) {
+                    if (cb.getValue() == cc.getValue() && (cb.getValue() == 0 || cb.getValue() == 13)) {
+                        // Player has special cards (0, 13, 13, 0) or (13, 0, 0, 13)
+                        special = true;
+                    }
+                }
+                if (special) {
+                    for (Player _player : players.values()) {
+                        if (player.getId() != _player.getId()) {
+                            _player.setScore(_player.getScore() + 50);
+                            if (_player.getScore() == 100 || _player.getScore() == 50) {
+                                _player.setScore(_player.getScore() / 2);
+                            }
+                            if (_player.getScore() > 100) {
+                                this.terminate();
+                            }
+                        }
+                    }
+                    // Inside speical case
+                    return;
+                }
+            }
+        }
+
+        // Case 2: common case
+        int smallestPoint = Integer.MAX_VALUE;
+
+        for (Player player : players.values()) {
+            if (smallestPoint > player.calculatePoints()) {
+                smallestPoint = player.calculatePoints();
+            }
+        }
+        for (Player player : players.values()) {
+            if (player.getCalledCabo()) {
+                if (smallestPoint != player.calculatePoints()) {
+                    player.setScore(player.calculatePoints() * 2 + player.getScore());
+                } else {
+                    // get zero score this time
+                }
+            } else {
+                player.setScore(player.getScore() + player.calculatePoints());
+
+            }
+            if (player.getScore() == 100 || player.getScore() == 50) {
+                player.setScore(player.getScore()/2);
+            }
+            if (player.getScore() > 100) {
+                this.terminate();
+            }
+        }
+    }
+
+    /**
+     * Draw a card from `availableCards` pile
+     * @return a card retrieve from `availableCard`
+     */
+    public Card takeFirstCardFromAvailableCards() {
+        Card card = this.availableCards.remove(0);
+        this.playedCards.add(card);
+        return card;
+    }
+
+    public ArrayList<Card> getAvailableCards() {
+        return this.availableCards;
+    }
+
+    public ArrayList<Card> getDiscardedCards() {
+        return this.discardedCards;
+    }
+    public ArrayList<Card> getPlayedCards() {
+        return this.playedCards;
+    }
+
+    /**
+     * Distribute cards to all participated players;
+     */
+    public void distributeCardsAtBeginning() {
+        players.forEach((k, player) -> {
+            player.reset();
+            for (int i = 0; i < DISTRIBUTION_CARD_NUMBER_AT_BEGINNING; i ++) {
+                player.drawCard();
+            }
+        });
     }
 }
 
