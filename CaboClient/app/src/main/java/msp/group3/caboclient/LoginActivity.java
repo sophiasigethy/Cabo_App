@@ -156,34 +156,10 @@ public class LoginActivity extends AppCompatActivity {
         String myDbId = DatabaseOperation.getDao().getCurrentUser().getUid();
         SharedPreferences sharedPref = getApplicationContext().getSharedPreferences(
                 R.string.preference_file_key + "", Context.MODE_PRIVATE);
-        DatabaseReference myref = DatabaseOperation.getDao().getUserRef(myDbId);
-        //if (!sharedPref.getString(String.valueOf(R.string.preference_userdbid), "None").equals(myDbId)) {
-        ValueEventListener readPlayerEvent = new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                SharedPreferences.Editor editor = sharedPref.edit();
-                editor.putString(String.valueOf(R.string.preference_userdbid),
-                        snapshot.child("dbID").getValue().toString());
-                editor.putString(String.valueOf(R.string.preference_username),
-                        snapshot.child("name").getValue().toString());
-                editor.putString(String.valueOf(R.string.preference_usermail),
-                        snapshot.child("mail").getValue().toString());
-                editor.putString(String.valueOf(R.string.preference_usernick),
-                        snapshot.child("nick").getValue().toString());
-                editor.apply();
-                nick = snapshot.child("nick").getValue().toString();
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-            }
-        };
-        myref.addValueEventListener(readPlayerEvent);
-        //}
+        DatabaseOperation.getDao().setupDatabaseListener(myDbId, sharedPref);
         DatabaseOperation.getDao().updateLastLoggedIn(myDbId);
         Intent myIntent = new Intent(LoginActivity.this, MainActivity.class);
         myIntent.putExtra("dbid", myDbId);
-        myIntent.putExtra("nick", nick);
         LoginActivity.this.startActivity(myIntent);
     }
 }

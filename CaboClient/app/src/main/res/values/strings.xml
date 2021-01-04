@@ -30,4 +30,5 @@
     <string name="preference_username">username</string>
     <string name="preference_usermail">usermail</string>
     <string name="preference_usernick">usernick</string>
+    <string name="preference_friendlist">friendlist</string>
 </resources>

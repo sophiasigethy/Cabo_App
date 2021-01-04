@@ -1,29 +1,19 @@
 package msp.group3.caboclient;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-
-import android.os.Build;
-//import android.support.v7.app.AppCompatActivity;
-import android.text.method.ScrollingMovementMethod;
-import android.util.TypedValue;
-import android.view.View;
-import android.widget.EditText;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
+import androidx.appcompat.app.AppCompatActivity;
 
 import org.java_websocket.client.WebSocketClient;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
+//import android.support.v7.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity implements Communicator.CommunicatorCallback {
 
@@ -46,11 +36,14 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
         communicator.connectWebSocket();
         mWebSocketClient = communicator.getmWebSocketClient();
         me = DatabaseOperation.getDao().readPlayerFromSharedPrefs(getApplicationContext());
-        if (me.getNick().equals("None"))    {
+        if (me.getNick().equals("None")) {
             me.setNick(getIntent().getStringExtra("nick"));
         }
         Toast.makeText(MainActivity.this, R.string.welcome + " " + me.getNick(), Toast.LENGTH_LONG);
         userNameTxt.setText("Welcome " + me.getNick());
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_list_item_1, me.getFriendsNicknames());
+        friendList.setAdapter(adapter);
         //startGame();
     }
 
