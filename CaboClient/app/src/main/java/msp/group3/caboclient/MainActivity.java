@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
         communicator.connectWebSocket();
         mWebSocketClient = communicator.getmWebSocketClient();
 
-        startGame();
+        //startMatching();
     }
 
 
@@ -75,6 +75,5 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
     public void startMatching() {
         Intent intent = new Intent(MainActivity.this, WaitingRoomActivity.class);
         startActivity(intent);
-
     }
 }

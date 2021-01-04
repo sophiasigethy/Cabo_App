@@ -39,7 +39,6 @@ import java.util.List;
  * this is an example for a zoomable and scrollable layout
  */
 public class InGameActivity extends AppCompatActivity implements Communicator.CommunicatorCallback {
-    private WebSocketClient mWebSocketClient;
     private Communicator communicator;
 
     private com.otaliastudios.zoom.ZoomLayout zoomLayout;
@@ -166,7 +165,6 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
 
 
         communicator = Communicator.getInstance(this);
-        mWebSocketClient = communicator.getmWebSocketClient();
         communicator.setActivity(this);
         /*try {
             communicator.sendMessage(JSON_commands.sendWelcomeMessage(TypeDefs.welcomeMessage));
