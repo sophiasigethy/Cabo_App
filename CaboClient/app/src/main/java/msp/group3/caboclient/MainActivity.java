@@ -4,47 +4,58 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-
-import android.os.Build;
-//import android.support.v7.app.AppCompatActivity;
-import android.text.method.ScrollingMovementMethod;
-import android.util.TypedValue;
 import android.view.View;
-import android.widget.EditText;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.google.gson.Gson;
+import androidx.appcompat.app.AppCompatActivity;
 
 import org.java_websocket.client.WebSocketClient;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
+//import android.support.v7.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity implements Communicator.CommunicatorCallback {
 
-
-    private TextView mTextView;
-
+    private Player me;
     private Communicator communicator;
     private WebSocketClient mWebSocketClient;
-    private String myDbID;
+    private ListView friendList;
+    private TextView userNameTxt;
+    private Button startGameBtn;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        myDbID = getIntent().getStringExtra("dbid");
-
-        mTextView = (TextView) findViewById(R.id.connecting);
+        friendList = (ListView) findViewById(R.id.list_friends);
+        userNameTxt = (TextView) findViewById(R.id.username);
+        startGameBtn = (Button) findViewById(R.id.start_game_btn);
 
         //connects to server
         communicator = Communicator.getInstance(this);
         communicator.connectWebSocket();
         mWebSocketClient = communicator.getmWebSocketClient();
-
-        //startMatching();
+        me = DatabaseOperation.getDao().readPlayerFromSharedPrefs(getApplicationContext());
+        if (me.getNick().equals("None")) {
+            me.setNick(getIntent().getStringExtra("nick"));
+        }
+        Toast.makeText(MainActivity.this, R.string.welcome + " " + me.getNick(), Toast.LENGTH_LONG);
+        userNameTxt.setText("Welcome " + me.getNick());
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_list_item_1, me.getFriendsNicknames());
+        friendList.setAdapter(adapter);
+        startGameBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startMatching();
+            }
+        });
     }
 
 
@@ -56,18 +67,16 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
      *
      * @param message
      */
-    public void handelTextMessage(String message) throws JSONException {
+    public void handleTextMessage(String message) throws JSONException {
         JSONObject jsonObject = new JSONObject(message);
 //        if (message.equalsIgnoreCase("startMatching")) {
 //            startMatching();
 //        }
         if (jsonObject.has("accepted")) {
-            startMatching();
+            Toast.makeText(MainActivity.this, "Connected", Toast.LENGTH_LONG);
         }
         if (jsonObject.has("notAccepted")) {
             String mes = TypeDefs.server + jsonObject.get("notAccepted").toString();
-            mTextView.setText(mes);
-            mTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP,20);
         }
     }
 

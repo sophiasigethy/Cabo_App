@@ -14,7 +14,7 @@ public class Player {
     private ArrayList<Card> cards = new ArrayList<>();
 
     @JsonIgnore
-    private CardSuiteManager cardSuiteManager;
+    private Gamestate gamestate;
 
     private String status;
 
@@ -30,14 +30,12 @@ public class Player {
         this.status=TypeDefs.waiting;
     }
 
-    public Player(int id, String name, CardSuiteManager mgr) {
+    public Player(int id, String name, Gamestate gs) {
         this.id = id;
         this.name = name;
-        this.cardSuiteManager = mgr;
-        this.cardSuiteManager.addPlayer(this);
-        this.status=TypeDefs.waiting;
+        this.gamestate = gs;
+        this.status = TypeDefs.waiting;
     }
-
     public int getId() {
         return id;
     }
@@ -79,8 +77,7 @@ public class Player {
      */
     public void drawCard() {
         if (this.calledCabo) return;
-
-        this.cards.add(this.cardSuiteManager.takeFirstCardFromAvailableCards());
+        this.cards.add(this.gamestate.takeFirstCardFromAvailableCards());
     }
 
     /**
@@ -100,7 +97,7 @@ public class Player {
 
         // Remove all of them
         for (int i = 0; i < cardsToRemove.size(); i ++) {
-            this.cardSuiteManager.getDiscardedCards().add(cardsToRemove.get(i));
+            this.gamestate.getDiscardedCards().add(cardsToRemove.get(i));
             this.cards.remove(cardsToRemove.get(i));
         }
     }
@@ -154,8 +151,8 @@ public class Player {
                         cardsToSwap.set(i, myCard);
                         // NOTE: It only need to be called in `availableCards`, no need for `discardedCards`
                         if (shouldUpdatePlayedCards) {
-                            this.cardSuiteManager.getPlayedCards().add(otherCard);
-                            this.cardSuiteManager.getPlayedCards().remove(myCard);
+                            this.gamestate.getPlayedCards().add(otherCard);
+                            this.gamestate.getPlayedCards().remove(myCard);
                         }
                         swapped = true;
                     }
@@ -170,7 +167,7 @@ public class Player {
      * @param otherCard
      */
     public void swapWithAvailableCards(Card myCard, Card otherCard) {
-        this.swapWithPileCards(this.cardSuiteManager.getAvailableCards(), myCard, otherCard, true);
+        this.swapWithPileCards(this.gamestate.getAvailableCards(), myCard, otherCard, true);
     }
     /**
      * Swap with discarded card pile
@@ -179,7 +176,7 @@ public class Player {
      * @param otherCard
      */
     public void swapWithDiscardedCards(Card myCard, Card otherCard) {
-        this.swapWithPileCards(this.cardSuiteManager.getDiscardedCards(), myCard, otherCard, false);
+        this.swapWithPileCards(this.gamestate.getDiscardedCards(), myCard, otherCard, false);
     }
     /**
      * Get the points of all cards play obtains
@@ -219,15 +216,7 @@ public class Player {
     }
 
     public ArrayList<Card> getMyCards() {
-        // updateCardList();
         return this.cards;
-    }
-    public void updateCardList() {
-//        ArrayList<Card> cards = new ArrayList<>();
-//        for (int i = 0; i < this.cardIndexes.size(); i ++) {
-//            cards.add(this.cardSuiteManager.getCardByIndex(this.cardIndexes.get(i)));
-//        }
-        // this.cards =cards;
     }
 
     public String getStatus() {
