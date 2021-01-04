@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import org.java_websocket.client.WebSocketClient;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -262,6 +263,13 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
 
     @Override
     public void handleTextMessage(String message) throws JSONException {
+        JSONObject jsonObject = new JSONObject(message);
+
+        if (jsonObject.has("chatMessage")) {
+                String chatText = jsonObject.get("chatMessage").toString();
+               // TODO pauline: den String chatText einfach nur anzeigen :)
+
+        }
 
     }
 }
