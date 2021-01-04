@@ -31,6 +31,14 @@
           }
         },
         {
+          "client_id": "197870335964-a2iv8tttk50kvfbrevq7ht9p2vcg8ckg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "msp.group3.caboclient",
+            "certificate_hash": "90bbb785ee22b5299f038586f669f692bf132ed0"
+          }
+        },
+        {
           "client_id": "197870335964-h2l1tlqei8opado5c6cqno8luac9kul5.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
