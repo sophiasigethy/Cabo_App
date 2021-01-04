@@ -4,7 +4,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,6 +26,7 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
     private WebSocketClient mWebSocketClient;
     private ListView friendList;
     private TextView userNameTxt;
+    private Button startGameBtn;
 
 
     @Override
@@ -32,6 +35,7 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
         setContentView(R.layout.activity_main);
         friendList = (ListView) findViewById(R.id.list_friends);
         userNameTxt = (TextView) findViewById(R.id.username);
+        startGameBtn = (Button) findViewById(R.id.start_game_btn);
 
         //connects to server
         communicator = Communicator.getInstance(this);
@@ -46,7 +50,12 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_list_item_1, me.getFriendsNicknames());
         friendList.setAdapter(adapter);
-        //startGame();
+        startGameBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startMatching();
+            }
+        });
     }
 
 
@@ -64,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
 //            startMatching();
 //        }
         if (jsonObject.has("accepted")) {
-            startMatching();
+            Toast.makeText(MainActivity.this, "Connected", Toast.LENGTH_LONG);
         }
         if (jsonObject.has("notAccepted")) {
             String mes = TypeDefs.server + jsonObject.get("notAccepted").toString();
@@ -75,6 +84,5 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
     public void startMatching() {
         Intent intent = new Intent(MainActivity.this, WaitingRoomActivity.class);
         startActivity(intent);
-
     }
 }
