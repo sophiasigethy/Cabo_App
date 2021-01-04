@@ -69,7 +69,7 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
             e.printStackTrace();
         }
 
-        //startGame();
+        startGame();
 
     }
 
