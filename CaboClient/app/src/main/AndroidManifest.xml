@@ -16,12 +16,14 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.CaboClient">
         <activity
-                android:name=".LoginActivity"
-                android:label="@string/title_activity_login">
-            <!--<intent-filter>
+            android:name=".LoginActivity"
+            android:configChanges="orientation"
+            android:label="@string/title_activity_login"
+            android:screenOrientation="portrait">
+            <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>-->
+            </intent-filter>
         </activity>
 
         <activity
@@ -32,15 +34,15 @@
         </activity>
 
         <activity
-                android:name=".WaitingRoomActivity"
-                android:screenOrientation="sensorLandscape"
-                android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"/>
-        <activity android:name=".MainActivity"
-                  android:label="@string/title_main_activity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            android:name=".WaitingRoomActivity"
+            android:screenOrientation="sensorLandscape"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen" />
+
+        <activity
+            android:name=".MainActivity"
+            android:configChanges="orientation"
+            android:label="@string/title_main_activity"
+            android:screenOrientation="portrait">
         </activity>
 
         <activity
