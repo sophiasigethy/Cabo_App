@@ -1,5 +1,8 @@
 package myServer;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.web.socket.TextMessage;
@@ -16,8 +19,8 @@ public class Gamestate {
 
     // contains websocketsession-id and the associated player object
     public HashMap<String, Player> players = new HashMap<String, Player>();
-    private final int MAX_PLAYER = 2;
-    private int test=0;
+    private final int MAX_PLAYER = 1;
+    private int test = 0;
     // determines how many players are already registered
     private int countPlayer = 0;
     //status of the game- see Type Defs for all 3 state
@@ -32,15 +35,20 @@ public class Gamestate {
     //client who sent something most recently
     private WebSocketSession currentSession;
 
+    private int currentPlayerId = 0;
+    private Card currentPickedCard = null;
+
     public Gamestate(SocketHandler socketHandler) {
         // this.cardSuiteMgr = new CardSuiteManager();
         this.generateCards(true);
         this.socketHandler = socketHandler;
     }
+
     public Gamestate(SocketHandler socketHandler, boolean shouldShuffle) {
         this.generateCards(false);
         this.socketHandler = socketHandler;
     }
+
     /**
      * this method handles how to proceed when a client connects
      * -> if there are not too many players yet (MAX_PLAYER), the player will be registered, otherwise not
@@ -79,8 +87,7 @@ public class Gamestate {
                 e.printStackTrace();
             }
         }
-        //TODO remove player from cardsuit player list
-        //cardSuiteMgr.getPlayers().remove();
+
     }
 
     /**
@@ -116,9 +123,9 @@ public class Gamestate {
                     if (isMaxPlayer()) {
                         //sends gamestart and players start to play cabo
                         sendToAll(JSON_commands.statusupdateServer(state));
-                        //send 4 cards to every client
+                       /* //send 4 cards to every client
                         distributeCardsAtBeginning();
-                        sendInitialCards();
+                        sendInitialCards();*/
                     } else {
                         //send status update to inform client that system is waiting for other players
                         socketHandler.sendMessage(session, JSON_commands.statusupdateServer(state));
@@ -133,7 +140,7 @@ public class Gamestate {
             //sendToOne(jsonObject);
         }
 
-        if (jsonObject.has("statusupdate")) {
+        /*if (jsonObject.has("statusupdate")) {
             String status = jsonObject.get("statusupdate").toString();
             if (status.equalsIgnoreCase(TypeDefs.readyForGamestart)) {
                 getPlayerBySessionId(session.getId()).setStatus(TypeDefs.readyForGamestart);
@@ -145,9 +152,125 @@ public class Gamestate {
                     sendNextPlayer(nextPlayerId);
                 }
             }
-        }
+        }*/
         if (jsonObject.has("startGameForAll")) {
             sendToAll(JSON_commands.startGame("start"));
+
+        }
+        if (jsonObject.has("askForInitialSettings")) {
+            sendToAll(JSON_commands.sendMAXPlayer(MAX_PLAYER));
+
+            generateCards(true);
+            //send 4 cards to every client
+            distributeCardsAtBeginning();
+            sendInitialPlayerSettings();
+
+        }
+
+        if (jsonObject.has("memorizedCards")) {
+            getPlayerBySessionId(session.getId()).setStatus(TypeDefs.readyForGamestart);
+            if (checkIfEveryoneReady()) {
+                //send which player's turn it is
+                currentPlayerId = getFirstPlayer();
+                updatePlayerStatus();
+                sendStatusupdatePlayer();
+                sendNextPlayer();
+            }
+        }
+
+        if (jsonObject.has("pickCard")) {
+
+            if (checkIfPlayerIsAuthorised(getPlayerBySessionId(session.getId()))) {
+                //TODO draw card ? discard card?
+                Card card = takeFirstCardFromAvailableCards();
+                //TODO method for card
+                currentPickedCard = card;
+                Player firstPlayer = getPlayerById(currentPlayerId);
+                if (firstPlayer != null) {
+                    socketHandler.sendMessage(session, JSON_commands.sendFirstCard(card));
+                }
+            }
+        }
+
+        if (jsonObject.has("swapPickedCardWithOwnCards")) {
+            if (checkIfPlayerIsAuthorised(getPlayerBySessionId(session.getId()))) {
+                JSONObject js = jsonObject.getJSONObject("swapPickedCardWithOwnCards");
+                String json = js.get("card").toString();
+                ObjectMapper objectMapper = new ObjectMapper();
+                objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+                Card card = objectMapper.readValue(json, Card.class);
+                Player currentPlayer = getPlayerBySessionId(session.getId());
+                //TODO call swap method?
+                currentPlayer.swapWithAvailableCards(card, currentPickedCard);
+                sendToAll(JSON_commands.sendDiscardedCard(card));
+
+                sendToAll(JSON_commands.sendUpdatePlayer(currentPlayer));
+            }
+        }
+
+        if (jsonObject.has("playPickedCard")) {
+            if (checkIfPlayerIsAuthorised(getPlayerBySessionId(session.getId()))) {
+                JSONObject js = jsonObject.getJSONObject("playPickedCard");
+                String json = js.get("card").toString();
+                ObjectMapper objectMapper = new ObjectMapper();
+                objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+                Card card = objectMapper.readValue(json, Card.class);
+
+                sendToAll(JSON_commands.sendPlayedCard(card));
+
+            }
+        }
+
+        if (jsonObject.has("useFunctionalityPeek")) {
+            if (checkIfPlayerIsAuthorised(getPlayerBySessionId(session.getId()))) {
+                JSONObject js = jsonObject.getJSONObject("useFunctionalityPeek");
+                String json = js.get("card").toString();
+                ObjectMapper objectMapper = new ObjectMapper();
+                objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+                Card card = objectMapper.readValue(json, Card.class);
+                //TODO Handle this case
+
+                Player currentPlayer = getPlayerBySessionId(session.getId());
+                sendToAll(JSON_commands.sendUpdatePlayer(currentPlayer));
+            }
+        }
+        if (jsonObject.has("useFunctionalitySpy")) {
+            if (checkIfPlayerIsAuthorised(getPlayerBySessionId(session.getId()))) {
+                JSONObject js = jsonObject.getJSONObject("useFunctionalitySpy");
+                String json = js.get("card").toString();
+                ObjectMapper objectMapper = new ObjectMapper();
+                objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+                Card card = objectMapper.readValue(json, Card.class);
+                //TODO Handle this case
+
+                Player currentPlayer = getPlayerBySessionId(session.getId());
+                sendToAll(JSON_commands.sendUpdatePlayer(currentPlayer));
+            }
+        }
+        if (jsonObject.has("useFunctionalitySwap")) {
+            if (checkIfPlayerIsAuthorised(getPlayerBySessionId(session.getId()))) {
+                JSONObject js = jsonObject.getJSONObject("useFunctionalitySwap");
+                String json = js.get("card").toString();
+                ObjectMapper objectMapper = new ObjectMapper();
+                objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+                Card card = objectMapper.readValue(json, Card.class);
+                //TODO Handle this case
+                //TODO handle case when one player called cabo
+
+                Player currentPlayer = getPlayerBySessionId(session.getId());
+                sendToAll(JSON_commands.sendUpdatePlayer(currentPlayer));
+            }
+        }
+
+        if (jsonObject.has("finishMove")) {
+            finishMove();
+            sendStatusupdatePlayer();
+            sendToAll(JSON_commands.sendNextPlayer(currentPlayerId));
+        }
+
+        if (jsonObject.has("cabo")) {
+            Player currentPlayer = getPlayerBySessionId(session.getId());
+            currentPlayer.setCalledCabo(true);
         }
     }
 
@@ -231,6 +354,16 @@ public class Gamestate {
         return false;
     }
 
+    public void sendToAllButME(JSONObject jsonObject, WebSocketSession mySession) throws IOException {
+        for (Map.Entry<String, Player> entry : players.entrySet()) {
+            String key = entry.getKey();
+            if (!key.equalsIgnoreCase(mySession.getId())) {
+                socketHandler.sendMessage(getSessionBySessionId(key), jsonObject);
+            }
+
+        }
+    }
+
 
     /**
      * this method checks if there are alredy MAX_PLAYERS connected
@@ -291,14 +424,17 @@ public class Gamestate {
         }
     }
 
-    public void sendInitialCards() throws IOException {
+    public void sendInitialPlayerSettings() throws IOException {
         for (Map.Entry<String, Player> entry : players.entrySet()) {
             String key = entry.getKey();
             Player player = entry.getValue();
             //player.updateCardList();
-            socketHandler.sendMessage(getSessionBySessionId(key), JSON_commands.sendInitialCards(player));
+            socketHandler.sendMessage(getSessionBySessionId(key), JSON_commands.sendInitialME(player));
+            sendToAll(JSON_commands.sendInitialOthers(player));
         }
+
     }
+
 
     public WebSocketSession getSessionBySessionId(String id) {
         for (WebSocketSession session : sessions) {
@@ -321,12 +457,22 @@ public class Gamestate {
         return null;
     }
 
+    public Player getPlayerById(int id) {
+        for (Player player : players.values()) {
+            if (player.getId() == id) {
+                return player;
+            }
+        }
+        return null;
+    }
+
     public int getFirstPlayer() {
         Random random = new Random();
         int start = random.nextInt(MAX_PLAYER + 1);
         if (start == 0) {
             return getFirstPlayer();
         }
+        currentPlayerId = start;
         return start;
     }
 
@@ -336,13 +482,13 @@ public class Gamestate {
         }
     }
 
-    public void sendNextPlayer(int id) throws IOException {
+    public void sendNextPlayer() throws IOException {
         for (WebSocketSession session : sessions) {
-            socketHandler.sendMessage(session, JSON_commands.sendNextPlayer(id));
+            socketHandler.sendMessage(session, JSON_commands.sendNextPlayer(currentPlayerId));
         }
     }
 
-    public void updatePlayerStatus(int currentPlayerId) {
+    public void updatePlayerStatus() {
         for (Player player : players.values()) {
             if (player.getId() == currentPlayerId) {
                 player.setStatus(TypeDefs.playing);
@@ -359,6 +505,39 @@ public class Gamestate {
             }
         }
         return true;
+    }
+
+    public boolean checkIfPlayerIsAuthorised(Player player) {
+        if (player.getStatus().equalsIgnoreCase(TypeDefs.playing)) {
+            return true;
+        }
+        return false;
+    }
+
+    public void finishMove() throws IOException {
+        if (getPlayerById(currentPlayerId).getCalledCabo()){
+            //TODO finish Game
+            calcScores();
+            for (WebSocketSession session: sessions){
+                socketHandler.sendMessage(session, JSON_commands.sendScores(getPlayerBySessionId(session.getId())));
+            }
+        }else{
+            currentPlayerId=getNextPlayerId();
+            updatePlayerStatus();
+        }
+
+    }
+
+    public int getNextPlayerId(){
+        int oldId = currentPlayerId;
+        int nextId= 0;
+        if (oldId==MAX_PLAYER){
+            nextId=1;
+            return nextId;
+        }else{
+            nextId++;
+            return nextId;
+        }
     }
 
     /*****************************************
@@ -400,11 +579,12 @@ public class Gamestate {
         logger.log(Level.INFO, "The cards is generated successfully.");
 
     }
+
     /**
      * Generate cards
      */
     private void generateUnShuffledCards() {
-        for (int i = 0; i <= 13; i ++) {
+        for (int i = 0; i <= 13; i++) {
             if (i == 0 || i == 13) {
                 this.availableCards.add(new Card(i, TypeDefs.SPADE));
                 this.availableCards.add(new Card(i, TypeDefs.CLUB));
@@ -438,6 +618,7 @@ public class Gamestate {
 
     /**
      * Shuffle cards
+     *
      * @param shouldShuffle the flag to show whether the cards should be shuffled
      */
     private void shuffleCards(boolean shouldShuffle) {
@@ -525,7 +706,7 @@ public class Gamestate {
 
             }
             if (player.getScore() == 100 || player.getScore() == 50) {
-                player.setScore(player.getScore()/2);
+                player.setScore(player.getScore() / 2);
             }
             if (player.getScore() > 100) {
                 this.terminate();
@@ -535,6 +716,7 @@ public class Gamestate {
 
     /**
      * Draw a card from `availableCards` pile
+     *
      * @return a card retrieve from `availableCard`
      */
     public Card takeFirstCardFromAvailableCards() {
@@ -550,6 +732,7 @@ public class Gamestate {
     public ArrayList<Card> getDiscardedCards() {
         return this.discardedCards;
     }
+
     public ArrayList<Card> getPlayedCards() {
         return this.playedCards;
     }
@@ -560,7 +743,7 @@ public class Gamestate {
     public void distributeCardsAtBeginning() {
         players.forEach((k, player) -> {
             player.reset();
-            for (int i = 0; i < DISTRIBUTION_CARD_NUMBER_AT_BEGINNING; i ++) {
+            for (int i = 0; i < DISTRIBUTION_CARD_NUMBER_AT_BEGINNING; i++) {
                 player.drawCard();
             }
         });

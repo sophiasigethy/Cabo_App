@@ -124,5 +124,16 @@ public class Player {
     public void setFriendListID(int friendListID) {
         this.friendListID = friendListID;
     }
+
+    public void updateCards(Player other){
+
+        this.myCards =other.getMyCards();
+
+    }
+    public void updateScore(Player other){
+
+        this.score =other.getScore();
+
+    }
 }
 

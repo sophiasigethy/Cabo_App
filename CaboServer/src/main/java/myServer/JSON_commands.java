@@ -126,15 +126,15 @@ public class JSON_commands {
 
     }
 
-    public static JSONObject sendInitialCards(Player player) throws JsonProcessingException {
+    public static JSONObject sendInitialME(Player player) throws JsonProcessingException {
         player.getMyCards();
         ObjectMapper objectMapper = new ObjectMapper();
 
         JSONObject jmsg = new JSONObject();
         JSONObject jsubmsg = new JSONObject();
 
-        jsubmsg.put("player", objectMapper.writeValueAsString(player));
-        jmsg.put("initialCards", jsubmsg);
+        jsubmsg.put("me", objectMapper.writeValueAsString(player));
+        jmsg.put("initialMe", jsubmsg);
 
         return jmsg;
     }
@@ -167,6 +167,85 @@ public class JSON_commands {
 
         jsubmsg.put("player", objectMapper.writeValueAsString(player));
         jmsg.put("removePlayer", jsubmsg);
+
+        return jmsg;
+    }
+
+
+    public static JSONObject sendMAXPlayer(int countPlayer) throws JSONException {
+        return new JSONObject().put("sendMAXPlayer", countPlayer);
+    }
+
+    public static JSONObject sendInitialOthers(Player player) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        JSONObject jmsg = new JSONObject();
+        JSONObject jsubmsg = new JSONObject();
+
+        jsubmsg.put("otherPlayer", objectMapper.writeValueAsString(player));
+        jmsg.put("initialOtherPlayer", jsubmsg);
+
+        return jmsg;
+    }
+
+    public static JSONObject sendFirstCard(Card card) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        JSONObject jmsg = new JSONObject();
+        JSONObject jsubmsg = new JSONObject();
+
+        jsubmsg.put("card", objectMapper.writeValueAsString(card));
+        jmsg.put("pickedCard", jsubmsg);
+
+        return jmsg;
+
+    }
+
+    public static JSONObject sendPlayedCard(Card card) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        JSONObject jmsg = new JSONObject();
+        JSONObject jsubmsg = new JSONObject();
+
+        jsubmsg.put("card", objectMapper.writeValueAsString(card));
+        jmsg.put("playedCard", jsubmsg);
+
+        return jmsg;
+
+    }
+
+    public static JSONObject sendDiscardedCard(Card card) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        JSONObject jmsg = new JSONObject();
+        JSONObject jsubmsg = new JSONObject();
+
+        jsubmsg.put("card", objectMapper.writeValueAsString(card));
+        jmsg.put("discardedCard", jsubmsg);
+
+        return jmsg;
+    }
+
+    public static JSONObject sendUpdatePlayer(Player player) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        JSONObject jmsg = new JSONObject();
+        JSONObject jsubmsg = new JSONObject();
+
+        jsubmsg.put("player", objectMapper.writeValueAsString(player));
+        jmsg.put("updatePlayer", jsubmsg);
+
+        return jmsg;
+    }
+
+    public static JSONObject sendScores(Player player) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        JSONObject jmsg = new JSONObject();
+        JSONObject jsubmsg = new JSONObject();
+
+        jsubmsg.put("player", objectMapper.writeValueAsString(player));
+        jmsg.put("score", jsubmsg);
 
         return jmsg;
     }
