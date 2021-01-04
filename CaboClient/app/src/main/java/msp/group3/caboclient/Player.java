@@ -13,7 +13,7 @@ public class Player {
     private String mail = "";
     private String nick = "";
     private int score;
-    private int friendListID;
+    private ArrayList<Player> friendList = new ArrayList<>();
     private ArrayList<Card> myCards = new ArrayList<>();
 
 
@@ -33,6 +33,11 @@ public class Player {
         this.dbID = dbID;
         this.name = name;
         this.mail = mail;
+        this.nick = nick;
+    }
+
+    public Player(String dbID, String nick) {
+        this.dbID = dbID;
         this.nick = nick;
     }
 
@@ -117,12 +122,20 @@ public class Player {
         this.score = score;
     }
 
-    public int getFriendListID() {
-        return friendListID;
+    public ArrayList<Player> getFriendList() {
+        return friendList;
     }
 
-    public void setFriendListID(int friendListID) {
-        this.friendListID = friendListID;
+    public ArrayList<String> getFriendsNicknames()  {
+        ArrayList<String> nicks = new ArrayList<>();
+        for (Player player : friendList)    {
+            nicks.add(player.getNick());
+        }
+        return nicks;
+    }
+
+    public void setFriendList(ArrayList<Player> friendList) {
+        this.friendList = friendList;
     }
 }
 

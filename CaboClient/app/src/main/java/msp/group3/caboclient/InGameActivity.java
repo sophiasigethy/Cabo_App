@@ -1056,7 +1056,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
 
 
     @Override
-    public void handelTextMessage(String message) throws JSONException {
+    public void handleTextMessage(String message) throws JSONException {
         JSONObject jsonObject = new JSONObject(message);
 
         if (jsonObject.has("chatMessage")) {
