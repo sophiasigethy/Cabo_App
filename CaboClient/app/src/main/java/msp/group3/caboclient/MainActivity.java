@@ -1,21 +1,30 @@
 package msp.group3.caboclient;
 
-import androidx.appcompat.app.AppCompatActivity;
-
+import android.app.Activity;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.gson.internal.LinkedTreeMap;
 
 import org.java_websocket.client.WebSocketClient;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 //import android.support.v7.app.AppCompatActivity;
 
@@ -27,6 +36,8 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
     private ListView friendList;
     private TextView userNameTxt;
     private Button startGameBtn;
+    private Button addFriendBtn;
+    private SharedPreferences sharedPref;
 
 
     @Override
@@ -36,12 +47,15 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
         friendList = (ListView) findViewById(R.id.list_friends);
         userNameTxt = (TextView) findViewById(R.id.username);
         startGameBtn = (Button) findViewById(R.id.start_game_btn);
+        addFriendBtn = (Button) findViewById(R.id.add_friend_btn);
+        sharedPref = getApplicationContext().getSharedPreferences(
+                R.string.preference_file_key + "", Context.MODE_PRIVATE);
 
         //connects to server
         communicator = Communicator.getInstance(this);
         communicator.connectWebSocket();
         mWebSocketClient = communicator.getmWebSocketClient();
-        me = DatabaseOperation.getDao().readPlayerFromSharedPrefs(getApplicationContext());
+        me = DatabaseOperation.getDao().readPlayerFromSharedPrefs(sharedPref);
         if (me.getNick().equals("None")) {
             me.setNick(getIntent().getStringExtra("nick"));
         }
@@ -56,8 +70,14 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
                 startMatching();
             }
         });
+        addFriendBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DatabaseOperation.getDao().updateUserList(sharedPref);
+                showAddFriendDialog();
+            }
+        });
     }
-
 
 
     /**
@@ -84,5 +104,72 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
     public void startMatching() {
         Intent intent = new Intent(MainActivity.this, WaitingRoomActivity.class);
         startActivity(intent);
+    }
+
+
+    private void showAddFriendDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        builder.setTitle(R.string.search_friend);
+        // Set up the input
+        LinearLayout linearLayout = new LinearLayout(MainActivity.this);
+        linearLayout.setOrientation(LinearLayout.VERTICAL);
+        final EditText searchNick = new EditText(MainActivity.this);
+        searchNick.setHint(R.string.enter_nick);
+        searchNick.setWidth(70);
+        linearLayout.addView(searchNick);
+        // Set up the buttons
+        builder.setPositiveButton(R.string.search, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        });
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        builder.setView(linearLayout);
+        final AlertDialog dialog = builder.create();
+        dialog.show();
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!searchNick.getText().toString().isEmpty()) {
+                    ArrayList<Player> allUsers = DatabaseOperation.getDao().getAllUsersList(sharedPref);
+                    if (allUsers.size() > 0) {
+                        for (Player user : allUsers) {
+                            if (user.getNick().toLowerCase().equals(
+                                    searchNick.getText().toString().toLowerCase())) {
+                                Toast.makeText(MainActivity.this,
+                                        "Friendrequest sent to " + user.getDbID(), Toast.LENGTH_LONG);
+                                //TODO Send FriendRequest
+                                dialog.dismiss();
+                                break;
+                            }
+                        }
+                        Toast.makeText(MainActivity.this,
+                                "No such user found: " + searchNick.getText().toString(), Toast.LENGTH_LONG);
+                        dialog.dismiss();
+                    }
+                }
+                Toast.makeText(MainActivity.this,
+                        "Friendrequest aborted", Toast.LENGTH_LONG);
+                dialog.cancel();
+            }
+        });
+    }
+
+    /**
+     * Called when the activity has detected the user's press of the back
+     * key. The {@link #getOnBackPressedDispatcher() OnBackPressedDispatcher} will be given a
+     * chance to handle the back button before the default behavior of
+     * {@link Activity#onBackPressed()} is invoked.
+     *
+     * @see #getOnBackPressedDispatcher()
+     */
+    @Override
+    public void onBackPressed() {
+        //TODO Display Dialog if user wants to exit
     }
 }

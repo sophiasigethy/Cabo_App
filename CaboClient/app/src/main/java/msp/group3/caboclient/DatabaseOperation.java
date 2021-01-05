@@ -1,6 +1,5 @@
 package msp.group3.caboclient;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
@@ -46,9 +45,11 @@ public class DatabaseOperation {
         return database.getReference("cabo/users").child(dbID);
     }
 
-    public Player readPlayerFromSharedPrefs(Context context) {
-        SharedPreferences sharedPref = context.getSharedPreferences(
-                R.string.preference_file_key + "", Context.MODE_PRIVATE);
+    public DatabaseReference getUsersRef() {
+        return database.getReference("cabo/users");
+    }
+
+    public Player readPlayerFromSharedPrefs(SharedPreferences sharedPref) {
         Player player = new Player(
                 sharedPref.getString(String.valueOf(R.string.preference_userdbid), "None"),
                 sharedPref.getString(String.valueOf(R.string.preference_username), "None"),
@@ -133,6 +134,53 @@ public class DatabaseOperation {
         sharedPreferencesEditor.putString(serializedObjectKey, serializedObject);
         sharedPreferencesEditor.apply();
     }
+
+    public void updateUserList(SharedPreferences sharedPref) {
+        //Read all registered users from Firebase RealtimeDatabase and write them to SharedPrefs
+        DatabaseReference myref = getUsersRef();
+        ValueEventListener readAllPlayersEvent = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                ArrayList<Player> users = new ArrayList<>();
+                for (DataSnapshot user : snapshot.getChildren()) {
+                    String dbId = (String) user.child("dbID").getValue();
+                    if (dbId != null) {
+                        String nick = user.child("nick").getValue().toString();
+                        if (nick != null)
+                            users.add(new Player(dbId, nick));
+                    }
+                }
+                saveObjectToSharedPreference(
+                        sharedPref, String.valueOf(R.string.preference_users), users);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        };
+        myref.addListenerForSingleValueEvent(readAllPlayersEvent);
+        myref.child("0").setValue((System.currentTimeMillis()) + "");
+    }
+
+    public ArrayList<Player> getAllUsersList(SharedPreferences sharedPref) {
+        // Read serialized list of all registered users
+        // Maybe it´s a good idea to call updateUserList() before
+        ArrayList<Player> allUsers = new ArrayList<>();
+        String users = sharedPref.getString(String.valueOf(R.string.preference_users), "None");
+        if (!users.equals("None")) {
+            ArrayList deserializedUsers = getSavedObjectFromPreference(
+                    sharedPref, String.valueOf(R.string.preference_users), ArrayList.class);
+            if (deserializedUsers.size() > 0) {
+                for (int i = 0; i < deserializedUsers.size(); i++) {
+                    String dbID = (String) ((LinkedTreeMap) deserializedUsers.get(i)).get("dbID");
+                    String nick = (String) ((LinkedTreeMap) deserializedUsers.get(i)).get("nick");
+                    allUsers.add(new Player(dbID, nick));
+                }
+            }
+        }
+        return allUsers;
+    }
+
 
     public static <GenericClass> GenericClass getSavedObjectFromPreference(
             SharedPreferences sharedPreferences, String preferenceKey, Class<GenericClass> classType) {

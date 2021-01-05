@@ -25,10 +25,15 @@
     <string name="game_settings">"Game Settings"</string>
     <string name="find_game">"Find Game"</string>
     <string name="add_friend">"Add a Friend"</string>
+    <string name="search_friend">Search friend</string>
+    <string name="enter_nick">Enter a Nickname</string>
+    <string name="search">Search</string>
     <string name="preference_file_key">user</string>
     <string name="preference_userdbid">userdbid</string>
     <string name="preference_username">username</string>
     <string name="preference_usermail">usermail</string>
     <string name="preference_usernick">usernick</string>
     <string name="preference_friendlist">friendlist</string>
+    <string name="preference_users">all_users</string>
+
 </resources>
