@@ -240,6 +240,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         playedCardsStackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                cardPopAnimation(playedCardsStackButton);
                 player1CardsGlow.setVisibility(View.INVISIBLE);
                 playedCardsStackGlow.setVisibility(View.INVISIBLE);
                 Toast.makeText(getApplicationContext(),
@@ -256,6 +257,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         pickCardsStackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                cardPopAnimation(pickCardsStackButton);
                 tapPickCardAnimation.setVisibility(View.INVISIBLE);
                 growCardGlowAnimation(playedCardsStackGlow);
                 growCardGlowAnimation(player1CardsGlow);
@@ -630,6 +632,17 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         grow_in.setDuration(1000);
         grow_in.setFillAfter(true);
         card.startAnimation(grow_in);
+    }
+
+    private void cardPopAnimation(ImageButton button){
+        ScaleAnimation grow_in = new ScaleAnimation(1f, 1.2f, 1f, 1.2f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        grow_in.setDuration(500);
+        grow_in.setStartOffset(500);
+        button.startAnimation(grow_in);
+        ScaleAnimation grow_out = new ScaleAnimation(1.2f, 1f, 1.2f, 1f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        grow_out.setDuration(500);
+        grow_out.setStartOffset(500);
+        button.startAnimation(grow_out);
     }
 
     //TODO insert actual image of card depending on value
