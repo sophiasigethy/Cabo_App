@@ -19,8 +19,8 @@ public class Gamestate {
 
     // contains websocketsession-id and the associated player object
     public HashMap<String, Player> players = new HashMap<String, Player>();
-    private final int MAX_PLAYER = 2;
-    private int test = 0;
+    private final int MAX_PLAYER = 1;
+    private int test=0;
     // determines how many players are already registered
     private int countPlayer = 0;
     //status of the game- see Type Defs for all 3 state
@@ -722,7 +722,7 @@ public class Gamestate {
 
             }
             if (player.getScore() == 100 || player.getScore() == 50) {
-                player.setScore(player.getScore() / 2);
+                player.setScore(player.getScore()/2);
             }
             if (player.getScore() > 100) {
                 this.terminate();
@@ -759,7 +759,7 @@ public class Gamestate {
     public void distributeCardsAtBeginning() {
         players.forEach((k, player) -> {
             player.reset();
-            for (int i = 0; i < DISTRIBUTION_CARD_NUMBER_AT_BEGINNING; i++) {
+            for (int i = 0; i < DISTRIBUTION_CARD_NUMBER_AT_BEGINNING; i ++) {
                 player.drawCard();
             }
         });

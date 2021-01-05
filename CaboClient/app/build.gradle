@@ -51,5 +51,11 @@ dependencies {
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+    implementation 'com.google.code.gson:gson:2.8.6'
+    implementation 'de.hdodenhof:circleimageview:3.1.0'
+    implementation 'com.otaliastudios:zoomlayout:1.8.0'
+    implementation "androidx.fragment:fragment:1.2.5"
+    def lottieVersion = "3.6.0"
+    implementation "com.airbnb.android:lottie:$lottieVersion"
 
 }

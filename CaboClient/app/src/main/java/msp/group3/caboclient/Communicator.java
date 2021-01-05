@@ -28,7 +28,7 @@ public class Communicator {
     private static Communicator instance;
 
     public interface CommunicatorCallback extends Serializable {
-        public void handelTextMessage(String message) throws JSONException;
+        public void handleTextMessage(String message) throws JSONException;
     }
 
 
@@ -70,7 +70,7 @@ public class Communicator {
             public void onMessage(String s) {
 
                 try {
-                    activity.handelTextMessage(s);
+                    activity.handleTextMessage(s);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
