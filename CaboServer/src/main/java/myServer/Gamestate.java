@@ -210,13 +210,13 @@ public class Gamestate {
 
         if (jsonObject.has("playPickedCard")) {
             if (checkIfPlayerIsAuthorised(getPlayerBySessionId(session.getId()))) {
-                JSONObject js = jsonObject.getJSONObject("playPickedCard");
+                /*JSONObject js = jsonObject.getJSONObject("playPickedCard");
                 String json = js.get("card").toString();
                 ObjectMapper objectMapper = new ObjectMapper();
                 objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-                Card card = objectMapper.readValue(json, Card.class);
+                Card card = objectMapper.readValue(json, Card.class);*/
 
-                sendToAll(JSON_commands.sendPlayedCard(card));
+                sendToAll(JSON_commands.sendPlayedCard(currentPickedCard));
 
             }
         }
