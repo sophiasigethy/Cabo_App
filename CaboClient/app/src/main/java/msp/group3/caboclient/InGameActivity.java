@@ -153,7 +153,10 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         player1CardsGlow.setVisibility(View.INVISIBLE);
         pickCardsStackButton = (ImageButton) findViewById(R.id.pick_card_imageButton);
 
+        setUpPlayerStats();
         setUpOnClickListeners();
+
+        pickCardsStackButton.setEnabled(false);
 
         //TODO: Chat fragment integration
         if (savedInstanceState == null) {
@@ -584,7 +587,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
 
 
 
-    private void setUpPlayerStats(int nrPlayers) {
+    private void setUpPlayerStats() {
 
         Collections.addAll(player1CardButtons, findViewById(R.id.player1_card1_imageButton), findViewById(R.id.player1_card2_imageButton), findViewById(R.id.player1_card3_imageButton), findViewById(R.id.player1_card4_imageButton));
         Collections.addAll(player2CardButtons, findViewById(R.id.player2_card1_imageButton), findViewById(R.id.player2_card2_imageButton), findViewById(R.id.player2_card3_imageButton), findViewById(R.id.player2_card4_imageButton));
@@ -609,6 +612,20 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
 
         Collections.addAll(otherPlayerButtonLists, player2CardButtons, player3CardButtons, player4CardButtons);
 
+        for(int i=0; i<4; i++){
+            player1CardButtons.get(i).setVisibility(View.INVISIBLE);
+            player2CardButtons.get(i).setVisibility(View.INVISIBLE);
+            player3CardButtons.get(i).setVisibility(View.INVISIBLE);
+            player4CardButtons.get(i).setVisibility(View.INVISIBLE);
+            playerPics.get(i).setVisibility(View.INVISIBLE);
+            playerStats.get(i).setVisibility(View.INVISIBLE);
+            playerNames.get(i).setVisibility(View.INVISIBLE);
+            playerOverviews.get(i).setVisibility(View.INVISIBLE);
+            playerHighlightAnimations.get(i).setVisibility(View.INVISIBLE);
+        }
+    }
+
+    private void visualizePlayerStats(int nrPlayers){
         for(int i=nrPlayers; i<4; i++){
             playerPics.get(i).setVisibility(View.INVISIBLE);
             playerStats.get(i).setVisibility(View.INVISIBLE);
@@ -1153,7 +1170,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
 
         if (jsonObject.has("sendMAXPlayer")) {
             int maxPlayer = (int) jsonObject.get("sendMAXPlayer");
-            setUpPlayerStats(maxPlayer);
+            visualizePlayerStats(maxPlayer);
             // TODO pauline: hier wurde die Anzahl Spieler geschickt
         }
         if (jsonObject.has("initialMe")) {
