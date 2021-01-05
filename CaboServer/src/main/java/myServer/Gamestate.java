@@ -19,7 +19,7 @@ public class Gamestate {
 
     // contains websocketsession-id and the associated player object
     public HashMap<String, Player> players = new HashMap<String, Player>();
-    private final int MAX_PLAYER = 1;
+    private final int MAX_PLAYER = 2;
     private int test = 0;
     // determines how many players are already registered
     private int countPlayer = 0;
@@ -230,35 +230,51 @@ public class Gamestate {
                 Card card = objectMapper.readValue(json, Card.class);
                 //TODO Handle this case
 
+                sendToAll(JSON_commands.useFunctionalityPeek(card));
                 Player currentPlayer = getPlayerBySessionId(session.getId());
-                sendToAll(JSON_commands.sendUpdatePlayer(currentPlayer));
+
             }
         }
         if (jsonObject.has("useFunctionalitySpy")) {
             if (checkIfPlayerIsAuthorised(getPlayerBySessionId(session.getId()))) {
                 JSONObject js = jsonObject.getJSONObject("useFunctionalitySpy");
-                String json = js.get("card").toString();
+                String json1 = js.get("card").toString();
+                String json3 = js.get("spyedPlayer").toString();
+
                 ObjectMapper objectMapper = new ObjectMapper();
                 objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-                Card card = objectMapper.readValue(json, Card.class);
+                Card card = objectMapper.readValue(json1, Card.class);
+                Player spyedPlayer = objectMapper.readValue(json3, Player.class);
+
                 //TODO Handle this case
 
+
+                sendToAll(JSON_commands.useFunctionalitySpy(card, spyedPlayer));
                 Player currentPlayer = getPlayerBySessionId(session.getId());
-                sendToAll(JSON_commands.sendUpdatePlayer(currentPlayer));
+
             }
         }
         if (jsonObject.has("useFunctionalitySwap")) {
             if (checkIfPlayerIsAuthorised(getPlayerBySessionId(session.getId()))) {
                 JSONObject js = jsonObject.getJSONObject("useFunctionalitySwap");
-                String json = js.get("card").toString();
+                String json = js.get("card1").toString();
+                String json2 = js.get("card2").toString();
+                String json3 = js.get("player1").toString();
+                String json4 = js.get("player1").toString();
                 ObjectMapper objectMapper = new ObjectMapper();
                 objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-                Card card = objectMapper.readValue(json, Card.class);
+                Card card1 = objectMapper.readValue(json, Card.class);
+                Card card2 = objectMapper.readValue(json2, Card.class);
+                Player player1 = objectMapper.readValue(json3, Player.class);
+                Player player2 = objectMapper.readValue(json4, Player.class);
                 //TODO Handle this case
                 //TODO handle case when one player called cabo
 
+                sendToAll(JSON_commands.sendUpdatePlayer(getPlayerById(player1.getId())));
+                sendToAll(JSON_commands.sendUpdatePlayer(getPlayerById(player2.getId())));
+                sendToAll(JSON_commands.useFunctionalitySwap(card1,player1, card2,player2));
                 Player currentPlayer = getPlayerBySessionId(session.getId());
-                sendToAll(JSON_commands.sendUpdatePlayer(currentPlayer));
+
             }
         }
 

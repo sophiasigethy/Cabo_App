@@ -96,25 +96,29 @@ public class JSON_commands {
 
         return jmsg;
     }
-    public static JSONObject useFunctionalitySpy(Card card) throws JSONException {
+    public static JSONObject useFunctionalitySpy(Card card, Player player) throws JSONException {
         Gson gson= new Gson();
 
         JSONObject jmsg = new JSONObject();
         JSONObject jsubmsg = new JSONObject();
 
         jsubmsg.put("card", gson.toJson(card));
+        jsubmsg.put("spyedPlayer", gson.toJson(player));
         jmsg.put("useFunctionalitySpy", jsubmsg);
 
         return jmsg;
     }
 
-    public static JSONObject useFunctionalitySwap(Card card) throws JSONException {
+    public static JSONObject useFunctionalitySwap(Card card1, Player player1, Card card2, Player player2) throws JSONException {
         Gson gson= new Gson();
 
         JSONObject jmsg = new JSONObject();
         JSONObject jsubmsg = new JSONObject();
 
-        jsubmsg.put("card", gson.toJson(card));
+        jsubmsg.put("card1", gson.toJson(card1));
+        jsubmsg.put("player1", gson.toJson(player1));
+        jsubmsg.put("card2", gson.toJson(card2));
+        jsubmsg.put("player2", gson.toJson(player2));
         jmsg.put("useFunctionalitySwap", jsubmsg);
 
         return jmsg;

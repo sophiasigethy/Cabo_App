@@ -320,7 +320,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 //danach hat er folgende Möglichkeiten:
                 //1. karte mit eigner Karte tauschen: webSocketClient.send(String.valueOf(JSON_commands.swapPickedCardWithOwnCards(card)));
                 //2. karte ablegen und die Funktionalität nutzen:  webSocketClient.send(String.valueOf(JSON_commands.playPickedCard(card)));
-                webSocketClient.send(String.valueOf(JSON_commands.swapPickedCardWithOwnCards(card)));
+                //webSocketClient.send(String.valueOf(JSON_commands.swapPickedCardWithOwnCards(card)));
                 webSocketClient.send(String.valueOf(JSON_commands.playPickedCard(card)));
             }
 
@@ -332,7 +332,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 Gson gson = new Gson();
                 Card card = gson.fromJson(jsonString, Card.class);
                 //TODO Pauline: dies ist die Karte, die der Spieler (der gerade an der Reihe ist) abgelegt (auf den Ablegestapel),
-                //Indem er die gezogene Karte mit seiner eigenen Karte tauscht
+                //Indem er die gezogene Karte mit seiner eigenen Karte tauscht (!)
                 //diese Karte hat sich also vorher unter den 4 eigenen Karten befunden und wurde jetzt mit der gezogenen Karte getauscht
             }
         }
@@ -346,10 +346,53 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 //TODO Pauline: dies ist die Karte, die der Spieler (der gerade an der Reihe ist)gezogen und abgelegt hat (auf den Ablegestapel)
                 //danach kann er die Funktionalität nutzen:
                 // je nachdem muss dann an den Server dies gesandt werden:
-                //webSocketClient.send(String.valueOf(JSON_commands.useFunctionalityPeek(card)));
-                //webSocketClient.send(String.valueOf(JSON_commands.useFunctionalitySpy(card)));
-                //webSocketClient.send(String.valueOf(JSON_commands.useFunctionalitySwap(card)));
+                webSocketClient.send(String.valueOf(JSON_commands.useFunctionalityPeek(card)));
+                webSocketClient.send(String.valueOf(JSON_commands.useFunctionalitySpy(card, me)));
+                webSocketClient.send(String.valueOf(JSON_commands.useFunctionalitySwap(card, me, card, me)));
+
             }
+        }
+
+        if (jsonObject.has("useFunctionalityPeek")) {
+            JSONObject js = jsonObject.getJSONObject("useFunctionalityPeek");
+            String json = js.get("card").toString();
+
+            Gson gson = new Gson();
+            Card card = gson.fromJson(json, Card.class);
+
+            //TODO Pauline: das ist die Karte, die der Spieler bei sich selbst anschaut -> anzeigen für alle Spieler
+
+        }
+        if (jsonObject.has("useFunctionalitySpy")) {
+
+            JSONObject js = jsonObject.getJSONObject("useFunctionalitySpy");
+            String json1 = js.get("card").toString();
+            String json2 = js.get("spyedPlayer").toString();
+
+            Gson gson = new Gson();
+            Card card = gson.fromJson(json1, Card.class);
+
+            Player spyedPlayer = gson.fromJson(json2, Player.class);
+
+            //TODO pauline: das ist der Spieler und die Karte des Spielers, die angeschaut wird, von dem Spieler der gerade dran ist
+
+        }
+        if (jsonObject.has("useFunctionalitySwap")) {
+
+            JSONObject js = jsonObject.getJSONObject("useFunctionalitySwap");
+            String json1 = js.get("card1").toString();
+            String json2 = js.get("card2").toString();
+            String json3 = js.get("player1").toString();
+            String json4 = js.get("player1").toString();
+            Gson gson = new Gson();
+            Card card1 = gson.fromJson(json1, Card.class);
+
+            Card card2 = gson.fromJson(json1, Card.class);
+            Player player1 = gson.fromJson(json3, Player.class);
+            Player player2 = gson.fromJson(json4, Player.class);
+
+            //TODO Pauline: das sind die Karten und zugehörigen Spieler, die vertauscht wurden
+
         }
 
         if (jsonObject.has("updatePlayer")) {
@@ -387,54 +430,55 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 Gson gson = new Gson();
                 Player player = gson.fromJson(jsonString, Player.class);
                 updateScores(player);
-                String winner= getNameOfWinner();
+                String winner = getNameOfWinner();
                 //TODO Pauline: die Scores sind jetzt in allen Spielern upgedated : player.getScore(); und können somit angezeigt werden
                 // winner ist der Name des Gewinners
             }
         }
     }
 
-    public void updateCards(Player updatedPlayer){
+    public void updateCards(Player updatedPlayer) {
         if (updatedPlayer.getId() == me.getId()) {
             me.updateCards(updatedPlayer);
-        }else{
-            for (Player player: otherPlayers){
-                if (player.getId()==updatedPlayer.getId()){
+        } else {
+            for (Player player : otherPlayers) {
+                if (player.getId() == updatedPlayer.getId()) {
                     player.updateCards(updatedPlayer);
                 }
             }
         }
     }
 
-    public void updateScores(Player updatedPlayer){
+    public void updateScores(Player updatedPlayer) {
         if (updatedPlayer.getId() == me.getId()) {
             me.updateScore(updatedPlayer);
-        }else{
-            for (Player player: otherPlayers){
-                if (player.getId()==updatedPlayer.getId()){
+        } else {
+            for (Player player : otherPlayers) {
+                if (player.getId() == updatedPlayer.getId()) {
                     player.updateScore(updatedPlayer);
                 }
             }
         }
     }
 
-    public String getNameOfWinner(){
-        ArrayList<Integer> scores= new ArrayList<>();
+
+    public String getNameOfWinner() {
+        ArrayList<Integer> scores = new ArrayList<>();
         scores.add(me.getScore());
-        for (Player player: otherPlayers){
+        for (Player player : otherPlayers) {
             scores.add(player.getScore());
         }
         Collections.sort(scores);
-        int winnerScore= scores.get(scores.size()-1);
+        int winnerScore = scores.get(scores.size() - 1);
         return getWinner(winnerScore);
     }
 
     public String getWinner(int winnerScore) {
-        if (me.getScore()==winnerScore){
+        if (me.getScore() == winnerScore) {
             return me.getName();
-        }else{
-            for (Player player: otherPlayers){
-                if (player.getScore()==winnerScore){
+        } else {
+            for (Player player : otherPlayers) {
+                if (player.getScore() == winnerScore) {
                     return player.getName();
                 }
             }

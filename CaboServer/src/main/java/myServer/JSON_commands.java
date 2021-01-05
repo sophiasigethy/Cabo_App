@@ -250,4 +250,43 @@ public class JSON_commands {
         return jmsg;
     }
 
+    public static JSONObject useFunctionalityPeek(Card card) throws JSONException, JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        JSONObject jmsg = new JSONObject();
+        JSONObject jsubmsg = new JSONObject();
+
+        jsubmsg.put("card", objectMapper.writeValueAsString(card));
+        jmsg.put("useFunctionalityPeek", jsubmsg);
+
+        return jmsg;
+    }
+    public static JSONObject useFunctionalitySpy(Card card, Player player) throws JSONException, JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        JSONObject jmsg = new JSONObject();
+        JSONObject jsubmsg = new JSONObject();
+
+        jsubmsg.put("card",objectMapper.writeValueAsString(card));
+        jsubmsg.put("spyedPlayer", objectMapper.writeValueAsString(player));
+        jmsg.put("useFunctionalitySpy", jsubmsg);
+
+        return jmsg;
+    }
+
+    public static JSONObject useFunctionalitySwap(Card card1, Player player1, Card card2, Player player2) throws JSONException, JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        JSONObject jmsg = new JSONObject();
+        JSONObject jsubmsg = new JSONObject();
+
+        jsubmsg.put("card1", objectMapper.writeValueAsString(card1));
+        jsubmsg.put("player1", objectMapper.writeValueAsString(player1));
+        jsubmsg.put("card2", objectMapper.writeValueAsString(card2));
+        jsubmsg.put("player2", objectMapper.writeValueAsString(player2));
+        jmsg.put("useFunctionalitySwap", jsubmsg);
+
+        return jmsg;
+    }
+
 }
