@@ -98,12 +98,15 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
             //TODO: Make message more detailed, to differ what was accepted (friendrequested or game invite?)
             String mes = TypeDefs.server + jsonObject.get("notAccepted").toString();
         }
-        if (jsonObject.has("friendrequestaccepted")) {
+        if (jsonObject.has("friendrequest")) {
             //TODO: Receive dbID and nick from accepting Player, and edit the following accordingly
-            //String receivedDbID = "";
-            //String receivedNick = "";
-            //Player sender = new Player(receivedDbID, receivedNick);
-            //DatabaseOperation.getDao().addFriendships(me, sender);
+            //String destinationDbID = "";
+            //if (destinationDbID.equals(me.getDbID())) {
+            //   String receivedDbID = "";
+            //   String receivedNick = "";
+            //   Player sender = new Player(receivedDbID, receivedNick);
+            //   acceptFriendRequestDialog(sender);
+            //}
         }
     }
 
@@ -165,6 +168,37 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
                 dialog.cancel();
             }
         });
+    }
+
+    private void acceptFriendRequestDialog(Player sender) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        builder.setTitle(R.string.friend_request_received + sender.getNick());
+        builder.setPositiveButton(R.string.accept, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        });
+        builder.setNegativeButton(R.string.decline, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        final AlertDialog dialog = builder.create();
+        dialog.show();
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DatabaseOperation.getDao().addFriendships(me, sender);
+            }
+        });
+        dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO: Return declinefriendrequest message to sender
+            }
+        });
+
     }
 
     /**
