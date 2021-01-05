@@ -1180,6 +1180,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 Gson gson = new Gson();
                 me = gson.fromJson(jsonString, Player.class);
                 // hier wurde me gesetzt
+                initiateInitialCardLookUp();
 
                 //webSocketClient.send(String.valueOf(JSON_commands.sendMemorized("memorized")));
             }
