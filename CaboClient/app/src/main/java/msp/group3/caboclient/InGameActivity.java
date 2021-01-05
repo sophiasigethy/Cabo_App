@@ -1062,7 +1062,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
 
 
     @Override
-    public void handelTextMessage(String message) throws JSONException {
+    public void handleTextMessage(String message) throws JSONException {
         JSONObject jsonObject = new JSONObject(message);
 
         if (jsonObject.has("chatMessage")) {
@@ -1082,7 +1082,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 me = gson.fromJson(jsonString, Player.class);
                 // hier wurde me gesetzt
 
-                webSocketClient.send(String.valueOf(JSON_commands.sendMemorized("memorized")));
+                //webSocketClient.send(String.valueOf(JSON_commands.sendMemorized("memorized")));
             }
         }
         if (jsonObject.has("initialOtherPlayer")) {
@@ -1095,7 +1095,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                     otherPlayers.add(player);
                 }
             }
-            //webSocketClient.send(String.valueOf(JSON_commands.sendMemorized("memorized")));
+
         }
 
         //TODO: wenn alles angezeigt wurde und der Spieler seine Karten angeschaut hat, muss folgendes gesendet werden:
@@ -1106,7 +1106,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             //TODO pauline: call method which shows Client who's turn it is
             // dann muss der player auf den nachziehstapel tippen, um eine karte zu ziehen
             // du kannst immer über me.getStatus() überprüfen, ob der Client wirklich spielen darf -> der Stautus muss gleich "playing" siehe typeDefs sein
-            webSocketClient.send(String.valueOf(JSON_commands.sendPickCard("memorized")));
+            //webSocketClient.send(String.valueOf(JSON_commands.sendPickCard("memorized")));
         }
 
         if (jsonObject.has("pickedCard")) {
@@ -1120,7 +1120,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 //1. karte mit eigner Karte tauschen: webSocketClient.send(String.valueOf(JSON_commands.swapPickedCardWithOwnCards(card)));
                 //2. karte ablegen und die Funktionalität nutzen:  webSocketClient.send(String.valueOf(JSON_commands.playPickedCard(card)));
                 //webSocketClient.send(String.valueOf(JSON_commands.swapPickedCardWithOwnCards(card)));
-                webSocketClient.send(String.valueOf(JSON_commands.playPickedCard(card)));
+               // webSocketClient.send(String.valueOf(JSON_commands.playPickedCard(card)));
             }
 
         }
@@ -1145,9 +1145,9 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 //TODO Pauline: dies ist die Karte, die der Spieler (der gerade an der Reihe ist)gezogen und abgelegt hat (auf den Ablegestapel)
                 //danach kann er die Funktionalität nutzen:
                 // je nachdem muss dann an den Server dies gesandt werden:
-                webSocketClient.send(String.valueOf(JSON_commands.useFunctionalityPeek(card)));
-                webSocketClient.send(String.valueOf(JSON_commands.useFunctionalitySpy(card, me)));
-                webSocketClient.send(String.valueOf(JSON_commands.useFunctionalitySwap(card, me, card, me)));
+                //webSocketClient.send(String.valueOf(JSON_commands.useFunctionalityPeek(card)));
+                //webSocketClient.send(String.valueOf(JSON_commands.useFunctionalitySpy(card, me)));
+               // webSocketClient.send(String.valueOf(JSON_commands.useFunctionalitySwap(card, me, card, me)));
 
             }
         }
@@ -1186,7 +1186,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             Gson gson = new Gson();
             Card card1 = gson.fromJson(json1, Card.class);
 
-            Card card2 = gson.fromJson(json1, Card.class);
+            Card card2 = gson.fromJson(json2, Card.class);
             Player player1 = gson.fromJson(json3, Player.class);
             Player player2 = gson.fromJson(json4, Player.class);
 

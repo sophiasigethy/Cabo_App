@@ -12,7 +12,7 @@ public class TypeDefs {
     public static String playing =  "playing";
     public static String welcomeMessage =  "Hello";
 
-    public static String URI ="ws://192.168.2.125:8080/chat";
+    public static String URI ="ws://192.168.178.27:8080/chat";
 
 }
 
