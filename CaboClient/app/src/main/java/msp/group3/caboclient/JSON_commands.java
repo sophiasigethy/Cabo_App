@@ -73,13 +73,12 @@ public class JSON_commands {
 
     }
 
-    public static JSONObject playPickedCard(Card card) throws JSONException {
+    public static JSONObject playPickedCard() throws JSONException {
         Gson gson= new Gson();
 
         JSONObject jmsg = new JSONObject();
         JSONObject jsubmsg = new JSONObject();
 
-        jsubmsg.put("card", gson.toJson(card));
         jmsg.put("playPickedCard", jsubmsg);
 
         return jmsg;

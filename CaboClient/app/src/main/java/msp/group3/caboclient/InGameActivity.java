@@ -87,6 +87,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
     private final List<ImageButton> player2CardButtons = new ArrayList<>();
     private final List<ImageButton> player3CardButtons = new ArrayList<>();
     private final List<ImageButton> player4CardButtons = new ArrayList<>();
+    private final List<List<ImageButton>> otherPlayerButtonLists = new ArrayList<>();
 
     private final List<de.hdodenhof.circleimageview.CircleImageView> playerPics = new ArrayList<>();
     private final List<TextView> playerStats = new ArrayList<>();
@@ -152,9 +153,6 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         player1CardsGlow.setVisibility(View.INVISIBLE);
         pickCardsStackButton = (ImageButton) findViewById(R.id.pick_card_imageButton);
 
-        //TODO insert Number of Players here
-        setUpPlayerStats(4);
-
         setUpOnClickListeners();
 
         //TODO: Chat fragment integration
@@ -189,8 +187,8 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         //initiateInitialCardLookUp();
         //initiateSpyAction();
 
-        testIndicatePlayerTurn(1);
-        tapPickCardAnimation.setVisibility(View.VISIBLE);
+        //testIndicatePlayerTurn(1);
+
 
         chatButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -232,6 +230,11 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             public void onClick(View view) {
                 Toast.makeText(getApplicationContext(),
                         "CABO!.", Toast.LENGTH_SHORT).show();
+                try {
+                    webSocketClient.send(String.valueOf(JSON_commands.sendCabo("cabo")));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -247,6 +250,11 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         playedCardsStackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                try {
+                    webSocketClient.send(String.valueOf(JSON_commands.playPickedCard()));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
                 player1CardsGlow.setVisibility(View.INVISIBLE);
                 playedCardsStackGlow.setVisibility(View.INVISIBLE);
                 Toast.makeText(getApplicationContext(),
@@ -263,25 +271,14 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         pickCardsStackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                try {
+                    webSocketClient.send(String.valueOf(JSON_commands.sendPickCard("memorized")));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
                 tapPickCardAnimation.setVisibility(View.INVISIBLE);
                 growCardGlowAnimation(playedCardsStackGlow);
                 growCardGlowAnimation(player1CardsGlow);
-                showPickedCardInContainer();
-                playedCardsStackButton.setEnabled(true);
-                setPlayer1CardsOnClickListeners(1);
-                switchButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        playSwapAnimation();
-                        deactivateAllOnCardClickListeners();
-                        switchButton.setVisibility(View.INVISIBLE);
-                        makePickedCardContainerDisappear();
-                        for(ImageButton cardButton : player1CardButtons){
-                            cardButton.setSelected(false);
-                        }
-                    }
-                });
-
             }
         });
 
@@ -610,6 +607,8 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         Collections.addAll(playerHighlightAnimations, findViewById(R.id.player1_highlight_animationView), findViewById(R.id.player2_highlight_animationView),
                 findViewById(R.id.player3_highlight_animationView), findViewById(R.id.player4_highlight_animationView));
 
+        Collections.addAll(otherPlayerButtonLists, player2CardButtons, player3CardButtons, player4CardButtons);
+
         for(int i=nrPlayers; i<4; i++){
             playerPics.get(i).setVisibility(View.INVISIBLE);
             playerStats.get(i).setVisibility(View.INVISIBLE);
@@ -673,7 +672,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
     }
 
     //TODO put card as parameter
-    private void showPickedCardInContainer(){
+    private void showPickedCardInContainer(Card card){
         pickedCardButtonContainer.setVisibility(View.VISIBLE);
         final ObjectAnimator oa1 = ObjectAnimator.ofFloat(pickedCardBigImageview, "scaleX", 1f, 0f);
         final ObjectAnimator oa2 = ObjectAnimator.ofFloat(pickedCardBigImageview, "scaleX", 0f, 1f);
@@ -683,11 +682,35 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             @Override
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
-                pickedCardBigImageview.setImageResource(R.drawable.card_hearts_8);
+                pickedCardBigImageview.setImageResource(getCardResource(card));
                 oa2.start();
             }
         });
         oa1.start();
+        playedCardsStackButton.setEnabled(true);
+        setPlayer1CardsOnClickListeners(1);
+        switchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                playSwapAnimation();
+                deactivateAllOnCardClickListeners();
+                switchButton.setVisibility(View.INVISIBLE);
+                makePickedCardContainerDisappear();
+                for(int i = 0; i<player1CardButtons.size(); i++){
+                    if(player1CardButtons.get(i).isSelected()){
+                        try {
+                            webSocketClient.send(String.valueOf(JSON_commands.swapPickedCardWithOwnCards(me.getMyCards().get(i))));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+                for(ImageButton cardButton : player1CardButtons){
+                    cardButton.setSelected(false);
+                }
+            }
+        });
     }
 
     private void makePickedCardContainerDisappear(){
@@ -849,9 +872,38 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 updateText.setVisibility(View.INVISIBLE);
                 switchButton.setVisibility(View.INVISIBLE);
                 deactivateAllOnCardClickListeners();
+                //TODO
+                /*webSocketClient.send(String.valueOf(JSON_commands.useFunctionalitySwap(selectedCards.get(0), getCardOwner(selectedCards.get(0)),
+                        selectedCards.get(0), getCardOwner(selectedCards.get(1)))));*/
             }
         });
     }
+    private Player getCardOwner(ImageButton cardButton){
+        for(int i=0; i<otherPlayers.size(); i++){
+            if(otherPlayerButtonLists.get(i).contains(cardButton)){
+                return otherPlayers.get(i);
+            }
+        }
+        if(player1CardButtons.contains(cardButton)){
+            return me;
+        }
+        return null;
+    }
+    //TODO nochmal anschauen
+    /*private Card getCardObjectFromButton(ImageButton cardButton){
+        for(int i=0; i<otherPlayers.size(); i++){
+            for(int j=0; j<otherPlayerButtonLists.get(i).size(); j++){
+                return otherPlayers.get(i).getMyCards().get(i);
+            }
+            if(otherPlayerButtonLists.get(i).contains(cardButton)){
+                return otherPlayers.get(i).getMyCards().get(i);
+            }
+        }
+        for(int i=0; i<player1CardButtons.size(); i++)
+        if(player1CardButtons.contains(cardButton)){
+            return me.getMyCards().get();
+        }
+    }*/
 
     private void playSwapAnimation() {
        /* Toast.makeText(getApplicationContext(),
@@ -911,6 +963,17 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 updateText.setVisibility(View.INVISIBLE);
                 deactivateAllOnCardClickListeners();
                 nrCardsSelected = 0;
+                Card selectedCard=null;
+                for(int i = 0; i<otherPlayers.size(); i++){
+                    if(getSelectedCard(otherPlayerButtonLists.get(i), otherPlayers.get(i))!=null){
+                        selectedCard=getSelectedCard(otherPlayerButtonLists.get(i), otherPlayers.get(0));
+                    }
+                }
+                try {
+                    webSocketClient.send(String.valueOf(JSON_commands.useFunctionalitySpy(selectedCard, me)));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         });
     }
@@ -932,11 +995,24 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                         peekButton.setVisibility(View.INVISIBLE);
                     }
                 }
+                try {
+                    webSocketClient.send(String.valueOf(JSON_commands.useFunctionalityPeek(getSelectedCard(player1CardButtons, me))));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
                 updateText.setVisibility(View.INVISIBLE);
                 deactivateAllOnCardClickListeners();
                 nrCardsSelected = 0;
             }
         });
+    }
+    private Card getSelectedCard(List<ImageButton> cardButtons, Player owner){
+        for(int i=0; i<cardButtons.size(); i++){
+            if(cardButtons.get(i).isSelected()){
+                return owner.getMyCards().get(i);
+            }
+        }
+        return null;
     }
 
     private void initiateInitialCardLookUp(){
@@ -960,6 +1036,11 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                         setCountdownTimer(card);
                     }
                     peekButton.setVisibility(View.INVISIBLE);
+                    try {
+                        webSocketClient.send(String.valueOf(JSON_commands.sendMemorized("memorized")));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 }
                 updateText.setVisibility(View.INVISIBLE);
                 deactivateAllOnCardClickListeners();
@@ -1072,6 +1153,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
 
         if (jsonObject.has("sendMAXPlayer")) {
             int maxPlayer = (int) jsonObject.get("sendMAXPlayer");
+            setUpPlayerStats(maxPlayer);
             // TODO pauline: hier wurde die Anzahl Spieler geschickt
         }
         if (jsonObject.has("initialMe")) {
@@ -1103,6 +1185,14 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
 
         if (jsonObject.has("nextPlayer")) {
             int nextPlayerId = jsonObject.getInt("nextPlayer");
+            if(me.getId() == nextPlayerId){
+                indicatePlayerTurn(me);
+                tapPickCardAnimation.setVisibility(View.VISIBLE);
+                pickCardsStackButton.setEnabled(true);
+            }
+            else{
+                indicatePlayerTurn(getPlayerById(nextPlayerId));
+            }
             //TODO pauline: call method which shows Client who's turn it is
             // dann muss der player auf den nachziehstapel tippen, um eine karte zu ziehen
             // du kannst immer über me.getStatus() überprüfen, ob der Client wirklich spielen darf -> der Stautus muss gleich "playing" siehe typeDefs sein
@@ -1116,6 +1206,8 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 Gson gson = new Gson();
                 Card card = gson.fromJson(jsonString, Card.class);
                 //TODO pauline: das ist die Karte, die der Spieler von Nachziehstapel gezogen hat
+                showPickedCardInContainer(card);
+
                 //danach hat er folgende Möglichkeiten:
                 //1. karte mit eigner Karte tauschen: webSocketClient.send(String.valueOf(JSON_commands.swapPickedCardWithOwnCards(card)));
                 //2. karte ablegen und die Funktionalität nutzen:  webSocketClient.send(String.valueOf(JSON_commands.playPickedCard(card)));
@@ -1131,6 +1223,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 Gson gson = new Gson();
                 Card card = gson.fromJson(jsonString, Card.class);
                 //TODO Pauline: dies ist die Karte, die der Spieler (der gerade an der Reihe ist) abgelegt (auf den Ablegestapel),
+                displayDiscardedCard(card);
                 //Indem er die gezogene Karte mit seiner eigenen Karte tauscht (!)
                 //diese Karte hat sich also vorher unter den 4 eigenen Karten befunden und wurde jetzt mit der gezogenen Karte getauscht
             }
@@ -1143,6 +1236,10 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 Gson gson = new Gson();
                 Card card = gson.fromJson(jsonString, Card.class);
                 //TODO Pauline: dies ist die Karte, die der Spieler (der gerade an der Reihe ist)gezogen und abgelegt hat (auf den Ablegestapel)
+                displayDiscardedCard(card);
+                if(me.getStatus().equals(TypeDefs.playing)){
+                    initiateCardAction(card);
+                }
                 //danach kann er die Funktionalität nutzen:
                 // je nachdem muss dann an den Server dies gesandt werden:
                 //webSocketClient.send(String.valueOf(JSON_commands.useFunctionalityPeek(card)));
@@ -1160,6 +1257,9 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             Card card = gson.fromJson(json, Card.class);
 
             //TODO Pauline: das ist die Karte, die der Spieler bei sich selbst anschaut -> anzeigen für alle Spieler
+            if(me.getStatus().equals(TypeDefs.waiting)){
+
+            }
 
         }
         if (jsonObject.has("useFunctionalitySpy")) {
@@ -1174,6 +1274,9 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             Player spyedPlayer = gson.fromJson(json2, Player.class);
 
             //TODO pauline: das ist der Spieler und die Karte des Spielers, die angeschaut wird, von dem Spieler der gerade dran ist
+            if(me.getStatus().equals(TypeDefs.waiting)){
+
+            }
 
         }
         if (jsonObject.has("useFunctionalitySwap")) {
@@ -1191,6 +1294,9 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             Player player2 = gson.fromJson(json4, Player.class);
 
             //TODO Pauline: das sind die Karten und zugehörigen Spieler, die vertauscht wurden
+            if(me.getStatus().equals(TypeDefs.waiting)){
+
+            }
 
         }
 
@@ -1283,6 +1389,15 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             }
         }
         return "";
+    }
+
+    public Player getPlayerById(int id) {
+        for (Player player : otherPlayers) {
+            if (player.getId() == id) {
+                return player;
+            }
+        }
+        return null;
     }
 
 }
