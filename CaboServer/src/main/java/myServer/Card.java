@@ -2,15 +2,17 @@ package myServer;
 
 public class Card {
 
-    private String type;
-    private int value;
+    private String type="";
+    private int value=0;
 
     public void setChoice(String choice) {
         this.choice = choice;
     }
 
     // NOTE: The special effects of a card, such as `spy`, `peek`, `swap`
-    private String choice;
+    private String choice="";
+    public Card (){
+    }
 
     public Card (int value, String type){
         this.value=value;

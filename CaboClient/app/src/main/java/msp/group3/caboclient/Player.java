@@ -137,5 +137,16 @@ public class Player {
     public void setFriendList(ArrayList<Player> friendList) {
         this.friendList = friendList;
     }
+
+    public void updateCards(Player other){
+
+        this.myCards =other.getMyCards();
+
+    }
+    public void updateScore(Player other){
+
+        this.score =other.getScore();
+
+    }
 }
 

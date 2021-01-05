@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
-import android.util.TypedValue;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -24,7 +23,7 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
 
     private EditText editText;
     private Button button;
-    private WebSocketClient mWebSocketClient;
+    private WebSocketClient webSocketClient;
     private Communicator communicator;
     private TextView mTextView;
     private TextView player1_name;
@@ -61,7 +60,7 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
 
 
         communicator = Communicator.getInstance(this);
-        mWebSocketClient = communicator.getmWebSocketClient();
+        webSocketClient = communicator.getmWebSocketClient();
         communicator.setActivity(this);
         try {
             communicator.sendMessage(JSON_commands.sendWelcomeMessage(TypeDefs.welcomeMessage));
@@ -69,7 +68,7 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
             e.printStackTrace();
         }
 
-        startGame();
+       // startGame();
 
     }
 
@@ -88,7 +87,7 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
         } else {
             jsonObject = JSON_commands.Username(message);
         }
-        mWebSocketClient.send(jsonObject.toString());
+        webSocketClient.send(jsonObject.toString());
         editText.setText("");
     }
 
@@ -191,7 +190,7 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
                 }
                 //TODO nur für testzwecke sonst auskommentieren
                 // showCards();
-                mWebSocketClient.send(JSON_commands.statusupdate(TypeDefs.readyForGamestart).toString());
+                webSocketClient.send(JSON_commands.statusupdate(TypeDefs.readyForGamestart).toString());
             }
         }
         if (jsonObject.has("statusupdatePlayer")) {
@@ -204,11 +203,10 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
                     me.replacePlayer(player);
                 }
             }
-
         }
         if (jsonObject.has("nextPlayer")) {
             int nextPlayerId = jsonObject.getInt("nextPlayer");
-            //call method which showas Client who's turn it is
+            //call method which shows Client who's turn it is
             //showNextPlayer(nextPlayerId);
         }
         if (jsonObject.has("startGame")) {

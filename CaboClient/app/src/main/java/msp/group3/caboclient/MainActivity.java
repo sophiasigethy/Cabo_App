@@ -92,7 +92,7 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
 //        }
         if (jsonObject.has("accepted")) {
             //TODO: Make message more detailed, to differ what was accepted (friendrequested or game invite?)
-            Toast.makeText(MainActivity.this, "Connected", Toast.LENGTH_LONG);
+            //Toast.makeText(MainActivity.this, "Connected", Toast.LENGTH_LONG);
         }
         if (jsonObject.has("notAccepted")) {
             //TODO: Make message more detailed, to differ what was accepted (friendrequested or game invite?)
