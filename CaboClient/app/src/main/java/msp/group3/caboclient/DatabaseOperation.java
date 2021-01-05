@@ -31,33 +31,29 @@ public class DatabaseOperation {
     }
 
     public static synchronized DatabaseOperation getDao() {
+        /**
+         * Call the DatabaseOperation Singleton and use it
+         * */
         if (dao == null) {
             return new DatabaseOperation();
         }
         return dao;
     }
 
-    private void setupListenerForPlayerData() {
-
-    }
-
-    public DatabaseReference getUserRef(String dbID) {
-        return database.getReference("cabo/users").child(dbID);
-    }
-
-    public DatabaseReference getUsersRef() {
-        return database.getReference("cabo/users");
-    }
-
     public Player readPlayerFromSharedPrefs(SharedPreferences sharedPref) {
+        /**
+         * This function reads the information about the player, stored in SharedPrefs
+         * It returns the Player as a Player Object
+         * @param sharedPref: The SharedPref Object to access it
+         * @return: The Player Object stored in SharedPref
+         * */
         Player player = new Player(
                 sharedPref.getString(String.valueOf(R.string.preference_userdbid), "None"),
                 sharedPref.getString(String.valueOf(R.string.preference_username), "None"),
                 sharedPref.getString(String.valueOf(R.string.preference_usermail), "None"),
                 sharedPref.getString(String.valueOf(R.string.preference_usernick), "None")
         );
-        String friends = sharedPref.getString(String.valueOf(R.string.preference_friendlist),
-                "None");
+        String friends = sharedPref.getString(String.valueOf(R.string.preference_friendlist), "None");
         if (!friends.equals("None")) {
             ArrayList<Player> friendList = new ArrayList<Player>();
             ArrayList deserializedFriends = getSavedObjectFromPreference(
@@ -77,25 +73,46 @@ public class DatabaseOperation {
         return player;
     }
 
-    public void updateLastLoggedIn(String dbID) {
-        DatabaseReference myRef = database.getReference("cabo/users").child(dbID);
-        myRef.child("lastLoggedIn").setValue((System.currentTimeMillis()) + "");
+    public void updateLastLoggedIn(String myDbId) {
+        /**
+         * This function saves a timestamp into the active user in Firebase Realtime DB
+         * This is necessary, to trigger the ValueEventListener, so that data can be loaded
+         * from firebase after login
+         * @param myDbId: My DbID to access the correct path in Firebase Realtime DB
+         * */
+        getUserRef(myDbId).child("lastLoggedIn").setValue((System.currentTimeMillis()) + "");
     }
 
-    public void addUserToDB(Player player) {
-        //TODO: Add check for username already in use
-        DatabaseReference myRef = database.getReference("cabo/users");
-        myRef.child(player.getDbID()).setValue(player);
-    }
-
-    public void addFriend(String myDbId, String friendsDbId) {
-        DatabaseReference myRef = database.getReference("cabo/friendships");
-        myRef.child(myDbId).child(friendsDbId).setValue("1");
+    public boolean addUserToDB(Player player, SharedPreferences sharedPref) {
+        /**
+         * This function adds a new user to the Firebase Realtime DB
+         * If a nickname is already in use, false is returned
+         * @param player: The Player to add to the Firebase Realtime DB
+         * @param sharedPref: The SharedPref Object to access it
+         * @return: True, if everything is fine
+         *          False, if nickname already in use
+         * */
+        ArrayList<Player> allUsers = DatabaseOperation.getDao().getAllUsersList(sharedPref);
+        for (Player user : allUsers) {
+            if (user.getNick().toLowerCase().equals(player.getNick().toLowerCase())) {
+                return false;
+            }
+        }
+        getUserRef(player.getDbID()).setValue(player);
+        return true;
     }
 
     public void setupDatabaseListener(String myDbId, SharedPreferences sharedPref) {
+        /**
+         * To read from Firebase Realtime database, you have to add a ValueEventListener to a DB-Reference
+         * Each time values at the reference change, the Listener is called
+         * This Listener reads every information about the user from the db and writes it to
+         * SharedPrefs
+         * To avoid multiple calls of the listener, it is setup once after Login/Registration
+         * @param myDbId: My DbID to access the correct path in Firebase Realtime DB
+         * @param sharedPref: The SharedPref Object to access it
+         */
         DatabaseReference myref = getDao().getUserRef(myDbId);
-        //if (!sharedPref.getString(String.valueOf(R.string.preference_userdbid), "None").equals(myDbId)) {
         ValueEventListener readPlayerEvent = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -125,19 +142,12 @@ public class DatabaseOperation {
         myref.addValueEventListener(readPlayerEvent);
     }
 
-    public static void saveObjectToSharedPreference(
-            SharedPreferences sharedPreferences, String serializedObjectKey, Object object) {
-        // Serialize an object and write the string to sharedpref
-        SharedPreferences.Editor sharedPreferencesEditor = sharedPreferences.edit();
-        final Gson gson = new Gson();
-        String serializedObject = gson.toJson(object);
-        sharedPreferencesEditor.putString(serializedObjectKey, serializedObject);
-        sharedPreferencesEditor.apply();
-    }
-
     public void updateUserList(SharedPreferences sharedPref) {
-        //Read all registered users from Firebase RealtimeDatabase and write them to SharedPrefs
-        DatabaseReference myref = getUsersRef();
+        /**
+         * Read all registered users from Firebase RealtimeDatabase and write them to SharedPrefs
+         * @param sharedPref: The SharedPref Object to access it
+         */
+        DatabaseReference myref = getAllUsersRef();
         ValueEventListener readAllPlayersEvent = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -163,8 +173,11 @@ public class DatabaseOperation {
     }
 
     public ArrayList<Player> getAllUsersList(SharedPreferences sharedPref) {
-        // Read serialized list of all registered users
-        // Maybe it´s a good idea to call updateUserList() before
+        /**
+         * Read serialized list of all registered users
+         * Maybe it´s a good idea to call updateUserList() before
+         * @param sharedPref: The SharedPref Object to access it
+         */
         ArrayList<Player> allUsers = new ArrayList<>();
         String users = sharedPref.getString(String.valueOf(R.string.preference_users), "None");
         if (!users.equals("None")) {
@@ -181,15 +194,58 @@ public class DatabaseOperation {
         return allUsers;
     }
 
+    public void addFriendships(Player receiver, Player sender) {
+        /**
+         * If a friendrequest was accepted, add both users to each other´s friendList in the DB
+         * @param receiver: The Player who received the FriendRequestAccepted-Message
+         * @param sender: The Player who sent the FriendRequestAccepted-Message
+         */
+        DatabaseReference myRef = database.getReference("cabo/users").
+                child(receiver.getDbID()).child("friendList").child(sender.getDbID());
+        myRef.child("dbID").setValue(sender.getDbID());
+        myRef.child("nick").setValue(sender.getNick());
+        myRef = database.getReference("cabo/users").
+                child(sender.getDbID()).child("friendList").child(receiver.getDbID());
+        myRef.child("dbID").setValue(receiver.getDbID());
+        myRef.child("nick").setValue(receiver.getNick());
+    }
+
+    public static void saveObjectToSharedPreference(
+            SharedPreferences sharedPref, String serializedObjectKey, Object object) {
+        /**
+         * Serialize an object and write the string to SharedPref
+         * @param sharedPref: The SharedPref Object to access it
+         * @param serializedObjectKey: The key, under which the serialized object will be stored
+         * @param object: The object to be serialized and stored
+         * */
+        SharedPreferences.Editor sharedPreferencesEditor = sharedPref.edit();
+        final Gson gson = new Gson();
+        String serializedObject = gson.toJson(object);
+        sharedPreferencesEditor.putString(serializedObjectKey, serializedObject);
+        sharedPreferencesEditor.apply();
+    }
 
     public static <GenericClass> GenericClass getSavedObjectFromPreference(
-            SharedPreferences sharedPreferences, String preferenceKey, Class<GenericClass> classType) {
-        // Deserialize an object from sharedpref
-        if (sharedPreferences.contains(preferenceKey)) {
+            SharedPreferences sharedPref, String preferenceKey, Class<GenericClass> classType) {
+        /**
+         * Deserialize a serialized object from SharedPref
+         * @param sharedPref: The SharedPref Object to access it
+         * @param preferenceKey: The key, under which the serialized object can be found
+         * @param classType: The Class-Type, the deserialized object will have
+         **/
+        if (sharedPref.contains(preferenceKey)) {
             final Gson gson = new Gson();
-            return gson.fromJson(sharedPreferences.getString(preferenceKey, ""), classType);
+            return gson.fromJson(sharedPref.getString(preferenceKey, ""), classType);
         }
         return null;
+    }
+
+    public DatabaseReference getUserRef(String dbID) {
+        return getAllUsersRef().child(dbID);
+    }
+
+    public DatabaseReference getAllUsersRef() {
+        return database.getReference("cabo/users");
     }
 
     public FirebaseDatabase getDatabase() {

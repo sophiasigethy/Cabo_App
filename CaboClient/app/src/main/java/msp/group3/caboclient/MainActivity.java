@@ -18,8 +18,6 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.gson.internal.LinkedTreeMap;
-
 import org.java_websocket.client.WebSocketClient;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -93,10 +91,19 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
 //            startMatching();
 //        }
         if (jsonObject.has("accepted")) {
+            //TODO: Make message more detailed, to differ what was accepted (friendrequested or game invite?)
             Toast.makeText(MainActivity.this, "Connected", Toast.LENGTH_LONG);
         }
         if (jsonObject.has("notAccepted")) {
+            //TODO: Make message more detailed, to differ what was accepted (friendrequested or game invite?)
             String mes = TypeDefs.server + jsonObject.get("notAccepted").toString();
+        }
+        if (jsonObject.has("friendrequestaccepted")) {
+            //TODO: Receive dbID and nick from accepting Player, and edit the following accordingly
+            //String receivedDbID = "";
+            //String receivedNick = "";
+            //Player sender = new Player(receivedDbID, receivedNick);
+            //DatabaseOperation.getDao().addFriendships(me, sender);
         }
     }
 

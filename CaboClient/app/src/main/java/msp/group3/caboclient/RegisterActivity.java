@@ -28,6 +28,7 @@ public class RegisterActivity extends AppCompatActivity {
     private static final String TAG = "LOGIN";
     private Player player;
     private String nick;
+    private SharedPreferences sharedPref;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -54,6 +55,8 @@ public class RegisterActivity extends AppCompatActivity {
                 }
             }
         });
+        sharedPref = getApplicationContext().getSharedPreferences(
+                R.string.preference_file_key + "", Context.MODE_PRIVATE);
     }
 
     private void register(String password) {
@@ -71,16 +74,18 @@ public class RegisterActivity extends AppCompatActivity {
                                             .build());
                             if (player.getDbID().equals(""))
                                 player.setDbID(user.getUid());
-                            SharedPreferences sharedPref = getApplicationContext().getSharedPreferences(
-                                    getString(R.string.preference_file_key), Context.MODE_PRIVATE);
-                            SharedPreferences.Editor editor = sharedPref.edit();
-                            editor.putString(String.valueOf(R.string.preference_userdbid), player.getDbID());
-                            editor.putString(String.valueOf(R.string.preference_username), player.getName());
-                            editor.putString(String.valueOf(R.string.preference_usermail), player.getMail());
-                            editor.putString(String.valueOf(R.string.preference_usernick), player.getNick());
-                            editor.apply();
-                            DatabaseOperation.getDao().addUserToDB(player);
-                            moveToMainActivity();
+                            if (DatabaseOperation.getDao().addUserToDB(player, sharedPref)) {
+                                SharedPreferences sharedPref = getApplicationContext().getSharedPreferences(
+                                        getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+                                SharedPreferences.Editor editor = sharedPref.edit();
+                                editor.putString(String.valueOf(R.string.preference_userdbid), player.getDbID());
+                                editor.putString(String.valueOf(R.string.preference_username), player.getName());
+                                editor.putString(String.valueOf(R.string.preference_usermail), player.getMail());
+                                editor.putString(String.valueOf(R.string.preference_usernick), player.getNick());
+                                editor.apply();
+                                moveToMainActivity();
+                            } else
+                                Toast.makeText(RegisterActivity.this, R.string.duplicate_user, Toast.LENGTH_LONG);
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "createUserWithEmail:failure", task.getException());
