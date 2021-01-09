@@ -37,6 +37,7 @@ public class LoginActivity extends AppCompatActivity {
     private GoogleSignInAccount account;
     private static final int RC_SIGN_IN = 666;
     private String nick;
+    private Button noLogIn;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -47,6 +48,7 @@ public class LoginActivity extends AppCompatActivity {
         final Button loginButton = findViewById(R.id.login);
         final ProgressBar loadingProgressBar = findViewById(R.id.loading);
         final SignInButton googleLoginButton = findViewById(R.id.google_login);
+        noLogIn= findViewById(R.id.noLogIn);
 
         /*
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -76,6 +78,13 @@ public class LoginActivity extends AppCompatActivity {
                     signInOrRegister("", "");
                 signInOrRegister(usernameEditText.getText().toString(),
                         passwordEditText.getText().toString());
+            }
+        });
+
+        noLogIn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                moveToWaitingRoomActivity();
             }
         });
     }
@@ -161,5 +170,11 @@ public class LoginActivity extends AppCompatActivity {
         Intent myIntent = new Intent(LoginActivity.this, MainActivity.class);
         myIntent.putExtra("dbid", myDbId);
         LoginActivity.this.startActivity(myIntent);
+    }
+
+    private void moveToWaitingRoomActivity(){
+        Intent myIntent = new Intent(LoginActivity.this, MainActivity.class);
+        LoginActivity.this.startActivity(myIntent);
+
     }
 }
