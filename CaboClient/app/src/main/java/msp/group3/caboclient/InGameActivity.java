@@ -157,6 +157,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         setUpOnClickListeners();
 
         pickCardsStackButton.setEnabled(false);
+        playedCardsStackButton.setEnabled(false);
 
         //TODO: Chat fragment integration
         if (savedInstanceState == null) {
@@ -258,6 +259,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+                pickCardsStackButton.setEnabled(false);
                 player1CardsGlow.setVisibility(View.INVISIBLE);
                 playedCardsStackGlow.setVisibility(View.INVISIBLE);
                 Toast.makeText(getApplicationContext(),
@@ -282,6 +284,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 tapPickCardAnimation.setVisibility(View.INVISIBLE);
                 growCardGlowAnimation(playedCardsStackGlow);
                 growCardGlowAnimation(player1CardsGlow);
+                playedCardsStackButton.setEnabled(true);
             }
         });
 
@@ -626,15 +629,15 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
     }
 
     private void visualizePlayerStats(int nrPlayers){
-        for(int i=nrPlayers; i<4; i++){
-            playerPics.get(i).setVisibility(View.INVISIBLE);
-            playerStats.get(i).setVisibility(View.INVISIBLE);
-            playerNames.get(i).setVisibility(View.INVISIBLE);
-            playerHighlightAnimations.get(i).setVisibility(View.INVISIBLE);
+        for(int i=0; i<nrPlayers; i++){
+            playerPics.get(i).setVisibility(View.VISIBLE);
+            playerStats.get(i).setVisibility(View.VISIBLE);
+            playerNames.get(i).setVisibility(View.VISIBLE);
+            playerHighlightAnimations.get(i).setVisibility(View.VISIBLE);
         }
 
-        for(int i=nrPlayers*4; i<16; i++){
-            playerCardButtons.get(i).setVisibility(View.INVISIBLE);
+        for(int i=0; i<nrPlayers*4; i++){
+            playerCardButtons.get(i).setVisibility(View.VISIBLE);
         }
         for (int i = 0; i < nrPlayers; i++) {
             playerStats.get(i).setVisibility(View.INVISIBLE);
@@ -1180,6 +1183,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 Gson gson = new Gson();
                 me = gson.fromJson(jsonString, Player.class);
                 // hier wurde me gesetzt
+                //TODO set player name
                 initiateInitialCardLookUp();
 
                 //webSocketClient.send(String.valueOf(JSON_commands.sendMemorized("memorized")));
@@ -1192,6 +1196,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 Gson gson = new Gson();
                 Player player = gson.fromJson(jsonString, Player.class);
                 if (player.getId() != me.getId()) {
+                    //TODO set player name
                     otherPlayers.add(player);
                 }
             }
