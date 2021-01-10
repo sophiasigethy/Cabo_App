@@ -36,6 +36,7 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
     private Button startGameBtn;
     private Button addFriendBtn;
     private SharedPreferences sharedPref;
+    private boolean accepted= false;
 
 
     @Override
@@ -91,6 +92,7 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
 //            startMatching();
 //        }
         if (jsonObject.has("accepted")) {
+            accepted=true;
             //TODO: Make message more detailed, to differ what was accepted (friendrequested or game invite?)
             //Toast.makeText(MainActivity.this, "Connected", Toast.LENGTH_LONG);
         }
@@ -112,8 +114,11 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
 
 
     public void startMatching() {
-        Intent intent = new Intent(MainActivity.this, WaitingRoomActivity.class);
-        startActivity(intent);
+        if (accepted){
+            Intent intent = new Intent(MainActivity.this, WaitingRoomActivity.class);
+            startActivity(intent);
+        }
+
     }
 
 

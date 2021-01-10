@@ -19,7 +19,7 @@ public class Gamestate {
 
     // contains websocketsession-id and the associated player object
     public HashMap<String, Player> players = new HashMap<String, Player>();
-    private final int MAX_PLAYER = 2;
+    private final int MAX_PLAYER = 3;
     private int test = 0;
     // determines how many players are already registered
     private int countPlayer = 0;
@@ -163,6 +163,7 @@ public class Gamestate {
             generateCards(true);
             //send 4 cards to every client
             distributeCardsAtBeginning();
+            socketHandler.sendMessage(session, JSON_commands.sendInitialME(getPlayerBySessionId(session.getId())));
             sendInitialPlayerSettings();
 
         }
@@ -423,13 +424,18 @@ public class Gamestate {
      * @throws IOException
      */
     public void sendInitialPlayerSettings() throws IOException {
-        for (Map.Entry<String, Player> entry : players.entrySet()) {
+        /*for (Map.Entry<String, Player> entry : players.entrySet()) {
             String key = entry.getKey();
             Player player = entry.getValue();
             //player.updateCardList();
             socketHandler.sendMessage(getSessionBySessionId(key), JSON_commands.sendInitialME(player));
             sendToAll(JSON_commands.sendInitialOthers(player));
-        }
+        }*/
+
+            for (Player player: players.values()){
+                sendToAll(JSON_commands.sendInitialOthers(player));
+            }
+
 
     }
 
@@ -575,13 +581,11 @@ public class Gamestate {
      */
     public int getNextPlayerId() {
         int oldId = currentPlayerId;
-        int nextId = 0;
         if (oldId == MAX_PLAYER) {
-            nextId = 1;
-            return nextId;
+            return 1;
         } else {
-            nextId++;
-            return nextId;
+            oldId++;
+            return oldId;
         }
     }
 
