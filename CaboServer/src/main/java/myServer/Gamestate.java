@@ -580,8 +580,8 @@ public class Gamestate {
             nextId = 1;
             return nextId;
         } else {
-            nextId++;
-            return nextId;
+            oldId++;
+            return oldId;
         }
     }
 

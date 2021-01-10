@@ -93,7 +93,9 @@ public class Communicator {
     }
 
     public void sendMessage(JSONObject jsonObject) {
-        mWebSocketClient.send(jsonObject.toString());
+        if(mWebSocketClient!=null){
+            mWebSocketClient.send(jsonObject.toString());
+        }
     }
 
     private JSONObject getMessage(String message) throws JSONException {
