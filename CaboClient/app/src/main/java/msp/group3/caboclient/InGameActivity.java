@@ -258,17 +258,27 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                pickCardsStackButton.setEnabled(false);
-                player1CardsGlow.setVisibility(View.INVISIBLE);
-                playedCardsStackGlow.setVisibility(View.INVISIBLE);
-                Toast.makeText(getApplicationContext(),
-                        "Discard card...", Toast.LENGTH_SHORT).show();
-                makePickedCardContainerDisappear();
-                switchButton.setVisibility(View.INVISIBLE);
-                for (ImageButton cardButton : player1CardButtons) {
-                    cardButton.setSelected(false);
+                try {
+                    webSocketClient.send(String.valueOf(JSON_commands.sendFinishMove("finish")));
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
-                deactivateAllOnCardClickListeners();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        pickCardsStackButton.setEnabled(false);
+                        player1CardsGlow.setVisibility(View.INVISIBLE);
+                        playedCardsStackGlow.setVisibility(View.INVISIBLE);
+                        Toast.makeText(getApplicationContext(),
+                                "Discard card...", Toast.LENGTH_SHORT).show();
+                        makePickedCardContainerDisappear();
+                        switchButton.setVisibility(View.INVISIBLE);
+                        for(ImageButton cardButton : player1CardButtons){
+                            cardButton.setSelected(false);
+                        }
+                        deactivateAllOnCardClickListeners();
+                    }
+                });
             }
         });
 
@@ -277,6 +287,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             public void onClick(View view) {
                 try {
                     webSocketClient.send(String.valueOf(JSON_commands.sendPickCard("memorized")));
+                    Log.d("----------------------PICK", "clicked pick card and send to server");
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -365,20 +376,20 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                                     nrCardsSelected--;
                                 }
                             }
-                            for (ImageButton otherCard : player3CardButtons) {
-                                if (otherCard.isSelected()) {
+                            for( ImageButton otherCard : player3CardButtons){
+                                if(otherCard.isSelected()){
                                     otherCard.setSelected(false);
                                     nrCardsSelected--;
                                 }
                             }
-                            for (ImageButton otherCard : player4CardButtons) {
-                                if (otherCard.isSelected()) {
+                            for( ImageButton otherCard : player4CardButtons){
+                                if(otherCard.isSelected()){
                                     otherCard.setSelected(false);
                                     nrCardsSelected--;
                                 }
                             }
-                            for (ImageButton otherCard : player2CardButtons) {
-                                if (otherCard.isSelected()) {
+                            for( ImageButton otherCard : player2CardButtons){
+                                if(otherCard.isSelected()){
                                     otherCard.setSelected(false);
                                     nrCardsSelected--;
                                 }
@@ -387,10 +398,10 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                         /*Toast.makeText(getApplicationContext(),
                                 "Cards selected: "+nrCardsSelected, Toast.LENGTH_SHORT).show();*/
                     }
-                    if (pickedCardButtonContainer.getVisibility() == View.VISIBLE) {
+                    if(pickedCardButtonContainer.getVisibility()==View.VISIBLE){
                         switchButton.setVisibility(View.VISIBLE);
                     }
-                    if (nrCardsSelected == cardsAllowed) {
+                    if(nrCardsSelected==cardsAllowed){
                         peekButton.setEnabled(true);
                     }
                     player1CardsGlow.setVisibility(View.INVISIBLE);
@@ -400,8 +411,8 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         }
     }
 
-    private void setPlayer2CardsOnClickListeners(int cardsAllowed) {
-        for (ImageButton cardButton : player2CardButtons) {
+    private void setPlayer2CardsOnClickListeners(int cardsAllowed){
+        for(ImageButton cardButton : player2CardButtons){
             cardButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -410,33 +421,34 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
 
                     zoomInOnSelectedCard(cardButton);
 
-                    if (cardButton.isSelected()) {
+                    if(cardButton.isSelected()){
                         cardButton.setSelected(false);
                         nrCardsSelected--;
-                    } else {
+                    }
+                    else{
                         cardButton.setSelected(true);
                         nrCardsSelected++;
-                        if (nrCardsSelected > cardsAllowed) {
-                            for (ImageButton otherCard : player2CardButtons) {
-                                if (otherCard != cardButton && otherCard.isSelected()) {
+                        if(nrCardsSelected>cardsAllowed){
+                            for( ImageButton otherCard : player2CardButtons){
+                                if(otherCard != cardButton && otherCard.isSelected()){
                                     otherCard.setSelected(false);
                                     nrCardsSelected--;
                                 }
                             }
-                            for (ImageButton otherCard : player3CardButtons) {
-                                if (otherCard.isSelected()) {
+                            for( ImageButton otherCard : player3CardButtons){
+                                if(otherCard.isSelected()){
                                     otherCard.setSelected(false);
                                     nrCardsSelected--;
                                 }
                             }
-                            for (ImageButton otherCard : player4CardButtons) {
-                                if (otherCard.isSelected()) {
+                            for( ImageButton otherCard : player4CardButtons){
+                                if(otherCard.isSelected()){
                                     otherCard.setSelected(false);
                                     nrCardsSelected--;
                                 }
                             }
-                            for (ImageButton otherCard : player1CardButtons) {
-                                if (otherCard.isSelected()) {
+                            for( ImageButton otherCard : player1CardButtons){
+                                if(otherCard.isSelected()){
                                     otherCard.setSelected(false);
                                     nrCardsSelected--;
                                 }
@@ -444,7 +456,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                         }
 
                     }
-                    if (nrCardsSelected == cardsAllowed) {
+                    if(nrCardsSelected==cardsAllowed){
                         spyButton.setEnabled(true);
                         peekButton.setEnabled(true);
                     }
@@ -453,8 +465,8 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         }
     }
 
-    private void setPlayer3CardsOnClickListeners(int cardsAllowed) {
-        for (ImageButton cardButton : player3CardButtons) {
+    private void setPlayer3CardsOnClickListeners(int cardsAllowed){
+        for(ImageButton cardButton : player3CardButtons){
             cardButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -463,33 +475,34 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
 
                     zoomInOnSelectedCard(cardButton);
 
-                    if (cardButton.isSelected()) {
+                    if(cardButton.isSelected()){
                         cardButton.setSelected(false);
                         nrCardsSelected--;
-                    } else {
+                    }
+                    else{
                         cardButton.setSelected(true);
                         nrCardsSelected++;
-                        if (nrCardsSelected > cardsAllowed) {
-                            for (ImageButton otherCard : player3CardButtons) {
-                                if (otherCard != cardButton && otherCard.isSelected()) {
+                        if(nrCardsSelected>cardsAllowed){
+                            for( ImageButton otherCard : player3CardButtons){
+                                if(otherCard != cardButton && otherCard.isSelected()){
                                     otherCard.setSelected(false);
                                     nrCardsSelected--;
                                 }
                             }
-                            for (ImageButton otherCard : player2CardButtons) {
-                                if (otherCard.isSelected()) {
+                            for( ImageButton otherCard : player2CardButtons){
+                                if(otherCard.isSelected()){
                                     otherCard.setSelected(false);
                                     nrCardsSelected--;
                                 }
                             }
-                            for (ImageButton otherCard : player4CardButtons) {
-                                if (otherCard.isSelected()) {
+                            for( ImageButton otherCard : player4CardButtons){
+                                if(otherCard.isSelected()){
                                     otherCard.setSelected(false);
                                     nrCardsSelected--;
                                 }
                             }
-                            for (ImageButton otherCard : player1CardButtons) {
-                                if (otherCard.isSelected()) {
+                            for( ImageButton otherCard : player1CardButtons){
+                                if(otherCard.isSelected()){
                                     otherCard.setSelected(false);
                                     nrCardsSelected--;
                                 }
@@ -497,7 +510,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                         }
 
                     }
-                    if (nrCardsSelected == cardsAllowed) {
+                    if(nrCardsSelected==cardsAllowed){
                         spyButton.setEnabled(true);
                         peekButton.setEnabled(true);
                     }
@@ -506,8 +519,8 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         }
     }
 
-    private void setPlayer4CardsOnClickListeners(int cardsAllowed) {
-        for (ImageButton cardButton : player4CardButtons) {
+    private void setPlayer4CardsOnClickListeners(int cardsAllowed){
+        for(ImageButton cardButton : player4CardButtons){
             cardButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -516,40 +529,41 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
 
                     zoomInOnSelectedCard(cardButton);
 
-                    if (cardButton.isSelected()) {
+                    if(cardButton.isSelected()){
                         cardButton.setSelected(false);
                         nrCardsSelected--;
-                    } else {
+                    }
+                    else{
                         cardButton.setSelected(true);
                         nrCardsSelected++;
-                        if (nrCardsSelected > cardsAllowed) {
-                            for (ImageButton otherCard : player4CardButtons) {
-                                if (otherCard != cardButton && otherCard.isSelected()) {
+                        if(nrCardsSelected>cardsAllowed){
+                            for( ImageButton otherCard : player4CardButtons){
+                                if(otherCard != cardButton && otherCard.isSelected()){
                                     otherCard.setSelected(false);
                                     nrCardsSelected--;
                                 }
                             }
-                            for (ImageButton otherCard : player3CardButtons) {
-                                if (otherCard.isSelected()) {
+                            for( ImageButton otherCard : player3CardButtons){
+                                if(otherCard.isSelected()){
                                     otherCard.setSelected(false);
                                     nrCardsSelected--;
                                 }
                             }
-                            for (ImageButton otherCard : player2CardButtons) {
-                                if (otherCard.isSelected()) {
+                            for( ImageButton otherCard : player2CardButtons){
+                                if(otherCard.isSelected()){
                                     otherCard.setSelected(false);
                                     nrCardsSelected--;
                                 }
                             }
-                            for (ImageButton otherCard : player1CardButtons) {
-                                if (otherCard.isSelected()) {
+                            for( ImageButton otherCard : player1CardButtons){
+                                if(otherCard.isSelected()){
                                     otherCard.setSelected(false);
                                     nrCardsSelected--;
                                 }
                             }
                         }
                     }
-                    if (nrCardsSelected == cardsAllowed) {
+                    if(nrCardsSelected==cardsAllowed){
                         spyButton.setEnabled(true);
                         peekButton.setEnabled(true);
                     }
@@ -558,33 +572,33 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         }
     }
 
-    private void deactivateAllOnCardClickListeners() {
+    private void deactivateAllOnCardClickListeners(){
         deactivatePlayer1OnClickListeners();
         deactivatePlayer2OnClickListeners();
         deactivatePlayer3OnClickListeners();
         deactivatePlayer4OnClickListeners();
     }
 
-    private void deactivatePlayer1OnClickListeners() {
-        for (ImageButton cardButton : player1CardButtons) {
+    private void deactivatePlayer1OnClickListeners(){
+        for(ImageButton cardButton : player1CardButtons){
             cardButton.setOnClickListener(null);
         }
     }
 
-    private void deactivatePlayer2OnClickListeners() {
-        for (ImageButton cardButton : player2CardButtons) {
+    private void deactivatePlayer2OnClickListeners(){
+        for(ImageButton cardButton : player2CardButtons){
             cardButton.setOnClickListener(null);
         }
     }
 
-    private void deactivatePlayer3OnClickListeners() {
-        for (ImageButton cardButton : player3CardButtons) {
+    private void deactivatePlayer3OnClickListeners(){
+        for(ImageButton cardButton : player3CardButtons){
             cardButton.setOnClickListener(null);
         }
     }
 
-    private void deactivatePlayer4OnClickListeners() {
-        for (ImageButton cardButton : player4CardButtons) {
+    private void deactivatePlayer4OnClickListeners(){
+        for(ImageButton cardButton : player4CardButtons){
             cardButton.setOnClickListener(null);
         }
     }
@@ -615,7 +629,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
 
         Collections.addAll(otherPlayerButtonLists, player2CardButtons, player3CardButtons, player4CardButtons);
 
-        for (int i = 0; i < 4; i++) {
+        for(int i=0; i<4; i++){
             player1CardButtons.get(i).setVisibility(View.INVISIBLE);
             player2CardButtons.get(i).setVisibility(View.INVISIBLE);
             player3CardButtons.get(i).setVisibility(View.INVISIBLE);
@@ -628,28 +642,28 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         }
     }
 
-    private void visualizePlayerStats(int nrPlayers) {
+    private void visualizePlayerStats(int nrPlayers){
         playerPics.get(0).setVisibility(View.VISIBLE);
         playerStats.get(0).setVisibility(View.VISIBLE);
         playerNames.get(0).setVisibility(View.VISIBLE);
         playerOverviews.get(0).setVisibility(View.VISIBLE);
-        for (ImageButton card : player1CardButtons) {
+        for(ImageButton card : player1CardButtons){
             card.setVisibility(View.VISIBLE);
         }
 
-        for (int i = 1; i < nrPlayers; i++) {
+        for(int i=1; i<nrPlayers; i++){
             playerPics.get(i).setVisibility(View.VISIBLE);
             playerStats.get(i).setVisibility(View.VISIBLE);
             playerNames.get(i).setVisibility(View.VISIBLE);
             playerOverviews.get(i).setVisibility(View.VISIBLE);
-            for (ImageButton cardButton : otherPlayerButtonLists.get(i - 1)) {
+            for(ImageButton cardButton : otherPlayerButtonLists.get(i-1)){
                 cardButton.setVisibility(View.VISIBLE);
             }
             //playerHighlightAnimations.get(i).setVisibility(View.VISIBLE);
         }
     }
 
-    private void growCardGlowAnimation(ImageView card) {
+    private void growCardGlowAnimation(ImageView card){
         //bounds remain the same only image changes
         AlphaAnimation fade_in = new AlphaAnimation(0f, 1f);
         fade_in.setDuration(2000);
@@ -663,7 +677,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
     }
 
     //TODO insert actual image of card depending on value
-    private void animateCardTurn(ImageButton cardButton) {
+    private void animateCardTurn(ImageButton cardButton){
         final ObjectAnimator oa1 = ObjectAnimator.ofFloat(cardButton, "scaleX", 1f, 0f);
         final ObjectAnimator oa2 = ObjectAnimator.ofFloat(cardButton, "scaleX", 0f, 1f);
         oa1.setInterpolator(new DecelerateInterpolator());
@@ -680,23 +694,23 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         oa1.start();
     }
 
-    private Card getCardFromButton(ImageButton cardButton) {
-        if (player1CardButtons.contains(cardButton)) {
+    private Card getCardFromButton(ImageButton cardButton){
+        if(player1CardButtons.contains(cardButton)){
             return me.getMyCards().get(player1CardButtons.indexOf(cardButton));
         }
-        if (player2CardButtons.contains(cardButton)) {
+        if(player2CardButtons.contains(cardButton)){
             return otherPlayers.get(0).getMyCards().get(player2CardButtons.indexOf(cardButton));
         }
-        if (player3CardButtons.contains(cardButton)) {
+        if(player3CardButtons.contains(cardButton)){
             return otherPlayers.get(1).getMyCards().get(player3CardButtons.indexOf(cardButton));
         }
-        if (player4CardButtons.contains(cardButton)) {
+        if(player4CardButtons.contains(cardButton)){
             return otherPlayers.get(2).getMyCards().get(player4CardButtons.indexOf(cardButton));
         }
         return null;
     }
 
-    private void animateCardTurnBack(ImageButton cardButton) {
+    private void animateCardTurnBack(ImageButton cardButton){
         final ObjectAnimator oa1 = ObjectAnimator.ofFloat(cardButton, "scaleX", 1f, 0f);
         final ObjectAnimator oa2 = ObjectAnimator.ofFloat(cardButton, "scaleX", 0f, 1f);
         oa1.setInterpolator(new DecelerateInterpolator());
@@ -713,7 +727,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
     }
 
     //TODO put card as parameter
-    private void showPickedCardInContainer(Card card) {
+    private void showPickedCardInContainer(Card card){
         pickedCardBigImageview.setImageResource(R.drawable.card_back);
         pickedCardButtonContainer.setVisibility(View.VISIBLE);
         final ObjectAnimator oa1 = ObjectAnimator.ofFloat(pickedCardBigImageview, "scaleX", 1f, 0f);
@@ -739,8 +753,8 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 deactivateAllOnCardClickListeners();
                 switchButton.setVisibility(View.INVISIBLE);
                 makePickedCardContainerDisappear();
-                for (int i = 0; i < player1CardButtons.size(); i++) {
-                    if (player1CardButtons.get(i).isSelected()) {
+                for(int i = 0; i<player1CardButtons.size(); i++){
+                    if(player1CardButtons.get(i).isSelected()){
                         try {
                             webSocketClient.send(String.valueOf(JSON_commands.swapPickedCardWithOwnCards(me.getMyCards().get(i))));
                         } catch (JSONException e) {
@@ -751,7 +765,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        for (ImageButton cardButton : player1CardButtons) {
+                        for(ImageButton cardButton : player1CardButtons){
                             cardButton.setSelected(false);
                         }
                     }
@@ -761,12 +775,12 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         });
     }
 
-    private void makePickedCardContainerDisappear() {
+    private void makePickedCardContainerDisappear(){
         pickedCardButtonContainer.setVisibility(View.INVISIBLE);
         pickedCardBigImageview.setImageResource(R.drawable.card_back);
     }
 
-    private void zoomInOnSelectedCard(ImageButton cardButton) {
+    private void zoomInOnSelectedCard(ImageButton cardButton){
         int[] location = new int[2];
         cardButton.getLocationOnScreen(location);
         int x = location[0];
@@ -777,65 +791,43 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         display.getSize(size);
         int width = size.x;
         int height = size.y;
-        Log.d("-----------PAN", "x: " + zoomLayout.getPanX() / zoomLayout.getZoom() + " y: " + zoomLayout.getPanY() / zoomLayout.getZoom());
-        Log.d("-----------SCREEN", "x: " + width + " y: " + height);
-        Log.d("-----------CARD POSITION", "x: " + x + " y: " + y);
+        Log.d("-----------PAN", "x: "+zoomLayout.getPanX()/zoomLayout.getZoom()+ " y: "+zoomLayout.getPanY()/zoomLayout.getZoom());
+        Log.d("-----------SCREEN", "x: "+width+ " y: "+height);
+        Log.d("-----------CARD POSITION", "x: "+x+ " y: "+y);
         //zoomLayout.panTo( 2*width-zoomLayout.getScaledPanX()+x, 2*height-zoomLayout.getScaledPanY()+y, true);
     }
 
     //TODO replace resources
-    private int getCardResource(Card card) {
-        switch (card.getValue()) {
-            case -1:
-                return R.drawable.card_joker_1;
-            case 0:
-                return R.drawable.card_hearts_k;
-            case 1:
-                return R.drawable.card_hearts_a;
-            case 2:
-                return R.drawable.card_clubs_2;
-            case 3:
-                return R.drawable.card_clubs_3;
-            case 4:
-                return R.drawable.card_clubs_4;
-            case 5:
-                return R.drawable.card_clubs_5;
-            case 6:
-                return R.drawable.card_clubs_6;
-            case 7:
-                return R.drawable.card_clubs_7;
-            case 8:
-                return R.drawable.card_clubs_8;
-            case 9:
-                return R.drawable.card_clubs_9;
-            case 10:
-                return R.drawable.card_clubs_10;
-            case 11:
-                return R.drawable.card_clubs_j;
-            case 12:
-                return R.drawable.card_clubs_q;
-            case 13:
-                return R.drawable.card_clubs_k;
+    private int getCardResource(Card card){
+        switch(card.getValue()){
+            case -1: return R.drawable.card_joker_1;
+            case 0: return R.drawable.card_hearts_k;
+            case 1: return R.drawable.card_hearts_a;
+            case 2: return R.drawable.card_clubs_2;
+            case 3: return R.drawable.card_clubs_3;
+            case 4: return R.drawable.card_clubs_4;
+            case 5: return R.drawable.card_clubs_5;
+            case 6: return R.drawable.card_clubs_6;
+            case 7: return R.drawable.card_clubs_7;
+            case 8: return R.drawable.card_clubs_8;
+            case 9: return R.drawable.card_clubs_9;
+            case 10: return R.drawable.card_clubs_10;
+            case 11: return R.drawable.card_clubs_j;
+            case 12: return R.drawable.card_clubs_q;
+            case 13: return R.drawable.card_clubs_k;
         }
         return 0;
     }
 
-    private void initiateCardAction(Card pickedCard) {
-        switch (pickedCard.getValue()) {
-            case 7:
-                initiatePeekAction();
-            case 8:
-                initiatePeekAction();
-            case 9:
-                initiateSpyAction();
-            case 10:
-                initiateSpyAction();
-            case 11:
-                initiateBlindSwapAction();
-            case 12:
-                initiateBlindSwapAction();
-            case 13:
-                initiatePeekAndSwapAction();
+    private void initiateCardAction(Card pickedCard){
+        switch(pickedCard.getValue()){
+            case 7: initiatePeekAction();
+            case 8: initiatePeekAction();
+            case 9: initiateSpyAction();
+            case 10: initiateSpyAction();
+            case 11: initiateBlindSwapAction();
+            case 12: initiateBlindSwapAction();
+            case 13: initiatePeekAndSwapAction();
         }
     }
 
@@ -855,27 +847,27 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         peekButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                for (ImageButton cardButton : player1CardButtons) {
-                    if (cardButton.isSelected()) {
+                for(ImageButton cardButton : player1CardButtons){
+                    if(cardButton.isSelected()){
                         selectedCards.add(cardButton);
                     }
                 }
-                for (ImageButton cardButton : player2CardButtons) {
-                    if (cardButton.isSelected()) {
+                for(ImageButton cardButton : player2CardButtons){
+                    if(cardButton.isSelected()){
                         selectedCards.add(cardButton);
                     }
                 }
-                for (ImageButton cardButton : player3CardButtons) {
-                    if (cardButton.isSelected()) {
+                for(ImageButton cardButton : player3CardButtons){
+                    if(cardButton.isSelected()){
                         selectedCards.add(cardButton);
                     }
                 }
-                for (ImageButton cardButton : player4CardButtons) {
-                    if (cardButton.isSelected()) {
+                for(ImageButton cardButton : player4CardButtons){
+                    if(cardButton.isSelected()){
                         selectedCards.add(cardButton);
                     }
                 }
-                for (ImageButton card : selectedCards) {
+                for(ImageButton card : selectedCards){
                     animateCardTurn(card);
                 }
                 updateText.setText("Do you want to swap?");
@@ -884,7 +876,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 switchButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        for (ImageButton card : selectedCards) {
+                        for(ImageButton card : selectedCards){
                             animateCardTurnBack(card);
                         }
                         playSwapAnimation();
@@ -913,26 +905,26 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         switchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                for (ImageButton cardButton : player1CardButtons) {
-                    if (cardButton.isSelected()) {
+                for(ImageButton cardButton : player1CardButtons){
+                    if(cardButton.isSelected()){
                         selectedCards.add(cardButton);
                         cardButton.setSelected(false);
                     }
                 }
-                for (ImageButton cardButton : player2CardButtons) {
-                    if (cardButton.isSelected()) {
+                for(ImageButton cardButton : player2CardButtons){
+                    if(cardButton.isSelected()){
                         selectedCards.add(cardButton);
                         cardButton.setSelected(false);
                     }
                 }
-                for (ImageButton cardButton : player3CardButtons) {
-                    if (cardButton.isSelected()) {
+                for(ImageButton cardButton : player3CardButtons){
+                    if(cardButton.isSelected()){
                         selectedCards.add(cardButton);
                         cardButton.setSelected(false);
                     }
                 }
-                for (ImageButton cardButton : player4CardButtons) {
-                    if (cardButton.isSelected()) {
+                for(ImageButton cardButton : player4CardButtons){
+                    if(cardButton.isSelected()){
                         selectedCards.add(cardButton);
                         cardButton.setSelected(false);
                     }
@@ -948,14 +940,13 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             }
         });
     }
-
-    private Player getCardOwner(ImageButton cardButton) {
-        for (int i = 0; i < otherPlayers.size(); i++) {
-            if (otherPlayerButtonLists.get(i).contains(cardButton)) {
+    private Player getCardOwner(ImageButton cardButton){
+        for(int i=0; i<otherPlayers.size(); i++){
+            if(otherPlayerButtonLists.get(i).contains(cardButton)){
                 return otherPlayers.get(i);
             }
         }
-        if (player1CardButtons.contains(cardButton)) {
+        if(player1CardButtons.contains(cardButton)){
             return me;
         }
         return null;
@@ -991,6 +982,11 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 cardSwapAnimation.playAnimation();
                 cardSwapAnimation.setVisibility(View.INVISIBLE);
                 cardSwapBg.setVisibility(View.INVISIBLE);
+                try {
+                    webSocketClient.send(String.valueOf(JSON_commands.sendFinishMove("finish")));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
 
         }.start();
@@ -1010,22 +1006,22 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
 
             @Override
             public void onClick(View view) {
-                for (ImageButton cardButton : player2CardButtons) {
-                    if (cardButton.isSelected()) {
+                for(ImageButton cardButton : player2CardButtons){
+                    if(cardButton.isSelected()){
                         animateCardTurn(cardButton);
                         setCountdownTimer(cardButton);
                         spyButton.setVisibility(View.INVISIBLE);
                     }
                 }
-                for (ImageButton cardButton : player3CardButtons) {
-                    if (cardButton.isSelected()) {
+                for(ImageButton cardButton : player3CardButtons){
+                    if(cardButton.isSelected()){
                         animateCardTurn(cardButton);
                         setCountdownTimer(cardButton);
                         spyButton.setVisibility(View.INVISIBLE);
                     }
                 }
-                for (ImageButton cardButton : player4CardButtons) {
-                    if (cardButton.isSelected()) {
+                for(ImageButton cardButton : player4CardButtons){
+                    if(cardButton.isSelected()){
                         animateCardTurn(cardButton);
                         setCountdownTimer(cardButton);
                         spyButton.setVisibility(View.INVISIBLE);
@@ -1034,10 +1030,10 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 updateText.setVisibility(View.INVISIBLE);
                 deactivateAllOnCardClickListeners();
                 nrCardsSelected = 0;
-                Card selectedCard = null;
-                for (int i = 0; i < otherPlayers.size(); i++) {
-                    if (getSelectedCard(otherPlayerButtonLists.get(i), otherPlayers.get(i)) != null) {
-                        selectedCard = getSelectedCard(otherPlayerButtonLists.get(i), otherPlayers.get(0));
+                Card selectedCard=null;
+                for(int i = 0; i<otherPlayers.size(); i++){
+                    if(getSelectedCard(otherPlayerButtonLists.get(i), otherPlayers.get(i))!=null){
+                        selectedCard=getSelectedCard(otherPlayerButtonLists.get(i), otherPlayers.get(0));
                     }
                 }
                 try {
@@ -1059,8 +1055,8 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         peekButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                for (ImageButton cardButton : player1CardButtons) {
-                    if (cardButton.isSelected()) {
+                for(ImageButton cardButton : player1CardButtons){
+                    if(cardButton.isSelected()){
                         animateCardTurn(cardButton);
                         setCountdownTimer(cardButton);
                         peekButton.setVisibility(View.INVISIBLE);
@@ -1077,17 +1073,16 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             }
         });
     }
-
-    private Card getSelectedCard(List<ImageButton> cardButtons, Player owner) {
-        for (int i = 0; i < cardButtons.size(); i++) {
-            if (cardButtons.get(i).isSelected()) {
+    private Card getSelectedCard(List<ImageButton> cardButtons, Player owner){
+        for(int i=0; i<cardButtons.size(); i++){
+            if(cardButtons.get(i).isSelected()){
                 return owner.getMyCards().get(i);
             }
         }
         return null;
     }
 
-    private void initiateInitialCardLookUp() {
+    private void initiateInitialCardLookUp(){
         peekButton.setVisibility(View.VISIBLE);
         updateText.setVisibility(View.VISIBLE);
         updateText.setText("Select 2 of your cards to look at");
@@ -1100,11 +1095,11 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         peekButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                for (ImageButton cardButton : player1CardButtons) {
-                    if (cardButton.isSelected()) {
+                for(ImageButton cardButton : player1CardButtons){
+                    if(cardButton.isSelected()){
                         selectedCards.add(cardButton);
                     }
-                    for (ImageButton card : selectedCards) {
+                    for(ImageButton card: selectedCards){
                         animateCardTurn(card);
                         setCountdownTimer(card);
                     }
@@ -1129,7 +1124,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         });
     }
 
-    private void setCountdownTimer(ImageButton cardButton) {
+    private void setCountdownTimer(ImageButton cardButton){
         updateText.setText("Please remember the card");
         timerAnimation.setVisibility(View.VISIBLE);
         timerAnimation.playAnimation();
@@ -1151,26 +1146,25 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         }.start();
     }
 
-    private void showSpiedOnCard(ImageButton card) {
+    private void showSpiedOnCard(ImageButton card){
         card.setImageResource(R.drawable.card_pressed);
     }
 
-    private void turnCardBackToNormal(ImageButton card) {
+    private void turnCardBackToNormal(ImageButton card){
         card.setImageResource(R.drawable.card_button);
     }
 
     //TODO ids dont necessarily correspond with index
-    private void indicatePlayerTurn(Player player) {
-        scaleView(playerOverviews.get(player.getId() - 1), 1.2f);
+    private void indicatePlayerTurn(Player player){
+        scaleView(playerOverviews.get(player.getId()-1), 1.2f);
     }
-
-    private void testIndicatePlayerTurn(int i) {
-        for (com.airbnb.lottie.LottieAnimationView animation : playerHighlightAnimations) {
+    private void testIndicatePlayerTurn(int i){
+        for(com.airbnb.lottie.LottieAnimationView animation : playerHighlightAnimations){
             animation.setVisibility(View.INVISIBLE);
             animation.cancelAnimation();
         }
-        playerHighlightAnimations.get(i - 1).setVisibility(View.VISIBLE);
-        playerHighlightAnimations.get(i - 1).playAnimation();
+        playerHighlightAnimations.get(i-1).setVisibility(View.VISIBLE);
+        playerHighlightAnimations.get(i-1).playAnimation();
     }
 
     public void scaleView(View v, float factor) {
@@ -1183,13 +1177,13 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         v.startAnimation(anim);
     }
 
-    private void displayDiscardedCard(Card card) {
+    private void displayDiscardedCard(Card card){
         playedCardsStackButton.setImageResource(getCardResource(card));
 
     }
 
     //TODO display picked Card to User
-    private void displayPickedCard(Card card) {
+    private void displayPickedCard(Card card){
 
     }
 
@@ -1208,21 +1202,20 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
     public void processExtraData() throws JSONException {
         Intent intent = getIntent();
         String key = intent.getStringExtra("key");
-        if (key != null) {
-            switch (key) {
-                case "Willkommen":
+        if (key!=null){
+        switch (key) {
+            case "Willkommen":
 
-                    break;
-                case "myID":
-                    Toast.makeText(this, "This is my Toast message!",
-                            Toast.LENGTH_LONG).show();
-                    break;
-                case "test2":
-                    Toast.makeText(this, "client!",
-                            Toast.LENGTH_LONG).show();
-                    break;
-            }
-        }
+                break;
+            case "myID":
+                Toast.makeText(this, "This is my Toast message!",
+                        Toast.LENGTH_LONG).show();
+                break;
+            case "test2":
+                Toast.makeText(this, "client!",
+                        Toast.LENGTH_LONG).show();
+                break;
+        }}
     }
 
 
@@ -1237,8 +1230,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
 
         if (jsonObject.has("sendMAXPlayer")) {
             int maxPlayer = (int) jsonObject.get("sendMAXPlayer");
-            MAX_PLAYERS = maxPlayer;
-            Log.d("----------------------MAXPLAYERS", "playerNr: " + maxPlayer);
+            Log.d("----------------------MAXPLAYERS", "playerNr: "+maxPlayer);
             visualizePlayerStats(maxPlayer);
             // TODO pauline: hier wurde die Anzahl Spieler geschickt
         }
@@ -1249,9 +1241,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 Gson gson = new Gson();
                 me = gson.fromJson(jsonString, Player.class);
                 // hier wurde me gesetzt
-                //TODO set player name
-                //playerNames.get(0).setText(me.getName());
-                Log.d("----------------------ME", "my name: " + me.getName());
+                Log.d("----------------------ME", "my name: "+me.getName());
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -1400,7 +1390,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 // webSocketClient.send(String.valueOf(JSON_commands.useFunctionalitySwap(card, me, card, me)));
 
             }
-           
+
 
         }
 
