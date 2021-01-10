@@ -176,17 +176,7 @@ public class JSON_commands {
         return new JSONObject().put("sendMAXPlayer", countPlayer);
     }
 
-    public static JSONObject sendInitialOthers(Player player) throws JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
 
-        JSONObject jmsg = new JSONObject();
-        JSONObject jsubmsg = new JSONObject();
-
-        jsubmsg.put("otherPlayer", objectMapper.writeValueAsString(player));
-        jmsg.put("initialOtherPlayer", jsubmsg);
-
-        return jmsg;
-    }
 
     public static JSONObject sendFirstCard(Card card) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
@@ -285,6 +275,32 @@ public class JSON_commands {
         jsubmsg.put("card2", objectMapper.writeValueAsString(card2));
         jsubmsg.put("player2", objectMapper.writeValueAsString(player2));
         jmsg.put("useFunctionalitySwap", jsubmsg);
+
+        return jmsg;
+    }
+
+    public static JSONObject sendInitialOthers(Player player1, Player player2, Player player3) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        JSONObject jmsg = new JSONObject();
+        JSONObject jsubmsg = new JSONObject();
+
+        jsubmsg.put("otherPlayer1", objectMapper.writeValueAsString(player1));
+        jsubmsg.put("otherPlayer2", objectMapper.writeValueAsString(player2));
+        jsubmsg.put("otherPlayer3", objectMapper.writeValueAsString(player3));
+        jmsg.put("initialOtherPlayer", jsubmsg);
+
+        return jmsg;
+    }
+
+    public static JSONObject sendInitialOthers(Player player) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        JSONObject jmsg = new JSONObject();
+        JSONObject jsubmsg = new JSONObject();
+
+        jsubmsg.put("otherPlayer", objectMapper.writeValueAsString(player));
+        jmsg.put("initialOtherPlayer", jsubmsg);
 
         return jmsg;
     }

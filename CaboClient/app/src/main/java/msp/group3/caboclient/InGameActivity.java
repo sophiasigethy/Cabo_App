@@ -1230,6 +1230,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
 
         if (jsonObject.has("sendMAXPlayer")) {
             int maxPlayer = (int) jsonObject.get("sendMAXPlayer");
+            MAX_PLAYERS=maxPlayer;
             Log.d("----------------------MAXPLAYERS", "playerNr: "+maxPlayer);
             visualizePlayerStats(maxPlayer);
             // TODO pauline: hier wurde die Anzahl Spieler geschickt
@@ -1260,25 +1261,12 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 Gson gson = new Gson();
                 Player player = gson.fromJson(jsonString, Player.class);
                 if (player.getId() != me.getId()) {
-                    if (!otherPlayers.contains(player)) {
+                    if (!containsPlayer(player)) {
                         //TODO set player name
                         otherPlayers.add(player);
                         int index = otherPlayers.indexOf(player);
                         if (otherPlayers.size() == (MAX_PLAYERS - 1)) {
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    for (int i = 0; i < otherPlayers.size(); i++) {
-                                        if (i+1 < playerNames.size()) {
-                                            playerNames.get(i + 1).setText(otherPlayers.get(i).getName());
-                                           // Log.d("----------------------NAMES", "OUT OF BOUNDS");
-                                        }else{
-                                            Log.d("----------------------NAMES", "OUT OF BOUNDS");
-                                        }
-                                    }
-
-                                }
-                            });
+                            showNames();
                         }
 
                     }
@@ -1487,6 +1475,22 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         }
     }
 
+    private void showNames() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                for (int i = 0; i < otherPlayers.size(); i++) {
+                    if (i+1 < playerNames.size()) {
+                        playerNames.get(i + 1).setText(otherPlayers.get(i).getName());
+                    }else{
+                        Log.d("----------------------NAMES", "OUT OF BOUNDS");
+                    }
+                }
+
+            }
+        });
+    }
+
     public void updateCards(Player updatedPlayer) {
         if (updatedPlayer.getId() == me.getId()) {
             me.updateCards(updatedPlayer);
@@ -1497,6 +1501,15 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 }
             }
         }
+    }
+
+    public boolean containsPlayer(Player player){
+        for (Player otherPlayer: otherPlayers){
+            if (player.getId()==otherPlayer.getId()){
+                return true;
+            }
+        }
+        return false;
     }
 
     public void updateScores(Player updatedPlayer) {
