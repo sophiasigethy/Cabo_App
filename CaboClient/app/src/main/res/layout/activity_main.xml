@@ -41,41 +41,102 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
 
-    <RelativeLayout
-        android:id="@+id/relativeLayout"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="top"
-        android:layout_marginTop="8dp"
         android:orientation="horizontal"
+        android:layout_alignParentBottom="true"
+        android:weightSum="5"
         android:paddingLeft="50dp"
         android:paddingRight="50dp">
 
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:layout_margin="8dp">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/player1_image_main"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="12dp"
+                android:src="@drawable/bobsled"
+                android:elevation="16dp"/>
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/player2_image_main"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:src="@drawable/bobsled"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="12dp"
+                android:elevation="16dp"/>
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/player3_image_main"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:src="@drawable/bobsled"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="12dp"
+                android:elevation="16dp"/>
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/player4_image_main"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:src="@drawable/bobsled"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="12dp"
+                android:elevation="16dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Choose a Player"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="12dp"
+                android:textColor="@color/beige"
+                android:padding="6dp"/>
+
+        </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/relativeLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="top"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal"
+        android:layout_weight="4">
+
         <TextView
             android:id="@+id/username"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center|top"
             android:textColor="@color/beige"/>
 
         <TextView
             android:id="@+id/friendlistheader"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/username"
             android:gravity="center|top"
             android:text="@string/friend_list"
             android:textColor="@color/beige"/>
 
-
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_below="@+id/friendlistheader"
             android:orientation="vertical"
             android:layout_marginTop="6dp"
-            android:layout_marginBottom="12dp">
+            android:layout_marginBottom="12dp"
+            android:gravity="bottom"
+            android:layout_below="@id/friendlistheader">
 
             <FrameLayout
                 android:layout_width="match_parent"
@@ -121,4 +182,5 @@
         </LinearLayout>
 
     </RelativeLayout>
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
