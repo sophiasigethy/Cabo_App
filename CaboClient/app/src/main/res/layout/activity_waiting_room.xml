@@ -175,9 +175,9 @@
             android:layout_marginStart="16dp"
             android:ems="10"
             android:hint="@string/edit_message"
-            android:textColorHint="@color/white"
+            android:textColorHint="@color/beige"
             android:inputType="text"
-            android:textColor="@color/white"
+            android:textColor="@color/beige"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toLeftOf="@+id/send_button" />
@@ -213,7 +213,7 @@
             android:layout_marginTop="50dp"
             android:maxLines="10"
             android:scrollbars="vertical"
-            android:textColor="@color/white"
+            android:textColor="@color/beige"
             app:layout_constraintHorizontal_bias="0.52"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
@@ -274,7 +274,7 @@
             android:layout_weight="1"
             android:onClick="changeActivity"
             android:background="@drawable/outlined_button"
-            android:textColor="@color/white"
+            android:textColor="@drawable/outlined_button_text"
             android:text="@string/start_game" />
         <Button
             android:id="@+id/cancel_button"
@@ -284,8 +284,8 @@
             android:layout_marginLeft="4dp"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
-            android:textColor="@color/white"
-            android:background="@android:color/transparent"
+            android:textColor="@drawable/outlined_button_text"
+            android:background="@drawable/outlined_button"
             android:layout_weight="1"/>
 
     </LinearLayout>

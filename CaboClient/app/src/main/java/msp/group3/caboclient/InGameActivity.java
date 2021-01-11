@@ -616,7 +616,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             playerCardButtons.get(i).setVisibility(View.INVISIBLE);
         }
         for (int i = 0; i < nrPlayers; i++) {
-            playerStats.get(i).setVisibility(View.INVISIBLE);
+            //playerStats.get(i).setVisibility(View.INVISIBLE);
             playerHighlightAnimations.get(i).setVisibility(View.INVISIBLE);
         }
     }
