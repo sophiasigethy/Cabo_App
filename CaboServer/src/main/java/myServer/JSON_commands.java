@@ -279,15 +279,13 @@ public class JSON_commands {
         return jmsg;
     }
 
-    public static JSONObject sendInitialOthers(Player player1, Player player2, Player player3) throws JsonProcessingException {
+    public static JSONObject sendInitialOthers(ArrayList<Player> players) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
 
         JSONObject jmsg = new JSONObject();
         JSONObject jsubmsg = new JSONObject();
 
-        jsubmsg.put("otherPlayer1", objectMapper.writeValueAsString(player1));
-        jsubmsg.put("otherPlayer2", objectMapper.writeValueAsString(player2));
-        jsubmsg.put("otherPlayer3", objectMapper.writeValueAsString(player3));
+        jsubmsg.put("players", objectMapper.writeValueAsString(players));
         jmsg.put("initialOtherPlayer", jsubmsg);
 
         return jmsg;

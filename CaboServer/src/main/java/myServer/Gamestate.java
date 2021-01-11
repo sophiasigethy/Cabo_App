@@ -1,6 +1,5 @@
 package myServer;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONException;
@@ -37,6 +36,7 @@ public class Gamestate {
 
     private int currentPlayerId = 0;
     private Card currentPickedCard = null;
+    private int initialSetUp=0;
 
     public Gamestate(SocketHandler socketHandler) {
         // this.cardSuiteMgr = new CardSuiteManager();
@@ -158,13 +158,19 @@ public class Gamestate {
 
         }
         if (jsonObject.has("askForInitialSettings")) {
-            sendToAll(JSON_commands.sendMAXPlayer(MAX_PLAYER));
+           // sendToAll(JSON_commands.sendMAXPlayer(MAX_PLAYER));
+            socketHandler.sendMessage(session, JSON_commands.sendMAXPlayer(MAX_PLAYER));
+            initialSetUp++;
+            if (initialSetUp==MAX_PLAYER){
+                generateCards(true);
+                //send 4 cards to every client
+                distributeCardsAtBeginning();
 
-            generateCards(true);
-            //send 4 cards to every client
-            distributeCardsAtBeginning();
-            socketHandler.sendMessage(session, JSON_commands.sendInitialME(getPlayerBySessionId(session.getId())));
-            sendInitialPlayerSettings();
+                for (Player player: players.values()){
+                    sendInitialSetUp(player);
+                }
+            }
+
 
         }
 
@@ -435,8 +441,33 @@ public class Gamestate {
             for (Player player: players.values()){
                 sendToAll(JSON_commands.sendInitialOthers(player));
             }
+    }
 
+    public void sendInitialSetUp(Player player)throws IOException{
+        ArrayList<Player> list= new ArrayList<>();
+        for (Player other: players.values()){
+           if (player.getId()!=other.getId()){
+               list.add(other);
+           }else{
+               socketHandler.sendMessage(getSessionByPlayerID(player.getId()), JSON_commands.sendInitialME(player));
+           }
+        }
+        WebSocketSession session= getSessionByPlayerID(player.getId());
+        if (session!=null){
+            socketHandler.sendMessage(session, JSON_commands.sendInitialOthers(list));
+        }
+    }
 
+    public WebSocketSession getSessionByPlayerID(int playerID){
+        for (Map.Entry<String, Player> entry : players.entrySet()) {
+            String key = entry.getKey();
+            Player player = entry.getValue();
+            if (player.getId()==playerID) {
+                return getSessionBySessionId(key);
+            }
+
+        }
+        return null;
     }
 
 

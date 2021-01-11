@@ -29,12 +29,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import org.java_websocket.client.WebSocketClient;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -1254,7 +1257,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 //webSocketClient.send(String.valueOf(JSON_commands.sendMemorized("memorized")));
             }
         }
-        if (jsonObject.has("initialOtherPlayer")) {
+        /*if (jsonObject.has("initialOtherPlayer")) {
             JSONObject js = jsonObject.getJSONObject("initialOtherPlayer");
             if (js.has("otherPlayer")) {
                 String jsonString = js.get("otherPlayer").toString();
@@ -1271,6 +1274,17 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
 
                     }
                 }
+            }
+
+        }*/
+        if (jsonObject.has("initialOtherPlayer")) {
+            JSONObject js = jsonObject.getJSONObject("initialOtherPlayer");
+            Gson gson= new Gson();
+            if (js.has("players")) {
+                String jsonString = js.get("players").toString();
+                List<Player> players = gson.fromJson(jsonString, new TypeToken<List<Player>>(){}.getType());
+                otherPlayers.addAll(players);
+                showNames();
             }
 
         }
