@@ -160,7 +160,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         setUpOnClickListeners();
 
         pickCardsStackButton.setEnabled(false);
-        playedCardsStackButton.setEnabled(false);
+        //playedCardsStackButton.setEnabled(false);
 
         //TODO: Chat fragment integration
         if (savedInstanceState == null) {
@@ -253,38 +253,6 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             }
         });
 
-        playedCardsStackButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                try {
-                    webSocketClient.send(String.valueOf(JSON_commands.playPickedCard()));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                try {
-                    webSocketClient.send(String.valueOf(JSON_commands.sendFinishMove("finish")));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        pickCardsStackButton.setEnabled(false);
-                        player1CardsGlow.setVisibility(View.INVISIBLE);
-                        playedCardsStackGlow.setVisibility(View.INVISIBLE);
-                        Toast.makeText(getApplicationContext(),
-                                "Discard card...", Toast.LENGTH_SHORT).show();
-                        makePickedCardContainerDisappear();
-                        switchButton.setVisibility(View.INVISIBLE);
-                        for(ImageButton cardButton : player1CardButtons){
-                            cardButton.setSelected(false);
-                        }
-                        deactivateAllOnCardClickListeners();
-                    }
-                });
-            }
-        });
-
         pickCardsStackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -300,7 +268,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                         tapPickCardAnimation.setVisibility(View.INVISIBLE);
                         growCardGlowAnimation(playedCardsStackGlow);
                         growCardGlowAnimation(player1CardsGlow);
-                        playedCardsStackButton.setEnabled(true);
+                        //playedCardsStackButton.setEnabled(true);
                     }
                 });
             }
@@ -731,51 +699,95 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
 
     //TODO put card as parameter
     private void showPickedCardInContainer(Card card){
-        pickedCardBigImageview.setImageResource(R.drawable.card_back);
-        pickedCardButtonContainer.setVisibility(View.VISIBLE);
-        final ObjectAnimator oa1 = ObjectAnimator.ofFloat(pickedCardBigImageview, "scaleX", 1f, 0f);
-        final ObjectAnimator oa2 = ObjectAnimator.ofFloat(pickedCardBigImageview, "scaleX", 0f, 1f);
-        oa1.setInterpolator(new DecelerateInterpolator());
-        oa2.setInterpolator(new AccelerateDecelerateInterpolator());
-        oa1.addListener(new AnimatorListenerAdapter() {
+        runOnUiThread(new Runnable() {
             @Override
-            public void onAnimationEnd(Animator animation) {
-                super.onAnimationEnd(animation);
-                pickedCardBigImageview.setImageResource(getCardResource(card));
-                oa2.start();
+            public void run() {
+                pickedCardBigImageview.setImageResource(R.drawable.card_back);
+                pickedCardButtonContainer.setVisibility(View.VISIBLE);
+                final ObjectAnimator oa1 = ObjectAnimator.ofFloat(pickedCardBigImageview, "scaleX", 1f, 0f);
+                final ObjectAnimator oa2 = ObjectAnimator.ofFloat(pickedCardBigImageview, "scaleX", 0f, 1f);
+                oa1.setInterpolator(new DecelerateInterpolator());
+                oa2.setInterpolator(new AccelerateDecelerateInterpolator());
+                oa1.addListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        super.onAnimationEnd(animation);
+                        pickedCardBigImageview.setImageResource(getCardResource(card));
+                        oa2.start();
+                    }
+                });
+                oa1.start();
+                enablePlayedCardStackButton(card);
+                setPlayer1CardsOnClickListeners(1);
+                switchButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        playSwapAnimation();
+                        deactivateAllOnCardClickListeners();
+                        switchButton.setVisibility(View.INVISIBLE);
+                        makePickedCardContainerDisappear();
+                        for(int i = 0; i<player1CardButtons.size(); i++){
+                            if(player1CardButtons.get(i).isSelected()){
+                                try {
+                                    webSocketClient.send(String.valueOf(JSON_commands.swapPickedCardWithOwnCards(me.getMyCards().get(i))));
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                for(ImageButton cardButton : player1CardButtons){
+                                    cardButton.setSelected(false);
+                                }
+                            }
+                        });
+
+                    }
+                });
             }
         });
-        oa1.start();
-        playedCardsStackButton.setEnabled(true);
-        setPlayer1CardsOnClickListeners(1);
-        switchButton.setOnClickListener(new View.OnClickListener() {
+    }
+
+    private void enablePlayedCardStackButton(Card pickedCard){
+        playedCardsStackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                playSwapAnimation();
-                deactivateAllOnCardClickListeners();
-                switchButton.setVisibility(View.INVISIBLE);
-                makePickedCardContainerDisappear();
-                for(int i = 0; i<player1CardButtons.size(); i++){
-                    if(player1CardButtons.get(i).isSelected()){
-                        try {
-                            webSocketClient.send(String.valueOf(JSON_commands.swapPickedCardWithOwnCards(me.getMyCards().get(i))));
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+                try {
+                    Log.d("----------------------SEND", "play picked card");
+                    webSocketClient.send(String.valueOf(JSON_commands.playPickedCard()));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                if(pickedCard.getValue()!=7 && pickedCard.getValue()!=8 && pickedCard.getValue()!=9 && pickedCard.getValue()!=10 && pickedCard.getValue()!=11 && pickedCard.getValue()!=12){
+                    try {
+                        Log.d("----------------------SEND", "finish");
+                        webSocketClient.send(String.valueOf(JSON_commands.sendFinishMove("finish")));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
                 }
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        pickCardsStackButton.setEnabled(false);
+                        player1CardsGlow.setVisibility(View.INVISIBLE);
+                        playedCardsStackGlow.setVisibility(View.INVISIBLE);
+                        Toast.makeText(getApplicationContext(),
+                                "Discard card...", Toast.LENGTH_SHORT).show();
+                        makePickedCardContainerDisappear();
+                        switchButton.setVisibility(View.INVISIBLE);
                         for(ImageButton cardButton : player1CardButtons){
                             cardButton.setSelected(false);
                         }
+                        deactivateAllOnCardClickListeners();
                     }
                 });
-
             }
         });
+        playedCardsStackButton.setEnabled(true);
     }
 
     private void makePickedCardContainerDisappear(){
@@ -1302,6 +1314,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        updateText.setVisibility(View.VISIBLE);
                         updateText.setText("Pick a card");
                         tapPickCardAnimation.setVisibility(View.VISIBLE);
                         pickCardsStackButton.setEnabled(true);
@@ -1313,6 +1326,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                     public void run() {
                         Player player = getPlayerById(nextPlayerId);
                         if (player != null) {
+                            updateText.setVisibility(View.VISIBLE);
                             updateText.setText("It's " + getPlayerById(nextPlayerId).getName() + "'s turn");
                         }
                     }
@@ -1377,10 +1391,14 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 Card card = gson.fromJson(jsonString, Card.class);
                 //TODO Pauline: dies ist die Karte, die der Spieler (der gerade an der Reihe ist)gezogen und abgelegt hat (auf den Ablegestapel)
                 displayDiscardedCard(card);
+                Log.d("----------------------MY STATUS", me.getStatus());
+
                 if (me.getStatus().equals(TypeDefs.playing)) {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            Log.d("----------------------ACTION", "trying to play action");
+
                             initiateCardAction(card);
                         }
                     });
