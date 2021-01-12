@@ -283,7 +283,8 @@ public class Gamestate {
         }
 
         if (jsonObject.has("finishMove")) {
-            if(checkIfPlayerIsAuthorised(getPlayerBySessionId(session.getId()))) {
+            Player player= getPlayerBySessionId(session.getId());
+            if(checkIfPlayerIsAuthorised(player)) {
                 finishMove();
                 sendStatusupdatePlayer();
                 sendToAll(JSON_commands.sendNextPlayer(currentPlayerId));

@@ -858,9 +858,9 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             case 13:
                 initiatePeekAndSwapAction();
                 break;
-            default:
-                webSocketClient.send(String.valueOf(JSON_commands.sendFinishMove("finish")));
-                break;
+           // default:
+           //     webSocketClient.send(String.valueOf(JSON_commands.sendFinishMove("finish")));
+           //     break;
         }
     }
 
@@ -1419,7 +1419,6 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                         public void run() {
                             Log.d("----------------------ACTION", "trying to play action");
 
-                            initiateCardAction(card);
                             try {
                                 initiateCardAction(card);
                             } catch (JSONException e) {
@@ -1451,6 +1450,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
 
             }
 
+            if (me.getStatus().equals(TypeDefs.playing))
             webSocketClient.send(String.valueOf(JSON_commands.sendFinishMove("finish")));
 
         }
@@ -1471,6 +1471,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             if (me.getStatus().equals(TypeDefs.waiting)) {
 
             }
+            if (me.getStatus().equals(TypeDefs.playing))
             webSocketClient.send(String.valueOf(JSON_commands.sendFinishMove("finish")));
 
         }
@@ -1492,6 +1493,8 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             if (me.getStatus().equals(TypeDefs.waiting)) {
 
             }
+
+            if (me.getStatus().equals(TypeDefs.playing))
             webSocketClient.send(String.valueOf(JSON_commands.sendFinishMove("finish")));
 
         }
