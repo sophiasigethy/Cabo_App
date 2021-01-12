@@ -186,7 +186,7 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
                 Gson gson = new Gson();
                 Player player = gson.fromJson(jsonString, Player.class);
                 if (player.getId() == me.getId()) {
-                    me.replacePlayer(player);
+                    me.updateStatus(player);
                 }
                 //TODO nur für testzwecke sonst auskommentieren
                 // showCards();
@@ -200,7 +200,7 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
                 Gson gson = new Gson();
                 Player player = gson.fromJson(jsonString, Player.class);
                 if (player.getId() == me.getId()) {
-                    me.replacePlayer(player);
+                    me.updateStatus(player);
                 }
             }
         }

@@ -220,6 +220,8 @@ public class Gamestate {
 
         if (jsonObject.has("playPickedCard")) {
             if (checkIfPlayerIsAuthorised(getPlayerBySessionId(session.getId()))) {
+                takeFirstCardFromAvailableCards();
+                availableCards.remove(0);
                 playedCards.add(currentPickedCard);
                 sendToAll(JSON_commands.sendPlayedCard(currentPickedCard));
             }
@@ -281,9 +283,12 @@ public class Gamestate {
         }
 
         if (jsonObject.has("finishMove")) {
-            finishMove();
-            sendStatusupdatePlayer();
-            sendToAll(JSON_commands.sendNextPlayer(currentPlayerId));
+            if(checkIfPlayerIsAuthorised(getPlayerBySessionId(session.getId()))) {
+                finishMove();
+                sendStatusupdatePlayer();
+                sendToAll(JSON_commands.sendNextPlayer(currentPlayerId));
+            }
+
         }
 
         if (jsonObject.has("cabo")) {
