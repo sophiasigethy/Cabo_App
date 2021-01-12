@@ -19,6 +19,10 @@ public class Player {
 
     private String status;
 
+    public Player(){
+
+    }
+
     public Player(int id, String name) {
         this.id = id;
         this.name = name;
@@ -76,10 +80,11 @@ public class Player {
         this.myCards = myCards;
     }
 
-    public void replacePlayer(Player player){
+    public void updateStatus(Player player){
         this.id= player.getId();
         this.name=player.getName();
         this.myCards= player.getMyCards();
+        this.status=player.getStatus();
     }
 
     public String getStatus() {
@@ -148,5 +153,8 @@ public class Player {
         this.score =other.getScore();
 
     }
+
+
+
 }
 

@@ -18,7 +18,7 @@ public class Gamestate {
 
     // contains websocketsession-id and the associated player object
     public HashMap<String, Player> players = new HashMap<String, Player>();
-    private final int MAX_PLAYER = 3;
+    private final int MAX_PLAYER = 2;
     private int test = 0;
     // determines how many players are already registered
     private int countPlayer = 0;
@@ -36,7 +36,7 @@ public class Gamestate {
 
     private int currentPlayerId = 0;
     private Card currentPickedCard = null;
-    private int initialSetUp=0;
+    private int initialSetUp = 0;
 
     public Gamestate(SocketHandler socketHandler) {
         // this.cardSuiteMgr = new CardSuiteManager();
@@ -158,15 +158,15 @@ public class Gamestate {
 
         }
         if (jsonObject.has("askForInitialSettings")) {
-           // sendToAll(JSON_commands.sendMAXPlayer(MAX_PLAYER));
+            // sendToAll(JSON_commands.sendMAXPlayer(MAX_PLAYER));
             socketHandler.sendMessage(session, JSON_commands.sendMAXPlayer(MAX_PLAYER));
             initialSetUp++;
-            if (initialSetUp==MAX_PLAYER){
+            if (initialSetUp == MAX_PLAYER) {
                 generateCards(true);
                 //send 4 cards to every client
                 distributeCardsAtBeginning();
 
-                for (Player player: players.values()){
+                for (Player player : players.values()) {
                     sendInitialSetUp(player);
                 }
             }
@@ -175,7 +175,10 @@ public class Gamestate {
         }
 
         if (jsonObject.has("memorizedCards")) {
-            getPlayerBySessionId(session.getId()).setStatus(TypeDefs.readyForGamestart);
+            Player player= getPlayerBySessionId(session.getId());
+            if (!(player.getStatus().equalsIgnoreCase(TypeDefs.waiting)||player.getStatus().equalsIgnoreCase(TypeDefs.playing))){
+                getPlayerBySessionId(session.getId()).setStatus(TypeDefs.readyForGamestart);
+            }
             if (checkIfEveryoneReady()) {
                 //send which player's turn it is
                 currentPlayerId = getFirstPlayer();
@@ -189,10 +192,12 @@ public class Gamestate {
 
             if (checkIfPlayerIsAuthorised(getPlayerBySessionId(session.getId()))) {
                 //TODO draw card ? discard card?
-                currentPickedCard = takeFirstCardFromAvailableCards();
-
-                Player firstPlayer = getPlayerById(currentPlayerId);
-                if (firstPlayer != null) {
+                //getPlayerBySessionId(session.getId()).drawCard();
+                //currentPickedCard = takeFirstCardFromAvailableCards();
+                Player currentPlayer = getPlayerBySessionId(session.getId());
+                if (currentPlayer != null) {
+                    currentPickedCard = availableCards.get(0);
+                    // Player firstPlayer = getPlayerById(currentPlayerId);
                     socketHandler.sendMessage(session, JSON_commands.sendFirstCard(currentPickedCard));
                 }
             }
@@ -204,17 +209,18 @@ public class Gamestate {
                 String json = js.get("card").toString();
                 ObjectMapper objectMapper = new ObjectMapper();
                 objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-                Card card = objectMapper.readValue(json, Card.class);
+                Card ownCard = objectMapper.readValue(json, Card.class);
                 Player currentPlayer = getPlayerBySessionId(session.getId());
 
-                currentPlayer.swapWithAvailableCards(card, currentPickedCard);
-                sendToAll(JSON_commands.sendDiscardedCard(card));
+                currentPlayer.swapWithOwnCard(ownCard, currentPickedCard);
+                sendToAll(JSON_commands.sendDiscardedCard(ownCard));
                 sendToAll(JSON_commands.sendUpdatePlayer(currentPlayer));
             }
         }
 
         if (jsonObject.has("playPickedCard")) {
             if (checkIfPlayerIsAuthorised(getPlayerBySessionId(session.getId()))) {
+                playedCards.add(currentPickedCard);
                 sendToAll(JSON_commands.sendPlayedCard(currentPickedCard));
             }
         }
@@ -427,6 +433,7 @@ public class Gamestate {
 
     /**
      * this methods sends the initial Settings to all players at the very beginning of the game
+     *
      * @throws IOException
      */
     public void sendInitialPlayerSettings() throws IOException {
@@ -438,31 +445,31 @@ public class Gamestate {
             sendToAll(JSON_commands.sendInitialOthers(player));
         }*/
 
-            for (Player player: players.values()){
-                sendToAll(JSON_commands.sendInitialOthers(player));
-            }
+        for (Player player : players.values()) {
+            sendToAll(JSON_commands.sendInitialOthers(player));
+        }
     }
 
-    public void sendInitialSetUp(Player player)throws IOException{
-        ArrayList<Player> list= new ArrayList<>();
-        for (Player other: players.values()){
-           if (player.getId()!=other.getId()){
-               list.add(other);
-           }else{
-               socketHandler.sendMessage(getSessionByPlayerID(player.getId()), JSON_commands.sendInitialME(player));
-           }
+    public void sendInitialSetUp(Player player) throws IOException {
+        ArrayList<Player> list = new ArrayList<>();
+        for (Player other : players.values()) {
+            if (player.getId() != other.getId()) {
+                list.add(other);
+            } else {
+                socketHandler.sendMessage(getSessionByPlayerID(player.getId()), JSON_commands.sendInitialME(player));
+            }
         }
-        WebSocketSession session= getSessionByPlayerID(player.getId());
-        if (session!=null){
+        WebSocketSession session = getSessionByPlayerID(player.getId());
+        if (session != null) {
             socketHandler.sendMessage(session, JSON_commands.sendInitialOthers(list));
         }
     }
 
-    public WebSocketSession getSessionByPlayerID(int playerID){
+    public WebSocketSession getSessionByPlayerID(int playerID) {
         for (Map.Entry<String, Player> entry : players.entrySet()) {
             String key = entry.getKey();
             Player player = entry.getValue();
-            if (player.getId()==playerID) {
+            if (player.getId() == playerID) {
                 return getSessionBySessionId(key);
             }
 
@@ -473,6 +480,7 @@ public class Gamestate {
 
     /**
      * this method returns the associated session to a specific sessionId
+     *
      * @param id
      * @return
      */
@@ -487,6 +495,7 @@ public class Gamestate {
 
     /**
      * this method returns the associated player to a specific sessionId
+     *
      * @param sessionId
      * @return
      */
@@ -504,6 +513,7 @@ public class Gamestate {
 
     /**
      * this method returns the associated player to a specific playerId
+     *
      * @param id
      * @return
      */
@@ -518,11 +528,14 @@ public class Gamestate {
 
     /**
      * this method determines the first player at the beginning of the game
+     *
      * @return
      */
     public int getFirstPlayer() {
         Random random = new Random();
-        int start = random.nextInt(MAX_PLAYER + 1);
+        int start = random.nextInt(MAX_PLAYER) + 1;
+        //int start = random.ints(1,(MAX_PLAYER+1)).findFirst().getAsInt();;
+
         if (start == 0) {
             return getFirstPlayer();
         }
@@ -532,6 +545,7 @@ public class Gamestate {
 
     /**
      * this method sends an update when the status changes
+     *
      * @throws IOException
      */
     public void sendStatusupdatePlayer() throws IOException {
@@ -542,6 +556,7 @@ public class Gamestate {
 
     /**
      * this method sends the player who's next in line to play
+     *
      * @throws IOException
      */
     public void sendNextPlayer() throws IOException {
@@ -565,6 +580,7 @@ public class Gamestate {
 
     /**
      * this method checks if everyone has looked up the initial 2 cards and is ready to play
+     *
      * @return
      */
     public boolean checkIfEveryoneReady() {
@@ -578,6 +594,7 @@ public class Gamestate {
 
     /**
      * this player checks if a player is really on the turn
+     *
      * @param player
      * @return
      */
@@ -590,6 +607,7 @@ public class Gamestate {
 
     /**
      * this method handles what happens when a player finishes his move
+     *
      * @throws IOException
      */
     public void finishMove() throws IOException {
@@ -608,6 +626,7 @@ public class Gamestate {
 
     /**
      * this method returns an id which is the next in line to play
+     *
      * @return
      */
     public int getNextPlayerId() {

@@ -30,14 +30,14 @@ public class Player {
     public Player(int id, String name){
         this.id= id;
         this.name= name;
-        this.status=TypeDefs.waiting;
+        this.status=TypeDefs.MATCHING;
     }
 
     public Player(int id, String name, Gamestate gs) {
         this.id = id;
         this.name = name;
         this.gamestate = gs;
-        this.status = TypeDefs.waiting;
+        this.status = TypeDefs.MATCHING;
     }
     public int getId() {
         return id;
@@ -137,7 +137,7 @@ public class Player {
      * @param otherCard
      * @param shouldUpdatePlayedCards
      */
-    private void swapWithPileCards(ArrayList<Card> cardsToSwap, Card myCard, Card otherCard, boolean shouldUpdatePlayedCards) {
+    public void swapWithPileCards(ArrayList<Card> cardsToSwap, Card myCard, Card otherCard, boolean shouldUpdatePlayedCards) {
 
         if (this.calledCabo) return;
         boolean swapped = false;
@@ -228,5 +228,18 @@ public class Player {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public void swapWithOwnCard(Card ownCard, Card currentPickedCard){
+        //gezogene Karte wird von availableCards entfernt und in playedCards hinzugefügt-> ist letzter Eintrag von playedCards jetzt
+        //diese Karte muss currentPickedCard entsprechen
+        gamestate.takeFirstCardFromAvailableCards();
+        for (int i=0; i<this.cards.size(); i++ ){
+            if (ownCard.equalsCard(cards.get(i))){
+                cards.remove(i);
+                cards.add(i, currentPickedCard);
+            }
+        }
+
     }
 }
