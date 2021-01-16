@@ -701,7 +701,8 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             @Override
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
-                cardButton.setImageResource(R.drawable.card_back);
+                cardButton.setSelected(false);
+                cardButton.setImageResource(R.drawable.card_button);
                 oa2.start();
             }
         });
