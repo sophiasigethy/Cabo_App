@@ -268,7 +268,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                         tapPickCardAnimation.setVisibility(View.INVISIBLE);
                         growCardGlowAnimation(playedCardsStackGlow);
                         growCardGlowAnimation(player1CardsGlow);
-                        //playedCardsStackButton.setEnabled(true);
+                        cardPopAnimation(pickCardsStackButton);
                     }
                 });
             }
@@ -647,6 +647,19 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         card.startAnimation(grow_in);
     }
 
+    private void growCardGlowAnimationOut(ImageView card){
+        //bounds remain the same only image changes
+        AlphaAnimation fade_out = new AlphaAnimation(1f, 0f);
+        fade_out.setDuration(2000);
+        fade_out.setFillAfter(true);
+        card.startAnimation(fade_out);
+
+        ScaleAnimation grow_out = new ScaleAnimation(1.0f, 0f, 1.0f, 0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        grow_out.setDuration(1000);
+        grow_out.setFillAfter(true);
+        card.startAnimation(grow_out);
+    }
+
     private void cardPopAnimation(ImageButton button){
         ScaleAnimation grow_in = new ScaleAnimation(1f, 1.2f, 1f, 1.2f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
         grow_in.setDuration(500);
@@ -739,6 +752,8 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                         deactivateAllOnCardClickListeners();
                         switchButton.setVisibility(View.INVISIBLE);
                         makePickedCardContainerDisappear();
+                        growCardGlowAnimationOut(playedCardsStackGlow);
+                        growCardGlowAnimationOut(player1CardsGlow);
                         for(int i = 0; i<player1CardButtons.size(); i++){
                             if(player1CardButtons.get(i).isSelected()){
                                 try {
@@ -785,10 +800,11 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                     @Override
                     public void run() {
                         pickCardsStackButton.setEnabled(false);
-                        player1CardsGlow.setVisibility(View.INVISIBLE);
-                        playedCardsStackGlow.setVisibility(View.INVISIBLE);
-                        Toast.makeText(getApplicationContext(),
-                                "Discard card...", Toast.LENGTH_SHORT).show();
+                        growCardGlowAnimationOut(player1CardsGlow);
+                        growCardGlowAnimationOut(playedCardsStackGlow);
+                        cardPopAnimation(playedCardsStackButton);
+                        /*Toast.makeText(getApplicationContext(),
+                                "Discard card...", Toast.LENGTH_SHORT).show();*/
                         makePickedCardContainerDisappear();
                         switchButton.setVisibility(View.INVISIBLE);
                         for(ImageButton cardButton : player1CardButtons){
