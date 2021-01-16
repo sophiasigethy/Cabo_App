@@ -856,7 +856,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 initiateBlindSwapAction();
                 break;
             case 13:
-                initiatePeekAndSwapAction();
+                //initiatePeekAndSwapAction();
                 break;
            // default:
            //     webSocketClient.send(String.valueOf(JSON_commands.sendFinishMove("finish")));
@@ -1001,8 +1001,6 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
     }*/
 
     private void playSwapAnimation() {
-       /* Toast.makeText(getApplicationContext(),
-                "Blind Swapping Cards", Toast.LENGTH_SHORT).show();*/
         cardSwapAnimation.setVisibility(View.VISIBLE);
         cardSwapBg.setVisibility(View.VISIBLE);
         cardSwapAnimation.playAnimation();
@@ -1083,6 +1081,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         updateText.setVisibility(View.VISIBLE);
         updateText.setText("Please choose 1 of your cards");
         peekButton.setEnabled(false);
+
         setPlayer1CardsOnClickListeners(1);
 
         peekButton.setOnClickListener(new View.OnClickListener() {
