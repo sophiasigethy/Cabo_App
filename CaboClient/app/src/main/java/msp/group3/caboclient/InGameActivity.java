@@ -647,6 +647,17 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         card.startAnimation(grow_in);
     }
 
+    private void cardPopAnimation(ImageButton button){
+        ScaleAnimation grow_in = new ScaleAnimation(1f, 1.2f, 1f, 1.2f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        grow_in.setDuration(500);
+        grow_in.setStartOffset(500);
+        button.startAnimation(grow_in);
+        ScaleAnimation grow_out = new ScaleAnimation(1.2f, 1f, 1.2f, 1f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        grow_out.setDuration(500);
+        grow_out.setStartOffset(500);
+        button.startAnimation(grow_out);
+    }
+
     //TODO insert actual image of card depending on value
     private void animateCardTurn(ImageButton cardButton){
         final ObjectAnimator oa1 = ObjectAnimator.ofFloat(cardButton, "scaleX", 1f, 0f);
