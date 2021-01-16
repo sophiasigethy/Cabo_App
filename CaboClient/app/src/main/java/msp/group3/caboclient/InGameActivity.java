@@ -1198,17 +1198,20 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         card.setImageResource(R.drawable.card_button);
     }
 
-    //TODO ids dont necessarily correspond with index
     private void indicatePlayerTurn(Player player){
-        scaleView(playerOverviews.get(player.getId()-1), 1.2f);
-    }
-    private void testIndicatePlayerTurn(int i){
         for(com.airbnb.lottie.LottieAnimationView animation : playerHighlightAnimations){
             animation.setVisibility(View.INVISIBLE);
             animation.cancelAnimation();
         }
-        playerHighlightAnimations.get(i-1).setVisibility(View.VISIBLE);
-        playerHighlightAnimations.get(i-1).playAnimation();
+        if(player==me){
+            playerHighlightAnimations.get(0).setVisibility(View.VISIBLE);
+            playerHighlightAnimations.get(0).playAnimation();
+        }
+        else{
+            int index = otherPlayers.indexOf(player)+1;
+            playerHighlightAnimations.get(index).setVisibility(View.VISIBLE);
+            playerHighlightAnimations.get(index).playAnimation();
+        }
     }
 
     public void scaleView(View v, float factor) {
@@ -1345,6 +1348,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        indicatePlayerTurn(me);
                         updateText.setVisibility(View.VISIBLE);
                         updateText.setText("Pick a card");
                         tapPickCardAnimation.setVisibility(View.VISIBLE);
@@ -1357,6 +1361,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                     public void run() {
                         Player player = getPlayerById(nextPlayerId);
                         if (player != null) {
+                            indicatePlayerTurn(player);
                             updateText.setVisibility(View.VISIBLE);
                             updateText.setText("It's " + getPlayerById(nextPlayerId).getName() + "'s turn");
                         }
