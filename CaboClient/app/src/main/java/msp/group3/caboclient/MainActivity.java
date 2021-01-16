@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -34,7 +35,7 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
     private ListView friendList;
     private TextView userNameTxt;
     private Button startGameBtn;
-    private Button addFriendBtn;
+    private ImageButton addFriendBtn;
     private SharedPreferences sharedPref;
     private boolean accepted= false;
 
@@ -46,7 +47,7 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
         friendList = (ListView) findViewById(R.id.list_friends);
         userNameTxt = (TextView) findViewById(R.id.username);
         startGameBtn = (Button) findViewById(R.id.start_game_btn);
-        addFriendBtn = (Button) findViewById(R.id.add_friend_btn);
+        addFriendBtn = (ImageButton) findViewById(R.id.add_friend_btn);
         sharedPref = getApplicationContext().getSharedPreferences(
                 R.string.preference_file_key + "", Context.MODE_PRIVATE);
 

@@ -8,6 +8,7 @@ import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,7 +23,7 @@ import java.util.ArrayList;
 public class WaitingRoomActivity extends AppCompatActivity implements Communicator.CommunicatorCallback {
 
     private EditText editText;
-    private Button button;
+    private ImageButton sendButton;
     private WebSocketClient webSocketClient;
     private Communicator communicator;
     private TextView mTextView;
@@ -48,7 +49,7 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
         setContentView(R.layout.activity_waiting_room);
 
         editText = (EditText) findViewById(R.id.editText);
-        button = (Button) findViewById(R.id.button);
+        sendButton = (ImageButton) findViewById(R.id.send_button);
         mTextView = (TextView) findViewById(R.id.messages);
         mTextView.setMovementMethod(ScrollingMovementMethod.getInstance());
 
