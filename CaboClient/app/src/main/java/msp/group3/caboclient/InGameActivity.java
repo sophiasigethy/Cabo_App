@@ -40,6 +40,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * this is an example for a zoomable and scrollable layout
@@ -241,15 +242,6 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-            }
-        });
-
-        caboButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(getApplicationContext(),
-                        "CABO!", Toast.LENGTH_SHORT).show();
-                showSpiedOnCard(player2CardButtons.get(0));
             }
         });
 
@@ -1096,6 +1088,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                     }
                 }
                 try {
+                    //TimeUnit.SECONDS.sleep(10);
                     webSocketClient.send(String.valueOf(JSON_commands.useFunctionalitySpy(selectedCard, me)));
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -1105,16 +1098,24 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
     }
 
     private void initiatePeekAction() {
-        peekButton.setVisibility(View.VISIBLE);
-        updateText.setVisibility(View.VISIBLE);
-        updateText.setText("Please choose 1 of your cards");
-        peekButton.setEnabled(false);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                peekButton.setVisibility(View.VISIBLE);
+                updateText.setVisibility(View.VISIBLE);
+                updateText.setText("Please choose 1 of your cards");
+                peekButton.setEnabled(false);
 
-        setPlayer1CardsOnClickListeners(1);
+                setPlayer1CardsOnClickListeners(1);
+            }
+        });
+
 
         peekButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Log.d("-----------Peek", "button clicked");
+
                 for(ImageButton cardButton : player1CardButtons){
                     if(cardButton.isSelected()){
                         animateCardTurn(cardButton);
@@ -1122,14 +1123,23 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                         peekButton.setVisibility(View.INVISIBLE);
                     }
                 }
+
                 try {
                     webSocketClient.send(String.valueOf(JSON_commands.useFunctionalityPeek(getSelectedCard(player1CardButtons, me))));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                updateText.setVisibility(View.INVISIBLE);
-                deactivateAllOnCardClickListeners();
-                nrCardsSelected = 0;
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        updateText.setVisibility(View.INVISIBLE);
+                        deactivateAllOnCardClickListeners();
+                        nrCardsSelected = 0;
+
+                    }
+                });
+
             }
         });
     }
@@ -1206,12 +1216,65 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         }.start();
     }
 
-    private void showSpiedOnCard(ImageButton card){
-        card.setImageResource(R.drawable.card_pressed);
+    private void showSpiedOnCard(Player spiedOnPlayer, Card card){
+        int playerIndex = otherPlayers.indexOf(spiedOnPlayer);
+        int cardIndex = spiedOnPlayer.getMyCards().indexOf(card);
+        ImageButton cardButton = otherPlayerButtonLists.get(playerIndex).get(cardIndex);
+        cardButton.setImageResource(R.drawable.card_spied);
+
+        new CountDownTimer(3000, 1000) {
+
+            public void onTick(long millisUntilFinished) {
+
+            }
+
+            public void onFinish() {
+                cardButton.setImageResource(R.drawable.card_button);
+            }
+
+        }.start();
+
     }
 
-    private void turnCardBackToNormal(ImageButton card){
-        card.setImageResource(R.drawable.card_button);
+    //TODO
+    private void showSwappedCards(Player spiedOnPlayer, Card card){
+        int playerIndex = otherPlayers.indexOf(spiedOnPlayer);
+        int cardIndex = spiedOnPlayer.getMyCards().indexOf(card);
+        ImageButton cardButton = otherPlayerButtonLists.get(playerIndex).get(cardIndex);
+        cardButton.setImageResource(R.drawable.card_spied);
+
+        new CountDownTimer(3000, 1000) {
+
+            public void onTick(long millisUntilFinished) {
+
+            }
+
+            public void onFinish() {
+                cardButton.setImageResource(R.drawable.card_button);
+            }
+
+        }.start();
+
+    }
+
+    private void showPeekedOnCard(Player peekingPlayer, Card card){
+        int playerIndex = otherPlayers.indexOf(peekingPlayer);
+        int cardIndex = peekingPlayer.getMyCards().indexOf(card);
+        ImageButton cardButton = otherPlayerButtonLists.get(playerIndex).get(cardIndex);
+        cardButton.setImageResource(R.drawable.card_spied);
+
+        new CountDownTimer(3000, 1000) {
+
+            public void onTick(long millisUntilFinished) {
+
+            }
+
+            public void onFinish() {
+                cardButton.setImageResource(R.drawable.card_button);
+            }
+
+        }.start();
+
     }
 
     private void indicatePlayerTurn(Player player){
@@ -1474,16 +1537,30 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             JSONObject js = jsonObject.getJSONObject("useFunctionalityPeek");
             String json = js.get("card").toString();
 
+            Log.d("----------------------PEEK ACTION CONFIRMED BY SERVER", me.getStatus());
+
             Gson gson = new Gson();
             Card card = gson.fromJson(json, Card.class);
 
             //TODO Pauline: das ist die Karte, die der Spieler bei sich selbst anschaut -> anzeigen für alle Spieler
             if (me.getStatus().equals(TypeDefs.waiting)) {
-
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Player peekingPlayer = null;
+                        for(Player player : otherPlayers){
+                            if(player.getStatus().equals(TypeDefs.playing)){
+                                peekingPlayer=player;
+                            }
+                        }
+                        //showPeekedOnCard(peekingPlayer, card);
+                    }
+                });
             }
 
-            if (me.getStatus().equals(TypeDefs.playing))
-            webSocketClient.send(String.valueOf(JSON_commands.sendFinishMove("finish")));
+            if (me.getStatus().equals(TypeDefs.playing)){
+                webSocketClient.send(String.valueOf(JSON_commands.sendFinishMove("finish")));
+            }
 
         }
         if (jsonObject.has("useFunctionalitySpy")) {
@@ -1491,6 +1568,8 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             JSONObject js = jsonObject.getJSONObject("useFunctionalitySpy");
             String json1 = js.get("card").toString();
             String json2 = js.get("spyedPlayer").toString();
+
+            Log.d("----------------------PEEK ACTION CONFIRMED BY SERVER", me.getStatus());
 
             Gson gson = new Gson();
             Card card = gson.fromJson(json1, Card.class);
@@ -1501,10 +1580,17 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             //Hier das spyen anzeigen bzw erlauben
             // danach finish aufrufen
             if (me.getStatus().equals(TypeDefs.waiting)) {
-
+                /*runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        //showSpiedOnCard(spyedPlayer, card);
+                    }
+                });*/
+                showSpiedOnCard(spyedPlayer, card);
             }
-            if (me.getStatus().equals(TypeDefs.playing))
-            webSocketClient.send(String.valueOf(JSON_commands.sendFinishMove("finish")));
+            if (me.getStatus().equals(TypeDefs.playing)){
+                webSocketClient.send(String.valueOf(JSON_commands.sendFinishMove("finish")));
+            }
 
         }
         if (jsonObject.has("useFunctionalitySwap")) {
