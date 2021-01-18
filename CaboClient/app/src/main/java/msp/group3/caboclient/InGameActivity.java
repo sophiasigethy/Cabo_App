@@ -955,6 +955,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         setPlayer4CardsOnClickListeners(2);
 
         ArrayList<ImageButton> selectedCards = new ArrayList<>();
+        nrCardsSelected = 0;
 
         switchButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -1005,16 +1006,25 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         });
     }
     private Player getCardOwner(ImageButton cardButton){
-        for(int i=0; i<otherPlayers.size(); i++){
-            if(otherPlayerButtonLists.get(i).contains(cardButton)){
-                return otherPlayers.get(i);
-            }
-        }
         if(player1CardButtons.contains(cardButton)){
+            int index = player1CardButtons.indexOf(cardButton);
             return me;
+        }
+        if(player2CardButtons.contains(cardButton)){
+            int index = player2CardButtons.indexOf(cardButton);
+            return otherPlayers.get(0);
+        }
+        if(player3CardButtons.contains(cardButton)){
+            int index = player3CardButtons.indexOf(cardButton);
+            return otherPlayers.get(1);
+        }
+        if(player4CardButtons.contains(cardButton)){
+            int index = player4CardButtons.indexOf(cardButton);
+            return otherPlayers.get(2);
         }
         return null;
     }
+
     //TODO nochmal anschauen
     private Card getCardObjectFromButton(ImageButton cardButton){
         if(player1CardButtons.contains(cardButton)){
@@ -1762,7 +1772,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             }
         });
     }
-    
+
     public void updateCards(Player updatedPlayer) {
         if (updatedPlayer.getId() == me.getId()) {
             me.updateCards(updatedPlayer);
