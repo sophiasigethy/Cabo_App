@@ -122,13 +122,13 @@ public class Player {
         if (this.calledCabo) return;
 
         for (int i = 0; i < other.cards.size(); i ++) {
-            if (otherCard.equals(other.cards.get(i))) {
+            if (otherCard.equalsCard(other.cards.get(i))) {
                 other.cards.set(i, myCard);
                 break;
             }
         }
         for (int i = 0; i < this.cards.size(); i ++) {
-            if (myCard.equals(this.cards.get(i))) {
+            if (myCard.equalsCard(this.cards.get(i))) {
                 this.cards.set(i, otherCard);
                 break;
             }

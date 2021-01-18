@@ -991,12 +991,12 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 deactivateAllOnCardClickListeners();
                 //TODO
                 try {
-                    Card card1 = getCardObjectFromButton(selectedCards.get(0));
+                    Card card1 = getCardFromButton(selectedCards.get(0));
                     Player card1Owner = getCardOwner(selectedCards.get(0));
                     Card card2 = getCardFromButton(selectedCards.get(1));
                     Player card2Owner = getCardOwner(selectedCards.get(1));
-                    Log.d("-----------SEND TO SERVER SWAP", "card1"+card1.getValue()+" by "+card1Owner.getName());
-                    Log.d("-----------SEND TO SERVER SWAP", "card2"+card2.getValue()+" by "+card2Owner.getName());
+                    Log.d("-----------SEND TO SERVER SWAP", "card1 "+card1.getValue()+" by "+card1Owner.getName());
+                    Log.d("-----------SEND TO SERVER SWAP", "card2 "+card2.getValue()+" by "+card2Owner.getName());
 
                     webSocketClient.send(String.valueOf(JSON_commands.useFunctionalitySwap(card1, card1Owner, card2, card2Owner)));
                 } catch (JSONException e) {
@@ -1025,26 +1025,6 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         return null;
     }
 
-    //TODO nochmal anschauen
-    private Card getCardObjectFromButton(ImageButton cardButton){
-        if(player1CardButtons.contains(cardButton)){
-            int index = player1CardButtons.indexOf(cardButton);
-            return me.getMyCards().get(index);
-        }
-        if(player2CardButtons.contains(cardButton)){
-            int index = player2CardButtons.indexOf(cardButton);
-            return otherPlayers.get(0).getMyCards().get(index);
-        }
-        if(player3CardButtons.contains(cardButton)){
-            int index = player3CardButtons.indexOf(cardButton);
-            return otherPlayers.get(1).getMyCards().get(index);
-        }
-        if(player4CardButtons.contains(cardButton)){
-            int index = player4CardButtons.indexOf(cardButton);
-            return otherPlayers.get(2).getMyCards().get(index);
-        }
-        return null;
-    }
 
     private void playSwapAnimation() {
         cardSwapAnimation.setVisibility(View.VISIBLE);
@@ -1280,23 +1260,80 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
 
     //TODO
     private void showSwappedCards(Player swappingPlayer, Card card){
-        int playerIndex = otherPlayers.indexOf(swappingPlayer);
-        int cardIndex = swappingPlayer.getMyCards().indexOf(card);
-        ImageButton cardButton = otherPlayerButtonLists.get(playerIndex).get(cardIndex);
-        cardButton.setImageResource(R.drawable.card_swapped);
+        if(swappingPlayer==me){
+            int cardIndex = me.getMyCards().indexOf(card);
+            ImageButton cardButton = player1CardButtons.get(cardIndex);
+            cardButton.setImageResource(R.drawable.card_swapped);
 
-        new CountDownTimer(3000, 1000) {
+            new CountDownTimer(3000, 1000) {
 
-            public void onTick(long millisUntilFinished) {
+                public void onTick(long millisUntilFinished) {
 
+                }
+
+                public void onFinish() {
+                    cardButton.setImageResource(R.drawable.card_button);
+                }
+
+            }.start();
+        }
+        else{
+            int playerIndex = otherPlayers.indexOf(swappingPlayer);
+            int cardIndex = swappingPlayer.getMyCards().indexOf(card);
+            ImageButton cardButton = otherPlayerButtonLists.get(playerIndex).get(cardIndex);
+            cardButton.setImageResource(R.drawable.card_swapped);
+
+            new CountDownTimer(3000, 1000) {
+
+                public void onTick(long millisUntilFinished) {
+
+                }
+
+                public void onFinish() {
+                    cardButton.setImageResource(R.drawable.card_button);
+                }
+
+            }.start();
+        }
+    }
+
+    private void showTwoSwappedCards(Player player1, Card card1, Player player2, Card card2){
+
+        ImageButton card1Button = getButtonFromCard(player1, card1);
+        ImageButton card2Button = getButtonFromCard(player2, card2);
+        card1Button.setImageResource(R.drawable.card_swapped);
+        card2Button.setImageResource(R.drawable.card_swapped);
+
+            new CountDownTimer(10000, 1000) {
+
+                public void onTick(long millisUntilFinished) {
+
+                }
+
+                public void onFinish() {
+                    card1Button.setImageResource(R.drawable.card_button);
+                    card2Button.setImageResource(R.drawable.card_button);
+                }
+
+            }.start();
+    }
+
+    private ImageButton getButtonFromCard(Player owner, Card card){
+        if(owner.getId()==me.getId()){
+            return player1CardButtons.get(getCardIndex(me, card));
+        }
+        else{
+            for(int i=0; i< otherPlayers.size(); i++){
+                if(otherPlayers.get(i).getId()==owner.getId()){
+                    switch(i){
+                        case 0: return player2CardButtons.get(getCardIndex(otherPlayers.get(i), card));
+                        case 1: return player3CardButtons.get(getCardIndex(otherPlayers.get(i), card));
+                        case 2: return player4CardButtons.get(getCardIndex(otherPlayers.get(i), card));
+                    }
+                }
             }
-
-            public void onFinish() {
-                cardButton.setImageResource(R.drawable.card_button);
-            }
-
-        }.start();
-
+        }
+        return null;
     }
 
     //TODO write own indexOf
@@ -1693,7 +1730,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             String json1 = js.get("card1").toString();
             String json2 = js.get("card2").toString();
             String json3 = js.get("player1").toString();
-            String json4 = js.get("player1").toString();
+            String json4 = js.get("player2").toString();
             Gson gson = new Gson();
             Card card1 = gson.fromJson(json1, Card.class);
 
@@ -1702,15 +1739,38 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             Player player2 = gson.fromJson(json4, Player.class);
 
             Log.d("----------------------SWAP ACTION CONFIRMED BY SERVER", me.getStatus());
+            Log.d("----------------------PLAYER 1", player1.getName());
+            Log.d("----------------------PLAYER 2", player2.getName());
 
 
             //TODO Pauline: das sind die Karten und zugehörigen Spieler, die vertauscht wurden
             if (me.getStatus().equals(TypeDefs.waiting)) {
-
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        //showTwoSwappedCards(player1, card1, player2, card2);
+                    }
+                });
             }
 
-            if (me.getStatus().equals(TypeDefs.playing))
-            webSocketClient.send(String.valueOf(JSON_commands.sendFinishMove("finish")));
+            if (me.getStatus().equals(TypeDefs.playing)){
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            public void run() {
+                                try {
+                                    webSocketClient.send(String.valueOf(JSON_commands.sendFinishMove("finish")));
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }, 3000);
+                    }
+                });
+            }
 
         }
 
@@ -1793,23 +1853,41 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
 
     public void updateCards(Player updatedPlayer) {
         if (updatedPlayer.getId() == me.getId()) {
+            ArrayList<Card> oldcards = me.getMyCards();
             me.updateCards(updatedPlayer);
+            if(!me.getStatus().equals(TypeDefs.playing)){
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        for (int i=0; i <me.getMyCards().size(); i++){
+                            if(!oldcards.get(i).equalsCard(me.getMyCards().get(i))){
+                                Log.d("----------------------SWAPPED CARD", "index: "+i);
+                                showSwappedCards(me, me.getMyCards().get(i));
+                            }
+                        }
+                    }
+                });
+            }
         } else {
             for (Player player : otherPlayers) {
                 if (player.getId() == updatedPlayer.getId()) {
                     ArrayList<Card> oldcards = player.getMyCards();
+                    Log.d("-----------OLD CARDS", "cards: "+oldcards.get(0).getValue()+" "+oldcards.get(1).getValue()+" "+oldcards.get(2).getValue()+" "+oldcards.get(3).getValue()+" ");
                     player.updateCards(updatedPlayer);
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            for (int i=0; i <player.getMyCards().size(); i++){
-                                if(!oldcards.get(i).equalsCard(player.getMyCards().get(i))){
-                                    Log.d("----------------------SWAPPED CARD", "index: "+i);
-                                    showSwappedCards(player, player.getMyCards().get(i));
+                    Log.d("-----------NEW CARDS", "cards: "+updatedPlayer.getMyCards().get(0).getValue()+" "+updatedPlayer.getMyCards().get(1).getValue()+" "+updatedPlayer.getMyCards().get(2).getValue()+" "+updatedPlayer.getMyCards().get(3).getValue()+" ");
+                    if(!me.getStatus().equals(TypeDefs.playing)) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                for (int i = 0; i < player.getMyCards().size(); i++) {
+                                    if (!oldcards.get(i).equalsCard(player.getMyCards().get(i))) {
+                                        Log.d("----------------------SWAPPED CARD", "index: " + i);
+                                        showSwappedCards(player, player.getMyCards().get(i));
+                                    }
                                 }
                             }
-                        }
-                    });
+                        });
+                    }
                 }
             }
         }

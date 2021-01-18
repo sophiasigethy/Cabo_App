@@ -198,7 +198,7 @@ public class Gamestate {
                 Player currentPlayer = getPlayerBySessionId(session.getId());
                 if (currentPlayer != null) {
                     currentPickedCard = availableCards.get(0);
-                    //currentPickedCard = new Card(8, "", "");
+                    //currentPickedCard = new Card(11, "", "");
                     // Player firstPlayer = getPlayerById(currentPlayerId);
                     socketHandler.sendMessage(session, JSON_commands.sendFirstCard(currentPickedCard));
                 }
@@ -265,7 +265,7 @@ public class Gamestate {
                 String json = js.get("card1").toString();
                 String json2 = js.get("card2").toString();
                 String json3 = js.get("player1").toString();
-                String json4 = js.get("player1").toString();
+                String json4 = js.get("player2").toString();
                 ObjectMapper objectMapper = new ObjectMapper();
                 objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
                 Card card1 = objectMapper.readValue(json, Card.class);
