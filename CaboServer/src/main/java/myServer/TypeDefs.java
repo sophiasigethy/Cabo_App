@@ -20,4 +20,13 @@ public class TypeDefs {
     public static String playing =  "playing";
 
 
+    public static String smiling =  "smiling";
+    public static String laughing =  "laughing";
+    public static String tongueOut =  "tongueOut";
+    public static String shocked =  "shocked";
+    public static String angry =  "angry";
+
+
+
+
 }

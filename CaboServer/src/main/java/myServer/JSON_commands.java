@@ -303,4 +303,27 @@ public class JSON_commands {
         return jmsg;
     }
 
+    public static JSONObject picturePlayer(Player player) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        JSONObject jmsg = new JSONObject();
+        JSONObject jsubmsg = new JSONObject();
+
+        jsubmsg.put("player", objectMapper.writeValueAsString(player));
+        jmsg.put("picture", jsubmsg);
+
+        return jmsg;
+    }
+
+    public static JSONObject smileyPlayer(Player player) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        JSONObject jmsg = new JSONObject();
+        JSONObject jsubmsg = new JSONObject();
+
+        jsubmsg.put("player", objectMapper.writeValueAsString(player));
+        jmsg.put("smiley", jsubmsg);
+
+        return jmsg;
+    }
 }

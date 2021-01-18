@@ -23,6 +23,10 @@ public class Player {
     @JsonIgnore
     private boolean calledCabo = false;
 
+
+    private String picture="";
+    private String smiley="";
+
     public Player(){
 
     }
@@ -31,6 +35,7 @@ public class Player {
         this.id= id;
         this.name= name;
         this.status=TypeDefs.MATCHING;
+        this.smiley=TypeDefs.smiling;
     }
 
     public Player(int id, String name, Gamestate gs) {
@@ -38,6 +43,7 @@ public class Player {
         this.name = name;
         this.gamestate = gs;
         this.status = TypeDefs.MATCHING;
+        this.smiley=TypeDefs.smiling;
     }
     public int getId() {
         return id;
@@ -241,5 +247,21 @@ public class Player {
             }
         }
 
+    }
+
+    public String getPicture() {
+        return picture;
+    }
+
+    public void setPicture(String picture) {
+        this.picture = picture;
+    }
+
+    public String getSmiley() {
+        return smiley;
+    }
+
+    public void setSmiley(String smiley) {
+        this.smiley = smiley;
     }
 }

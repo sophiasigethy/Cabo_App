@@ -130,4 +130,11 @@ public class JSON_commands {
     public static JSONObject sendCabo(String message) throws JSONException {
         return new JSONObject().put("cabo", message);
     }
+
+    public static JSONObject sendPicture(String picture) throws JSONException {
+        return new JSONObject().put("picture", picture);
+    }
+    public static JSONObject sendSmiley(String smiley) throws JSONException {
+        return new JSONObject().put("smiley",smiley);
+    }
 }
