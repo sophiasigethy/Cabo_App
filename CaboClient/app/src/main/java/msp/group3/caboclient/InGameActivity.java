@@ -1706,6 +1706,8 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 Player player = gson.fromJson(jsonString, Player.class);
                 if (player.getId() == me.getId()) {
                     me.setStatus(player.getStatus());
+                }else{
+                    getPlayerById(player.getId()).setStatus(player.getStatus());
                 }
             }
         }
