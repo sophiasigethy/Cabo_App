@@ -1559,7 +1559,6 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-
                         Handler handler = new Handler();
                         handler.postDelayed(new Runnable() {
                             public void run() {
@@ -1719,7 +1718,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                         @Override
                         public void run() {
                             for (int i=0; i <player.getMyCards().size(); i++){
-                                if(oldcards.get(i).getValue()!=player.getMyCards().get(i).getValue()){
+                                if(oldcards.get(i).equalsCard(player.getMyCards().get(i))){
                                     Log.d("----------------------SWAPPED CARD", "index: "+i);
                                     showSwappedCards(player, player.getMyCards().get(i));
                                 }

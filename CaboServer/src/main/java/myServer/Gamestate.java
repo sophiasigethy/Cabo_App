@@ -196,7 +196,8 @@ public class Gamestate {
                 //currentPickedCard = takeFirstCardFromAvailableCards();
                 Player currentPlayer = getPlayerBySessionId(session.getId());
                 if (currentPlayer != null) {
-                    currentPickedCard = availableCards.get(0);
+                    //currentPickedCard = availableCards.get(0);
+                    currentPickedCard = new Card(8, "", "");
                     // Player firstPlayer = getPlayerById(currentPlayerId);
                     socketHandler.sendMessage(session, JSON_commands.sendFirstCard(currentPickedCard));
                 }
