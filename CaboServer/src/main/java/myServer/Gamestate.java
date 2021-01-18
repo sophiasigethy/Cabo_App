@@ -175,15 +175,16 @@ public class Gamestate {
         }
 
         if (jsonObject.has("memorizedCards")) {
-            Player player= getPlayerBySessionId(session.getId());
-            if (!(player.getStatus().equalsIgnoreCase(TypeDefs.waiting)||player.getStatus().equalsIgnoreCase(TypeDefs.playing))){
+            Player player = getPlayerBySessionId(session.getId());
+            if (!(player.getStatus().equalsIgnoreCase(TypeDefs.waiting) || player.getStatus().equalsIgnoreCase(TypeDefs.playing))) {
                 getPlayerBySessionId(session.getId()).setStatus(TypeDefs.readyForGamestart);
             }
             if (checkIfEveryoneReady()) {
                 //send which player's turn it is
                 currentPlayerId = getFirstPlayer();
                 updatePlayerStatus();
-                sendStatusupdatePlayer();
+                sendStatusupdateOfAllPlayer();
+                //sendStatusupdatePlayer();
                 sendNextPlayer();
             }
         }
@@ -284,10 +285,11 @@ public class Gamestate {
         }
 
         if (jsonObject.has("finishMove")) {
-            Player player= getPlayerBySessionId(session.getId());
-            if(checkIfPlayerIsAuthorised(player)) {
+            Player player = getPlayerBySessionId(session.getId());
+            if (checkIfPlayerIsAuthorised(player)) {
                 finishMove();
-                sendStatusupdatePlayer();
+               // sendStatusupdatePlayer();
+                sendStatusupdateOfAllPlayer();
                 sendToAll(JSON_commands.sendNextPlayer(currentPlayerId));
             }
 
@@ -558,6 +560,14 @@ public class Gamestate {
     public void sendStatusupdatePlayer() throws IOException {
         for (WebSocketSession session : sessions) {
             socketHandler.sendMessage(session, JSON_commands.statusupdatePlayer(getPlayerBySessionId(session.getId())));
+        }
+    }
+
+    public void sendStatusupdateOfAllPlayer() throws IOException {
+        for (WebSocketSession session : sessions) {
+            for (Player player : players.values()) {
+                socketHandler.sendMessage(session, JSON_commands.statusupdatePlayer(player));
+            }
         }
     }
 
