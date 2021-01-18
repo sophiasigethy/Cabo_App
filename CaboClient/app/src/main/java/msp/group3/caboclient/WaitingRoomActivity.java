@@ -127,7 +127,7 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
                 usernameAccepted = true;
                 showText(mes);
             }
-           
+
         }
 
         //this is sent by the server to inform the client that another player has connected
