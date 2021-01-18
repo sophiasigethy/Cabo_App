@@ -109,6 +109,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
 
     private Player me;
     private ArrayList<Player> otherPlayers = new ArrayList<>();
+    private int playingPlayerId = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -1082,14 +1083,18 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 deactivateAllOnCardClickListeners();
                 nrCardsSelected = 0;
                 Card selectedCard=null;
+                Player spiedOnPlayer = null;
                 for(int i = 0; i<otherPlayers.size(); i++){
                     if(getSelectedCard(otherPlayerButtonLists.get(i), otherPlayers.get(i))!=null){
                         selectedCard=getSelectedCard(otherPlayerButtonLists.get(i), otherPlayers.get(0));
+                        spiedOnPlayer=otherPlayers.get(i);
+
                     }
                 }
                 try {
                     //TimeUnit.SECONDS.sleep(10);
-                    webSocketClient.send(String.valueOf(JSON_commands.useFunctionalitySpy(selectedCard, me)));
+                    //TODO send player that is spied on NOT me
+                    webSocketClient.send(String.valueOf(JSON_commands.useFunctionalitySpy(selectedCard, spiedOnPlayer)));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -1212,23 +1217,40 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
     }
 
     private void showSpiedOnCard(Player spiedOnPlayer, Card card){
-        int playerIndex = otherPlayers.indexOf(spiedOnPlayer);
-        int cardIndex = spiedOnPlayer.getMyCards().indexOf(card);
-        ImageButton cardButton = otherPlayerButtonLists.get(playerIndex).get(cardIndex);
-        cardButton.setImageResource(R.drawable.card_spied);
+        if(spiedOnPlayer.getId()==me.getId()){
+            ImageButton cardButton = player1CardButtons.get(getCardIndex(me, card));
+            updateText.setText("You are being spied on");
+            cardButton.setImageResource(R.drawable.card_spied);
+            new CountDownTimer(10000, 1000) {
 
-        new CountDownTimer(3000, 1000) {
+                public void onTick(long millisUntilFinished) {
 
-            public void onTick(long millisUntilFinished) {
+                }
 
-            }
+                public void onFinish() {
+                    cardButton.setImageResource(R.drawable.card_button);
+                }
 
-            public void onFinish() {
-                cardButton.setImageResource(R.drawable.card_button);
-            }
+            }.start();
+        }
+        else{
+            int playerIndex = otherPlayers.indexOf(spiedOnPlayer);
+            int cardIndex = getCardIndex(spiedOnPlayer, card);
+            ImageButton cardButton = otherPlayerButtonLists.get(playerIndex).get(cardIndex);
+            cardButton.setImageResource(R.drawable.card_spied);
+            updateText.setText(spiedOnPlayer.getName()+" is being spied on");
+            new CountDownTimer(10000, 1000) {
 
-        }.start();
+                public void onTick(long millisUntilFinished) {
 
+                }
+
+                public void onFinish() {
+                    cardButton.setImageResource(R.drawable.card_button);
+                }
+
+            }.start();
+        }
     }
 
     //TODO
@@ -1252,13 +1274,16 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
 
     }
 
+    //TODO write own indexOf
     private void showPeekedOnCard(Player peekingPlayer, Card card){
         int playerIndex = otherPlayers.indexOf(peekingPlayer);
-        int cardIndex = peekingPlayer.getMyCards().indexOf(card);
+        //int cardIndex = peekingPlayer.getMyCards().indexOf(card); //for some reason returns -1
+        int cardIndex = getCardIndex(peekingPlayer, card);
         ImageButton cardButton = otherPlayerButtonLists.get(playerIndex).get(cardIndex);
         cardButton.setImageResource(R.drawable.card_spied);
+        updateText.setText(peekingPlayer.getName()+" is peeking");
 
-        new CountDownTimer(3000, 1000) {
+        new CountDownTimer(10000, 1000) {
 
             public void onTick(long millisUntilFinished) {
 
@@ -1270,6 +1295,15 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
 
         }.start();
 
+    }
+
+    private int getCardIndex(Player peekingPlayer, Card card){
+        for(int i=0; i<peekingPlayer.getMyCards().size(); i++){
+            if(peekingPlayer.getMyCards().get(i).equalsCard(card)){
+                return i;
+            }
+        }
+        return 0;
     }
 
     private void indicatePlayerTurn(Player player){
@@ -1414,6 +1448,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
 
         if (jsonObject.has("nextPlayer")) {
             int nextPlayerId = jsonObject.getInt("nextPlayer");
+            playingPlayerId = nextPlayerId;
             Log.d("----------------------NEXT PLAYER", "id: " + nextPlayerId);
             Log.d("----------------------MY ID", "id: " + nextPlayerId);
             //updateText.setText("Its your turn: "+getPlayerById(nextPlayerId).getName());
@@ -1517,6 +1552,14 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                         }
                     });
                 }
+                else{
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            updateText.setText("A card is being played");
+                        }
+                    });
+                }
                 //danach kann er die Funktionalität nutzen:
                 // je nachdem muss dann an den Server dies gesandt werden:
                 //webSocketClient.send(String.valueOf(JSON_commands.useFunctionalityPeek(card)));
@@ -1539,18 +1582,17 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
 
             //TODO Pauline: das ist die Karte, die der Spieler bei sich selbst anschaut -> anzeigen für alle Spieler
             if (me.getStatus().equals(TypeDefs.waiting)) {
-                Player peekingPlayer = null;
-                for(Player player : otherPlayers){
-                    if(player.getStatus().equals(TypeDefs.playing)){
-                        peekingPlayer=player;
-                        Log.d("----------------------PEEK ACTION CONFIRMED BY SERVER", "peeker:" +peekingPlayer.getName());
-                    }
-                }
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-
-                        //showPeekedOnCard(peekingPlayer, card);
+                        Player peekingPlayer = null;
+                        for(Player player : otherPlayers){
+                            if(player.getId()==playingPlayerId){
+                                peekingPlayer=player;
+                                Log.d("----------------------PEEK ACTION CONFIRMED BY SERVER", "peeker:" +peekingPlayer.getName());
+                            }
+                        }
+                        showPeekedOnCard(peekingPlayer, card);
                     }
                 });
             }
@@ -1592,13 +1634,12 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             //Hier das spyen anzeigen bzw erlauben
             // danach finish aufrufen
             if (me.getStatus().equals(TypeDefs.waiting)) {
-                /*runOnUiThread(new Runnable() {
+                runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        //showSpiedOnCard(spyedPlayer, card);
+                        showSpiedOnCard(spyedPlayer, card);
                     }
-                });*/
-                //showSpiedOnCard(spyedPlayer, card);
+                });
             }
             if (me.getStatus().equals(TypeDefs.playing)){
                 runOnUiThread(new Runnable() {
@@ -1718,7 +1759,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                         @Override
                         public void run() {
                             for (int i=0; i <player.getMyCards().size(); i++){
-                                if(oldcards.get(i).equalsCard(player.getMyCards().get(i))){
+                                if(!oldcards.get(i).equalsCard(player.getMyCards().get(i))){
                                     Log.d("----------------------SWAPPED CARD", "index: "+i);
                                     showSwappedCards(player, player.getMyCards().get(i));
                                 }
