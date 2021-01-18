@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Handler;
 import android.util.Log;
 import android.view.Display;
 import android.view.View;
@@ -316,13 +317,11 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
     }
 
     private void setPlayer1CardsOnClickListeners(int cardsAllowed) {
-        Log.d("-----------ON CLICK LISTENER", "initiating");
+        Log.d("-----------ON CLICK LISTENER PLAYER 1", "initiating");
         for (ImageButton cardButton : player1CardButtons) {
             cardButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-
-                    //zoomInOnSelectedCard(cardButton);
 
                     if (cardButton.isSelected()) {
                         nrCardsSelected--;
@@ -358,8 +357,6 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                                 }
                             }
                         }
-                        /*Toast.makeText(getApplicationContext(),
-                                "Cards selected: "+nrCardsSelected, Toast.LENGTH_SHORT).show();*/
                     }
                     if(pickedCardButtonContainer.getVisibility()==View.VISIBLE){
                         switchButton.setVisibility(View.VISIBLE);
@@ -367,6 +364,9 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                     if(nrCardsSelected==cardsAllowed){
                         peekButton.setEnabled(true);
                     }
+                    Log.d("-----------ON CLICK LISTENER PLAYER 1", "#selected: "+nrCardsSelected);
+                    Log.d("-----------ON CLICK LISTENER PLAYER 1", "#allowed: "+cardsAllowed);
+
                     player1CardsGlow.setVisibility(View.INVISIBLE);
                     playedCardsStackGlow.setVisibility(View.INVISIBLE);
                 }
@@ -1052,7 +1052,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         setPlayer3CardsOnClickListeners(1);
         setPlayer4CardsOnClickListeners(1);
 
-
+        nrCardsSelected = 0;
         spyButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -1098,18 +1098,13 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
     }
 
     private void initiatePeekAction() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                peekButton.setVisibility(View.VISIBLE);
-                updateText.setVisibility(View.VISIBLE);
-                updateText.setText("Please choose 1 of your cards");
-                peekButton.setEnabled(false);
+        peekButton.setVisibility(View.VISIBLE);
+        updateText.setVisibility(View.VISIBLE);
+        updateText.setText("Please choose 1 of your cards");
+        peekButton.setEnabled(false);
 
-                setPlayer1CardsOnClickListeners(1);
-            }
-        });
-
+        nrCardsSelected = 0;
+        setPlayer1CardsOnClickListeners(1);
 
         peekButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -1139,10 +1134,10 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
 
                     }
                 });
-
             }
         });
     }
+
     private Card getSelectedCard(List<ImageButton> cardButtons, Player owner){
         for(int i=0; i<cardButtons.size(); i++){
             if(cardButtons.get(i).isSelected()){
@@ -1237,11 +1232,11 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
     }
 
     //TODO
-    private void showSwappedCards(Player spiedOnPlayer, Card card){
-        int playerIndex = otherPlayers.indexOf(spiedOnPlayer);
-        int cardIndex = spiedOnPlayer.getMyCards().indexOf(card);
+    private void showSwappedCards(Player swappingPlayer, Card card){
+        int playerIndex = otherPlayers.indexOf(swappingPlayer);
+        int cardIndex = swappingPlayer.getMyCards().indexOf(card);
         ImageButton cardButton = otherPlayerButtonLists.get(playerIndex).get(cardIndex);
-        cardButton.setImageResource(R.drawable.card_spied);
+        cardButton.setImageResource(R.drawable.card_swapped);
 
         new CountDownTimer(3000, 1000) {
 
@@ -1544,22 +1539,40 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
 
             //TODO Pauline: das ist die Karte, die der Spieler bei sich selbst anschaut -> anzeigen für alle Spieler
             if (me.getStatus().equals(TypeDefs.waiting)) {
+                Player peekingPlayer = null;
+                for(Player player : otherPlayers){
+                    if(player.getStatus().equals(TypeDefs.playing)){
+                        peekingPlayer=player;
+                        Log.d("----------------------PEEK ACTION CONFIRMED BY SERVER", "peeker:" +peekingPlayer.getName());
+                    }
+                }
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Player peekingPlayer = null;
-                        for(Player player : otherPlayers){
-                            if(player.getStatus().equals(TypeDefs.playing)){
-                                peekingPlayer=player;
-                            }
-                        }
+
                         //showPeekedOnCard(peekingPlayer, card);
                     }
                 });
             }
 
             if (me.getStatus().equals(TypeDefs.playing)){
-                webSocketClient.send(String.valueOf(JSON_commands.sendFinishMove("finish")));
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            public void run() {
+                                try {
+                                    webSocketClient.send(String.valueOf(JSON_commands.sendFinishMove("finish")));
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }, 10000);
+                    }
+                });
+
             }
 
         }
@@ -1586,10 +1599,25 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                         //showSpiedOnCard(spyedPlayer, card);
                     }
                 });*/
-                showSpiedOnCard(spyedPlayer, card);
+                //showSpiedOnCard(spyedPlayer, card);
             }
             if (me.getStatus().equals(TypeDefs.playing)){
-                webSocketClient.send(String.valueOf(JSON_commands.sendFinishMove("finish")));
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            public void run() {
+                                try {
+                                    webSocketClient.send(String.valueOf(JSON_commands.sendFinishMove("finish")));
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }, 10000);
+                    }
+                });
             }
 
         }
@@ -1606,6 +1634,9 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             Card card2 = gson.fromJson(json2, Card.class);
             Player player1 = gson.fromJson(json3, Player.class);
             Player player2 = gson.fromJson(json4, Player.class);
+
+            Log.d("----------------------SWAP ACTION CONFIRMED BY SERVER", me.getStatus());
+
 
             //TODO Pauline: das sind die Karten und zugehörigen Spieler, die vertauscht wurden
             if (me.getStatus().equals(TypeDefs.waiting)) {
@@ -1675,13 +1706,26 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         });
     }
 
+    //TODO working with value -> would not show if two cards of same value are changed
     public void updateCards(Player updatedPlayer) {
         if (updatedPlayer.getId() == me.getId()) {
             me.updateCards(updatedPlayer);
         } else {
             for (Player player : otherPlayers) {
                 if (player.getId() == updatedPlayer.getId()) {
+                    ArrayList<Card> oldcards = player.getMyCards();
                     player.updateCards(updatedPlayer);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            for (int i=0; i <player.getMyCards().size(); i++){
+                                if(oldcards.get(i).getValue()!=player.getMyCards().get(i).getValue()){
+                                    Log.d("----------------------SWAPPED CARD", "index: "+i);
+                                    showSwappedCards(player, player.getMyCards().get(i));
+                                }
+                            }
+                        }
+                    });
                 }
             }
         }
