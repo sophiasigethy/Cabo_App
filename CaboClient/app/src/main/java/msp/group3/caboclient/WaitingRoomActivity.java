@@ -57,7 +57,7 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
         player2_name = (TextView) findViewById(R.id.player2_name_textview_waiting_room);
         player3_name = (TextView) findViewById(R.id.player3_name_textview_waiting_room);
         player4_name = (TextView) findViewById(R.id.player4_name_textview_waiting_room);
-        name= (TextView) findViewById(R.id.name);
+        name = (TextView) findViewById(R.id.name);
 
 
         communicator = Communicator.getInstance(this);
@@ -127,6 +127,7 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
                 usernameAccepted = true;
                 showText(mes);
             }
+           
         }
 
         //this is sent by the server to inform the client that another player has connected
@@ -226,7 +227,35 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
             String mes = TypeDefs.server + jsonObject.get("notAccepted").toString();
             showText(mes);
         }
+        if (jsonObject.has("picture")) {
+            JSONObject js = jsonObject.getJSONObject("picture");
+            if (js.has("player")) {
+                String jsonString = js.get("player").toString();
+                Gson gson = new Gson();
+                Player player = gson.fromJson(jsonString, Player.class);
+                if (player.getId() == me.getId()) {
+                    me.setPicture(player.getPicture());
+                    //TODO set picture here
+                } else {
+                    Player otherPlayer= getPlayerById(player.getId());
+                    if (otherPlayer!=null){
+                        otherPlayer.setPicture(player.getPicture());
+                    }
+                }
+            }
+        }
 
+    }
+
+    public Player getPlayerById(int id) {
+        if (players != null) {
+            for (Player player : players) {
+                if (player.getId() == id) {
+                    return player;
+                }
+            }
+        }
+        return null;
     }
 
     /**
@@ -346,7 +375,7 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
             }
         }
         updateTextViews(removedPlayer.getName());
-        String text= "(Server): "+ removedPlayer.getName()+ " has disconnected.";
+        String text = "(Server): " + removedPlayer.getName() + " has disconnected.";
         showText(text);
     }
 

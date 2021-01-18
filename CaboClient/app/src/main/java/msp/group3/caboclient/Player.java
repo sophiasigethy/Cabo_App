@@ -17,6 +17,11 @@ public class Player {
     private ArrayList<Card> myCards = new ArrayList<>();
 
 
+
+    private String picture="";
+    private String smiley="";
+
+
     private String status;
 
     public Player(){
@@ -27,6 +32,7 @@ public class Player {
         this.id = id;
         this.name = name;
         this.status=TypeDefs.waiting;
+
     }
 
     public Player(String dbID) {
@@ -154,7 +160,21 @@ public class Player {
 
     }
 
+    public String getPicture() {
+        return picture;
+    }
 
+    public void setPicture(String picture) {
+        this.picture = picture;
+    }
+
+    public String getSmiley() {
+        return smiley;
+    }
+
+    public void setSmiley(String smiley) {
+        this.smiley = smiley;
+    }
 
 }
 

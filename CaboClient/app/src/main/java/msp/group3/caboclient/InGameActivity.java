@@ -1375,6 +1375,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
 
                 //webSocketClient.send(String.valueOf(JSON_commands.sendMemorized("memorized")));
             }
+
         }
         /*if (jsonObject.has("initialOtherPlayer")) {
             JSONObject js = jsonObject.getJSONObject("initialOtherPlayer");
@@ -1687,6 +1688,23 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 String winner = getNameOfWinner();
                 //TODO Pauline: die Scores sind jetzt in allen Spielern upgedated : player.getScore(); und können somit angezeigt werden
                 // winner ist der Name des Gewinners
+            }
+        }
+        if (jsonObject.has("smiley")) {
+            JSONObject js = jsonObject.getJSONObject("smiley");
+            if (js.has("player")) {
+                String jsonString = js.get("player").toString();
+                Gson gson = new Gson();
+                Player player = gson.fromJson(jsonString, Player.class);
+                if (player.getId() == me.getId()) {
+                    me.setSmiley(player.getSmiley());
+                    //TODO set smiley here
+                } else {
+                    Player otherPlayer= getPlayerById(player.getId());
+                    if (otherPlayer!=null){
+                        otherPlayer.setSmiley(player.getSmiley());
+                    }
+                }
             }
         }
     }

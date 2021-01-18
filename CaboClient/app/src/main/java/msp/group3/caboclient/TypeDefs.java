@@ -12,7 +12,13 @@ public class TypeDefs {
     public static String playing =  "playing";
     public static String welcomeMessage =  "Hello";
 
-    public static String URI ="ws://192.168.2.125:8080/chat";
+    public static String URI ="ws://192.168.178.27:8080/chat";
+
+    public static String smiling =  "smiling";
+    public static String laughing =  "laughing";
+    public static String tongueOut =  "tongueOut";
+    public static String shocked =  "shocked";
+    public static String angry =  "angry";
 
 }
 

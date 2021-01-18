@@ -18,7 +18,7 @@ public class Gamestate {
 
     // contains websocketsession-id and the associated player object
     public HashMap<String, Player> players = new HashMap<String, Player>();
-    private final int MAX_PLAYER = 2;
+    private final int MAX_PLAYER = 1;
     private int test = 0;
     // determines how many players are already registered
     private int countPlayer = 0;
@@ -197,8 +197,8 @@ public class Gamestate {
                 //currentPickedCard = takeFirstCardFromAvailableCards();
                 Player currentPlayer = getPlayerBySessionId(session.getId());
                 if (currentPlayer != null) {
-                    //currentPickedCard = availableCards.get(0);
-                    currentPickedCard = new Card(8, "", "");
+                    currentPickedCard = availableCards.get(0);
+                    //currentPickedCard = new Card(8, "", "");
                     // Player firstPlayer = getPlayerById(currentPlayerId);
                     socketHandler.sendMessage(session, JSON_commands.sendFirstCard(currentPickedCard));
                 }
@@ -288,7 +288,7 @@ public class Gamestate {
             Player player = getPlayerBySessionId(session.getId());
             if (checkIfPlayerIsAuthorised(player)) {
                 finishMove();
-               // sendStatusupdatePlayer();
+                // sendStatusupdatePlayer();
                 sendStatusupdateOfAllPlayer();
                 sendToAll(JSON_commands.sendNextPlayer(currentPlayerId));
             }
@@ -298,6 +298,18 @@ public class Gamestate {
         if (jsonObject.has("cabo")) {
             Player currentPlayer = getPlayerBySessionId(session.getId());
             currentPlayer.setCalledCabo(true);
+        }
+        if (jsonObject.has("picture")) {
+            String picture = jsonObject.get("picture").toString();
+            Player currentPlayer = getPlayerBySessionId(session.getId());
+            currentPlayer.setPicture(picture);
+            sendPictureOfOnePlayertoAll(currentPlayer);
+        }
+        if (jsonObject.has("smiley")) {
+            String smiley = jsonObject.get("smiley").toString();
+            Player currentPlayer = getPlayerBySessionId(session.getId());
+            currentPlayer.setSmiley(smiley);
+            sendSmileyOfOnePlayerToAll(currentPlayer);
         }
     }
 
@@ -568,6 +580,17 @@ public class Gamestate {
             for (Player player : players.values()) {
                 socketHandler.sendMessage(session, JSON_commands.statusupdatePlayer(player));
             }
+        }
+    }
+
+    public void sendPictureOfOnePlayertoAll(Player player) throws IOException {
+        for (WebSocketSession session : sessions) {
+            socketHandler.sendMessage(session, JSON_commands.picturePlayer(player));
+        }
+    }
+    public void sendSmileyOfOnePlayerToAll(Player player) throws IOException {
+        for (WebSocketSession session : sessions) {
+            socketHandler.sendMessage(session, JSON_commands.smileyPlayer(player));
         }
     }
 
