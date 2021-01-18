@@ -989,8 +989,18 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 switchButton.setVisibility(View.INVISIBLE);
                 deactivateAllOnCardClickListeners();
                 //TODO
-                /*webSocketClient.send(String.valueOf(JSON_commands.useFunctionalitySwap(selectedCards.get(0), getCardOwner(selectedCards.get(0)),
-                        selectedCards.get(0), getCardOwner(selectedCards.get(1)))));*/
+                try {
+                    Card card1 = getCardObjectFromButton(selectedCards.get(0));
+                    Player card1Owner = getCardOwner(selectedCards.get(0));
+                    Card card2 = getCardFromButton(selectedCards.get(1));
+                    Player card2Owner = getCardOwner(selectedCards.get(1));
+                    Log.d("-----------SEND TO SERVER SWAP", "card1"+card1.getValue()+" by "+card1Owner.getName());
+                    Log.d("-----------SEND TO SERVER SWAP", "card2"+card2.getValue()+" by "+card2Owner.getName());
+
+                    webSocketClient.send(String.valueOf(JSON_commands.useFunctionalitySwap(card1, card1Owner, card2, card2Owner)));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         });
     }
@@ -1006,20 +1016,25 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         return null;
     }
     //TODO nochmal anschauen
-    /*private Card getCardObjectFromButton(ImageButton cardButton){
-        for(int i=0; i<otherPlayers.size(); i++){
-            for(int j=0; j<otherPlayerButtonLists.get(i).size(); j++){
-                return otherPlayers.get(i).getMyCards().get(i);
-            }
-            if(otherPlayerButtonLists.get(i).contains(cardButton)){
-                return otherPlayers.get(i).getMyCards().get(i);
-            }
-        }
-        for(int i=0; i<player1CardButtons.size(); i++)
+    private Card getCardObjectFromButton(ImageButton cardButton){
         if(player1CardButtons.contains(cardButton)){
-            return me.getMyCards().get();
+            int index = player1CardButtons.indexOf(cardButton);
+            return me.getMyCards().get(index);
         }
-    }*/
+        if(player2CardButtons.contains(cardButton)){
+            int index = player2CardButtons.indexOf(cardButton);
+            return otherPlayers.get(0).getMyCards().get(index);
+        }
+        if(player3CardButtons.contains(cardButton)){
+            int index = player3CardButtons.indexOf(cardButton);
+            return otherPlayers.get(1).getMyCards().get(index);
+        }
+        if(player4CardButtons.contains(cardButton)){
+            int index = player4CardButtons.indexOf(cardButton);
+            return otherPlayers.get(2).getMyCards().get(index);
+        }
+        return null;
+    }
 
     private void playSwapAnimation() {
         cardSwapAnimation.setVisibility(View.VISIBLE);
@@ -1747,8 +1762,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             }
         });
     }
-
-    //TODO working with value -> would not show if two cards of same value are changed
+    
     public void updateCards(Player updatedPlayer) {
         if (updatedPlayer.getId() == me.getId()) {
             me.updateCards(updatedPlayer);
