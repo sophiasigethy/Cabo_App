@@ -83,6 +83,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
     private int nrCardsSelected = 0;
 
 
+
     private ImageButton playedCardsStackButton;
     private ImageView playedCardsStackGlow;
     private ImageView player1CardsGlow;
@@ -115,6 +116,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
     private ArrayList<Player> otherPlayers = new ArrayList<>();
     private int playingPlayerId = 0;
     protected String entireChatText = "";
+    private boolean initialRound=true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -245,6 +247,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                         "CABO!.", Toast.LENGTH_SHORT).show();
                 try {
                     webSocketClient.send(String.valueOf(JSON_commands.sendCabo("cabo")));
+                    webSocketClient.send(String.valueOf(JSON_commands.sendFinishMove("finish")));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -1496,7 +1499,12 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             if (js.has("me")) {
                 String jsonString = js.get("me").toString();
                 Gson gson = new Gson();
-                me = gson.fromJson(jsonString, Player.class);
+                Player myself= gson.fromJson(jsonString, Player.class);
+                if (me==null){
+                    me = myself;
+                }else{
+                    me.replacePlayerForNextRound(myself);
+                }
                 // hier wurde me gesetzt
                 Log.d("----------------------ME", "my name: "+me.getName());
                 runOnUiThread(new Runnable() {
@@ -1517,8 +1525,13 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 String jsonString = js.get("players").toString();
                 List<Player> players = gson.fromJson(jsonString, new TypeToken<List<Player>>() {
                 }.getType());
-                otherPlayers.addAll(players);
-                showNames();
+                if (initialRound){
+                    otherPlayers.addAll(players);
+                    showNames();
+                }else{
+                    nextRound(players);
+                }
+
             }
 
         }
@@ -1826,6 +1839,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 Player player = gson.fromJson(jsonString, Player.class);
                 updateScores(player);
                 String winner = getNameOfWinner();
+                initialRound=false;
                 //TODO Pauline: die Scores sind jetzt in allen Spielern upgedated : player.getScore(); und können somit angezeigt werden
                 // winner ist der Name des Gewinners
             }
@@ -1868,6 +1882,16 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 otherPlayerEmojis.get(playerIndex).setImageResource(R.drawable.emoji_tounge);
             }
 
+    }
+
+    public void nextRound(List<Player>players){
+        for (Player oldPlayer: otherPlayers){
+            for (Player newPlayer: players){
+                if (oldPlayer.getId()==newPlayer.getId()){
+                    oldPlayer.replacePlayerForNextRound(newPlayer);
+                }
+            }
+        }
     }
 
     private void showNames() {

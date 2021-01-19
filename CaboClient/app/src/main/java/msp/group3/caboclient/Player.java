@@ -176,5 +176,12 @@ public class Player {
         this.smiley = smiley;
     }
 
+    public void replacePlayerForNextRound(Player other){
+        score=other.getScore();
+        myCards.clear();
+        myCards.addAll(other.getMyCards());
+        status=other.getStatus();
+    }
+
 }
 
