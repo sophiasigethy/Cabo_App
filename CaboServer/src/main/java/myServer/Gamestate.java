@@ -137,41 +137,18 @@ public class Gamestate {
         // client sent chat message
         if (jsonObject.has("chatMessage")) {
             sendToAll(jsonObject);
-            //sendToOne(jsonObject);
         }
 
-        /*if (jsonObject.has("statusupdate")) {
-            String status = jsonObject.get("statusupdate").toString();
-            if (status.equalsIgnoreCase(TypeDefs.readyForGamestart)) {
-                getPlayerBySessionId(session.getId()).setStatus(TypeDefs.readyForGamestart);
-                if (checkIfEveryoneReady()) {
-                    //send which player's turn it is
-                    int nextPlayerId = getFirstPlayer();
-                    updatePlayerStatus(nextPlayerId);
-                    sendStatusupdatePlayer();
-                    sendNextPlayer(nextPlayerId);
-                }
-            }
-        }*/
         if (jsonObject.has("startGameForAll")) {
             sendToAll(JSON_commands.startGame("start"));
 
         }
         if (jsonObject.has("askForInitialSettings")) {
-            // sendToAll(JSON_commands.sendMAXPlayer(MAX_PLAYER));
             socketHandler.sendMessage(session, JSON_commands.sendMAXPlayer(MAX_PLAYER));
             initialSetUp++;
             if (initialSetUp == MAX_PLAYER) {
-                generateCards(true);
-                //send 4 cards to every client
-                distributeCardsAtBeginning();
-
-                for (Player player : players.values()) {
-                    sendInitialSetUp(player);
-                }
+                startRound();
             }
-
-
         }
 
         if (jsonObject.has("memorizedCards")) {
@@ -197,7 +174,13 @@ public class Gamestate {
                 //currentPickedCard = takeFirstCardFromAvailableCards();
                 Player currentPlayer = getPlayerBySessionId(session.getId());
                 if (currentPlayer != null) {
-                    currentPickedCard = availableCards.get(0);
+                    if (availableCards.size() != 0) {
+                        currentPickedCard = availableCards.get(0);
+                    } else {
+                        mixCards();
+                        currentPickedCard = availableCards.get(0);
+                    }
+
                     //currentPickedCard = new Card(11, "", "");
                     // Player firstPlayer = getPlayerById(currentPlayerId);
                     socketHandler.sendMessage(session, JSON_commands.sendFirstCard(currentPickedCard));
@@ -289,8 +272,13 @@ public class Gamestate {
             if (checkIfPlayerIsAuthorised(player)) {
                 finishMove();
                 // sendStatusupdatePlayer();
-                sendStatusupdateOfAllPlayer();
-                sendToAll(JSON_commands.sendNextPlayer(currentPlayerId));
+                if (getPlayerById(currentPlayerId).getCalledCabo()) {
+                    finishRound();
+                } else {
+                    sendStatusupdateOfAllPlayer();
+                    sendToAll(JSON_commands.sendNextPlayer(currentPlayerId));
+                }
+
             }
 
         }
@@ -298,6 +286,7 @@ public class Gamestate {
         if (jsonObject.has("cabo")) {
             Player currentPlayer = getPlayerBySessionId(session.getId());
             currentPlayer.setCalledCabo(true);
+
         }
         if (jsonObject.has("picture")) {
             String picture = jsonObject.get("picture").toString();
@@ -310,6 +299,18 @@ public class Gamestate {
             Player currentPlayer = getPlayerBySessionId(session.getId());
             currentPlayer.setSmiley(smiley);
             sendSmileyOfOnePlayerToAll(currentPlayer);
+        }
+    }
+
+    private void startRound() throws IOException {
+        availableCards = null;
+        playedCards = null;
+        discardedCards = null;
+        generateCards(true);
+        distributeCardsAtBeginning();
+
+        for (Player player : players.values()) {
+            sendInitialSetUp(player);
         }
     }
 
@@ -588,6 +589,7 @@ public class Gamestate {
             socketHandler.sendMessage(session, JSON_commands.picturePlayer(player));
         }
     }
+
     public void sendSmileyOfOnePlayerToAll(Player player) throws IOException {
         for (WebSocketSession session : sessions) {
             socketHandler.sendMessage(session, JSON_commands.smileyPlayer(player));
@@ -651,17 +653,25 @@ public class Gamestate {
      * @throws IOException
      */
     public void finishMove() throws IOException {
-        if (getPlayerById(currentPlayerId).getCalledCabo()) {
-            //TODO finish Game
-            calcScores();
-            for (WebSocketSession session : sessions) {
-                socketHandler.sendMessage(session, JSON_commands.sendScores(getPlayerBySessionId(session.getId())));
-            }
-        } else {
-            currentPlayerId = getNextPlayerId();
-            updatePlayerStatus();
-        }
+        currentPlayerId = getNextPlayerId();
+        updatePlayerStatus();
 
+    }
+
+    private void finishRound() throws IOException {
+        calcScores();
+        for (WebSocketSession session : sessions) {
+            socketHandler.sendMessage(session, JSON_commands.sendScores(getPlayerBySessionId(session.getId())));
+        }
+        if (terminated) {
+            //TODO send Game End
+            //remove this object in sockethandler
+        } else {
+            for (Player player : players.values()) {
+                player.setStatus(TypeDefs.MATCHING);
+            }
+            startRound();
+        }
     }
 
     /**
@@ -676,6 +686,18 @@ public class Gamestate {
         } else {
             oldId++;
             return oldId;
+        }
+    }
+
+    public void mixCards() {
+        availableCards = playedCards;
+        for (Player player : players.values()) {
+            for (int i = 0; i < player.getCards().size(); i++) {
+                if (availableCards.get(i).equalsCard(player.getCards().get(i))) {
+                    availableCards.remove(i);
+                    i++;
+                }
+            }
         }
     }
 
