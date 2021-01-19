@@ -2,6 +2,7 @@ package msp.group3.caboclient;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.fragment.app.Fragment;
 
 
 import android.animation.Animator;
@@ -43,11 +44,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import static msp.group3.caboclient.TypeDefs.*;
+
 /**
  * this is an example for a zoomable and scrollable layout
  */
 public class InGameActivity extends AppCompatActivity implements Communicator.CommunicatorCallback {
-    private WebSocketClient webSocketClient;
+    protected WebSocketClient webSocketClient;
     private Communicator communicator;
 
     private com.otaliastudios.zoom.ZoomLayout zoomLayout;
@@ -103,13 +106,15 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
     private final List<Integer> player3CardClickCounts = new ArrayList<>();
     private final List<Integer> player4CardClickCounts = new ArrayList<>();
     private final List<com.airbnb.lottie.LottieAnimationView> playerHighlightAnimations = new ArrayList<>();
+    private final List<ImageView> otherPlayerEmojis = new ArrayList<>();
 
 
     private final List<ConstraintLayout> playerOverviews = new ArrayList<>();
 
-    private Player me;
+    protected Player me;
     private ArrayList<Player> otherPlayers = new ArrayList<>();
     private int playingPlayerId = 0;
+    protected String entireChatText = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -163,7 +168,6 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         setUpOnClickListeners();
 
         pickCardsStackButton.setEnabled(false);
-        //playedCardsStackButton.setEnabled(false);
 
         //TODO: Chat fragment integration
         if (savedInstanceState == null) {
@@ -280,6 +284,11 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             public void onClick(View view) {
                 ownEmojiButton.setImageResource(R.drawable.emoji_happy);
                 emojiSelectionContainer.setVisibility(View.INVISIBLE);
+                try {
+                    webSocketClient.send(String.valueOf(JSON_commands.sendSmiley(smiling)));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -288,6 +297,11 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             public void onClick(View view) {
                 ownEmojiButton.setImageResource(R.drawable.emoji_very_happy);
                 emojiSelectionContainer.setVisibility(View.INVISIBLE);
+                try {
+                    webSocketClient.send(String.valueOf(JSON_commands.sendSmiley(laughing)));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -296,6 +310,11 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             public void onClick(View view) {
                 ownEmojiButton.setImageResource(R.drawable.emoji_tounge);
                 emojiSelectionContainer.setVisibility(View.INVISIBLE);
+                try {
+                    webSocketClient.send(String.valueOf(JSON_commands.sendSmiley(tongueOut)));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -304,6 +323,11 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             public void onClick(View view) {
                 ownEmojiButton.setImageResource(R.drawable.emoji_shocked);
                 emojiSelectionContainer.setVisibility(View.INVISIBLE);
+                try {
+                    webSocketClient.send(String.valueOf(JSON_commands.sendSmiley(shocked)));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -312,6 +336,11 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             public void onClick(View view) {
                 ownEmojiButton.setImageResource(R.drawable.emoji_angry);
                 emojiSelectionContainer.setVisibility(View.INVISIBLE);
+                try {
+                    webSocketClient.send(String.valueOf(JSON_commands.sendSmiley(angry)));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -592,6 +621,8 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 findViewById(R.id.player3_highlight_animationView), findViewById(R.id.player4_highlight_animationView));
 
         Collections.addAll(otherPlayerButtonLists, player2CardButtons, player3CardButtons, player4CardButtons);
+
+        Collections.addAll(otherPlayerEmojis, findViewById(R.id.player2_emoji), findViewById(R.id.player3_emoji), findViewById(R.id.player4_emoji));
 
         for(int i=0; i<4; i++){
             player1CardButtons.get(i).setVisibility(View.INVISIBLE);
@@ -1265,7 +1296,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             ImageButton cardButton = player1CardButtons.get(cardIndex);
             cardButton.setImageResource(R.drawable.card_swapped);
 
-            new CountDownTimer(3000, 1000) {
+            new CountDownTimer(5000, 1000) {
 
                 public void onTick(long millisUntilFinished) {
 
@@ -1443,7 +1474,14 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
 
         if (jsonObject.has("chatMessage")) {
             String chatText = jsonObject.get("chatMessage").toString();
-            // TODO pauline: den String chatText einfach nur anzeigen :)
+            entireChatText = entireChatText+"\n"+chatText;
+            InGameChatFragment fragment_obj = (InGameChatFragment)getSupportFragmentManager().
+                    findFragmentById(R.id.fragment_chat);
+            fragment_obj.textMsg.setText(entireChatText);
+
+            // TODO pauline: den String chatText einfach nur anzeigen :) -> zum testen server auf eine person stellen
+            //edittext leeren und namen dazu schreiben
+            //symbol anzeigen, wenn neue nachricht kommt
         }
 
         if (jsonObject.has("sendMAXPlayer")) {
@@ -1468,31 +1506,10 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                         initiateInitialCardLookUp();
                     }
                 });
-
-                //webSocketClient.send(String.valueOf(JSON_commands.sendMemorized("memorized")));
             }
 
         }
-        /*if (jsonObject.has("initialOtherPlayer")) {
-            JSONObject js = jsonObject.getJSONObject("initialOtherPlayer");
-            if (js.has("otherPlayer")) {
-                String jsonString = js.get("otherPlayer").toString();
-                Gson gson = new Gson();
-                Player player = gson.fromJson(jsonString, Player.class);
-                if (player.getId() != me.getId()) {
-                    if (!containsPlayer(player)) {
-                        //TODO set player name
-                        otherPlayers.add(player);
-                        int index = otherPlayers.indexOf(player);
-                        if (otherPlayers.size() == (MAX_PLAYERS - 1)) {
-                            showNames();
-                        }
 
-                    }
-                }
-            }
-
-        }*/
         if (jsonObject.has("initialOtherPlayer")) {
             JSONObject js = jsonObject.getJSONObject("initialOtherPlayer");
             Gson gson = new Gson();
@@ -1601,7 +1618,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 displayDiscardedCard(card);
                 Log.d("----------------------MY STATUS", me.getStatus());
 
-                if (me.getStatus().equals(TypeDefs.playing)) {
+                if (me.getStatus().equals(playing)) {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -1644,7 +1661,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             Card card = gson.fromJson(json, Card.class);
 
             //TODO Pauline: das ist die Karte, die der Spieler bei sich selbst anschaut -> anzeigen für alle Spieler
-            if (me.getStatus().equals(TypeDefs.waiting)) {
+            if (me.getStatus().equals(waiting)) {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -1660,7 +1677,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 });
             }
 
-            if (me.getStatus().equals(TypeDefs.playing)){
+            if (me.getStatus().equals(playing)){
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -1696,7 +1713,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             //TODO pauline: das ist der Spieler und die Karte des Spielers, die angeschaut wird, von dem Spieler der gerade dran ist
             //Hier das spyen anzeigen bzw erlauben
             // danach finish aufrufen
-            if (me.getStatus().equals(TypeDefs.waiting)) {
+            if (me.getStatus().equals(waiting)) {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -1704,7 +1721,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                     }
                 });
             }
-            if (me.getStatus().equals(TypeDefs.playing)){
+            if (me.getStatus().equals(playing)){
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -1739,21 +1756,18 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             Player player2 = gson.fromJson(json4, Player.class);
 
             Log.d("----------------------SWAP ACTION CONFIRMED BY SERVER", me.getStatus());
-            Log.d("----------------------PLAYER 1", player1.getName());
-            Log.d("----------------------PLAYER 2", player2.getName());
-
 
             //TODO Pauline: das sind die Karten und zugehörigen Spieler, die vertauscht wurden
-            if (me.getStatus().equals(TypeDefs.waiting)) {
+            if (me.getStatus().equals(waiting)) {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        //showTwoSwappedCards(player1, card1, player2, card2);
+                        playSwapAnimation();
                     }
                 });
             }
 
-            if (me.getStatus().equals(TypeDefs.playing)){
+            if (me.getStatus().equals(playing)){
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -1824,15 +1838,36 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 Player player = gson.fromJson(jsonString, Player.class);
                 if (player.getId() == me.getId()) {
                     me.setSmiley(player.getSmiley());
-                    //TODO set smiley here
                 } else {
                     Player otherPlayer= getPlayerById(player.getId());
                     if (otherPlayer!=null){
                         otherPlayer.setSmiley(player.getSmiley());
+                        showPlayerSmiley(otherPlayer);
                     }
                 }
             }
         }
+    }
+
+    private void showPlayerSmiley(Player player){
+        int playerIndex = otherPlayers.indexOf(player);
+
+            if(player.getSmiley().equals(smiling)){
+                otherPlayerEmojis.get(playerIndex).setImageResource(R.drawable.emoji_happy);
+            }
+            else if (player.getSmiley().equals(laughing)){
+                otherPlayerEmojis.get(playerIndex).setImageResource(R.drawable.emoji_very_happy);
+            }
+            else if (player.getSmiley().equals(angry)){
+                otherPlayerEmojis.get(playerIndex).setImageResource(R.drawable.emoji_angry);
+            }
+            else if (player.getSmiley().equals(shocked)){
+                otherPlayerEmojis.get(playerIndex).setImageResource(R.drawable.emoji_shocked);
+            }
+            else if (player.getSmiley().equals(tongueOut)){
+                otherPlayerEmojis.get(playerIndex).setImageResource(R.drawable.emoji_tounge);
+            }
+
     }
 
     private void showNames() {
@@ -1855,7 +1890,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         if (updatedPlayer.getId() == me.getId()) {
             ArrayList<Card> oldcards = me.getMyCards();
             me.updateCards(updatedPlayer);
-            if(!me.getStatus().equals(TypeDefs.playing)){
+            if(!me.getStatus().equals(playing)){
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -1875,7 +1910,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                     Log.d("-----------OLD CARDS", "cards: "+oldcards.get(0).getValue()+" "+oldcards.get(1).getValue()+" "+oldcards.get(2).getValue()+" "+oldcards.get(3).getValue()+" ");
                     player.updateCards(updatedPlayer);
                     Log.d("-----------NEW CARDS", "cards: "+updatedPlayer.getMyCards().get(0).getValue()+" "+updatedPlayer.getMyCards().get(1).getValue()+" "+updatedPlayer.getMyCards().get(2).getValue()+" "+updatedPlayer.getMyCards().get(3).getValue()+" ");
-                    if(!me.getStatus().equals(TypeDefs.playing)) {
+                    if(!me.getStatus().equals(playing)) {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
