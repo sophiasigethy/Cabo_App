@@ -225,6 +225,18 @@
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
+                <ImageView
+                    android:id="@+id/player2_card_glow_imageview"
+                    android:layout_width="120dp"
+                    android:layout_height="160dp"
+                    app:srcCompat="@drawable/card_glow"
+                    android:scaleType="fitCenter"
+                    android:alpha="0.5"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"/>
+
                 <ImageButton
                     android:id="@+id/player2_card1_imageButton"
                     android:layout_width="55dp"
@@ -300,6 +312,18 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintRight_toLeftOf="@id/player1_cards">
 
+                <ImageView
+                    android:id="@+id/player3_card_glow_imageview"
+                    android:layout_width="120dp"
+                    android:layout_height="160dp"
+                    app:srcCompat="@drawable/card_glow"
+                    android:scaleType="fitCenter"
+                    android:alpha="0.5"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"/>
+
                 <ImageButton
                     android:id="@+id/player3_card1_imageButton"
                     android:layout_width="55dp"
@@ -374,6 +398,18 @@
                 android:rotation="-45"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toRightOf="@id/player1_cards">
+
+                <ImageView
+                    android:id="@+id/player4_card_glow_imageview"
+                    android:layout_width="120dp"
+                    android:layout_height="160dp"
+                    app:srcCompat="@drawable/card_glow"
+                    android:scaleType="fitCenter"
+                    android:alpha="0.5"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"/>
 
                 <ImageButton
                     android:id="@+id/player4_card1_imageButton"

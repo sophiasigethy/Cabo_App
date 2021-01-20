@@ -108,6 +108,8 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
     private final List<Integer> player4CardClickCounts = new ArrayList<>();
     private final List<com.airbnb.lottie.LottieAnimationView> playerHighlightAnimations = new ArrayList<>();
     private final List<ImageView> otherPlayerEmojis = new ArrayList<>();
+    private List<ImageView> otherPlayersCardGlows = new ArrayList<>();
+
 
 
     private final List<ConstraintLayout> playerOverviews = new ArrayList<>();
@@ -199,13 +201,6 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
 
     private void setUpOnClickListeners() {
 
-        //initiatePeekAndSwapAction();
-        //initiateInitialCardLookUp();
-        //initiateSpyAction();
-
-        //testIndicatePlayerTurn(1);
-
-
         chatButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -270,6 +265,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                         growCardGlowAnimation(playedCardsStackGlow);
                         growCardGlowAnimation(player1CardsGlow);
                         cardPopAnimation(pickCardsStackButton);
+                        pickCardsStackButton.setEnabled(false);
                     }
                 });
             }
@@ -575,6 +571,13 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         deactivatePlayer4OnClickListeners();
     }
 
+    private void deactivateAllButtons(){
+        deactivateAllOnCardClickListeners();
+        caboButton.setEnabled(false);
+        pickCardsStackButton.setEnabled(false);
+        pickCardsStackButton.setEnabled(false);
+    }
+
     private void deactivatePlayer1OnClickListeners(){
         for(ImageButton cardButton : player1CardButtons){
             cardButton.setOnClickListener(null);
@@ -627,6 +630,8 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
 
         Collections.addAll(otherPlayerEmojis, findViewById(R.id.player2_emoji), findViewById(R.id.player3_emoji), findViewById(R.id.player4_emoji));
 
+        Collections.addAll(otherPlayersCardGlows, findViewById(R.id.player2_card_glow_imageview), findViewById(R.id.player3_card_glow_imageview), findViewById(R.id.player4_card_glow_imageview));
+
         for(int i=0; i<4; i++){
             player1CardButtons.get(i).setVisibility(View.INVISIBLE);
             player2CardButtons.get(i).setVisibility(View.INVISIBLE);
@@ -637,6 +642,10 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             playerNames.get(i).setVisibility(View.INVISIBLE);
             playerOverviews.get(i).setVisibility(View.INVISIBLE);
             playerHighlightAnimations.get(i).setVisibility(View.INVISIBLE);
+        }
+
+        for(ImageView glow : otherPlayersCardGlows){
+            glow.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -685,6 +694,20 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         grow_out.setDuration(1000);
         grow_out.setFillAfter(true);
         card.startAnimation(grow_out);
+    }
+
+    //TODO check if player said cabo
+    private void visualizeOtherPlayerCardGlows(){
+        for(int i=0; i<otherPlayers.size(); i++){
+            otherPlayersCardGlows.get(i).setVisibility(View.VISIBLE);
+            growCardGlowAnimation(otherPlayersCardGlows.get(i));
+        }
+    }
+
+    private void hideOtherPlayerCardGlows(){
+        for(int i=0; i<otherPlayers.size(); i++){
+            growCardGlowAnimationOut(otherPlayersCardGlows.get(i));
+        }
     }
 
     private void cardPopAnimation(ImageButton button){
@@ -988,12 +1011,17 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         setPlayer3CardsOnClickListeners(2);
         setPlayer4CardsOnClickListeners(2);
 
+        growCardGlowAnimation(player1CardsGlow);
+        visualizeOtherPlayerCardGlows();
+
         ArrayList<ImageButton> selectedCards = new ArrayList<>();
         nrCardsSelected = 0;
 
         switchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                growCardGlowAnimationOut(player1CardsGlow);
+                hideOtherPlayerCardGlows();
                 for(ImageButton cardButton : player1CardButtons){
                     if(cardButton.isSelected()){
                         selectedCards.add(cardButton);
@@ -1092,11 +1120,14 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         setPlayer3CardsOnClickListeners(1);
         setPlayer4CardsOnClickListeners(1);
 
+        visualizeOtherPlayerCardGlows();
+
         nrCardsSelected = 0;
         spyButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View view) {
+                hideOtherPlayerCardGlows();
                 for(ImageButton cardButton : player2CardButtons){
                     if(cardButton.isSelected()){
                         animateCardTurn(cardButton);
@@ -1127,7 +1158,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                     if(getSelectedCard(otherPlayerButtonLists.get(i), otherPlayers.get(i))!=null){
                         selectedCard=getSelectedCard(otherPlayerButtonLists.get(i), otherPlayers.get(0));
                         spiedOnPlayer=otherPlayers.get(i);
-
+                        hideOtherPlayerCardGlows();
                     }
                 }
                 try {
@@ -1149,6 +1180,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
 
         nrCardsSelected = 0;
         setPlayer1CardsOnClickListeners(1);
+        growCardGlowAnimation(player1CardsGlow);
 
         peekButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -1160,6 +1192,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                         animateCardTurn(cardButton);
                         setCountdownTimer(cardButton);
                         peekButton.setVisibility(View.INVISIBLE);
+                        growCardGlowAnimationOut(player1CardsGlow);
                     }
                 }
 
@@ -1200,10 +1233,12 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         setPlayer1CardsOnClickListeners(2);
 
         ArrayList<ImageButton> selectedCards = new ArrayList<>();
+        growCardGlowAnimation(player1CardsGlow);
 
         peekButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                growCardGlowAnimationOut(player1CardsGlow);
                 for(ImageButton cardButton : player1CardButtons){
                     if(cardButton.isSelected()){
                         selectedCards.add(cardButton);
@@ -1561,6 +1596,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        deactivateAllButtons();
                         Player player = getPlayerById(nextPlayerId);
                         if (player != null) {
                             indicatePlayerTurn(player);
