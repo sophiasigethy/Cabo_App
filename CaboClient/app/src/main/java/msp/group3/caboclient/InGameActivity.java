@@ -26,6 +26,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -109,12 +110,14 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
 
 
 
+
     private final List<ConstraintLayout> playerOverviews = new ArrayList<>();
 
     protected Player me;
     private ArrayList<Player> otherPlayers = new ArrayList<>();
     private int playingPlayerId = 0;
     protected String entireChatText = "";
+
     private boolean initialRound=true;
 
     @Override
@@ -1524,6 +1527,9 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             InGameChatFragment fragment_obj = (InGameChatFragment)getSupportFragmentManager().
                     findFragmentById(R.id.fragment_chat);
             fragment_obj.textMsg.setText(entireChatText);
+            //fragment_obj.chatMessagesList.add(new ChatMessage("Sender", chatText, true));
+            //fragment_obj.chatMessageListView.setAdapter(fragment_obj.adapter);
+
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {

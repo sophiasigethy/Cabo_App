@@ -38,6 +38,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         android:orientation="vertical"
         app:layout_constraintRight_toLeftOf="@id/chat_waiting_room">
+
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/player1_image_waiting_room"
         android:layout_width="106dp"
@@ -218,7 +219,6 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-
 
         <LinearLayout
             xmlns:android="http://schemas.android.com/apk/res/android"

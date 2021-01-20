@@ -1,11 +1,13 @@
 package msp.group3.caboclient;
 
+import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
@@ -13,10 +15,15 @@ import androidx.fragment.app.Fragment;
 import org.json.JSONException;
 import org.w3c.dom.Text;
 
+import java.util.ArrayList;
+
 public class InGameChatFragment extends Fragment {
 
     public TextView textMsg;
     public EditText textInput;
+    protected ListView chatMessageListView;
+    protected ArrayList<ChatMessage> chatMessagesList= new ArrayList();
+    protected static ChatArrayAdapter adapter;
 
     public InGameChatFragment() {
         super(R.layout.ingamechat_fragment);
@@ -36,7 +43,12 @@ public class InGameChatFragment extends Fragment {
         // EditText etFoo = (EditText) view.findViewById(R.id.etFoo);
         textMsg = view.findViewById(R.id.messages);
         textInput = view.findViewById(R.id.editText);
+        chatMessageListView = view.findViewById(R.id.chat_list_view);
+
         Button sendButton = view.findViewById(R.id.button);
+
+        adapter= new ChatArrayAdapter(getActivity().getApplicationContext(), R.layout.my_chat_message);
+        chatMessageListView.setAdapter(adapter);
 
 
         sendButton.setOnClickListener(new View.OnClickListener() {
@@ -44,6 +56,7 @@ public class InGameChatFragment extends Fragment {
             public void onClick(View view) {
                 String currentText = textInput.getText().toString();
                 String text = "(" + ((InGameActivity) getActivity()).me.getName() + "): " + currentText;
+                //String text = currentText;
                 textInput.setText("");
                 try {
 
@@ -53,6 +66,15 @@ public class InGameChatFragment extends Fragment {
                 }
             }
         });
+
+        adapter.registerDataSetObserver(new DataSetObserver() {
+            @Override
+            public void onChanged() {
+                super.onChanged();
+                chatMessageListView.setSelection(adapter.getCount() - 1);
+            }
+        });
     }
+
 
 }
