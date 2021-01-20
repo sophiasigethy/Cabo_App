@@ -13,7 +13,6 @@ import android.widget.TextView;
 import androidx.fragment.app.Fragment;
 
 import org.json.JSONException;
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -23,7 +22,7 @@ public class InGameChatFragment extends Fragment {
     public EditText textInput;
     protected ListView chatMessageListView;
     protected ArrayList<ChatMessage> chatMessagesList= new ArrayList();
-    protected static ChatArrayAdapter adapter;
+    protected static ChatAdapter adapter;
 
     public InGameChatFragment() {
         super(R.layout.ingamechat_fragment);
@@ -46,10 +45,6 @@ public class InGameChatFragment extends Fragment {
         chatMessageListView = view.findViewById(R.id.chat_list_view);
 
         Button sendButton = view.findViewById(R.id.button);
-
-        adapter= new ChatArrayAdapter(getActivity().getApplicationContext(), R.layout.my_chat_message);
-        chatMessageListView.setAdapter(adapter);
-
 
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override

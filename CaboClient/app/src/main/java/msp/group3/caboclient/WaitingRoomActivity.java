@@ -4,11 +4,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.method.ScrollingMovementMethod;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,18 +25,22 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
     private ImageButton sendButton;
     private WebSocketClient webSocketClient;
     private Communicator communicator;
-    private TextView mTextView;
     private TextView player1_name;
     private TextView player2_name;
     private TextView player3_name;
     private TextView player4_name;
     private TextView name;
+    protected ListView messagesListView;
+
 
     private String mMessage = "";
     //state of the game- see class Type Defs for all 3 states
     private String state = TypeDefs.MATCHING;
     // contains all other players
     private ArrayList<Player> players = new ArrayList();
+    protected ArrayList<ChatMessage> messageList = new ArrayList<>();
+    ChatAdapter adapter;
+
     // player object which represent this client
     private Player me;
     //determines if username has already been accepted by the server
@@ -50,15 +53,21 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
 
         editText = (EditText) findViewById(R.id.editText);
         sendButton = (ImageButton) findViewById(R.id.send_button);
-        mTextView = (TextView) findViewById(R.id.messages);
-        mTextView.setMovementMethod(ScrollingMovementMethod.getInstance());
-
+        messagesListView = (ListView) findViewById(R.id.messages_listview_waiting_room);
         player1_name = (TextView) findViewById(R.id.player1_name_textview_waiting_room);
         player2_name = (TextView) findViewById(R.id.player2_name_textview_waiting_room);
         player3_name = (TextView) findViewById(R.id.player3_name_textview_waiting_room);
         player4_name = (TextView) findViewById(R.id.player4_name_textview_waiting_room);
         name = (TextView) findViewById(R.id.name);
 
+        ChatMessage welcomeMsg = new ChatMessage("BOT1", "Welcome!", true);
+        ChatMessage welcomeMsg2 = new ChatMessage("BOT2", "Welcome!", false);
+
+        messageList.add(welcomeMsg);
+        messageList.add(welcomeMsg2);
+
+        adapter = new ChatAdapter(getApplicationContext(), messageList);
+        messagesListView.setAdapter(adapter);
 
         communicator = Communicator.getInstance(this);
         webSocketClient = communicator.getmWebSocketClient();
@@ -269,15 +278,17 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
             @Override
             public void run() {
                 // mTextView.setText(mTextView.getText() + "\n" + getTextMessage());
-                mTextView.setText(mTextView.getText() + "\n" + message);
-                if (mTextView.getLayout() != null) {
+                //mTextView.setText(mTextView.getText() + "\n" + message);
+                messageList.add(new ChatMessage("Player", message, true));
+                messagesListView.setAdapter(adapter);
+               /* if (mTextView.getLayout() != null) {
                     final int scrollAmount = mTextView.getLayout().getLineTop(mTextView.getLineCount()) - mTextView.getHeight();
                     // if there is no need to scroll, scrollAmount will be <=0
                     if (scrollAmount > 0)
                         mTextView.scrollTo(0, scrollAmount);
                     else
                         mTextView.scrollTo(0, 0);
-                }
+                }*/
             }
         });
         if (mMessage.contains("That username is already in use")) {
