@@ -1098,6 +1098,23 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
     }
 
 
+    private void playSwapAnimationOther() {
+        cardSwapAnimation.setVisibility(View.VISIBLE);
+        cardSwapBg.setVisibility(View.VISIBLE);
+        cardSwapAnimation.playAnimation();
+        new CountDownTimer(2000, 1000) {
+
+            public void onTick(long millisUntilFinished) {
+            }
+
+            public void onFinish() {
+                cardSwapAnimation.setVisibility(View.INVISIBLE);
+                cardSwapBg.setVisibility(View.INVISIBLE);
+            }
+
+        }.start();
+    }
+
     private void playSwapAnimation() {
         cardSwapAnimation.setVisibility(View.VISIBLE);
         cardSwapBg.setVisibility(View.VISIBLE);
@@ -1111,11 +1128,12 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 cardSwapAnimation.playAnimation();
                 cardSwapAnimation.setVisibility(View.INVISIBLE);
                 cardSwapBg.setVisibility(View.INVISIBLE);
-                try {
-                    webSocketClient.send(String.valueOf(JSON_commands.sendFinishMove("finish")));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                    try {
+                        Log.d("----------------------SEND FINISH:", "after swap");
+                        webSocketClient.send(String.valueOf(JSON_commands.sendFinishMove("finish")));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
             }
 
         }.start();
@@ -1361,7 +1379,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             int cardIndex = swappingPlayer.getMyCards().indexOf(card);
             ImageButton cardButton = otherPlayerButtonLists.get(playerIndex).get(cardIndex);
             cardButton.setImageResource(R.drawable.card_swapped);
-            playSwapAnimation();
+            playSwapAnimationOther();
 
             new CountDownTimer(5000, 1000) {
 
@@ -1600,7 +1618,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             int nextPlayerId = jsonObject.getInt("nextPlayer");
             playingPlayerId = nextPlayerId;
             Log.d("----------------------NEXT PLAYER", "id: " + nextPlayerId);
-            Log.d("----------------------MY ID", "id: " + nextPlayerId);
+            Log.d("----------------------MY ID", "id: " + me.getId());
             //updateText.setText("Its your turn: "+getPlayerById(nextPlayerId).getName());
             if (me.getId() == nextPlayerId) {
                 //indicatePlayerTurn(me);
@@ -1756,6 +1774,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                         handler.postDelayed(new Runnable() {
                             public void run() {
                                 try {
+                                    Log.d("----------------------SEND FINISH:", "after peek");
                                     webSocketClient.send(String.valueOf(JSON_commands.sendFinishMove("finish")));
                                 } catch (JSONException e) {
                                     e.printStackTrace();
@@ -1801,6 +1820,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                         handler.postDelayed(new Runnable() {
                             public void run() {
                                 try {
+                                    Log.d("----------------------SEND FINISH:", "after spy");
                                     webSocketClient.send(String.valueOf(JSON_commands.sendFinishMove("finish")));
                                 } catch (JSONException e) {
                                     e.printStackTrace();
@@ -1847,6 +1867,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                         handler.postDelayed(new Runnable() {
                             public void run() {
                                 try {
+                                    Log.d("----------------------SEND FINISH:", "after swap");
                                     webSocketClient.send(String.valueOf(JSON_commands.sendFinishMove("finish")));
                                 } catch (JSONException e) {
                                     e.printStackTrace();
