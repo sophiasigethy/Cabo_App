@@ -1919,6 +1919,15 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 }
             }
         }
+        if (jsonObject.has("calledCabo")) {
+            JSONObject js = jsonObject.getJSONObject("calledCabo");
+            if (js.has("player")) {
+                String jsonString = js.get("player").toString();
+                Gson gson = new Gson();
+                Player player = gson.fromJson(jsonString, Player.class);
+               //TODO dieser player hat cabo gedrückt
+            }
+        }
     }
 
     private void showPlayerSmiley(Player player){

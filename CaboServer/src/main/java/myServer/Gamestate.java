@@ -18,12 +18,13 @@ public class Gamestate {
 
     // contains websocketsession-id and the associated player object
     public HashMap<String, Player> players = new HashMap<String, Player>();
-    private final int MAX_PLAYER = 1;
+    private final int MAX_PLAYER = 2;
     private int test = 0;
     // determines how many players are already registered
     private int countPlayer = 0;
     //status of the game- see Type Defs for all 3 state
     private String state = TypeDefs.MATCHING;
+    private int lastDrawnPlayerId = 0;
 
     // public CardSuiteManager cardSuiteMgr = null;
 
@@ -180,6 +181,7 @@ public class Gamestate {
                         mixCards();
                         currentPickedCard = availableCards.get(0);
                     }
+                    lastDrawnPlayerId = currentPlayer.getId();
 
                     //currentPickedCard = new Card(11, "", "");
                     // Player firstPlayer = getPlayerById(currentPlayerId);
@@ -270,13 +272,15 @@ public class Gamestate {
         if (jsonObject.has("finishMove")) {
             Player player = getPlayerBySessionId(session.getId());
             if (checkIfPlayerIsAuthorised(player)) {
-                finishMove();
-                // sendStatusupdatePlayer();
-                if (getPlayerById(currentPlayerId).getCalledCabo()) {
-                    finishRound();
-                } else {
-                    sendStatusupdateOfAllPlayer();
-                    sendToAll(JSON_commands.sendNextPlayer(currentPlayerId));
+                if (hasPlayerDrawn(player.getId())){
+                    finishMove();
+                    // sendStatusupdatePlayer();
+                    if (getPlayerById(currentPlayerId).getCalledCabo()) {
+                        finishRound();
+                    } else {
+                        sendStatusupdateOfAllPlayer();
+                        sendToAll(JSON_commands.sendNextPlayer(currentPlayerId));
+                    }
                 }
 
             }
@@ -286,6 +290,8 @@ public class Gamestate {
         if (jsonObject.has("cabo")) {
             Player currentPlayer = getPlayerBySessionId(session.getId());
             currentPlayer.setCalledCabo(true);
+            lastDrawnPlayerId=currentPlayer.getId();
+            sendToAll(JSON_commands.calledCabo(currentPlayer));
 
         }
         if (jsonObject.has("picture")) {
@@ -686,6 +692,14 @@ public class Gamestate {
         } else {
             oldId++;
             return oldId;
+        }
+    }
+
+    public boolean hasPlayerDrawn(int id) {
+        if (lastDrawnPlayerId == id) {
+            return true;
+        } else {
+            return false;
         }
     }
 

@@ -326,4 +326,16 @@ public class JSON_commands {
 
         return jmsg;
     }
+
+    public static JSONObject calledCabo(Player player) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        JSONObject jmsg = new JSONObject();
+        JSONObject jsubmsg = new JSONObject();
+
+        jsubmsg.put("player", objectMapper.writeValueAsString(player));
+        jmsg.put("calledCabo", jsubmsg);
+
+        return jmsg;
+    }
 }
