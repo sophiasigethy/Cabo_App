@@ -2,7 +2,6 @@ package msp.group3.caboclient;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.fragment.app.Fragment;
 
 
 import android.animation.Animator;
@@ -37,12 +36,9 @@ import org.java_websocket.client.WebSocketClient;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import static msp.group3.caboclient.TypeDefs.*;
 
@@ -56,6 +52,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
     private com.otaliastudios.zoom.ZoomLayout zoomLayout;
 
     private ImageButton chatButton;
+    private ImageView chatNotificationBubble;
     private ImageButton settingsButton;
     private Button caboButton;
     private ImageButton zoomButton;
@@ -130,6 +127,8 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         //link layout
         zoomLayout = (com.otaliastudios.zoom.ZoomLayout) findViewById(R.id.zoomlayout);
         chatButton = (ImageButton) findViewById(R.id.chat_button);
+        chatNotificationBubble = (ImageView) findViewById(R.id.chat_notification_bubble);
+        chatNotificationBubble.setVisibility(View.INVISIBLE);
         settingsButton = (ImageButton) findViewById(R.id.settings_button);
         zoomButton = (ImageButton) findViewById(R.id.zoom_button);
         caboButton = (Button) findViewById(R.id.cabo_button);
@@ -204,6 +203,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         chatButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                chatNotificationBubble.setVisibility(View.INVISIBLE);
                 chatButtonCount++;
                 if (chatButtonCount % 2 == 0) {
                     chatFragmentContainer.setVisibility(View.INVISIBLE);
@@ -576,6 +576,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         caboButton.setEnabled(false);
         pickCardsStackButton.setEnabled(false);
         pickCardsStackButton.setEnabled(false);
+        tapPickCardAnimation.setVisibility(View.INVISIBLE);
     }
 
     private void deactivatePlayer1OnClickListeners(){
@@ -654,6 +655,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         playerStats.get(0).setVisibility(View.VISIBLE);
         playerNames.get(0).setVisibility(View.VISIBLE);
         playerOverviews.get(0).setVisibility(View.VISIBLE);
+
         for(ImageButton card : player1CardButtons){
             card.setVisibility(View.VISIBLE);
         }
@@ -666,7 +668,6 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             for(ImageButton cardButton : otherPlayerButtonLists.get(i-1)){
                 cardButton.setVisibility(View.VISIBLE);
             }
-            //playerHighlightAnimations.get(i).setVisibility(View.VISIBLE);
         }
     }
 
@@ -910,6 +911,12 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             case 13: return R.drawable.card_clubs_k;
         }
         return 0;
+    }
+
+    private void showCardsDisabled(List<ImageButton> cards){
+        for(ImageButton card : cards){
+            card.setAlpha(0.3f);
+        }
     }
 
     private void initiateCardAction(Card pickedCard) throws JSONException {
@@ -1351,8 +1358,9 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             int cardIndex = swappingPlayer.getMyCards().indexOf(card);
             ImageButton cardButton = otherPlayerButtonLists.get(playerIndex).get(cardIndex);
             cardButton.setImageResource(R.drawable.card_swapped);
+            playSwapAnimation();
 
-            new CountDownTimer(3000, 1000) {
+            new CountDownTimer(5000, 1000) {
 
                 public void onTick(long millisUntilFinished) {
 
@@ -1516,6 +1524,14 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             InGameChatFragment fragment_obj = (InGameChatFragment)getSupportFragmentManager().
                     findFragmentById(R.id.fragment_chat);
             fragment_obj.textMsg.setText(entireChatText);
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if(chatFragmentContainer.getVisibility() == View.INVISIBLE){
+                        chatNotificationBubble.setVisibility(View.VISIBLE);
+                    }
+                }
+            });
 
             // TODO pauline: den String chatText einfach nur anzeigen :) -> zum testen server auf eine person stellen
             //edittext leeren und namen dazu schreiben
