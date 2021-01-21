@@ -70,6 +70,10 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
     private ImageButton shockedEmojiButton;
     private ImageButton angryEmojiButton;
     private TextView updateText;
+    private ImageView cardContainerOverlaySwap;
+    private ImageView cardContainerOverlayPeek;
+    private ImageView cardContainerOverlaySpy;
+
     private com.airbnb.lottie.LottieAnimationView cardSwapAnimation;
     private com.airbnb.lottie.LottieAnimationView tapPickCardAnimation;
     private com.airbnb.lottie.LottieAnimationView timerAnimation;
@@ -162,6 +166,9 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         tapPickCardAnimation.setVisibility(View.INVISIBLE);
         timerAnimation = findViewById(R.id.timer_animationView);
         timerAnimation.setVisibility(View.INVISIBLE);
+        cardContainerOverlaySwap = findViewById(R.id.picked_card_big_imageview_swap);
+        cardContainerOverlayPeek= findViewById(R.id.picked_card_big_imageview_peek);
+        cardContainerOverlaySpy= findViewById(R.id.picked_card_big_imageview_spy);
 
         playedCardsStackButton = (ImageButton) findViewById(R.id.played_cards_imageButton);
         playedCardsStackGlow = findViewById(R.id.card_glow_imageview);
@@ -172,6 +179,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
 
         setUpPlayerStats();
         setUpOnClickListeners();
+        hideActionDisplay();
 
         pickCardsStackButton.setEnabled(false);
 
@@ -606,6 +614,54 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         }
     }
 
+    private void hideActionDisplay(){
+        cardContainerOverlaySwap.setVisibility(View.INVISIBLE);
+        cardContainerOverlaySpy.setVisibility(View.INVISIBLE);
+        cardContainerOverlayPeek.setVisibility(View.INVISIBLE);
+
+    }
+
+    private void showCardAction(Card pickedCard){
+        int value = pickedCard.getValue();
+        ImageView overlay = null;
+        switch (value) {
+            case 7:
+                overlay = cardContainerOverlayPeek;
+                break;
+            case 8:
+                overlay = cardContainerOverlayPeek;
+                break;
+            case 9:
+                overlay = cardContainerOverlaySpy;
+                break;
+            case 10:
+                overlay = cardContainerOverlaySpy;
+                break;
+            case 11:
+                overlay = cardContainerOverlaySwap;
+                break;
+            case 12:
+                overlay = cardContainerOverlaySwap;
+                break;
+        }
+
+        if(overlay!=null){
+            //growCardGlowAnimation(overlay);
+            overlay.setVisibility(View.VISIBLE);
+        }
+
+        new CountDownTimer(2000, 1000) {
+
+            public void onTick(long millisUntilFinished) {
+            }
+
+            public void onFinish() {
+                hideActionDisplay();
+            }
+
+        }.start();
+    }
+
 
     private void setUpPlayerStats() {
 
@@ -793,6 +849,8 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                         super.onAnimationEnd(animation);
                         pickedCardBigImageview.setImageResource(getCardResource(card));
                         oa2.start();
+                        showCardAction(card);
+
                     }
                 });
                 oa1.start();
@@ -1494,12 +1552,6 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
 
     private void displayDiscardedCard(Card card){
         playedCardsStackButton.setImageResource(getCardResource(card));
-
-    }
-
-    //TODO display picked Card to User
-    private void displayPickedCard(Card card){
-
     }
 
     @Override

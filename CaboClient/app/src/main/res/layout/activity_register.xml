@@ -198,10 +198,11 @@
             android:layout_height="0dp"
             android:src="@drawable/cabo_logo"
             android:translationX="-50dp"
+            android:paddingTop="60dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             android:layout_gravity="bottom"
-            android:layout_weight="1"
+            android:layout_weight="2"
             />
     </LinearLayout>
 
@@ -210,9 +211,8 @@
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:layout_weight="1"
-            android:weightSum="8"
-            android:padding="12dp"
-            android:background="@drawable/rounded_button">
+            android:paddingRight="24dp"
+            android:weightSum="8">
 
             <TextView
                 android:id="@+id/register_title"
@@ -228,6 +228,16 @@
                 android:shadowDy="5"
                 android:layout_weight="1"
                 android:layout_marginBottom="12dp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="4"
+                android:weightSum="4"
+                android:orientation="vertical"
+                android:padding="6dp"
+                android:background="@drawable/rounded_button">
+
             <EditText
                 android:id="@+id/register_mail"
                 android:layout_width="match_parent"
@@ -296,6 +306,8 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/register_nick" />
+
+            </LinearLayout>
 
             <Button
                 android:id="@+id/register_btn"
