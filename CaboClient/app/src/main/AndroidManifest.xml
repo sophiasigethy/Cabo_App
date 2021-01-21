@@ -7,6 +7,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -16,39 +17,37 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.CaboClient">
         <activity
-            android:name=".LoginActivity"
-            android:configChanges="orientation"
-            android:label="@string/title_activity_login"
-            android:screenOrientation="portrait">
+            android:name=".IntroActivity"
+            android:label="Cabo"
+            android:theme="@style/Theme.CaboClient.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
+        <activity
+            android:name=".LoginActivity"
+            android:configChanges="orientation"
+            android:label="@string/title_activity_login"
+            android:screenOrientation="portrait">
+        </activity>
         <activity
             android:name=".RegisterActivity"
             android:configChanges="orientation"
             android:label="@string/title_activity_register"
-            android:screenOrientation="portrait">
-        </activity>
-
+            android:screenOrientation="portrait"></activity>
         <activity
             android:name=".WaitingRoomActivity"
             android:screenOrientation="sensorLandscape"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen" />
-
         <activity
             android:name=".MainActivity"
             android:screenOrientation="sensorLandscape"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen">
-        </activity>
-
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"></activity>
         <activity
             android:name=".InGameActivity"
             android:screenOrientation="sensorLandscape"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen">
-        </activity>
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"></activity>
     </application>
 
 </manifest>
