@@ -456,8 +456,9 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
         for (int i = 0; i < 4; i++) {
             String avatarID = intent.getStringExtra("player" + i + "avatar");
             String dbID = intent.getStringExtra("player" + i + "dbid");
-            if (avatarID == null || avatarID.equals(""))
+            if (avatarID == null || avatarID.equals("")) {
                 continue;
+            }
             else if (dbID.equals(me.getDbID())) {
                 continue;
             } else {

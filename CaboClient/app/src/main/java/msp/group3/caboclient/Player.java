@@ -159,6 +159,11 @@ public class Player {
         return nicks;
     }
 
+    public boolean addFriend(Player player, SharedPreferences sharedPref) {
+        friendList.add(player);
+        return DatabaseOperation.getDao().writePlayerToSharedPref(this, sharedPref);
+    }
+
     public void setFriendList(ArrayList<Player> friendList) {
         this.friendList = friendList;
     }

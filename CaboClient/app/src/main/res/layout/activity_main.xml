@@ -49,11 +49,13 @@
                 android:text="@string/add_friend"
                 android:enabled="false"/>
 
-            <Button
+            <!--
+                <Button
                 android:id="@+id/settings_btn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/game_settings" />
+                -->
 
             <Button
                 android:id="@+id/start_game_btn"
