@@ -82,4 +82,11 @@ public class Card {
     public String getChoice() {
         return choice;
     }
+
+    public boolean equalsCard(Card otherCard){
+        if ((this.type.equalsIgnoreCase(otherCard.getType()))&& (this.value==otherCard.getValue())){
+            return true;
+        }
+        return false;
+    }
 }

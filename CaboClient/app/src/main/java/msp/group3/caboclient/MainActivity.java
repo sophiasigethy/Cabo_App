@@ -6,10 +6,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -17,6 +19,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import org.java_websocket.client.WebSocketClient;
 import org.json.JSONException;
@@ -32,19 +35,27 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
     private Communicator communicator;
     private WebSocketClient mWebSocketClient;
     private ListView friendList;
+    private ArrayList<Player> party = new ArrayList<>();
+    private ArrayList<Player> allUsers = new ArrayList<>();
     private TextView userNameTxt;
     private Button startGameBtn;
+    private Button findGameBtn;
     private Button addFriendBtn;
     private SharedPreferences sharedPref;
+    private Activity activity;
+    private FriendListAdapter friendListAdapter;
+    private boolean accepted= false;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        activity = this;
         friendList = (ListView) findViewById(R.id.list_friends);
         userNameTxt = (TextView) findViewById(R.id.username);
         startGameBtn = (Button) findViewById(R.id.start_game_btn);
+        findGameBtn = (Button) findViewById(R.id.find_game_btn);
         addFriendBtn = (Button) findViewById(R.id.add_friend_btn);
         sharedPref = getApplicationContext().getSharedPreferences(
                 R.string.preference_file_key + "", Context.MODE_PRIVATE);
@@ -53,15 +64,9 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
         communicator = Communicator.getInstance(this);
         communicator.connectWebSocket();
         mWebSocketClient = communicator.getmWebSocketClient();
+        communicator.setActivity(this);
         me = DatabaseOperation.getDao().readPlayerFromSharedPrefs(sharedPref);
-        if (me.getNick().equals("None")) {
-            me.setNick(getIntent().getStringExtra("nick"));
-        }
-        Toast.makeText(MainActivity.this, R.string.welcome + " " + me.getNick(), Toast.LENGTH_LONG);
         userNameTxt.setText("Welcome " + me.getNick());
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_list_item_1, me.getFriendsNicknames());
-        friendList.setAdapter(adapter);
         startGameBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -71,10 +76,10 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
         addFriendBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DatabaseOperation.getDao().updateUserList(sharedPref);
-                showAddFriendDialog();
+                searchFriendDialog();
             }
         });
+        allUsers = DatabaseOperation.getDao().getAllUsersList(sharedPref);
     }
 
 
@@ -90,40 +95,207 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
 //        if (message.equalsIgnoreCase("startMatching")) {
 //            startMatching();
 //        }
-        if (jsonObject.has("accepted")) {
-            //TODO: Make message more detailed, to differ what was accepted (friendrequested or game invite?)
-            //Toast.makeText(MainActivity.this, "Connected", Toast.LENGTH_LONG);
+        if (jsonObject.has("connectionAccepted")) {
+            activity.runOnUiThread(new Runnable() {
+                public void run() {
+                    Toast.makeText(activity, R.string.welcome + " " + me.getNick(), Toast.LENGTH_LONG);
+                    enableButtons();
+                    if (!party.contains(me))
+                        party.add(me);
+                    friendListAdapter = new FriendListAdapter(activity, me, party, communicator);
+                    friendList.setAdapter(friendListAdapter);
+                    //updateFriendList();
+                }
+            });
+            try {
+                communicator.sendMessage(JSON_commands.sendUserLogin(me));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
-        if (jsonObject.has("notAccepted")) {
-            //TODO: Make message more detailed, to differ what was accepted (friendrequested or game invite?)
-            String mes = TypeDefs.server + jsonObject.get("notAccepted").toString();
+
+        if (jsonObject.has("connectionNotAccepted")) {
+            String mes = TypeDefs.server + jsonObject.get("connectionNotAccepted").toString();
         }
+
         if (jsonObject.has("friendrequest")) {
-            //TODO: Receive dbID and nick from accepting Player, and edit the following accordingly
-            //String destinationDbID = "";
-            //if (destinationDbID.equals(me.getDbID())) {
-            //   String receivedDbID = "";
-            //   String receivedNick = "";
-            //   Player sender = new Player(receivedDbID, receivedNick);
-            //   acceptFriendRequestDialog(sender);
-            //}
+            JSONObject friendrequest = (JSONObject) jsonObject.get("friendrequest");
+            String destinationDbID = friendrequest.get("receiverDbID").toString().replace("\"", "").replace("\\", "");
+            if (destinationDbID.equals(me.getDbID())) {
+                String senderDbID = friendrequest.get("senderDbID").toString().replace("\"", "").replace("\\", "");
+                String senderNick = friendrequest.get("senderNick").toString().replace("\"", "").replace("\\", "");
+                int senderAvatar = Integer.parseInt(friendrequest.get("senderAvatarID").toString().replace("\"", "").replace("\\", ""));
+                Player sender = new Player(senderDbID, senderNick, senderAvatar);
+                //TODO: Find better way to display this Dialog
+                activity.runOnUiThread(new Runnable() {
+                    public void run() {
+                        acceptFriendRequestDialog(sender);
+                    }
+                });
+            }
+        }
+
+        if (jsonObject.has("friendAccepted")) {
+            JSONObject friendrequest = (JSONObject) jsonObject.get("friendAccepted");
+            String destinationDbID = friendrequest.get("receiverDbID").toString().replace("\"", "").replace("\\", "");
+            if (destinationDbID.equals(me.getDbID())) {
+                String senderDbID = friendrequest.get("senderDbID").toString().replace("\"", "").replace("\\", "");
+                String senderNick = friendrequest.get("senderNick").toString().replace("\"", "").replace("\\", "");
+                int senderAvatar = Integer.parseInt(friendrequest.get("senderAvatarID").toString().replace("\"", "").replace("\\", ""));
+                Player sender = new Player(senderDbID, senderNick, senderAvatar);
+                //TODO: Find better way to display this Dialog
+                activity.runOnUiThread(new Runnable() {
+                    public void run() {
+                        updateFriendList(sender, true);
+                    }
+                });
+            }
+        }
+
+        if (jsonObject.has("partyrequest")) {
+            // Invite a Player to join your party
+            JSONObject partyRequest = (JSONObject) jsonObject.get("partyrequest");
+            String destinationDbID = partyRequest.get("receiverDbID").toString().replace("\"", "").replace("\\", "");
+            if (destinationDbID.equals(me.getDbID())) {
+                String senderDbID = partyRequest.get("senderDbID").toString().replace("\"", "").replace("\\", "");
+                String senderNick = partyRequest.get("senderNick").toString().replace("\"", "").replace("\\", "");
+
+                int senderAvatar = Integer.parseInt(partyRequest.get("senderAvatarID").toString().replace("\"", "").replace("\\", ""));
+                Player sender = new Player(senderDbID, senderNick, senderAvatar);
+                View v = friendList.getChildAt(friendListAdapter.getPlayerIndex(sender) - friendList.getFirstVisiblePosition());
+                if (v != null) {
+                    Button inviteButton = (Button) v.findViewById(R.id.friendlist_invite);
+                    inviteButton.setBackgroundResource(R.drawable.party_invitation);
+                    inviteButton.setBackgroundColor(getResources().getColor(R.color.teal_200));
+                    inviteButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            View v = friendList.getChildAt(friendListAdapter.getPlayerIndex(sender) - friendList.getFirstVisiblePosition());
+                            if (v != null) {
+                                if (!party.contains(sender)) {
+                                    // Since you accepted the request, add player to party and send confirmation
+                                    party.add(sender);
+                                    updateFriendList(sender, false);
+                                    try {
+                                        communicator.sendMessage(
+                                                JSON_commands.sendPartyAccepted(me, sender));
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+            }
+        }
+
+        if (jsonObject.has("partyaccepted")) {
+            // If a player has accepted your party invitation, you receive this
+            JSONObject partyAccepted = (JSONObject) jsonObject.get("partyaccepted");
+            String destinationDbID = partyAccepted.get("receiverDbID").toString().replace("\"", "").replace("\\", "");
+            if (destinationDbID.equals(me.getDbID())) {
+                String senderDbID = partyAccepted.get("senderDbID").toString().replace("\"", "").replace("\\", "");
+                String senderNick = partyAccepted.get("senderNick").toString().replace("\"", "").replace("\\", "");
+                int senderAvatar = Integer.parseInt(partyAccepted.get("senderAvatarID").toString().replace("\"", "").replace("\\", ""));
+                Player sender = new Player(senderDbID, senderNick, senderAvatar);
+
+                activity.runOnUiThread(new Runnable() {
+                    public void run() {
+                        View v = friendList.getChildAt(
+                                friendListAdapter.getPlayerIndex(sender) - friendList.getFirstVisiblePosition());
+                        if (v != null) {
+                            if (!party.contains(sender)) {
+                                party.add(sender);
+                                updateFriendList(sender, false);
+                            }
+                        }
+                    }
+                });
+            }
+        }
+        if (jsonObject.has("onlinestatus")) {
+            JSONObject onlineRequest = (JSONObject) jsonObject.get("onlinestatus");
+            Boolean isOnline = Boolean.parseBoolean(onlineRequest.get("isonline").toString().replace("\"", "").replace("\\", ""));
+            String playerDbID = onlineRequest.get("senderDbID").toString().replace("\"", "").replace("\\", "");
+            String playerNick = onlineRequest.get("senderNick").toString().replace("\"", "").replace("\\", "");
+            int playerAvatar = Integer.parseInt(onlineRequest.get("senderAvatarID").toString().replace("\"", "").replace("\\", ""));
+            Player player = new Player(playerDbID, playerNick, playerAvatar);
+            if (!allUsers.contains(player)) {
+                allUsers.add(player);
+                DatabaseOperation.getDao().saveObjectToSharedPreference(
+                        sharedPref, String.valueOf(R.string.preference_all_users), allUsers);
+            }
+            if (me.getFriendList().contains(player)) {
+                activity.runOnUiThread(new Runnable() {
+                    public void run() {
+                        View v = friendList.getChildAt(
+                                friendListAdapter.getPlayerIndex(player) - friendList.getFirstVisiblePosition());
+                        if (v != null) {
+                            ImageView friendlistStatus = (ImageView) v.findViewById(R.id.friendlist_status);
+                            if (isOnline) {
+                                //friendlistStatus.setBackgroundColor(Color.GREEN);
+                                friendlistStatus.setBackground(ContextCompat.getDrawable(activity, R.drawable.circle_green));
+                                me.getFriendList().get(me.getFriendList().indexOf(player)).setOnline(true);
+                            } else {
+                                //friendlistStatus.setBackgroundColor(Color.RED);
+                                friendlistStatus.setBackground(ContextCompat.getDrawable(activity, R.drawable.circle_red));
+                                me.getFriendList().get(me.getFriendList().indexOf(player)).setOnline(true);
+                            }
+
+                            //TODO Check if this is enough
+                            updateFriendList(player, false);
+                        }
+                    }
+                });
+            }
         }
     }
 
+    private void updateFriendList(Player sender, boolean isNewFriend) {
+        ArrayList<Player> friends = me.getFriendList();
+        if (!isNewFriend) {
+            friends.remove(sender);
+            friends.add(0, sender);
+        } else
+            friends.add(sender);
+        //TODO Check if Adapter also has to get new list
+        me.setFriendList(friends);
+        friendListAdapter.notifyDataSetChanged();
+    }
 
-    public void startMatching() {
-        Intent intent = new Intent(MainActivity.this, WaitingRoomActivity.class);
+    public void startMatching()  {
+        Intent intent = new Intent(activity, WaitingRoomActivity.class);
+        int i;
+        for (i = 0; i < party.size(); i++) {
+            if (party.get(i).equals(me))
+                continue;
+            intent.putExtra("player" + i + "dbid", party.get(i).getDbID());
+            intent.putExtra("player" + i + "nick", party.get(i).getNick());
+            intent.putExtra("player" + i + "avatar", party.get(i).getAvatarID() + "");
+        }
+        while (i < 4) {
+            intent.putExtra("player" + i + "dbid", "");
+            intent.putExtra("player" + i + "nick", "");
+            intent.putExtra("player" + i + "avatar", "");
+            i++;
+        }
+        // TODO wait for ServerMessage with GameState-ID
+
         startActivity(intent);
     }
 
 
-    private void showAddFriendDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+
+
+    private void searchFriendDialog() {
+        DatabaseOperation.getDao().updateAllPlayers(sharedPref);
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setTitle(R.string.search_friend);
         // Set up the input
-        LinearLayout linearLayout = new LinearLayout(MainActivity.this);
+        LinearLayout linearLayout = new LinearLayout(activity);
         linearLayout.setOrientation(LinearLayout.VERTICAL);
-        final EditText searchNick = new EditText(MainActivity.this);
+        final EditText searchNick = new EditText(activity);
         searchNick.setHint(R.string.enter_nick);
         searchNick.setWidth(70);
         linearLayout.addView(searchNick);
@@ -146,33 +318,44 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
             @Override
             public void onClick(View v) {
                 if (!searchNick.getText().toString().isEmpty()) {
-                    ArrayList<Player> allUsers = DatabaseOperation.getDao().getAllUsersList(sharedPref);
-                    if (allUsers.size() > 0) {
-                        for (Player user : allUsers) {
-                            if (user.getNick().toLowerCase().equals(
-                                    searchNick.getText().toString().toLowerCase())) {
-                                Toast.makeText(MainActivity.this,
-                                        "Friendrequest sent to " + user.getDbID(), Toast.LENGTH_LONG);
-                                //TODO Send FriendRequest
-                                dialog.dismiss();
-                                break;
+                    if (!(me.getFriendsNicknames().contains(searchNick.getText().toString()))) {
+                        if (allUsers.size() > 0) {
+                            for (Player user : allUsers) {
+                                if (user.getNick().toLowerCase().equals(
+                                        searchNick.getText().toString().toLowerCase().trim())) {
+                                    Toast.makeText(activity,
+                                            "Friendrequest sent to " + user.getDbID(), Toast.LENGTH_LONG);
+                                    try {
+                                        communicator.sendMessage(JSON_commands.sendFriendRequest(me, user));
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                    dialog.dismiss();
+                                    break;
+                                }
                             }
+                            Toast.makeText(activity,
+                                    "No such user found: " + searchNick.getText().toString(),
+                                    Toast.LENGTH_LONG);
+                            dialog.dismiss();
                         }
-                        Toast.makeText(MainActivity.this,
-                                "No such user found: " + searchNick.getText().toString(), Toast.LENGTH_LONG);
-                        dialog.dismiss();
-                    }
+                    } else
+                        Toast.makeText(activity,
+                                searchNick.getText().toString() + " is already your friend",
+                                Toast.LENGTH_LONG);
                 }
-                Toast.makeText(MainActivity.this,
-                        "Friendrequest aborted", Toast.LENGTH_LONG);
+                Toast.makeText(activity,
+                        "You have to enter a Name", Toast.LENGTH_LONG);
                 dialog.cancel();
             }
         });
     }
 
     private void acceptFriendRequestDialog(Player sender) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-        builder.setTitle(R.string.friend_request_received + sender.getNick());
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        builder.setTitle(
+                getApplicationContext().getResources().getString(R.string.friend_request_received)
+                        + ": " + sender.getNick());
         builder.setPositiveButton(R.string.accept, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -189,7 +372,22 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DatabaseOperation.getDao().addFriendships(me, sender);
+                if (!me.getFriendsNicknames().contains(sender.getNick())) {
+                    if (DatabaseOperation.getDao().addFriendships(me, sender)) {
+                        updateFriendList(sender, true);
+                        try {
+                            communicator.sendMessage(JSON_commands.sendFriendRequestAccepted(me, sender));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        dialog.dismiss();
+                    } else {
+                        dialog.dismiss();
+                        Toast.makeText(activity, "Error while adding friend", Toast.LENGTH_LONG);
+                    }
+
+                } else
+                    Toast.makeText(activity, "User is already a friend", Toast.LENGTH_LONG);
             }
         });
         dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener(new View.OnClickListener() {
@@ -199,6 +397,12 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
             }
         });
 
+    }
+
+    public void enableButtons() {
+        addFriendBtn.setEnabled(true);
+        startGameBtn.setEnabled(true);
+        findGameBtn.setEnabled(true);
     }
 
     /**
@@ -212,5 +416,25 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
     @Override
     public void onBackPressed() {
         //TODO Display Dialog if user wants to exit
+    }
+
+    /**
+     * Dispatch onPause() to fragments.
+     */
+    @Override
+    protected void onPause() {
+        super.onPause();
+        try {
+            communicator.sendMessage(JSON_commands.sendLogout());
+        } catch (JSONException e) {
+            Log.e("LOGOUT", "Could not send logout to server");
+        }
+        //TODO: Remove Connection
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //TODO: Establish Connection
     }
 }

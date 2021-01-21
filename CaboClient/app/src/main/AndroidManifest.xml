@@ -40,9 +40,8 @@
 
         <activity
             android:name=".MainActivity"
-            android:configChanges="orientation"
-            android:label="@string/title_main_activity"
-            android:screenOrientation="portrait">
+            android:screenOrientation="sensorLandscape"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen">
         </activity>
 
         <activity

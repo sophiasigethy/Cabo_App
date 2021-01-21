@@ -3,42 +3,61 @@ package myServer;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Objects;
 
 public class Player {
 
     private int id;
-    private String name;
+    private String nick;
+
+    private String name="";
+    private String dbId;
+    private int avatarId;
 
     // The cards belong to this player
     private ArrayList<Card> cards = new ArrayList<>();
+
+
 
     @JsonIgnore
     private Gamestate gamestate;
 
     private String status;
 
-    @JsonIgnore
+
     private int score = 0;
     @JsonIgnore
     private boolean calledCabo = false;
+    private String picture="";
+    private String smiley="";
 
-    public Player(){
+    public Player() {
 
     }
 
     public Player(int id, String name){
         this.id= id;
+        this.nick =name;
         this.name= name;
-        this.status=TypeDefs.waiting;
+        this.status=TypeDefs.MATCHING;
+        this.smiley=TypeDefs.smiling;
     }
 
-    public Player(int id, String name, Gamestate gs) {
-        this.id = id;
-        this.name = name;
-        this.gamestate = gs;
-        this.status = TypeDefs.waiting;
+    public Player(String dbId, String nick, int avatarId) {
+        this.nick = nick;
+        this.dbId = dbId;
+        this.avatarId = avatarId;
     }
+
+    public Player(int id, String nick, Gamestate gs) {
+        this.id = id;
+        this.name = nick;
+        this.nick= nick;
+        this.gamestate = gs;
+        this.status = TypeDefs.MATCHING;
+        this.smiley=TypeDefs.smiling;
+    }
+
     public int getId() {
         return id;
     }
@@ -53,6 +72,21 @@ public class Player {
     public void setName(String name) {
         this.name = name;
     }
+    public String getNick() {
+        return nick;
+    }
+
+    public void setNick(String nick) {
+        this.nick = nick;
+    }
+
+    public int getAvatarId() {
+        return avatarId;
+    }
+
+    public void setAvatarId(int avatarId) {
+        this.avatarId = avatarId;
+    }
 
     /**
      * Reset player cards and his status
@@ -61,6 +95,7 @@ public class Player {
         this.cards = new ArrayList<>();
         this.calledCabo = false;
     }
+
     /**
      * Get player's cards
      */
@@ -70,11 +105,13 @@ public class Player {
 
     /**
      * Does a player run out of his cards ?
+     *
      * @return
      */
     public boolean hasNoCards() {
         return this.cards.size() == 0;
     }
+
     /**
      * A play draws a card from `availableCards`,
      */
@@ -116,13 +153,13 @@ public class Player {
         if (this.calledCabo) return;
 
         for (int i = 0; i < other.cards.size(); i ++) {
-            if (otherCard.equals(other.cards.get(i))) {
+            if (otherCard.equalsCard(other.cards.get(i))) {
                 other.cards.set(i, myCard);
                 break;
             }
         }
         for (int i = 0; i < this.cards.size(); i ++) {
-            if (myCard.equals(this.cards.get(i))) {
+            if (myCard.equalsCard(this.cards.get(i))) {
                 this.cards.set(i, otherCard);
                 break;
             }
@@ -137,7 +174,7 @@ public class Player {
      * @param otherCard
      * @param shouldUpdatePlayedCards
      */
-    private void swapWithPileCards(ArrayList<Card> cardsToSwap, Card myCard, Card otherCard, boolean shouldUpdatePlayedCards) {
+    public void swapWithPileCards(ArrayList<Card> cardsToSwap, Card myCard, Card otherCard, boolean shouldUpdatePlayedCards) {
 
         if (this.calledCabo) return;
         boolean swapped = false;
@@ -200,12 +237,15 @@ public class Player {
     public void callCabo() {
         this.calledCabo = true;
     }
+
     public void setCalledCabo(boolean calledCabo) {
         this.calledCabo = calledCabo;
     }
+
     public boolean getCalledCabo() {
         return this.calledCabo;
     }
+
     public void setScore(int score) {
         this.score = score;
     }
@@ -229,4 +269,67 @@ public class Player {
     public void setStatus(String status) {
         this.status = status;
     }
+
+    public void swapWithOwnCard(Card ownCard, Card currentPickedCard){
+        //gezogene Karte wird von availableCards entfernt und in playedCards hinzugefügt-> ist letzter Eintrag von playedCards jetzt
+        //diese Karte muss currentPickedCard entsprechen
+        gamestate.takeFirstCardFromAvailableCards();
+        for (int i=0; i<this.cards.size(); i++ ){
+            if (ownCard.equalsCard(cards.get(i))){
+                cards.remove(i);
+                cards.add(i, currentPickedCard);
+            }
+        }
+
+    }
+
+    public String getPicture() {
+        return picture;
+    }
+
+    public void setPicture(String picture) {
+        this.picture = picture;
+    }
+
+    public String getSmiley() {
+        return smiley;
+    }
+
+    public void setSmiley(String smiley) {
+        this.smiley = smiley;
+    }
+
+    public String getDbId() {
+        return dbId;
+    }
+
+    public void setDbId(String dbId) {
+        this.dbId = dbId;
+    }
+
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Player player = (Player) o;
+        return Objects.equals(nick, player.nick) && Objects.equals(dbId, player.dbId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(nick, dbId);
+    }
+
+
+    public Gamestate getGamestate() {
+        return gamestate;
+    }
+
+    public void setGamestate(Gamestate gamestate) {
+        this.gamestate = gamestate;
+    }
+
+
 }
