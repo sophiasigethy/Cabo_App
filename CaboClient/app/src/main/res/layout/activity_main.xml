@@ -169,7 +169,7 @@
                 android:background="@drawable/outlined_button"
                 android:textColor="@drawable/outlined_button_text"
                 android:layout_marginTop="6dp"
-                android:enabled="false"/>
+                android:enabled="false"
                 android:text="@string/start_game" />
 
             <Button
@@ -179,7 +179,7 @@
                 android:background="@drawable/outlined_button"
                 android:textColor="@drawable/outlined_button_text"
                 android:layout_marginTop="6dp"
-                android:enabled="false"/>
+                android:enabled="false"
                 android:text="@string/find_game" />
         </LinearLayout>
 

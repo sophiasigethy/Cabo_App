@@ -9,7 +9,30 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
+    android:background="@drawable/cabo_bg"
     tools:context=".LoginActivity">
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/particle_animationView_register"
+        android:layout_width="400dp"
+        android:layout_height="200dp"
+        app:lottie_rawRes="@raw/particles"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        android:alpha="0.2"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"/>
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/particle_animationView2_register"
+        android:layout_width="400dp"
+        android:layout_height="200dp"
+        app:lottie_rawRes="@raw/particles"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        android:alpha="0.2"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"/>
 
     <EditText
         android:id="@+id/register_mail"
@@ -19,6 +42,9 @@
         android:hint="@string/prompt_email"
         android:inputType="textEmailAddress"
         android:selectAllOnFocus="true"
+        android:textColor="@color/beige"
+        android:textSize="12dp"
+        android:textColorHint="@color/turquoise_highlight"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -31,6 +57,9 @@
         android:hint="@string/prompt_displayname"
         android:inputType="textPersonName"
         android:selectAllOnFocus="true"
+        android:textColor="@color/beige"
+        android:textSize="12dp"
+        android:textColorHint="@color/turquoise_highlight"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/register_mail" />
@@ -43,6 +72,9 @@
         android:hint="@string/prompt_nick"
         android:inputType="textEmailAddress"
         android:selectAllOnFocus="true"
+        android:textColor="@color/beige"
+        android:textSize="12dp"
+        android:textColorHint="@color/turquoise_highlight"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/register_name" />
@@ -56,6 +88,9 @@
         android:imeActionLabel="@string/action_sign_in_short"
         android:imeOptions="actionDone"
         android:inputType="textPassword"
+        android:textColor="@color/beige"
+        android:textSize="12dp"
+        android:textColorHint="@color/turquoise_highlight"
         android:selectAllOnFocus="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -68,6 +103,7 @@
         android:layout_marginTop="10dip"
         android:gravity="start"
         android:text="@string/choose_avatar"
+        android:textColor="@color/beige"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
@@ -203,6 +239,8 @@
         android:layout_marginEnd="48dp"
         android:layout_marginBottom="64dp"
         android:text="@string/action_register"
+        android:background="@drawable/outlined_button"
+        android:textColor="@drawable/outlined_button_text"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

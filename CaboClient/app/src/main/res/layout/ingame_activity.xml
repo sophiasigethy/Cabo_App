@@ -1060,8 +1060,9 @@
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragment_chat"
         android:layout_width="500dp"
-        android:layout_height="300dp"
+        android:layout_height="250dp"
         android:layout_margin="12dp"
+        android:translationZ="12dp"
         app:layout_constraintRight_toLeftOf="@id/chat_button"
         app:layout_constraintTop_toTopOf="parent"/>
 

@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -43,7 +44,7 @@ public class InGameChatFragment extends Fragment {
         textInput = view.findViewById(R.id.editText);
         chatMessageListView = view.findViewById(R.id.chat_list_view);
 
-        Button sendButton = view.findViewById(R.id.button);
+        ImageButton sendButton = view.findViewById(R.id.button);
 
         ChatMessage welcomeMsg = new ChatMessage("BOT1", "Welcome!", true);
         ChatMessage welcomeMsg2 = new ChatMessage("BOT2", "Welcome!", false);
