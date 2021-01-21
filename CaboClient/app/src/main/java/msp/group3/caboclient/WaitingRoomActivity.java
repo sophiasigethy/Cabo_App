@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -77,7 +78,6 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
         // startGame();
 
     }
