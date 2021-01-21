@@ -9,13 +9,17 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 public class Player {
-    final int NO_AVATAR_CHOSEN = 9;
+
+    private int NO_AVATAR_CHOSEN = 9;
     private int id;
     private String dbID = "";
     private String name = "";
     private String mail = "";
     private String nick = "";
-    private int avatarID = NO_AVATAR_CHOSEN;
+
+
+
+    private int avatarID ;
     private int score;
     private ArrayList<Player> friendList = new ArrayList<>();
     private ArrayList<Card> myCards = new ArrayList<>();
@@ -249,6 +253,16 @@ public class Player {
         myCards.clear();
         myCards.addAll(other.getMyCards());
         status=other.getStatus();
+    }
+    public int getNO_AVATAR_CHOSEN() {
+        return NO_AVATAR_CHOSEN;
+    }
+    public void setNO_AVATAR_CHOSEN(int NO_AVATAR_CHOSEN) {
+        this.NO_AVATAR_CHOSEN = NO_AVATAR_CHOSEN;
+    }
+
+    public Boolean getOnline() {
+        return isOnline;
     }
 
 }

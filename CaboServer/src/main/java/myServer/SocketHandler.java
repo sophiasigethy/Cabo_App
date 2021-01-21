@@ -27,6 +27,7 @@ public class SocketHandler extends TextWebSocketHandler {
     private final String serverName = "Server";
     private String mMessage = "";
     private String mWho = "";
+
     private Map<String, Player> connectedPlayers = new HashMap<String, Player>();
     private ArrayList<Gamestate> games = new ArrayList<>();
     private Set<WebSocketSession> sessions = new HashSet<>();
@@ -271,5 +272,13 @@ public class SocketHandler extends TextWebSocketHandler {
             }
         }
         return false;
+    }
+
+    public Map<String, Player> getConnectedPlayers() {
+        return connectedPlayers;
+    }
+
+    public void setConnectedPlayers(Map<String, Player> connectedPlayers) {
+        this.connectedPlayers = connectedPlayers;
     }
 }

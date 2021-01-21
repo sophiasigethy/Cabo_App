@@ -7,7 +7,6 @@ import org.json.JSONObject;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
-import javax.websocket.Session;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -349,6 +348,7 @@ public class Gamestate {
         Player newPlayer = new Player(generateId(), name, this);
         this.players.put(webSocketSession.getId(), newPlayer);
         //player is informed that he can join the game
+        saveAvatar(newPlayer);
         socketHandler.sendMessage(webSocketSession, JSON_commands.Welcome(newPlayer));
         informOtherPlayers(JSON_commands.newPlayer(newPlayer));
     }
@@ -741,6 +741,14 @@ public class Gamestate {
             }
         }
         return false;
+    }
+
+    public void saveAvatar(Player player){
+        for (Player socketHandlerPlayer: socketHandler.getConnectedPlayers().values()){
+            if (socketHandlerPlayer.getNick().equalsIgnoreCase(player.getName())){
+                player.setAvatarID(socketHandlerPlayer.getAvatarID());
+            }
+        }
     }
     /*****************************************
      * Copy and Paste from CardSuiteManager
