@@ -1557,13 +1557,14 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             entireChatText = entireChatText+"\n"+chatText;
             InGameChatFragment fragment_obj = (InGameChatFragment)getSupportFragmentManager().
                     findFragmentById(R.id.fragment_chat);
-            fragment_obj.textMsg.setText(entireChatText);
-            //fragment_obj.chatMessagesList.add(new ChatMessage("Sender", chatText, true));
-            //fragment_obj.chatMessageListView.setAdapter(fragment_obj.adapter);
+            //fragment_obj.textMsg.setText(entireChatText);
 
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    fragment_obj.chatMessagesList.add(new ChatMessage("Sender", chatText, true));
+                    fragment_obj.adapter.notifyDataSetChanged();
+                    fragment_obj.scrollMyListViewToBottom();
                     if(chatFragmentContainer.getVisibility() == View.INVISIBLE){
                         chatNotificationBubble.setVisibility(View.VISIBLE);
                     }
