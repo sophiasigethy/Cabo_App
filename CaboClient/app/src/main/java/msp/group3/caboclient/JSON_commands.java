@@ -31,8 +31,18 @@ public class JSON_commands {
      * @return
      * @throws JSONException
      */
-    public static JSONObject chatMessage(String message) throws JSONException {
-        return new JSONObject().put("chatMessage", message);
+    public static JSONObject chatMessage(String message, Player sender) throws JSONException {
+
+        Gson gson= new Gson();
+
+        JSONObject jmsg = new JSONObject();
+        JSONObject jsubmsg = new JSONObject();
+
+        jsubmsg.put("sender", gson.toJson(sender));
+        jsubmsg.put("message", message);
+        jmsg.put("chatMessage", jsubmsg);
+
+        return jmsg;
     }
 
     public static JSONObject statusupdate(String status) throws JSONException {
@@ -41,6 +51,20 @@ public class JSON_commands {
 
     public static JSONObject sendWelcomeMessage(String message) throws JSONException {
         return new JSONObject().put("welcomeMessage", message);
+    }
+
+    public static JSONObject sendUserLogin(Player player) throws JSONException {
+        Gson gson= new Gson();
+
+        JSONObject jmsg = new JSONObject();
+        JSONObject jsubmsg = new JSONObject();
+
+        jsubmsg.put("senderDbID", gson.toJson(player.getDbID()));
+        jsubmsg.put("senderNick", gson.toJson(player.getNick()));
+        jsubmsg.put("senderAvatarID", gson.toJson(player.getAvatarID()));
+        jmsg.put("sendUserLogin", jsubmsg);
+
+        return jmsg;
     }
 
     public static JSONObject startGameForAll(String message) throws JSONException {
@@ -56,7 +80,6 @@ public class JSON_commands {
     }
     public static JSONObject sendPickCard(String message) throws JSONException {
         return new JSONObject().put("pickCard", message);
-
     }
 
 
@@ -73,13 +96,12 @@ public class JSON_commands {
 
     }
 
-    public static JSONObject playPickedCard(Card card) throws JSONException {
+    public static JSONObject playPickedCard() throws JSONException {
         Gson gson= new Gson();
 
         JSONObject jmsg = new JSONObject();
         JSONObject jsubmsg = new JSONObject();
 
-        jsubmsg.put("card", gson.toJson(card));
         jmsg.put("playPickedCard", jsubmsg);
 
         return jmsg;
@@ -130,5 +152,99 @@ public class JSON_commands {
 
     public static JSONObject sendCabo(String message) throws JSONException {
         return new JSONObject().put("cabo", message);
+    }
+
+    public static JSONObject sendPicture(String picture) throws JSONException {
+        return new JSONObject().put("picture", picture);
+    }
+    public static JSONObject sendSmiley(String smiley) throws JSONException {
+        return new JSONObject().put("smiley",smiley);
+    }
+
+    public static JSONObject sendFriendRequest(Player sender, Player receiver) throws JSONException {
+        Gson gson= new Gson();
+
+        JSONObject jmsg = new JSONObject();
+        JSONObject jsubmsg = new JSONObject();
+
+        jsubmsg.put("senderDbID", gson.toJson(sender.getDbID()));
+        jsubmsg.put("senderNick", gson.toJson(sender.getNick()));
+        jsubmsg.put("senderAvatarID", gson.toJson(sender.getAvatarID()));
+        jsubmsg.put("receiverDbID", gson.toJson(receiver.getDbID()));
+        jsubmsg.put("receiverNick", gson.toJson(receiver.getNick()));
+        jmsg.put("sendFriendRequest", jsubmsg);
+
+        return jmsg;
+    }
+
+    public static JSONObject sendFriendRequestAccepted(Player sender, Player receiver) throws JSONException {
+        Gson gson= new Gson();
+
+        JSONObject jmsg = new JSONObject();
+        JSONObject jsubmsg = new JSONObject();
+
+        jsubmsg.put("senderDbID", gson.toJson(sender.getDbID()));
+        jsubmsg.put("senderNick", gson.toJson(sender.getNick()));
+        jsubmsg.put("senderAvatarID", gson.toJson(sender.getAvatarID()));
+        jsubmsg.put("receiverDbID", gson.toJson(receiver.getDbID()));
+        jsubmsg.put("receiverNick", gson.toJson(receiver.getNick()));
+        jmsg.put("sendFriendAccepted", jsubmsg);
+
+        return jmsg;
+    }
+
+    public static JSONObject sendPartyRequest(Player sender, Player receiver) throws JSONException {
+        Gson gson= new Gson();
+
+        JSONObject jmsg = new JSONObject();
+        JSONObject jsubmsg = new JSONObject();
+
+        jsubmsg.put("senderDbID", gson.toJson(sender.getDbID()));
+        jsubmsg.put("senderNick", gson.toJson(sender.getNick()));
+        jsubmsg.put("senderAvatarID", gson.toJson(sender.getAvatarID()));
+        jsubmsg.put("receiverDbID", gson.toJson(receiver.getDbID()));
+        jsubmsg.put("receiverNick", gson.toJson(receiver.getNick()));
+        jmsg.put("partyrequest", jsubmsg);
+
+        return jmsg;
+    }
+
+    public static JSONObject sendPartyAccepted(Player sender, Player receiver) throws JSONException {
+        Gson gson= new Gson();
+
+        JSONObject jmsg = new JSONObject();
+        JSONObject jsubmsg = new JSONObject();
+
+        jsubmsg.put("senderDbID", gson.toJson(sender.getDbID()));
+        jsubmsg.put("senderNick", gson.toJson(sender.getNick()));
+        jsubmsg.put("senderAvatarID", gson.toJson(sender.getAvatarID()));
+        jsubmsg.put("receiverDbID", gson.toJson(receiver.getDbID()));
+        jsubmsg.put("receiverNick", gson.toJson(receiver.getNick()));
+        jmsg.put("partyaccepted", jsubmsg);
+
+        return jmsg;
+    }
+
+    public static JSONObject sendPartyLeft(Player sender, Player receiver) throws JSONException {
+        Gson gson= new Gson();
+
+        JSONObject jmsg = new JSONObject();
+        JSONObject jsubmsg = new JSONObject();
+
+        jsubmsg.put("senderDbID", gson.toJson(sender.getDbID()));
+        jsubmsg.put("senderNick", gson.toJson(sender.getNick()));
+        jsubmsg.put("receiverDbID", gson.toJson(receiver.getDbID()));
+        jsubmsg.put("receiverNick", gson.toJson(receiver.getNick()));
+        jmsg.put("partyleft", jsubmsg);
+
+        return jmsg;
+    }
+
+    public static JSONObject sendLogout() throws JSONException {
+        return new JSONObject().put("logout", "");
+    }
+
+    public static JSONObject sendStartNewGame(String message) throws JSONException {
+        return new JSONObject().put("startNewGame", message);
     }
 }

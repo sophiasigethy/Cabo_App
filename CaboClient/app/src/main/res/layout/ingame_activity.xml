@@ -41,14 +41,35 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:background="@drawable/game_bg">
-
+        android:background="@drawable/cabo_bg">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="24dp">
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/particle_animationView"
+                android:layout_width="400dp"
+                android:layout_height="200dp"
+                app:lottie_rawRes="@raw/particles"
+                app:lottie_autoPlay="true"
+                app:lottie_loop="true"
+                android:alpha="0.2"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"/>
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/particle_animationView2"
+                android:layout_width="400dp"
+                android:layout_height="200dp"
+                app:lottie_rawRes="@raw/particles"
+                app:lottie_autoPlay="true"
+                app:lottie_loop="true"
+                android:alpha="0.2"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintRight_toRightOf="parent"/>
 
             <ImageButton
                 android:id="@+id/pick_card_imageButton"
@@ -98,7 +119,7 @@
                 android:background="@android:color/transparent"
                 android:elevation="16dp"
                 android:padding="4dp"
-                android:rotation="90"
+                android:rotation="-90"
                 android:scaleType="fitCenter"
                 app:layout_constraintBottom_toTopOf="@id/player1_cards"
                 app:layout_constraintLeft_toLeftOf="parent"
@@ -204,6 +225,18 @@
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
+                <ImageView
+                    android:id="@+id/player2_card_glow_imageview"
+                    android:layout_width="120dp"
+                    android:layout_height="160dp"
+                    app:srcCompat="@drawable/card_glow"
+                    android:scaleType="fitCenter"
+                    android:alpha="0.5"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"/>
+
                 <ImageButton
                     android:id="@+id/player2_card1_imageButton"
                     android:layout_width="55dp"
@@ -279,6 +312,18 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintRight_toLeftOf="@id/player1_cards">
 
+                <ImageView
+                    android:id="@+id/player3_card_glow_imageview"
+                    android:layout_width="120dp"
+                    android:layout_height="160dp"
+                    app:srcCompat="@drawable/card_glow"
+                    android:scaleType="fitCenter"
+                    android:alpha="0.5"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"/>
+
                 <ImageButton
                     android:id="@+id/player3_card1_imageButton"
                     android:layout_width="55dp"
@@ -353,6 +398,18 @@
                 android:rotation="-45"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toRightOf="@id/player1_cards">
+
+                <ImageView
+                    android:id="@+id/player4_card_glow_imageview"
+                    android:layout_width="120dp"
+                    android:layout_height="160dp"
+                    app:srcCompat="@drawable/card_glow"
+                    android:scaleType="fitCenter"
+                    android:alpha="0.5"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"/>
 
                 <ImageButton
                     android:id="@+id/player4_card1_imageButton"
@@ -441,7 +498,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         android:text="Score: 34"
         android:textSize="10sp"
-        android:textColor="@color/white"
+        android:textColor="@color/beige"
         android:textAlignment="center"
         android:layout_marginBottom="12dp"
         android:padding="6dp"
@@ -460,8 +517,8 @@
             android:text="Player 1"
             android:textAlignment="center"
             android:textSize="12sp"
-            android:textColor="@color/white"
-            android:shadowColor="#2C613E"
+            android:textColor="@color/beige"
+            android:shadowColor="@color/dark_purple"
             android:shadowDx="2"
             android:shadowDy="2"
             android:shadowRadius="2"
@@ -475,10 +532,11 @@
             android:layout_height="140dp"
             app:lottie_rawRes="@raw/player1_highlight"
             app:lottie_autoPlay="true"
-            app:lottie_loop="false"
-            android:translationX="-72dp"
-            android:translationY="52dp"
+            app:lottie_loop="true"
+            android:translationX="-74dp"
+            android:translationY="53dp"
             app:lottie_speed="0.5"
+            android:alpha="0.7"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="@id/player1_info_game"
             app:layout_constraintRight_toLeftOf="@id/player1_info_game"
@@ -585,8 +643,7 @@
             app:layout_constraintLeft_toLeftOf="parent"
             android:text="Score: 43"
             android:textSize="10sp"
-            android:textColor="@color/white"
-            android:translationY="-10dp"
+            android:textColor="@color/beige"
             android:textAlignment="center"
             android:layout_marginBottom="12dp"
             android:padding="6dp"
@@ -597,16 +654,16 @@
             android:id="@+id/player2_name_game"
             android:layout_width="90dp"
             android:layout_height="wrap_content"
-            android:elevation="16dp"
-            android:fontFamily="sans-serif-black"
             android:translationX="-30dp"
             android:translationY="10dp"
             android:padding="3dp"
             android:text="Player 2"
+            android:elevation="16dp"
+            android:fontFamily="sans-serif-black"
             android:textAlignment="center"
             android:textSize="12sp"
-            android:textColor="@color/white"
-            android:shadowColor="#2C613E"
+            android:textColor="@color/beige"
+            android:shadowColor="@color/dark_purple"
             android:shadowDx="2"
             android:shadowDy="2"
             android:shadowRadius="2"
@@ -620,10 +677,11 @@
             android:layout_height="140dp"
             app:lottie_rawRes="@raw/player1_highlight"
             app:lottie_autoPlay="true"
-            app:lottie_loop="false"
-            android:translationX="-72dp"
-            android:translationY="52dp"
+            app:lottie_loop="true"
+            android:translationX="-74dp"
+            android:translationY="53dp"
             app:lottie_speed="0.5"
+            android:alpha="0.7"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="@id/player2_info_game"
             app:layout_constraintRight_toLeftOf="@id/player2_info_game"
@@ -674,7 +732,8 @@
             app:layout_constraintLeft_toLeftOf="parent"
             android:text="Score: 43"
             android:textSize="10sp"
-            android:textColor="@color/white"
+            android:translationY="10dp"
+            android:textColor="@color/beige"
             android:textAlignment="center"
             android:layout_marginBottom="12dp"
             android:padding="6dp"
@@ -693,8 +752,8 @@
             android:text="Player 3"
             android:textAlignment="center"
             android:textSize="12sp"
-            android:textColor="@color/white"
-            android:shadowColor="#2C613E"
+            android:textColor="@color/beige"
+            android:shadowColor="@color/dark_purple"
             android:shadowDx="2"
             android:shadowDy="2"
             android:shadowRadius="2"
@@ -708,10 +767,11 @@
             android:layout_height="140dp"
             app:lottie_rawRes="@raw/player1_highlight"
             app:lottie_autoPlay="true"
-            app:lottie_loop="false"
-            android:translationX="-62dp"
-            android:translationY="52dp"
+            app:lottie_loop="true"
+            android:translationX="-64dp"
+            android:translationY="53dp"
             app:lottie_speed="0.5"
+            android:alpha="0.7"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="@id/player3_info_game"
             app:layout_constraintRight_toLeftOf="@id/player3_info_game"
@@ -763,7 +823,8 @@
             app:layout_constraintLeft_toLeftOf="parent"
             android:text="Score: 43"
             android:textSize="10sp"
-            android:textColor="@color/white"
+            android:translationY="10dp"
+            android:textColor="@color/beige"
             android:textAlignment="center"
             android:layout_marginBottom="12dp"
             android:padding="6dp"
@@ -782,8 +843,8 @@
             android:text="Player 4"
             android:textAlignment="center"
             android:textSize="12sp"
-            android:textColor="@color/white"
-            android:shadowColor="#2C613E"
+            android:textColor="@color/beige"
+            android:shadowColor="@color/dark_purple"
             android:shadowDx="2"
             android:shadowDy="2"
             android:shadowRadius="2"
@@ -797,10 +858,11 @@
             android:layout_height="140dp"
             app:lottie_rawRes="@raw/player1_highlight"
             app:lottie_autoPlay="true"
-            app:lottie_loop="false"
-            android:translationX="-62dp"
-            android:translationY="52dp"
+            app:lottie_loop="true"
+            android:translationX="-64dp"
+            android:translationY="53dp"
             app:lottie_speed="0.5"
+            android:alpha="0.7"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="@id/player4_info_game"
             app:layout_constraintRight_toLeftOf="@id/player4_info_game"
@@ -836,6 +898,7 @@
         android:layout_width="300dp"
         android:layout_height="300dp"
         app:srcCompat="@drawable/card_swap_bg"
+        android:alpha="0.7"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -872,6 +935,8 @@
         android:layout_margin="12dp"
         android:padding="8dp"
         android:text="PEEK"
+        android:background="@drawable/outlined_button"
+        android:textColor="@drawable/outlined_button_text"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -880,7 +945,7 @@
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/timer_animationView"
         android:layout_width="70dp"
-        android:layout_height="70dp"
+        android:layout_height="60dp"
         app:lottie_rawRes="@raw/timer"
         app:lottie_autoPlay="true"
         app:lottie_loop="true"
@@ -896,6 +961,8 @@
         android:layout_margin="12dp"
         android:padding="8dp"
         android:text="SPY"
+        android:background="@drawable/outlined_button"
+        android:textColor="@drawable/outlined_button_text"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -907,6 +974,8 @@
         android:layout_margin="12dp"
         android:padding="8dp"
         android:text="SWAP"
+        android:background="@drawable/outlined_button"
+        android:textColor="@drawable/outlined_button_text"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -920,7 +989,12 @@
         app:layout_constraintTop_toTopOf="parent"
         android:text="This is an update..."
         android:fontFamily="sans-serif-black"
-        android:textColor="@color/white"
+        android:textSize="12sp"
+        android:textColor="@color/beige"
+        android:shadowColor="@color/dark_purple"
+        android:shadowRadius="15"
+        android:shadowDx="4"
+        android:shadowDy="4"
         android:padding="12dp"/>
 
     <LinearLayout
@@ -931,22 +1005,33 @@
         app:layout_constraintStart_toStartOf="parent"
         android:padding="16dp"
         android:layout_marginLeft="12dp"
+        android:orientation="vertical"
         android:background="@drawable/rounded_button">
 
         <ImageView
             android:id="@+id/picked_card_big_imageview"
             android:layout_width="120dp"
             android:layout_height="180dp"
-            app:srcCompat="@drawable/card_back"
-            />
+            app:srcCompat="@drawable/card_back"/>
+        <TextView
+            android:id="@+id/picked_card_big_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="6dp"
+            android:layout_marginRight="6dp"
+            android:text="This card is..."
+            android:textSize="12sp"
+            android:fontFamily="sans-serif-black"
+            android:textColor="@color/beige"/>
     </LinearLayout>
 
     <ImageButton
         android:id="@+id/settings_button"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
         android:layout_margin="12dp"
-        android:background="@android:color/transparent"
+        android:background="@drawable/zoom_button_bg"
+        android:padding="6dp"
         app:srcCompat="@drawable/settings"
         android:scaleType="centerInside"
         app:layout_constraintEnd_toEndOf="parent"
@@ -954,14 +1039,23 @@
 
     <ImageButton
         android:id="@+id/chat_button"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
         android:layout_margin="12dp"
-        android:background="@android:color/transparent"
+        android:background="@drawable/zoom_button_bg"
+        android:padding="6dp"
         app:srcCompat="@drawable/chat_bubbles"
         android:scaleType="centerInside"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/settings_button"/>
+
+    <ImageView
+        android:id="@+id/chat_notification_bubble"
+        android:layout_width="12dp"
+        android:layout_height="12dp"
+        app:layout_constraintStart_toStartOf="@id/chat_button"
+        app:srcCompat="@drawable/notification_circle"
+        app:layout_constraintTop_toTopOf="@id/chat_button"/>
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragment_chat"
@@ -973,12 +1067,12 @@
 
     <Button
         android:id="@+id/cabo_button"
-        android:layout_width="84dp"
-        android:layout_height="84dp"
-        android:layout_margin="12dp"
-        android:background="@drawable/round_button"
-        android:scaleType="centerInside"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_margin="18dp"
+        android:background="@drawable/outlined_button"
         android:text="Cabo"
+        android:textColor="@drawable/outlined_button_text"
         app:layout_constraintEnd_toStartOf="@id/settings_button"
         app:layout_constraintTop_toTopOf="parent"/>
 

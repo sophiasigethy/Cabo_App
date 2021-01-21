@@ -20,14 +20,14 @@ public class JSON_commands {
      * @return
      * @throws JSONException
      */
-    public static JSONObject notAccepted(String msg) throws JSONException {
+    public static JSONObject connectionNotAccepted(String msg) throws JSONException {
 
-        return new JSONObject().put("notAccepted", msg);
+        return new JSONObject().put("connectionNotAccepted", msg);
     }
 
-    public static JSONObject accepted(String msg) throws JSONException {
+    public static JSONObject connectionAccepted(String msg) throws JSONException {
 
-        return new JSONObject().put("accepted", msg);
+        return new JSONObject().put("connectionAccepted", msg);
     }
     /**
      * this is sent to the client when client can participate in the game
@@ -176,17 +176,7 @@ public class JSON_commands {
         return new JSONObject().put("sendMAXPlayer", countPlayer);
     }
 
-    public static JSONObject sendInitialOthers(Player player) throws JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
 
-        JSONObject jmsg = new JSONObject();
-        JSONObject jsubmsg = new JSONObject();
-
-        jsubmsg.put("otherPlayer", objectMapper.writeValueAsString(player));
-        jmsg.put("initialOtherPlayer", jsubmsg);
-
-        return jmsg;
-    }
 
     public static JSONObject sendFirstCard(Card card) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
@@ -289,4 +279,127 @@ public class JSON_commands {
         return jmsg;
     }
 
+    public static JSONObject sendFriendRequest(Player sender, Player receiver) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        JSONObject jmsg = new JSONObject();
+        JSONObject jsubmsg = new JSONObject();
+        jsubmsg.put("senderDbID", objectMapper.writeValueAsString(sender.getDbId()));
+        jsubmsg.put("senderNick", objectMapper.writeValueAsString(sender.getNick()));
+        jsubmsg.put("senderAvatarID", objectMapper.writeValueAsString(sender.getAvatarId()));
+        jsubmsg.put("receiverDbID", objectMapper.writeValueAsString(receiver.getDbId()));
+        jsubmsg.put("receiverNick", objectMapper.writeValueAsString(receiver.getNick()));
+        jmsg.put("friendrequest", jsubmsg);
+        return jmsg;
+    }
+
+    public static JSONObject sendFriendAccepted(Player sender, Player receiver) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        JSONObject jmsg = new JSONObject();
+        JSONObject jsubmsg = new JSONObject();
+        jsubmsg.put("senderDbID", objectMapper.writeValueAsString(sender.getDbId()));
+        jsubmsg.put("senderNick", objectMapper.writeValueAsString(sender.getNick()));
+        jsubmsg.put("senderAvatarID", objectMapper.writeValueAsString(sender.getAvatarId()));
+        jsubmsg.put("receiverDbID", objectMapper.writeValueAsString(receiver.getDbId()));
+        jsubmsg.put("receiverNick", objectMapper.writeValueAsString(receiver.getNick()));
+        jmsg.put("friendAccepted", jsubmsg);
+        return jmsg;
+    }
+
+    public static JSONObject sendPartyRequest(Player sender, Player receiver) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        JSONObject jmsg = new JSONObject();
+        JSONObject jsubmsg = new JSONObject();
+        jsubmsg.put("senderDbID", objectMapper.writeValueAsString(sender.getDbId()));
+        jsubmsg.put("senderNick", objectMapper.writeValueAsString(sender.getNick()));
+        jsubmsg.put("senderAvatarID", objectMapper.writeValueAsString(sender.getAvatarId()));
+        jsubmsg.put("receiverDbID", objectMapper.writeValueAsString(receiver.getDbId()));
+        jsubmsg.put("receiverNick", objectMapper.writeValueAsString(receiver.getNick()));
+        jmsg.put("partyrequest", jsubmsg);
+        return jmsg;
+    }
+
+    public static JSONObject sendPartyAccepted(Player sender, Player receiver) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        JSONObject jmsg = new JSONObject();
+        JSONObject jsubmsg = new JSONObject();
+        jsubmsg.put("senderDbID", objectMapper.writeValueAsString(sender.getDbId()));
+        jsubmsg.put("senderNick", objectMapper.writeValueAsString(sender.getNick()));
+        jsubmsg.put("senderAvatarID", objectMapper.writeValueAsString(sender.getAvatarId()));
+        jsubmsg.put("receiverDbID", objectMapper.writeValueAsString(receiver.getDbId()));
+        jsubmsg.put("receiverNick", objectMapper.writeValueAsString(receiver.getNick()));
+        jmsg.put("partyaccepted", jsubmsg);
+        return jmsg;
+    }
+
+    public static JSONObject sendPlayerOnlineStatus(Boolean isOnline, Player player) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        JSONObject jmsg = new JSONObject();
+        JSONObject jsubmsg = new JSONObject();
+        jsubmsg.put("isonline", objectMapper.writeValueAsString(isOnline.toString()));
+        jsubmsg.put("senderDbID", objectMapper.writeValueAsString(player.getDbId()));
+        jsubmsg.put("senderNick", objectMapper.writeValueAsString(player.getNick()));
+        jsubmsg.put("senderAvatarID", objectMapper.writeValueAsString(player.getAvatarId()));
+        jmsg.put("onlinestatus", jsubmsg);
+        return jmsg;
+    }
+
+    public static JSONObject sendInitialOthers(ArrayList<Player> players) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        JSONObject jmsg = new JSONObject();
+        JSONObject jsubmsg = new JSONObject();
+
+        jsubmsg.put("players", objectMapper.writeValueAsString(players));
+        jmsg.put("initialOtherPlayer", jsubmsg);
+
+        return jmsg;
+    }
+
+    public static JSONObject sendInitialOthers(Player player) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        JSONObject jmsg = new JSONObject();
+        JSONObject jsubmsg = new JSONObject();
+
+        jsubmsg.put("otherPlayer", objectMapper.writeValueAsString(player));
+        jmsg.put("initialOtherPlayer", jsubmsg);
+
+        return jmsg;
+    }
+
+    public static JSONObject picturePlayer(Player player) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        JSONObject jmsg = new JSONObject();
+        JSONObject jsubmsg = new JSONObject();
+
+        jsubmsg.put("player", objectMapper.writeValueAsString(player));
+        jmsg.put("picture", jsubmsg);
+
+        return jmsg;
+    }
+
+    public static JSONObject smileyPlayer(Player player) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        JSONObject jmsg = new JSONObject();
+        JSONObject jsubmsg = new JSONObject();
+
+        jsubmsg.put("player", objectMapper.writeValueAsString(player));
+        jmsg.put("smiley", jsubmsg);
+
+        return jmsg;
+    }
+
+    public static JSONObject calledCabo(Player player) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        JSONObject jmsg = new JSONObject();
+        JSONObject jsubmsg = new JSONObject();
+
+        jsubmsg.put("player", objectMapper.writeValueAsString(player));
+        jmsg.put("calledCabo", jsubmsg);
+
+        return jmsg;
+    }
 }
