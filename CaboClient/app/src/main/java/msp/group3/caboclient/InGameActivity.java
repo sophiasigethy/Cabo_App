@@ -946,9 +946,9 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             case 13:
                 //initiatePeekAndSwapAction();
                 break;
-            // default:
-            //     webSocketClient.send(String.valueOf(JSON_commands.sendFinishMove("finish")));
-            //     break;
+           // default:
+           //     webSocketClient.send(String.valueOf(JSON_commands.sendFinishMove("finish")));
+           //     break;
         }
     }
 
@@ -1402,18 +1402,18 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         card1Button.setImageResource(R.drawable.card_swapped);
         card2Button.setImageResource(R.drawable.card_swapped);
 
-        new CountDownTimer(10000, 1000) {
+            new CountDownTimer(10000, 1000) {
 
-            public void onTick(long millisUntilFinished) {
+                public void onTick(long millisUntilFinished) {
 
-            }
+                }
 
-            public void onFinish() {
-                card1Button.setImageResource(R.drawable.card_button);
-                card2Button.setImageResource(R.drawable.card_button);
-            }
+                public void onFinish() {
+                    card1Button.setImageResource(R.drawable.card_button);
+                    card2Button.setImageResource(R.drawable.card_button);
+                }
 
-        }.start();
+            }.start();
     }
 
     private ImageButton getButtonFromCard(Player owner, Card card){
@@ -1967,21 +1967,21 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
     private void showPlayerSmiley(Player player){
         int playerIndex = otherPlayers.indexOf(player);
 
-        if(player.getSmiley().equals(smiling)){
-            otherPlayerEmojis.get(playerIndex).setImageResource(R.drawable.emoji_happy);
-        }
-        else if (player.getSmiley().equals(laughing)){
-            otherPlayerEmojis.get(playerIndex).setImageResource(R.drawable.emoji_very_happy);
-        }
-        else if (player.getSmiley().equals(angry)){
-            otherPlayerEmojis.get(playerIndex).setImageResource(R.drawable.emoji_angry);
-        }
-        else if (player.getSmiley().equals(shocked)){
-            otherPlayerEmojis.get(playerIndex).setImageResource(R.drawable.emoji_shocked);
-        }
-        else if (player.getSmiley().equals(tongueOut)){
-            otherPlayerEmojis.get(playerIndex).setImageResource(R.drawable.emoji_tounge);
-        }
+            if(player.getSmiley().equals(smiling)){
+                otherPlayerEmojis.get(playerIndex).setImageResource(R.drawable.emoji_happy);
+            }
+            else if (player.getSmiley().equals(laughing)){
+                otherPlayerEmojis.get(playerIndex).setImageResource(R.drawable.emoji_very_happy);
+            }
+            else if (player.getSmiley().equals(angry)){
+                otherPlayerEmojis.get(playerIndex).setImageResource(R.drawable.emoji_angry);
+            }
+            else if (player.getSmiley().equals(shocked)){
+                otherPlayerEmojis.get(playerIndex).setImageResource(R.drawable.emoji_shocked);
+            }
+            else if (player.getSmiley().equals(tongueOut)){
+                otherPlayerEmojis.get(playerIndex).setImageResource(R.drawable.emoji_tounge);
+            }
 
     }
 
@@ -2109,4 +2109,3 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
     }
 
 }
-

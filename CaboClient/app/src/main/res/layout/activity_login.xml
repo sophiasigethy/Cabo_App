@@ -135,4 +135,12 @@
         tools:layout_editor_absoluteX="161dp"
         tools:layout_editor_absoluteY="558dp" />
 
+    <Button
+        android:id="@+id/noLogIn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Continue without Log in "
+        tools:layout_editor_absoluteX="161dp"
+        tools:layout_editor_absoluteY="558dp" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

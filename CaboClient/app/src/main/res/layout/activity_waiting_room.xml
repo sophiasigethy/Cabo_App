@@ -58,9 +58,15 @@
             android:shadowDy="2"
             android:shadowRadius="2"
             android:text="Player 1"
+            android:fontFamily="sans-serif-black"
             android:textAlignment="center"
+            android:textSize="12sp"
             android:textColor="@color/white"
-            android:textSize="12sp" />
+            android:shadowColor="#2C613E"
+            android:shadowDx="2"
+            android:shadowDy="2"
+            android:shadowRadius="2"
+            android:gravity="center_horizontal"/>
     </LinearLayout>
 
     <LinearLayout

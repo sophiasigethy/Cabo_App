@@ -27,6 +27,11 @@ public class Player {
     private String smiley="";
 
 
+
+    private String picture="";
+    private String smiley="";
+
+
     private String status;
 
     public Player(){
@@ -247,4 +252,3 @@ public class Player {
     }
 
 }
-
