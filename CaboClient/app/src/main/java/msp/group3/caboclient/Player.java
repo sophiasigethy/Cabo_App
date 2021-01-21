@@ -25,13 +25,6 @@ public class Player {
 
     private String picture="";
     private String smiley="";
-
-
-
-    private String picture="";
-    private String smiley="";
-
-
     private String status;
 
     public Player(){

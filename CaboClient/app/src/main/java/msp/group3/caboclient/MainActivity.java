@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
     private TextView userNameTxt;
     private Button startGameBtn;
     private Button findGameBtn;
-    private Button addFriendBtn;
+    private ImageButton addFriendBtn;
     private SharedPreferences sharedPref;
     private Activity activity;
     private FriendListAdapter friendListAdapter;
@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
         userNameTxt = (TextView) findViewById(R.id.username);
         startGameBtn = (Button) findViewById(R.id.start_game_btn);
         findGameBtn = (Button) findViewById(R.id.find_game_btn);
-        addFriendBtn = (Button) findViewById(R.id.add_friend_btn);
+        addFriendBtn = (ImageButton) findViewById(R.id.add_friend_btn);
         sharedPref = getApplicationContext().getSharedPreferences(
                 R.string.preference_file_key + "", Context.MODE_PRIVATE);
 

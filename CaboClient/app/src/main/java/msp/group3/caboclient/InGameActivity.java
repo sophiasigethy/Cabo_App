@@ -1545,7 +1545,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             String chatText="";
             if (me != null) {
                 if (js.has("message")) {
-                    chatText = jsonObject.get("message").toString();
+                    chatText = js.get("message").toString();
                     //showText(mes);
                 }
             }
