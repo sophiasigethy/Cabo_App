@@ -421,4 +421,8 @@ public class JSON_commands {
 
         return new JSONObject().put("allowedToMove", "");
     }
+    public static JSONObject noStartYet() throws JSONException {
+
+        return new JSONObject().put("noStartYet", "");
+    }
 }

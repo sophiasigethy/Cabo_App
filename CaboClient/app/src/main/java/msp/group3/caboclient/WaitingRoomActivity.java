@@ -82,11 +82,11 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
         communicator.setActivity(this);
         try {
 
-           ArrayList<String> test= new ArrayList<>();
+          /* ArrayList<String> test= new ArrayList<>();
             test.add(me.getNick());
             test.add("ff");
-            communicator.sendMessage(JSON_commands.sendStartNewGame(test));
-          //  communicator.sendMessage(JSON_commands.sendStartNewGame(returnNicks()));
+            communicator.sendMessage(JSON_commands.sendStartNewGame(test));*/
+            communicator.sendMessage(JSON_commands.sendStartNewGame(returnNicks()));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -137,7 +137,7 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
             // TODO Server Nachricht anzeigen
             //String mes = TypeDefs.server + jsonObject.get("Hallo").toString();
             String mes = jsonObject.get("Hallo").toString();
-            if (me.getNick().equalsIgnoreCase("") || me.getNick() == null) {
+            if (me.getNick().equalsIgnoreCase("") || me.getNick() == null || me.getNick().equalsIgnoreCase("None")) {
                 showText(mes);
             } else {
 
@@ -156,8 +156,8 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
                 Gson gson = new Gson();
                 Player player = gson.fromJson(jsonString, Player.class);
                 //TODO Server Nachricht anzeigen
-                //String mes = TypeDefs.server + "Hello " + player.getNick() + " with id: " + player.getId();
-                String mes = "Hello " + player.getNick() + " with id: " + player.getNick();
+                String mes =  "Hello " + player.getName() + " with id: " + player.getId();
+               // String mes = "Hello " + player.getNick() + " with id: " + player.getNick();
                 me = new Player(player.getId(), player.getName(), player.getNick());
                 name.setText(player.getNick());
                 player1_name.setText(me.getNick());
@@ -210,7 +210,7 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
                 if (player.getId() != me.getId()) {
                     //TODO Server Nachricht anzeigen
                     //String mes = TypeDefs.server + player.getNick() + " with id: " + player.getId() + "has already entered the game.";
-                    String mes = player.getNick() + " with id: " + player.getId() + "has already entered the game.";
+                    String mes = player.getName() + " with id: " + player.getId() + "has already entered the game.";
                     players.add(player);
                     returnFreeTextView().setText(player.getNick());
                     showText(mes);
@@ -298,6 +298,10 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
                     }
                 }
             }
+        }
+        if (jsonObject.has("noStartYet")) {
+           String text="There are not enough player yet!";
+           showText(text);
         }
 
     }
@@ -431,8 +435,8 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
         if (state.equalsIgnoreCase(TypeDefs.GAMESTART)) {
             communicator.sendMessage(JSON_commands.startGameForAll("start"));
         } else {
-            Toast.makeText(WaitingRoomActivity.this,
-                    "There are not enough player yet!", Toast.LENGTH_LONG).show();
+            communicator.sendMessage(JSON_commands.askForStart());
+
         }
     }
 
@@ -478,6 +482,9 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
         party = new ArrayList<>();
         me = DatabaseOperation.getDao().readPlayerFromSharedPrefs(sharedPref);
         party.add(me);
+        if (me.getAvatarID()==9){
+            me.setAvatarID(1);
+        }
         player1_image.setImageResource(me.getAvatar());
         for (int i = 0; i < 4; i++) {
             String avatarID = intent.getStringExtra("player" + i + "avatar");

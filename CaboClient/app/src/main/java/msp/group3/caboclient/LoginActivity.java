@@ -207,7 +207,7 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
     public void moveToWaitingRoomActivity()  {
-        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+        Intent intent = new Intent(LoginActivity.this, ConnectionActivity.class);
         LoginActivity.this.startActivity(intent);
     }
 

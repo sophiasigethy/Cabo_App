@@ -153,10 +153,17 @@ public class Gamestate {
         if (jsonObject.has("chatMessage")) {
             sendToAll(jsonObject);
         }
+        if (jsonObject.has("askForStart")) {
+            if (players.size()>1){
+                startGame();
+            }else{
+                socketHandler.sendMessage(session, JSON_commands.noStartYet());
+            }
+        }
+
 
         if (jsonObject.has("startGameForAll")) {
-            MAX_PLAYER= players.size();
-            sendToAll(JSON_commands.startGame("start"));
+            startGame();
 
         }
         if (jsonObject.has("askForInitialSettings")) {
@@ -323,6 +330,13 @@ public class Gamestate {
         }
     }
 
+    private void startGame() throws IOException {
+        MAX_PLAYER= players.size();
+        state = TypeDefs.GAMESTART;
+        sendToAll(JSON_commands.statusupdateServer(state));
+        sendToAll(JSON_commands.startGame("start"));
+    }
+
 
     private void startRound() throws IOException {
         availableCards = null;
@@ -426,7 +440,7 @@ public class Gamestate {
      */
     public boolean isMaxPlayer() {
         //if (players.size() == MAX_PLAYER) {
-        if (players.size()  >1) {
+        if (players.size() ==4) {
             state = TypeDefs.GAMESTART;
             return true;
         }
@@ -753,9 +767,15 @@ public class Gamestate {
 
     public void saveAvatar(Player player){
         for (Player socketHandlerPlayer: socketHandler.getConnectedPlayers().values()){
-            if (socketHandlerPlayer.getNick().equalsIgnoreCase(player.getName())){
-                player.setAvatarID(socketHandlerPlayer.getAvatarID());
+            String nick =socketHandlerPlayer.getNick();
+            if (nick!=null){
+                if (socketHandlerPlayer.getNick().equalsIgnoreCase(player.getName())){
+                    player.setAvatarID(socketHandlerPlayer.getAvatarID());
+                }
+            }else{
+                player.setAvatarID(1);
             }
+
         }
     }
 

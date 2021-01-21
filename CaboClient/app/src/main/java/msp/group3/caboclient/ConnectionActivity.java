@@ -39,7 +39,7 @@ public class ConnectionActivity extends AppCompatActivity implements Communicato
     }
 
     public void moveToWaitingRoomActivity() throws JSONException {
-        Intent intent = new Intent(ConnectionActivity.this, ConnectionActivity.class);
+        Intent intent = new Intent(ConnectionActivity.this, WaitingRoomActivity.class);
         ConnectionActivity.this.startActivity(intent);
     }
 }

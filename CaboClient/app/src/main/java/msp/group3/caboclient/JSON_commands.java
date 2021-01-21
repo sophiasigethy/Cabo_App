@@ -260,4 +260,7 @@ public class JSON_commands {
     public static JSONObject noAccount() throws JSONException {
         return new JSONObject().put("noAccount", "noAccount");
     }
+    public static JSONObject askForStart() throws JSONException {
+        return new JSONObject().put("askForStart", "");
+    }
 }
