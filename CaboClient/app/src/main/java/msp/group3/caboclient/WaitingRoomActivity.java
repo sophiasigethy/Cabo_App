@@ -81,7 +81,8 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
         webSocketClient = communicator.getmWebSocketClient();
         communicator.setActivity(this);
         try {
-            communicator.sendMessage(JSON_commands.sendStartNewGame("start"));
+
+            communicator.sendMessage(JSON_commands.sendStartNewGame(returnNicks()));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -175,6 +176,7 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
                 // String mes = "(Server): " + newPlayer.getNick() + " joined the game";
                 String mes = newPlayer.getNick() + " joined the game";
                 showText(mes);
+                setPictureOfOtherPlayer(newPlayer);
             }
 
         }
@@ -208,6 +210,7 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
                     players.add(player);
                     returnFreeTextView().setText(player.getNick());
                     showText(mes);
+                    setPictureOfOtherPlayer(player);
                 }
             }
         }
@@ -333,6 +336,25 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
             // mName.setText(" \n");
         }
 
+
+    }
+
+    private void setAvatarImage(int i, Player newPlayer) {
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (i==0){
+                    player2_image.setImageResource(newPlayer.getAvatar());
+                }
+                if (i==1){
+                    player3_image.setImageResource(newPlayer.getAvatar());
+                }
+                if (i==2){
+                    player4_image.setImageResource(newPlayer.getAvatar());
+                }
+            }
+        });
 
     }
 
@@ -486,11 +508,29 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
 
     }
 
+    public void setPictureOfOtherPlayer(Player newPlayer){
+        for (int i=0; i<players.size();i++){
+            if (players.get(i).getId()==newPlayer.getId()){
+                setAvatarImage(i, newPlayer);
+            }
+        }
+    }
+
     public String getCurrentText(TextView textView) {
         int start = textView.getLayout().getLineStart(0);
         int end = textView.getLayout().getLineEnd(textView.getLineCount() - 1);
         String displayed = textView.getText().toString().substring(start, end);
         return displayed;
+    }
+
+    public ArrayList<String> returnNicks(){
+        ArrayList<String> nicks= new ArrayList<>();
+        if (party!=null){
+            for (Player player: party){
+                nicks.add(player.getNick());
+            }
+        }
+        return nicks;
     }
 
 }

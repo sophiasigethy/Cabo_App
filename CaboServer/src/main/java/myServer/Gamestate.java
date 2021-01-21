@@ -18,10 +18,14 @@ public class Gamestate {
 
     // contains websocketsession-id and the associated player object
     public HashMap<String, Player> players = new HashMap<String, Player>();
-    private final int MAX_PLAYER = 2;
+
+   // private ArrayList<Player> privatePartyPlayers= new ArrayList<>();
+    private int MAX_PLAYER = 4;
     private int test = 0;
     // determines how many players are already registered
     private int countPlayer = 0;
+
+    private boolean privateParty= false;
 
     private int gamestateID=0;
     //status of the game- see Type Defs for all 3 state
@@ -84,7 +88,8 @@ public class Gamestate {
             countPlayer--;
             Player disconnectedPlayer = getPlayerBySessionId(session.getId());
             players.remove(session.getId());
-            if (countPlayer!=MAX_PLAYER){
+           // if (countPlayer!=MAX_PLAYER){
+            if (countPlayer<2){
                 state=TypeDefs.MATCHING;
             }
             try {
@@ -118,7 +123,8 @@ public class Gamestate {
         }
         //client sent the username he would like to have
         if (jsonObject.has("username")) {
-            if (isMaxPlayer()) {
+           // if (isMaxPlayer()) {
+            if (players.size()==4) {
                 String msg = "Sorry enough players have registered in the meantime. You can no longer join this game.";
                 socketHandler.sendMessage(session, JSON_commands.connectionNotAccepted(msg));
             } else {
@@ -149,6 +155,7 @@ public class Gamestate {
         }
 
         if (jsonObject.has("startGameForAll")) {
+            MAX_PLAYER= players.size();
             sendToAll(JSON_commands.startGame("start"));
 
         }
@@ -418,7 +425,8 @@ public class Gamestate {
      * @return
      */
     public boolean isMaxPlayer() {
-        if (players.size() == MAX_PLAYER) {
+        //if (players.size() == MAX_PLAYER) {
+        if (players.size()  >1) {
             state = TypeDefs.GAMESTART;
             return true;
         }
@@ -750,6 +758,15 @@ public class Gamestate {
             }
         }
     }
+
+    public boolean isPrivateParty() {
+        return privateParty;
+    }
+
+    public void setPrivateParty(boolean privateParty) {
+        this.privateParty = privateParty;
+    }
+
     /*****************************************
      * Copy and Paste from CardSuiteManager
      ****************************************

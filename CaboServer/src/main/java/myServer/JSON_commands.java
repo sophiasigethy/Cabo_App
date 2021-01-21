@@ -412,4 +412,9 @@ public class JSON_commands {
 
         return jmsg;
     }
+
+    public static JSONObject startPrivateParty() throws JSONException {
+
+        return new JSONObject().put("startPrivateParty", "startPrivateParty");
+    }
 }

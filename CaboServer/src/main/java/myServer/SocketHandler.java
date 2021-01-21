@@ -1,5 +1,8 @@
 package myServer;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.context.annotation.PropertySource;
@@ -11,7 +14,6 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 
 // this class handles the connection between server and client and
@@ -141,11 +143,41 @@ public class SocketHandler extends TextWebSocketHandler {
             }
 
             if (jsonObject.has("startNewGame")) {
-                Gamestate gamestate = getNextFreeGame();
-                gamestate.setGamestateID(counterGameStateId);
-                counterGameStateId++;
-                games.add(gamestate);
-                getPlayerBySessionId(session.getId()).setGamestate(gamestate);
+                JSONObject js = jsonObject.getJSONObject("startNewGame");
+                ArrayList<String> partyPlayers=new ArrayList<>();
+                ObjectMapper mapper = new ObjectMapper();
+                mapper.enable(SerializationFeature.INDENT_OUTPUT);
+                if (js.has("players")) {
+                    String jsonString = js.get("players").toString();
+                    @SuppressWarnings("unchecked")
+                   List<String> party = mapper.readValue(jsonString, List.class);
+                    partyPlayers.addAll(party);
+                   //Player n= partyPlayers.get(Integer.parseInt("nick"));
+                    //partyPlayers.add(new Player());
+                }
+                if (!isAssignedToGame(getPlayerBySessionId(session.getId()))){
+
+                    if (partyPlayers.size()==1){
+                        Gamestate gamestate = getNextFreeGame();
+                        getPlayerBySessionId(session.getId()).setGamestate(gamestate);
+                    }else{
+                        Gamestate privateGamestate= getPrivateGamestate();
+                        for (String playerNick: partyPlayers){
+                            Player connectedPlayer=returnConnectedPlayerByNick(playerNick);
+                            if(connectedPlayer!=null){
+                                connectedPlayer.setGamestate(privateGamestate);
+                            }
+                            //player.setGamestate(privateGamestate);
+                            WebSocketSession webSocketSession= getSessionByPlayerNick(playerNick);
+                            if (webSocketSession!=null){
+                                sendMessage(webSocketSession, JSON_commands.startPrivateParty());
+                            }
+                        }
+
+                    }
+                }
+
+
             }
         }
     }
@@ -189,18 +221,34 @@ public class SocketHandler extends TextWebSocketHandler {
     public void sendMessage(WebSocketSession webSocketSession, JSONObject jsonMsg) throws IOException {
         webSocketSession.sendMessage(new TextMessage(jsonMsg.toString()));
     }
-
+    /**
+     * @return a GameState in MATCHING state
+     * */
     public Gamestate getNextFreeGame() {
-        /**
-         * @return a GameState in MATCHING state
-         * */
         for (Gamestate game : games) {
-            if (game.getState().equals(TypeDefs.MATCHING)) {
+            if (game.getState().equals(TypeDefs.MATCHING)&& !game.isPrivateParty()) {
                 return game;
             }
         }
-        return new Gamestate(this);
+        return createNewGamestate();
     }
+
+
+    public Gamestate createNewGamestate(){
+        counterGameStateId++;
+        Gamestate newGamestate= new Gamestate(this);
+        newGamestate.setGamestateID(counterGameStateId);
+        games.add(newGamestate);
+        return newGamestate;
+    }
+
+    public Gamestate getPrivateGamestate(){
+        Gamestate privateGamestate= createNewGamestate();
+        privateGamestate.setPrivateParty(true);
+        return privateGamestate;
+    }
+
+
 
     private WebSocketSession getSessionFromNick(String nick) {
         Iterator it = connectedPlayers.entrySet().iterator();
@@ -280,5 +328,35 @@ public class SocketHandler extends TextWebSocketHandler {
 
     public void setConnectedPlayers(Map<String, Player> connectedPlayers) {
         this.connectedPlayers = connectedPlayers;
+    }
+
+    public WebSocketSession getSessionByPlayerNick(String nick) {
+        for (Map.Entry<String, Player> entry : connectedPlayers.entrySet()) {
+            String key = entry.getKey();
+            Player player = entry.getValue();
+            if (player.getNick().equalsIgnoreCase(nick)) {
+                return getSessionBySessionId(key);
+            }
+
+        }
+        return null;
+    }
+
+    public WebSocketSession getSessionBySessionId(String id) {
+        for (WebSocketSession session : sessions) {
+            if (id.equalsIgnoreCase(session.getId())) {
+                return session;
+            }
+        }
+        return null;
+    }
+
+    public Player returnConnectedPlayerByNick(String nick){
+        for(Player connectedPlayer: connectedPlayers.values()){
+            if (connectedPlayer.getNick().equalsIgnoreCase(nick)){
+                return connectedPlayer;
+            }
+        }
+        return null;
     }
 }
