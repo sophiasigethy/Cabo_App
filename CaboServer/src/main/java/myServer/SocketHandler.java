@@ -150,10 +150,8 @@ public class SocketHandler extends TextWebSocketHandler {
                 if (js.has("players")) {
                     String jsonString = js.get("players").toString();
                     @SuppressWarnings("unchecked")
-                   List<String> party = mapper.readValue(jsonString, List.class);
+                    List<String> party = mapper.readValue(jsonString, List.class);
                     partyPlayers.addAll(party);
-                   //Player n= partyPlayers.get(Integer.parseInt("nick"));
-                    //partyPlayers.add(new Player());
                 }
                 if (!isAssignedToGame(getPlayerBySessionId(session.getId()))){
 
@@ -167,7 +165,6 @@ public class SocketHandler extends TextWebSocketHandler {
                             if(connectedPlayer!=null){
                                 connectedPlayer.setGamestate(privateGamestate);
                             }
-                            //player.setGamestate(privateGamestate);
                             WebSocketSession webSocketSession= getSessionByPlayerNick(playerNick);
                             if (webSocketSession!=null){
                                 sendMessage(webSocketSession, JSON_commands.startPrivateParty());
@@ -179,6 +176,12 @@ public class SocketHandler extends TextWebSocketHandler {
 
 
             }
+        }
+        if (jsonObject.has("noAccount")) {
+            connectedPlayers.put(session.getId(), new Player());
+            Gamestate gamestate = getNextFreeGame();
+            getPlayerBySessionId(session.getId()).setGamestate(gamestate);
+            sendMessage(session, JSON_commands.allowedToMove());
         }
     }
 

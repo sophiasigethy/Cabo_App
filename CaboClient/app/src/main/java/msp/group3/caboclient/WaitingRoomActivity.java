@@ -82,7 +82,11 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
         communicator.setActivity(this);
         try {
 
-            communicator.sendMessage(JSON_commands.sendStartNewGame(returnNicks()));
+           ArrayList<String> test= new ArrayList<>();
+            test.add(me.getNick());
+            test.add("ff");
+            communicator.sendMessage(JSON_commands.sendStartNewGame(test));
+          //  communicator.sendMessage(JSON_commands.sendStartNewGame(returnNicks()));
         } catch (JSONException e) {
             e.printStackTrace();
         }

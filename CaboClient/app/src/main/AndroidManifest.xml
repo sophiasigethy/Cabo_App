@@ -38,6 +38,7 @@
             android:screenOrientation="sensorLandscape"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen" />
 
+
         <activity
             android:name=".MainActivity"
             android:screenOrientation="sensorLandscape"
@@ -46,6 +47,11 @@
 
         <activity
             android:name=".InGameActivity"
+            android:screenOrientation="sensorLandscape"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen">
+        </activity>
+        <activity
+            android:name=".ConnectionActivity"
             android:screenOrientation="sensorLandscape"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen">
         </activity>

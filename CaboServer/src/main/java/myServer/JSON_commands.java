@@ -417,4 +417,8 @@ public class JSON_commands {
 
         return new JSONObject().put("startPrivateParty", "startPrivateParty");
     }
+    public static JSONObject allowedToMove() throws JSONException {
+
+        return new JSONObject().put("allowedToMove", "");
+    }
 }
