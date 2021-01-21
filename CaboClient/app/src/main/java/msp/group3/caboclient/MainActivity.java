@@ -257,8 +257,10 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
         if (!isNewFriend) {
             friends.remove(sender);
             friends.add(0, sender);
-        } else
+        } else {
             friends.add(sender);
+            me.addFriend(sender, sharedPref);
+        }
         //TODO Check if Adapter also has to get new list
         me.setFriendList(friends);
         friendListAdapter.notifyDataSetChanged();
@@ -280,7 +282,7 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
             intent.putExtra("player" + i + "avatar", "");
             i++;
         }
-        // TODO wait for ServerMessage with GameState-ID
+        // TODO Send StartGame to all party players
 
         startActivity(intent);
     }

@@ -151,7 +151,7 @@ public class DatabaseOperation {
     }
 
 
-    private boolean writePlayerToSharedPref(Player player, SharedPreferences sharedPref) {
+    public boolean writePlayerToSharedPref(Player player, SharedPreferences sharedPref) {
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString(String.valueOf(R.string.preference_userdbid), player.getDbID());
         editor.putString(String.valueOf(R.string.preference_username), player.getName());
