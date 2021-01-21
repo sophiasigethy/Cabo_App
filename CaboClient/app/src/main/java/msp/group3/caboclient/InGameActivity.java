@@ -1539,10 +1539,11 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
     public void handleTextMessage(String message) throws JSONException {
         JSONObject jsonObject = new JSONObject(message);
 
+        String chatText="";
+
         if (jsonObject.has("chatMessage")) {
            // String chatText = jsonObject.get("chatMessage").toString();
             JSONObject js = jsonObject.getJSONObject("chatMessage");
-            String chatText="";
             if (me != null) {
                 if (js.has("message")) {
                     chatText = js.get("message").toString();
@@ -1557,12 +1558,13 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             entireChatText = entireChatText+"\n"+chatText;
             InGameChatFragment fragment_obj = (InGameChatFragment)getSupportFragmentManager().
                     findFragmentById(R.id.fragment_chat);
+            fragment_obj.chatMessagesList.add(new ChatMessage("Sender", chatText, true));
+
             //fragment_obj.textMsg.setText(entireChatText);
 
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    fragment_obj.chatMessagesList.add(new ChatMessage("Sender", chatText, true));
                     fragment_obj.adapter.notifyDataSetChanged();
                     fragment_obj.scrollMyListViewToBottom();
                     if(chatFragmentContainer.getVisibility() == View.INVISIBLE){
