@@ -22,7 +22,7 @@ public class InGameChatFragment extends Fragment {
     public EditText textInput;
     protected ListView chatMessageListView;
     protected ArrayList<ChatMessage> chatMessagesList= new ArrayList();
-    protected static ChatAdapter adapter;
+    protected ChatAdapter adapter;
 
     public InGameChatFragment() {
         super(R.layout.ingamechat_fragment);
@@ -40,11 +40,19 @@ public class InGameChatFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         // Setup any handles to view objects here
         // EditText etFoo = (EditText) view.findViewById(R.id.etFoo);
-        textMsg = view.findViewById(R.id.messages);
         textInput = view.findViewById(R.id.editText);
         chatMessageListView = view.findViewById(R.id.chat_list_view);
 
         Button sendButton = view.findViewById(R.id.button);
+
+        ChatMessage welcomeMsg = new ChatMessage("BOT1", "Welcome!", true);
+        ChatMessage welcomeMsg2 = new ChatMessage("BOT2", "Welcome!", false);
+
+        chatMessagesList.add(welcomeMsg);
+        chatMessagesList.add(welcomeMsg2);
+
+        adapter = new ChatAdapter(view.getContext(), chatMessagesList);
+        chatMessageListView.setAdapter(adapter);
 
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -54,7 +62,6 @@ public class InGameChatFragment extends Fragment {
                 //String text = currentText;
                 textInput.setText("");
                 try {
-
                     ((InGameActivity) getActivity()).webSocketClient.send(String.valueOf(JSON_commands.chatMessage(text)));
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -62,10 +69,13 @@ public class InGameChatFragment extends Fragment {
             }
         });
 
-        adapter.registerDataSetObserver(new DataSetObserver() {
+    }
+
+    public void scrollMyListViewToBottom() {
+        chatMessageListView.post(new Runnable() {
             @Override
-            public void onChanged() {
-                super.onChanged();
+            public void run() {
+                // Select the last row so it will scroll into view...
                 chatMessageListView.setSelection(adapter.getCount() - 1);
             }
         });
