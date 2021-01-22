@@ -19,7 +19,8 @@
             android:name=".LoginActivity"
             android:configChanges="orientation"
             android:label="@string/title_activity_login"
-            android:screenOrientation="portrait">
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"
+            android:screenOrientation="sensorLandscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -30,7 +31,8 @@
             android:name=".RegisterActivity"
             android:configChanges="orientation"
             android:label="@string/title_activity_register"
-            android:screenOrientation="portrait">
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"
+            android:screenOrientation="sensorLandscape">
         </activity>
 
         <activity

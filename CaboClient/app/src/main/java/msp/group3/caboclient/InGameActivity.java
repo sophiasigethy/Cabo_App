@@ -70,6 +70,10 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
     private ImageButton shockedEmojiButton;
     private ImageButton angryEmojiButton;
     private TextView updateText;
+    private ImageView cardContainerOverlaySwap;
+    private ImageView cardContainerOverlayPeek;
+    private ImageView cardContainerOverlaySpy;
+
     private com.airbnb.lottie.LottieAnimationView cardSwapAnimation;
     private com.airbnb.lottie.LottieAnimationView tapPickCardAnimation;
     private com.airbnb.lottie.LottieAnimationView timerAnimation;
@@ -162,6 +166,9 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         tapPickCardAnimation.setVisibility(View.INVISIBLE);
         timerAnimation = findViewById(R.id.timer_animationView);
         timerAnimation.setVisibility(View.INVISIBLE);
+        cardContainerOverlaySwap = findViewById(R.id.picked_card_big_imageview_swap);
+        cardContainerOverlayPeek= findViewById(R.id.picked_card_big_imageview_peek);
+        cardContainerOverlaySpy= findViewById(R.id.picked_card_big_imageview_spy);
 
         playedCardsStackButton = (ImageButton) findViewById(R.id.played_cards_imageButton);
         playedCardsStackGlow = findViewById(R.id.card_glow_imageview);
@@ -172,6 +179,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
 
         setUpPlayerStats();
         setUpOnClickListeners();
+        hideActionDisplay();
 
         pickCardsStackButton.setEnabled(false);
 
@@ -606,6 +614,54 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         }
     }
 
+    private void hideActionDisplay(){
+        cardContainerOverlaySwap.setVisibility(View.INVISIBLE);
+        cardContainerOverlaySpy.setVisibility(View.INVISIBLE);
+        cardContainerOverlayPeek.setVisibility(View.INVISIBLE);
+
+    }
+
+    private void showCardAction(Card pickedCard){
+        int value = pickedCard.getValue();
+        ImageView overlay = null;
+        switch (value) {
+            case 7:
+                overlay = cardContainerOverlayPeek;
+                break;
+            case 8:
+                overlay = cardContainerOverlayPeek;
+                break;
+            case 9:
+                overlay = cardContainerOverlaySpy;
+                break;
+            case 10:
+                overlay = cardContainerOverlaySpy;
+                break;
+            case 11:
+                overlay = cardContainerOverlaySwap;
+                break;
+            case 12:
+                overlay = cardContainerOverlaySwap;
+                break;
+        }
+
+        if(overlay!=null){
+            //growCardGlowAnimation(overlay);
+            overlay.setVisibility(View.VISIBLE);
+        }
+
+        new CountDownTimer(2000, 1000) {
+
+            public void onTick(long millisUntilFinished) {
+            }
+
+            public void onFinish() {
+                hideActionDisplay();
+            }
+
+        }.start();
+    }
+
 
     private void setUpPlayerStats() {
 
@@ -793,6 +849,8 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                         super.onAnimationEnd(animation);
                         pickedCardBigImageview.setImageResource(getCardResource(card));
                         oa2.start();
+                        showCardAction(card);
+
                     }
                 });
                 oa1.start();
@@ -946,9 +1004,9 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             case 13:
                 //initiatePeekAndSwapAction();
                 break;
-            // default:
-            //     webSocketClient.send(String.valueOf(JSON_commands.sendFinishMove("finish")));
-            //     break;
+           // default:
+           //     webSocketClient.send(String.valueOf(JSON_commands.sendFinishMove("finish")));
+           //     break;
         }
     }
 
@@ -1402,18 +1460,18 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         card1Button.setImageResource(R.drawable.card_swapped);
         card2Button.setImageResource(R.drawable.card_swapped);
 
-        new CountDownTimer(10000, 1000) {
+            new CountDownTimer(10000, 1000) {
 
-            public void onTick(long millisUntilFinished) {
+                public void onTick(long millisUntilFinished) {
 
-            }
+                }
 
-            public void onFinish() {
-                card1Button.setImageResource(R.drawable.card_button);
-                card2Button.setImageResource(R.drawable.card_button);
-            }
+                public void onFinish() {
+                    card1Button.setImageResource(R.drawable.card_button);
+                    card2Button.setImageResource(R.drawable.card_button);
+                }
 
-        }.start();
+            }.start();
     }
 
     private ImageButton getButtonFromCard(Player owner, Card card){
@@ -1494,12 +1552,6 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
 
     private void displayDiscardedCard(Card card){
         playedCardsStackButton.setImageResource(getCardResource(card));
-
-    }
-
-    //TODO display picked Card to User
-    private void displayPickedCard(Card card){
-
     }
 
     @Override
@@ -1539,13 +1591,14 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
     public void handleTextMessage(String message) throws JSONException {
         JSONObject jsonObject = new JSONObject(message);
 
+        String chatText="";
+
         if (jsonObject.has("chatMessage")) {
            // String chatText = jsonObject.get("chatMessage").toString();
             JSONObject js = jsonObject.getJSONObject("chatMessage");
-            String chatText="";
             if (me != null) {
                 if (js.has("message")) {
-                    chatText = jsonObject.get("message").toString();
+                    chatText = js.get("message").toString();
                     //showText(mes);
                 }
             }
@@ -1557,13 +1610,15 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             entireChatText = entireChatText+"\n"+chatText;
             InGameChatFragment fragment_obj = (InGameChatFragment)getSupportFragmentManager().
                     findFragmentById(R.id.fragment_chat);
-            fragment_obj.textMsg.setText(entireChatText);
-            //fragment_obj.chatMessagesList.add(new ChatMessage("Sender", chatText, true));
-            //fragment_obj.chatMessageListView.setAdapter(fragment_obj.adapter);
+            fragment_obj.chatMessagesList.add(new ChatMessage("Sender", chatText, true));
+
+            //fragment_obj.textMsg.setText(entireChatText);
 
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    fragment_obj.adapter.notifyDataSetChanged();
+                    fragment_obj.scrollMyListViewToBottom();
                     if(chatFragmentContainer.getVisibility() == View.INVISIBLE){
                         chatNotificationBubble.setVisibility(View.VISIBLE);
                     }
@@ -1967,21 +2022,21 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
     private void showPlayerSmiley(Player player){
         int playerIndex = otherPlayers.indexOf(player);
 
-        if(player.getSmiley().equals(smiling)){
-            otherPlayerEmojis.get(playerIndex).setImageResource(R.drawable.emoji_happy);
-        }
-        else if (player.getSmiley().equals(laughing)){
-            otherPlayerEmojis.get(playerIndex).setImageResource(R.drawable.emoji_very_happy);
-        }
-        else if (player.getSmiley().equals(angry)){
-            otherPlayerEmojis.get(playerIndex).setImageResource(R.drawable.emoji_angry);
-        }
-        else if (player.getSmiley().equals(shocked)){
-            otherPlayerEmojis.get(playerIndex).setImageResource(R.drawable.emoji_shocked);
-        }
-        else if (player.getSmiley().equals(tongueOut)){
-            otherPlayerEmojis.get(playerIndex).setImageResource(R.drawable.emoji_tounge);
-        }
+            if(player.getSmiley().equals(smiling)){
+                otherPlayerEmojis.get(playerIndex).setImageResource(R.drawable.emoji_happy);
+            }
+            else if (player.getSmiley().equals(laughing)){
+                otherPlayerEmojis.get(playerIndex).setImageResource(R.drawable.emoji_very_happy);
+            }
+            else if (player.getSmiley().equals(angry)){
+                otherPlayerEmojis.get(playerIndex).setImageResource(R.drawable.emoji_angry);
+            }
+            else if (player.getSmiley().equals(shocked)){
+                otherPlayerEmojis.get(playerIndex).setImageResource(R.drawable.emoji_shocked);
+            }
+            else if (player.getSmiley().equals(tongueOut)){
+                otherPlayerEmojis.get(playerIndex).setImageResource(R.drawable.emoji_tounge);
+            }
 
     }
 
@@ -2109,4 +2164,3 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
     }
 
 }
-

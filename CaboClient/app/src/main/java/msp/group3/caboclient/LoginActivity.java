@@ -205,4 +205,10 @@ public class LoginActivity extends AppCompatActivity {
             (new Handler()).postDelayed(this::moveToMainActivity, 350);
         }
     }
+
+    private void moveToWaitingRoomActivity(){
+        Intent myIntent = new Intent(LoginActivity.this, MainActivity.class);
+        LoginActivity.this.startActivity(myIntent);
+
+    }
 }

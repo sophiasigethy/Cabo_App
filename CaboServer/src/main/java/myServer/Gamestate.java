@@ -959,7 +959,3 @@ public class Gamestate {
         this.state = state;
     }
 }
-
-
-
-
