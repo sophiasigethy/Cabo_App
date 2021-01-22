@@ -4,16 +4,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 
 import com.google.gson.Gson;
 
@@ -22,6 +19,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -41,6 +39,9 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
     private CircleImageView player4_image;
     private TextView name;
     protected ListView messagesListView;
+    private ArrayList<CircleImageView> otherPlayerImages = new ArrayList<>();
+    private ArrayList<TextView> otherPlayerNamesTextViews = new ArrayList<>();
+
 
 
     private String mMessage = "";
@@ -76,6 +77,11 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
         player3_image = (CircleImageView) findViewById(R.id.player3_image_waiting_room);
         player4_name = (TextView) findViewById(R.id.player4_name_textview_waiting_room);
         player4_image = (CircleImageView) findViewById(R.id.player4_image);
+        Collections.addAll(otherPlayerImages, player2_image, player3_image, player4_image);
+        Collections.addAll(otherPlayerNamesTextViews, player2_name, player3_name, player4_name);
+
+        showPresentPlayers();
+
         name = (TextView) findViewById(R.id.name);
         readParty(getIntent());
 
@@ -107,7 +113,17 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
             e.printStackTrace();
         }
         // startGame();
+    }
 
+    private void showPresentPlayers(){
+        for(int i = 0; i<players.size(); i++){
+            otherPlayerImages.get(i).setVisibility(View.VISIBLE);
+            otherPlayerNamesTextViews.get(i).setVisibility(View.VISIBLE);
+        }
+        for(int i = players.size(); i<3; i++){
+            otherPlayerImages.get(i).setVisibility(View.INVISIBLE);
+            otherPlayerNamesTextViews.get(i).setVisibility(View.INVISIBLE);
+        }
     }
 
     /**
@@ -148,7 +164,11 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
             //String mes = TypeDefs.server + jsonObject.get("Hallo").toString();
             String mes = jsonObject.get("Hallo").toString();
             if (me.getNick().equalsIgnoreCase("") || me.getNick() == null || me.getNick().equalsIgnoreCase("None")) {
-                showText(mes);
+                runOnUiThread(new Runnable() {
+                    public void run() {
+                        showText(mes);
+                    }
+                });
             } else {
 
                 webSocketClient.send(String.valueOf(JSON_commands.Username(me.getNick())));
@@ -169,10 +189,15 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
                 String mes =  "Hello " + player.getName() + " with id: " + player.getId();
                // String mes = "Hello " + player.getNick() + " with id: " + player.getNick();
                 me = new Player(player.getId(), player.getName(), player.getNick());
-                name.setText(player.getNick());
-                player1_name.setText(me.getNick());
-                usernameAccepted = true;
-                showText(mes);
+                runOnUiThread(new Runnable() {
+                    public void run() {
+                        name.setText(player.getNick());
+                        player1_name.setText(me.getNick());
+                        usernameAccepted = true;
+                        showText(mes);
+                    }
+                });
+
             }
 
         }
@@ -185,12 +210,16 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
                 Gson gson = new Gson();
                 Player newPlayer = gson.fromJson(jsonString, Player.class);
                 players.add(newPlayer);
-                returnFreeTextView().setText(newPlayer.getNick());
-                //TODO Server Nachricht anzeigen
-                // String mes = "(Server): " + newPlayer.getNick() + " joined the game";
-                String mes = newPlayer.getNick() + " joined the game";
-                showText(mes);
-                setPictureOfOtherPlayer(newPlayer);
+                runOnUiThread(new Runnable() {
+                    public void run() {
+                        returnFreeTextView().setText(newPlayer.getNick());
+                        //TODO Server Nachricht anzeigen
+                        // String mes = "(Server): " + newPlayer.getNick() + " joined the game";
+                        String mes = newPlayer.getNick() + " joined the game";
+                        showText(mes);
+                        setPictureOfOtherPlayer(newPlayer);
+                        showPresentPlayers();                    }
+                });
             }
 
         }
@@ -201,7 +230,11 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
             //String mes = TypeDefs.server + name + " is already in use. Please state another username.";
             // //TODO Server Nachricht anzeigen
             String mes = name + " is already in use. Please state another username.";
-            showText(mes);
+            runOnUiThread(new Runnable() {
+                public void run() {
+                    showText(mes);
+                }
+            });
         }
 
         //this is received when the state of the game changes
@@ -222,9 +255,14 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
                     //String mes = TypeDefs.server + player.getNick() + " with id: " + player.getId() + "has already entered the game.";
                     String mes = player.getName() + " with id: " + player.getId() + "has already entered the game.";
                     players.add(player);
-                    returnFreeTextView().setText(player.getNick());
-                    showText(mes);
-                    setPictureOfOtherPlayer(player);
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+                            returnFreeTextView().setText(player.getNick());
+                            showText(mes);
+                            setPictureOfOtherPlayer(player);
+                            showPresentPlayers();
+                        }
+                    });
                 }
             }
         }
@@ -284,6 +322,12 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
                 Gson gson = new Gson();
                 Player player = gson.fromJson(jsonString, Player.class);
                 removePlayer(player);
+                runOnUiThread(new Runnable() {
+                    public void run() {
+                        showPresentPlayers();
+                    }
+                });
+
             }
         }
         if (jsonObject.has("notAccepted")) {
@@ -299,12 +343,20 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
                 Gson gson = new Gson();
                 Player player = gson.fromJson(jsonString, Player.class);
                 if (player.getId() == me.getId()) {
-                    me.setPicture(player.getPicture());
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+                            me.setPicture(player.getPicture());
+                        }
+                    });
                     //TODO set picture here
                 } else {
                     Player otherPlayer = getPlayerById(player.getId());
                     if (otherPlayer != null) {
-                        otherPlayer.setPicture(player.getPicture());
+                        runOnUiThread(new Runnable() {
+                            public void run() {
+                                otherPlayer.setPicture(player.getPicture());
+                            }
+                        });
                     }
                 }
             }
