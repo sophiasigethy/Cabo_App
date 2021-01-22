@@ -65,7 +65,8 @@ public class DatabaseOperation {
                     for (int i = 0; i < deserializedFriends.size(); i++) {
                         String dbID = (String) ((LinkedTreeMap) deserializedFriends.get(i)).get("dbID").toString().replace("\"", "").replace("\\", "");
                         String nick = (String) ((LinkedTreeMap) deserializedFriends.get(i)).get("nick").toString().replace("\"", "").replace("\\", "");
-                        int avatarId = Integer.parseInt((String) ((LinkedTreeMap) deserializedFriends.get(i)).get("nick").toString().replace("\"", "").replace("\\", ""));
+                        //TODO Find out why double is read here
+                        int avatarId = (int)Double.parseDouble((String) ((LinkedTreeMap) deserializedFriends.get(i)).get("avatarID").toString().replace("\"", "").replace("\\", ""));
                         friendList.add(new Player(dbID, nick, avatarId));
                     }
                     if (friendList != null)
