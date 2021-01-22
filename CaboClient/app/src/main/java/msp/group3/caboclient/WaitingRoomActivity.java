@@ -92,7 +92,12 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
         webSocketClient = communicator.getmWebSocketClient();
         communicator.setActivity(this);
         try {
-            communicator.sendMessage(JSON_commands.sendStartNewGame("start"));
+
+          /* ArrayList<String> test= new ArrayList<>();
+            test.add(me.getNick());
+            test.add("ff");
+            communicator.sendMessage(JSON_commands.sendStartNewGame(test));*/
+            communicator.sendMessage(JSON_commands.sendStartNewGame(returnNicks()));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -142,7 +147,7 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
             // TODO Server Nachricht anzeigen
             //String mes = TypeDefs.server + jsonObject.get("Hallo").toString();
             String mes = jsonObject.get("Hallo").toString();
-            if (me.getNick().equalsIgnoreCase("") || me.getNick() == null) {
+            if (me.getNick().equalsIgnoreCase("") || me.getNick() == null || me.getNick().equalsIgnoreCase("None")) {
                 showText(mes);
             } else {
 
@@ -161,8 +166,8 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
                 Gson gson = new Gson();
                 Player player = gson.fromJson(jsonString, Player.class);
                 //TODO Server Nachricht anzeigen
-                //String mes = TypeDefs.server + "Hello " + player.getNick() + " with id: " + player.getId();
-                String mes = "Hello " + player.getNick() + " with id: " + player.getNick();
+                String mes =  "Hello " + player.getName() + " with id: " + player.getId();
+               // String mes = "Hello " + player.getNick() + " with id: " + player.getNick();
                 me = new Player(player.getId(), player.getName(), player.getNick());
                 name.setText(player.getNick());
                 player1_name.setText(me.getNick());
@@ -185,6 +190,7 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
                 // String mes = "(Server): " + newPlayer.getNick() + " joined the game";
                 String mes = newPlayer.getNick() + " joined the game";
                 showText(mes);
+                setPictureOfOtherPlayer(newPlayer);
             }
 
         }
@@ -214,10 +220,11 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
                 if (player.getId() != me.getId()) {
                     //TODO Server Nachricht anzeigen
                     //String mes = TypeDefs.server + player.getNick() + " with id: " + player.getId() + "has already entered the game.";
-                    String mes = player.getNick() + " with id: " + player.getId() + "has already entered the game.";
+                    String mes = player.getName() + " with id: " + player.getId() + "has already entered the game.";
                     players.add(player);
                     returnFreeTextView().setText(player.getNick());
                     showText(mes);
+                    setPictureOfOtherPlayer(player);
                 }
             }
         }
@@ -302,6 +309,10 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
                 }
             }
         }
+        if (jsonObject.has("noStartYet")) {
+           String text="There are not enough player yet!";
+           showText(text);
+        }
 
     }
 
@@ -345,6 +356,25 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
             // mName.setText(" \n");
         }
 
+
+    }
+
+    private void setAvatarImage(int i, Player newPlayer) {
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (i==0){
+                    player2_image.setImageResource(newPlayer.getAvatar());
+                }
+                if (i==1){
+                    player3_image.setImageResource(newPlayer.getAvatar());
+                }
+                if (i==2){
+                    player4_image.setImageResource(newPlayer.getAvatar());
+                }
+            }
+        });
 
     }
 
@@ -417,8 +447,8 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
         if (state.equalsIgnoreCase(TypeDefs.GAMESTART)) {
             communicator.sendMessage(JSON_commands.startGameForAll("start"));
         } else {
-            Toast.makeText(WaitingRoomActivity.this,
-                    "There are not enough player yet!", Toast.LENGTH_LONG).show();
+            communicator.sendMessage(JSON_commands.askForStart());
+
         }
     }
 
@@ -464,6 +494,9 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
         party = new ArrayList<>();
         me = DatabaseOperation.getDao().readPlayerFromSharedPrefs(sharedPref);
         party.add(me);
+        if (me.getAvatarID()==9){
+            me.setAvatarID(1);
+        }
         player1_image.setImageResource(me.getAvatar());
         for (int i = 0; i < 4; i++) {
             String avatarID = intent.getStringExtra("player" + i + "avatar");
@@ -497,11 +530,29 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
 
     }
 
+    public void setPictureOfOtherPlayer(Player newPlayer){
+        for (int i=0; i<players.size();i++){
+            if (players.get(i).getId()==newPlayer.getId()){
+                setAvatarImage(i, newPlayer);
+            }
+        }
+    }
+
     public String getCurrentText(TextView textView) {
         int start = textView.getLayout().getLineStart(0);
         int end = textView.getLayout().getLineEnd(textView.getLineCount() - 1);
         String displayed = textView.getText().toString().substring(start, end);
         return displayed;
+    }
+
+    public ArrayList<String> returnNicks(){
+        ArrayList<String> nicks= new ArrayList<>();
+        if (party!=null){
+            for (Player player: party){
+                nicks.add(player.getNick());
+            }
+        }
+        return nicks;
     }
 
 }

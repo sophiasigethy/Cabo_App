@@ -2,7 +2,6 @@ package myServer;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -285,7 +284,7 @@ public class JSON_commands {
         JSONObject jsubmsg = new JSONObject();
         jsubmsg.put("senderDbID", objectMapper.writeValueAsString(sender.getDbId()));
         jsubmsg.put("senderNick", objectMapper.writeValueAsString(sender.getNick()));
-        jsubmsg.put("senderAvatarID", objectMapper.writeValueAsString(sender.getAvatarId()));
+        jsubmsg.put("senderAvatarID", objectMapper.writeValueAsString(sender.getAvatarID()));
         jsubmsg.put("receiverDbID", objectMapper.writeValueAsString(receiver.getDbId()));
         jsubmsg.put("receiverNick", objectMapper.writeValueAsString(receiver.getNick()));
         jmsg.put("friendrequest", jsubmsg);
@@ -298,7 +297,7 @@ public class JSON_commands {
         JSONObject jsubmsg = new JSONObject();
         jsubmsg.put("senderDbID", objectMapper.writeValueAsString(sender.getDbId()));
         jsubmsg.put("senderNick", objectMapper.writeValueAsString(sender.getNick()));
-        jsubmsg.put("senderAvatarID", objectMapper.writeValueAsString(sender.getAvatarId()));
+        jsubmsg.put("senderAvatarID", objectMapper.writeValueAsString(sender.getAvatarID()));
         jsubmsg.put("receiverDbID", objectMapper.writeValueAsString(receiver.getDbId()));
         jsubmsg.put("receiverNick", objectMapper.writeValueAsString(receiver.getNick()));
         jmsg.put("friendAccepted", jsubmsg);
@@ -311,7 +310,7 @@ public class JSON_commands {
         JSONObject jsubmsg = new JSONObject();
         jsubmsg.put("senderDbID", objectMapper.writeValueAsString(sender.getDbId()));
         jsubmsg.put("senderNick", objectMapper.writeValueAsString(sender.getNick()));
-        jsubmsg.put("senderAvatarID", objectMapper.writeValueAsString(sender.getAvatarId()));
+        jsubmsg.put("senderAvatarID", objectMapper.writeValueAsString(sender.getAvatarID()));
         jsubmsg.put("receiverDbID", objectMapper.writeValueAsString(receiver.getDbId()));
         jsubmsg.put("receiverNick", objectMapper.writeValueAsString(receiver.getNick()));
         jmsg.put("partyrequest", jsubmsg);
@@ -324,21 +323,32 @@ public class JSON_commands {
         JSONObject jsubmsg = new JSONObject();
         jsubmsg.put("senderDbID", objectMapper.writeValueAsString(sender.getDbId()));
         jsubmsg.put("senderNick", objectMapper.writeValueAsString(sender.getNick()));
-        jsubmsg.put("senderAvatarID", objectMapper.writeValueAsString(sender.getAvatarId()));
+        jsubmsg.put("senderAvatarID", objectMapper.writeValueAsString(sender.getAvatarID()));
         jsubmsg.put("receiverDbID", objectMapper.writeValueAsString(receiver.getDbId()));
         jsubmsg.put("receiverNick", objectMapper.writeValueAsString(receiver.getNick()));
         jmsg.put("partyaccepted", jsubmsg);
         return jmsg;
     }
 
-    public static JSONObject sendPlayerOnlineStatus(Boolean isOnline, Player player) throws JsonProcessingException {
+    /*public static JSONObject sendPlayerOnlineStatus(Boolean isOnline, Player player) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         JSONObject jmsg = new JSONObject();
         JSONObject jsubmsg = new JSONObject();
         jsubmsg.put("isonline", objectMapper.writeValueAsString(isOnline.toString()));
         jsubmsg.put("senderDbID", objectMapper.writeValueAsString(player.getDbId()));
         jsubmsg.put("senderNick", objectMapper.writeValueAsString(player.getNick()));
-        jsubmsg.put("senderAvatarID", objectMapper.writeValueAsString(player.getAvatarId()));
+        jsubmsg.put("senderAvatarID", objectMapper.writeValueAsString(player.getAvatarID()));
+        jmsg.put("onlinestatus", jsubmsg);
+        return jmsg;
+    }*/
+    public static JSONObject sendPlayerOnlineStatus(Boolean isOnline, Player player) throws JsonProcessingException {
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        JSONObject jmsg = new JSONObject();
+        JSONObject jsubmsg = new JSONObject();
+        jsubmsg.put("isOnline", isOnline);
+        jsubmsg.put("player", objectMapper.writeValueAsString(player));
         jmsg.put("onlinestatus", jsubmsg);
         return jmsg;
     }
@@ -401,5 +411,18 @@ public class JSON_commands {
         jmsg.put("calledCabo", jsubmsg);
 
         return jmsg;
+    }
+
+    public static JSONObject startPrivateParty() throws JSONException {
+
+        return new JSONObject().put("startPrivateParty", "startPrivateParty");
+    }
+    public static JSONObject allowedToMove() throws JSONException {
+
+        return new JSONObject().put("allowedToMove", "");
+    }
+    public static JSONObject noStartYet() throws JSONException {
+
+        return new JSONObject().put("noStartYet", "");
     }
 }

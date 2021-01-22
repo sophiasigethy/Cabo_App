@@ -5,6 +5,8 @@ import com.google.gson.Gson;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
 /**
  this class contains methods to build all JSONobjects which are sent to the server during the game
  * these methods are used in the MainActivity class
@@ -244,7 +246,21 @@ public class JSON_commands {
         return new JSONObject().put("logout", "");
     }
 
-    public static JSONObject sendStartNewGame(String message) throws JSONException {
-        return new JSONObject().put("startNewGame", message);
+    public static JSONObject sendStartNewGame(ArrayList<String> players) throws JSONException {
+        JSONObject jmsg = new JSONObject();
+        JSONObject jsubmsg = new JSONObject();
+
+        Gson gson= new Gson();
+
+        jsubmsg.put("players",  gson.toJson(players));
+        jmsg.put("startNewGame", jsubmsg);
+
+        return jmsg;
+    }
+    public static JSONObject noAccount() throws JSONException {
+        return new JSONObject().put("noAccount", "noAccount");
+    }
+    public static JSONObject askForStart() throws JSONException {
+        return new JSONObject().put("askForStart", "");
     }
 }

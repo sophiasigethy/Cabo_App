@@ -7,7 +7,6 @@ import org.json.JSONObject;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
-import javax.websocket.Session;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -19,10 +18,14 @@ public class Gamestate {
 
     // contains websocketsession-id and the associated player object
     public HashMap<String, Player> players = new HashMap<String, Player>();
-    private final int MAX_PLAYER = 2;
+
+   // private ArrayList<Player> privatePartyPlayers= new ArrayList<>();
+    private int MAX_PLAYER = 4;
     private int test = 0;
     // determines how many players are already registered
     private int countPlayer = 0;
+
+    private boolean privateParty= false;
 
     private int gamestateID=0;
     //status of the game- see Type Defs for all 3 state
@@ -85,7 +88,8 @@ public class Gamestate {
             countPlayer--;
             Player disconnectedPlayer = getPlayerBySessionId(session.getId());
             players.remove(session.getId());
-            if (countPlayer!=MAX_PLAYER){
+           // if (countPlayer!=MAX_PLAYER){
+            if (countPlayer<2){
                 state=TypeDefs.MATCHING;
             }
             try {
@@ -119,7 +123,8 @@ public class Gamestate {
         }
         //client sent the username he would like to have
         if (jsonObject.has("username")) {
-            if (isMaxPlayer()) {
+           // if (isMaxPlayer()) {
+            if (players.size()==4) {
                 String msg = "Sorry enough players have registered in the meantime. You can no longer join this game.";
                 socketHandler.sendMessage(session, JSON_commands.connectionNotAccepted(msg));
             } else {
@@ -148,9 +153,17 @@ public class Gamestate {
         if (jsonObject.has("chatMessage")) {
             sendToAll(jsonObject);
         }
+        if (jsonObject.has("askForStart")) {
+            if (players.size()>1){
+                startGame();
+            }else{
+                socketHandler.sendMessage(session, JSON_commands.noStartYet());
+            }
+        }
+
 
         if (jsonObject.has("startGameForAll")) {
-            sendToAll(JSON_commands.startGame("start"));
+            startGame();
 
         }
         if (jsonObject.has("askForInitialSettings")) {
@@ -317,6 +330,13 @@ public class Gamestate {
         }
     }
 
+    private void startGame() throws IOException {
+        MAX_PLAYER= players.size();
+        state = TypeDefs.GAMESTART;
+        sendToAll(JSON_commands.statusupdateServer(state));
+        sendToAll(JSON_commands.startGame("start"));
+    }
+
 
     private void startRound() throws IOException {
         availableCards = null;
@@ -349,6 +369,7 @@ public class Gamestate {
         Player newPlayer = new Player(generateId(), name, this);
         this.players.put(webSocketSession.getId(), newPlayer);
         //player is informed that he can join the game
+        saveAvatar(newPlayer);
         socketHandler.sendMessage(webSocketSession, JSON_commands.Welcome(newPlayer));
         informOtherPlayers(JSON_commands.newPlayer(newPlayer));
     }
@@ -418,7 +439,8 @@ public class Gamestate {
      * @return
      */
     public boolean isMaxPlayer() {
-        if (players.size() == MAX_PLAYER) {
+        //if (players.size() == MAX_PLAYER) {
+        if (players.size() ==4) {
             state = TypeDefs.GAMESTART;
             return true;
         }
@@ -742,6 +764,29 @@ public class Gamestate {
         }
         return false;
     }
+
+    public void saveAvatar(Player player){
+        for (Player socketHandlerPlayer: socketHandler.getConnectedPlayers().values()){
+            String nick =socketHandlerPlayer.getNick();
+            if (nick!=null){
+                if (socketHandlerPlayer.getNick().equalsIgnoreCase(player.getName())){
+                    player.setAvatarID(socketHandlerPlayer.getAvatarID());
+                }
+            }else{
+                player.setAvatarID(1);
+            }
+
+        }
+    }
+
+    public boolean isPrivateParty() {
+        return privateParty;
+    }
+
+    public void setPrivateParty(boolean privateParty) {
+        this.privateParty = privateParty;
+    }
+
     /*****************************************
      * Copy and Paste from CardSuiteManager
      ****************************************

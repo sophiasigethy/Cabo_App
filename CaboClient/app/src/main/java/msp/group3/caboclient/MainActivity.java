@@ -16,6 +16,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -214,41 +216,58 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
             }
         }
         if (jsonObject.has("onlinestatus")) {
-            JSONObject onlineRequest = (JSONObject) jsonObject.get("onlinestatus");
+            JSONObject js = jsonObject.getJSONObject("onlinestatus");
+            Player player = null;
+            boolean isOnline=false;
+                if (js.has("isOnline")) {
+                    isOnline = (boolean) js.get("isOnline");
+                }
+
+            if (js.has("player")) {
+                String jsonString = js.get("player").toString();
+                Gson gson = new Gson();
+                player = gson.fromJson(jsonString, Player.class);
+            }
+
+           /* JSONObject onlineRequest = (JSONObject) jsonObject.get("onlinestatus");
             Boolean isOnline = Boolean.parseBoolean(onlineRequest.get("isonline").toString().replace("\"", "").replace("\\", ""));
             String playerDbID = onlineRequest.get("senderDbID").toString().replace("\"", "").replace("\\", "");
             String playerNick = onlineRequest.get("senderNick").toString().replace("\"", "").replace("\\", "");
             int playerAvatar = Integer.parseInt(onlineRequest.get("senderAvatarID").toString().replace("\"", "").replace("\\", ""));
-            Player player = new Player(playerDbID, playerNick, playerAvatar);
+            Player player = new Player(playerDbID, playerNick, playerAvatar);*/
             if (!allUsers.contains(player)) {
                 allUsers.add(player);
                 DatabaseOperation.getDao().saveObjectToSharedPreference(
                         sharedPref, String.valueOf(R.string.preference_all_users), allUsers);
             }
             if (me.getFriendList().contains(player)) {
+                boolean finalIsOnline = isOnline;
+                Player finalPlayer = player;
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
                         View v = friendList.getChildAt(
-                                friendListAdapter.getPlayerIndex(player) - friendList.getFirstVisiblePosition());
+                                friendListAdapter.getPlayerIndex(finalPlayer) - friendList.getFirstVisiblePosition());
                         if (v != null) {
                             ImageView friendlistStatus = (ImageView) v.findViewById(R.id.friendlist_status);
-                            if (isOnline) {
+                            if (finalIsOnline) {
                                 //friendlistStatus.setBackgroundColor(Color.GREEN);
                                 friendlistStatus.setBackground(ContextCompat.getDrawable(activity, R.drawable.circle_green));
-                                me.getFriendList().get(me.getFriendList().indexOf(player)).setOnline(true);
+                                me.getFriendList().get(me.getFriendList().indexOf(finalPlayer)).setOnline(true);
                             } else {
                                 //friendlistStatus.setBackgroundColor(Color.RED);
                                 friendlistStatus.setBackground(ContextCompat.getDrawable(activity, R.drawable.circle_red));
-                                me.getFriendList().get(me.getFriendList().indexOf(player)).setOnline(false);
+                                me.getFriendList().get(me.getFriendList().indexOf(finalPlayer)).setOnline(true);
                             }
 
                             //TODO Check if this is enough
-                            //updateFriendList(player, false);
-                            friendListAdapter.notifyDataSetChanged();
+                            updateFriendList(finalPlayer, false);
                         }
                     }
                 });
             }
+        }
+        if (jsonObject.has("startPrivateParty")) {
+            startMatching();
         }
     }
 
