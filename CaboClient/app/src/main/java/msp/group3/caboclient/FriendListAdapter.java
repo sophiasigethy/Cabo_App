@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -74,16 +75,21 @@ public class FriendListAdapter extends ArrayAdapter {
         player_nick.setText(friends.get(i).getNick());
         ImageView status = (ImageView) vi.findViewById(R.id.friendlist_status);
         //TODO Check why online status does not work
-        if (friends.get(i).isOnline())
-            status.setBackground(ContextCompat.getDrawable(context, R.drawable.circle_green));
-        else
-            status.setBackground(ContextCompat.getDrawable(context, R.drawable.circle_red));
-        Button invite_btn = (Button) vi.findViewById(R.id.friendlist_invite);
+        if (friends.get(i).isOnline()){
+            status.setImageResource(R.drawable.online);
+            //status.setBackground(ContextCompat.getDrawable(context, R.drawable.circle_green));
+        }
+        else{
+            status.setImageResource(R.drawable.offline);
+            //status.setBackground(ContextCompat.getDrawable(context, R.drawable.circle_red));
+        }
+
+        ImageButton invite_btn = (ImageButton) vi.findViewById(R.id.friendlist_invite);
         if (party.contains(friends.get(i))) {
             //TODO Check why Icon is not changed
-            invite_btn.setBackgroundResource(R.drawable.partyhat);
+            invite_btn.setImageResource(R.drawable.partyhat);
         } else {
-            invite_btn.setBackgroundResource(R.drawable.ic_baseline_add_circle_outline_24);
+            invite_btn.setImageResource(R.drawable.ic_baseline_add_circle_outline_24);
             invite_btn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
