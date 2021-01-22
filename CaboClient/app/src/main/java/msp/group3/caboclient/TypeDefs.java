@@ -22,5 +22,3 @@ public class TypeDefs {
     public static String angry =  "angry";
 
 }
-
-

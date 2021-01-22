@@ -16,7 +16,7 @@
             android:id="@+id/friendlist_image"
             android:layout_width="0dip"
             android:layout_height="50dip"
-            android:layout_weight=".20"
+            android:layout_weight=".15"
             android:layout_marginStart="5dip"
             android:layout_marginEnd="2.5dip"
             app:layout_constraintStart_toStartOf="parent"/>
@@ -28,26 +28,33 @@
             android:layout_weight=".40"
             android:layout_marginStart="2.5dip"
             android:layout_marginEnd="2.5dip"
+            android:textColor="@color/beige"
+            android:fontFamily="sans-serif-black"
+            android:layout_gravity="center_vertical"
             app:layout_constraintStart_toStartOf="@+id/friendlist_image"/>
 
         <ImageView
             android:id="@+id/friendlist_status"
-            android:src="@drawable/online_status"
-            android:background="@drawable/circle_red"
+            android:src="@drawable/offline"
             android:layout_width="0dip"
             android:layout_height="50dip"
             android:layout_weight=".15"
             android:layout_marginStart="2.5dip"
             android:layout_marginEnd="2.5dip"
+            android:scaleType="centerInside"
+            android:background="@android:color/transparent"
             app:layout_constraintStart_toStartOf="@+id/friendlist_name"/>
 
-        <Button
+        <ImageButton
             android:id="@+id/friendlist_invite"
             android:layout_width="0dip"
             android:layout_height="50dip"
             android:layout_weight=".15"
             android:layout_marginStart="2.5dip"
             android:layout_marginEnd="5dip"
+            android:src="@android:color/transparent"
+            android:scaleType="centerInside"
+            android:background="@android:color/transparent"
             app:layout_constraintStart_toStartOf="@+id/friendlist_status"/>
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
