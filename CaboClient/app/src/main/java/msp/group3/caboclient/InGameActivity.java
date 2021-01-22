@@ -22,11 +22,11 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.ScaleAnimation;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -217,6 +217,9 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 chatNotificationBubble.setVisibility(View.INVISIBLE);
                 chatButtonCount++;
                 if (chatButtonCount % 2 == 0) {
+                    InGameChatFragment fragment_obj = (InGameChatFragment)getSupportFragmentManager().
+                            findFragmentById(R.id.fragment_chat);
+                    fragment_obj.textInput.onEditorAction(EditorInfo.IME_ACTION_DONE);
                     chatFragmentContainer.setVisibility(View.INVISIBLE);
                 } else {
                     chatFragmentContainer.setVisibility(View.VISIBLE);
@@ -1654,6 +1657,8 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                     @Override
                     public void run() {
                         playerNames.get(0).setText(me.getName());
+                        playerPics.get(0).setImageResource(me.getAvatar());
+                        playerStats.get(0).setText("Score: "+me.getScore());
                         initiateInitialCardLookUp();
                     }
                 });
@@ -1670,7 +1675,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 }.getType());
                 if (initialRound){
                     otherPlayers.addAll(players);
-                    showNames();
+                    showPlayers();
                 }else{
                     nextRound(players);
                 }
@@ -2050,13 +2055,15 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         }
     }
 
-    private void showNames() {
+    private void showPlayers() {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 for (int i = 0; i < otherPlayers.size(); i++) {
                     if (i + 1 < playerNames.size()) {
                         playerNames.get(i + 1).setText(otherPlayers.get(i).getName());
+                        playerPics.get(i+1).setImageResource(otherPlayers.get(i).getAvatar());
+                        playerStats.get(i+1).setText("Score: "+otherPlayers.get(i).getScore());
                     } else {
                         Log.d("----------------------NAMES", "OUT OF BOUNDS");
                     }
