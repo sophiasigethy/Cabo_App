@@ -16,6 +16,8 @@ import org.json.JSONException;
 
 import java.util.ArrayList;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class FriendListAdapter extends ArrayAdapter {
     int NOT_FOUND = 32000;
     Context context;
@@ -66,7 +68,7 @@ public class FriendListAdapter extends ArrayAdapter {
         View vi = view;
         if (vi == null)
             vi = inflater.inflate(R.layout.friendlist_item, null);
-        ImageView playerIcon = (ImageView) vi.findViewById(R.id.friendlist_image);
+        CircleImageView playerIcon = (CircleImageView) vi.findViewById(R.id.friendlist_image);
         playerIcon.setImageResource(friends.get(i).getAvatar());
         TextView player_nick = (TextView) vi.findViewById(R.id.friendlist_name);
         player_nick.setText(friends.get(i).getNick());
