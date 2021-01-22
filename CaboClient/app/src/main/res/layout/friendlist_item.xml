@@ -12,7 +12,7 @@
         android:orientation="horizontal"
         tools:ignore="MissingConstraints">
 
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/friendlist_image"
             android:layout_width="0dip"
             android:layout_height="50dip"

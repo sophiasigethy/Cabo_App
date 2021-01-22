@@ -11,7 +11,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -257,11 +256,12 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
                             } else {
                                 //friendlistStatus.setBackgroundColor(Color.RED);
                                 friendlistStatus.setBackground(ContextCompat.getDrawable(activity, R.drawable.circle_red));
-                                me.getFriendList().get(me.getFriendList().indexOf(finalPlayer)).setOnline(true);
+                                me.getFriendList().get(me.getFriendList().indexOf(player)).setOnline(false);
                             }
 
                             //TODO Check if this is enough
-                            updateFriendList(finalPlayer, false);
+                            //updateFriendList(player, false);
+                            friendListAdapter.notifyDataSetChanged();
                         }
                     }
                 });
@@ -278,8 +278,7 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
             friends.remove(sender);
             friends.add(0, sender);
         } else {
-            friends.add(sender);
-            me.addFriend(sender, sharedPref);
+            me.addNewFriend(sender, sharedPref);
         }
         //TODO Check if Adapter also has to get new list
         me.setFriendList(friends);
