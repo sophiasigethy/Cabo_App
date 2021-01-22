@@ -12,8 +12,8 @@ public class TypeDefs {
     public static String playing =  "playing";
     public static String welcomeMessage =  "Hello";
 
-    //public static String URI ="ws://192.168.178.27:8080/chat"; //sophia
-    public static String URI ="ws://192.168.2.125:8080/chat"; //pauline
+    public static String URI ="ws://192.168.2.134:8080/chat"; //sophia
+    //public static String URI ="ws://192.168.2.125:8080/chat"; //pauline
 
 
     public static String smiling =  "smiling";
