@@ -165,12 +165,7 @@ public class SocketHandler extends TextWebSocketHandler {
         if (isAssignedToGame(getPlayerBySessionId(session.getId()))) {
             getPlayerBySessionId(session.getId()).getGamestate().afterConnectionClosed(session);
         }
-        Player logoutPlayer = connectedPlayers.get(session);
-        for (WebSocketSession sess : sessions) {
-            if (sess.equals(session))
-                continue;
-
-        }
+        Player logoutPlayer = connectedPlayers.get(session.getId());
         connectedPlayers.remove(session.getId());
         sessions.remove(session);
         for (String storedSession : connectedPlayers.keySet()) {
@@ -179,6 +174,7 @@ public class SocketHandler extends TextWebSocketHandler {
             if (sess != null)
                 sendMessage(sess, JSON_commands.sendPlayerOnlineStatus(false, logoutPlayer));
         }
+        System.out.println("User " + logoutPlayer.getNick() + " disconnected");
         //gamestate.afterConnectionClosed(session);
 
 
