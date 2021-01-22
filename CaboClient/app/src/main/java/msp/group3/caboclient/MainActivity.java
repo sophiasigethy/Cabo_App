@@ -243,6 +243,7 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
             if (me.getFriendList().contains(player)) {
                 boolean finalIsOnline = isOnline;
                 Player finalPlayer = player;
+                Player finalPlayer1 = player;
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
                         View v = friendList.getChildAt(
@@ -256,7 +257,7 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
                             } else {
                                 //friendlistStatus.setBackgroundColor(Color.RED);
                                 friendlistStatus.setBackground(ContextCompat.getDrawable(activity, R.drawable.circle_red));
-                                me.getFriendList().get(me.getFriendList().indexOf(player)).setOnline(false);
+                                me.getFriendList().get(me.getFriendList().indexOf(finalPlayer1)).setOnline(false);
                             }
 
                             //TODO Check if this is enough
