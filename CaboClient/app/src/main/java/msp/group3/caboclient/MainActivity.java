@@ -244,6 +244,7 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
             if (me.getFriendList().contains(player)) {
                 boolean finalIsOnline = isOnline;
                 Player finalPlayer = player;
+                Player finalPlayer1 = player;
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
                         View v = friendList.getChildAt(
@@ -262,6 +263,7 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
 
                             //TODO Check if this is enough
                             updateFriendList(finalPlayer, false);
+                            friendListAdapter.notifyDataSetChanged();
                         }
                     }
                 });
