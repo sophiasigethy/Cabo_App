@@ -76,10 +76,16 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
     private ImageView cardContainerOverlaySpy;
     private TextView centerText;
     private int round = 1;
+    private int cardDrawCount = 0;
+    private TextView hintTextCardStack;
+    private TextView hintTextOwnCards;
 
     private com.airbnb.lottie.LottieAnimationView cardSwapAnimation;
     private com.airbnb.lottie.LottieAnimationView tapPickCardAnimation;
     private com.airbnb.lottie.LottieAnimationView timerAnimation;
+    private com.airbnb.lottie.LottieAnimationView hintArrowCardStack;
+    private com.airbnb.lottie.LottieAnimationView hintArrowOwnCards;
+
 
 
     private ImageView cardSwapBg;
@@ -114,7 +120,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
     private final List<com.airbnb.lottie.LottieAnimationView> playerHighlightAnimations = new ArrayList<>();
     private final List<com.airbnb.lottie.LottieAnimationView> playerCaboAnimations = new ArrayList<>();
     private final List<ImageView> otherPlayerEmojis = new ArrayList<>();
-    private List<ImageView> otherPlayersCardGlows = new ArrayList<>();
+    private final List<ImageView> otherPlayersCardGlows = new ArrayList<>();
 
 
 
@@ -176,6 +182,14 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         cardContainerOverlaySwap = findViewById(R.id.picked_card_big_imageview_swap);
         cardContainerOverlayPeek= findViewById(R.id.picked_card_big_imageview_peek);
         cardContainerOverlaySpy= findViewById(R.id.picked_card_big_imageview_spy);
+        hintArrowOwnCards = findViewById(R.id.hint_arrow_player_cards);
+        hintArrowOwnCards.setVisibility(View.INVISIBLE);
+        hintArrowCardStack = findViewById(R.id.hint_arrow_card_stack);
+        hintArrowCardStack.setVisibility(View.INVISIBLE);
+        hintTextCardStack = findViewById(R.id.hint_card_stack_text);
+        hintTextCardStack.setVisibility(View.INVISIBLE);
+        hintTextOwnCards = findViewById(R.id.hint_player_cards_text);
+        hintTextOwnCards.setVisibility(View.INVISIBLE);
 
         playedCardsStackButton = (ImageButton) findViewById(R.id.played_cards_imageButton);
         playedCardsStackGlow = findViewById(R.id.card_glow_imageview);
@@ -370,6 +384,8 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             cardButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+
+                    hideHint();
 
                     if (cardButton.isSelected()) {
                         nrCardsSelected--;
@@ -861,7 +877,9 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                         pickedCardBigImageview.setImageResource(getCardResource(card));
                         oa2.start();
                         showCardAction(card);
-
+                        if(cardDrawCount==1){
+                            showHint();
+                        }
                     }
                 });
                 oa1.start();
@@ -922,6 +940,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        hideHint();
                         pickCardsStackButton.setEnabled(false);
                         growCardGlowAnimationOut(player1CardsGlow);
                         growCardGlowAnimationOut(playedCardsStackGlow);
@@ -1769,6 +1788,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                             caboButton.setEnabled(true);
                             caboButton.setAlpha(1f);
                         }
+                        cardDrawCount++;
                         updateText.setVisibility(View.VISIBLE);
                         updateText.setText("Pick a card");
                         tapPickCardAnimation.setVisibility(View.VISIBLE);
@@ -2079,6 +2099,20 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 fadeCaboPlayerCardsAndShowAnimation(0.3f);
             }
         }
+    }
+
+    private void showHint() {
+        hintTextOwnCards.setVisibility(View.VISIBLE);
+        hintTextCardStack.setVisibility(View.VISIBLE);
+        hintArrowOwnCards.setVisibility(View.VISIBLE);
+        hintArrowCardStack.setVisibility(View.VISIBLE);
+    }
+
+    private void hideHint(){
+        hintTextOwnCards.setVisibility(View.GONE);
+        hintTextCardStack.setVisibility(View.GONE);
+        hintArrowOwnCards.setVisibility(View.GONE);
+        hintArrowCardStack.setVisibility(View.GONE);
     }
 
     public void showNewRound(){
