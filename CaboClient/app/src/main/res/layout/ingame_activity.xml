@@ -1017,10 +1017,23 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"/>
 
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/game_end_stars"
+        android:layout_width="600dp"
+        android:layout_height="500dp"
+        app:lottie_rawRes="@raw/stars"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        app:lottie_speed="0.5"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"/>
+
     <TextView
         android:id="@+id/center_text"
         android:layout_width="250dp"
-        android:layout_height="250dp"
+        android:layout_height="70dp"
         android:text="Round 2"
         android:textAlignment="center"
         android:gravity="center_vertical"
@@ -1036,6 +1049,19 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         tools:ignore="RtlCompat" />
+
+    <Button
+        android:id="@+id/end_game_return_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Return"
+        android:padding="12dp"
+        android:textColor="@drawable/outlined_button_text"
+        android:background="@drawable/outlined_button"
+        app:layout_constraintTop_toBottomOf="@id/center_text"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        />
 
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/card_swap_animationView"

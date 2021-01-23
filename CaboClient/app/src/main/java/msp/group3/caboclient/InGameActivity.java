@@ -79,12 +79,14 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
     private int cardDrawCount = 0;
     private TextView hintTextCardStack;
     private TextView hintTextOwnCards;
+    private Button endGameReturnButton;
 
     private com.airbnb.lottie.LottieAnimationView cardSwapAnimation;
     private com.airbnb.lottie.LottieAnimationView tapPickCardAnimation;
     private com.airbnb.lottie.LottieAnimationView timerAnimation;
     private com.airbnb.lottie.LottieAnimationView hintArrowCardStack;
     private com.airbnb.lottie.LottieAnimationView hintArrowOwnCards;
+    private com.airbnb.lottie.LottieAnimationView endGameStars;
 
 
 
@@ -190,6 +192,10 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         hintTextCardStack.setVisibility(View.INVISIBLE);
         hintTextOwnCards = findViewById(R.id.hint_player_cards_text);
         hintTextOwnCards.setVisibility(View.INVISIBLE);
+        endGameStars = findViewById(R.id.game_end_stars);
+        endGameStars.setVisibility(View.INVISIBLE);
+        endGameReturnButton = findViewById(R.id.end_game_return_button);
+        endGameReturnButton.setVisibility(View.INVISIBLE);
 
         playedCardsStackButton = (ImageButton) findViewById(R.id.played_cards_imageButton);
         playedCardsStackGlow = findViewById(R.id.card_glow_imageview);
@@ -2313,6 +2319,33 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             }
         }
         return null;
+    }
+
+    private void showEndOfGame(Player winner){
+        for(ImageButton card : player1CardButtons){
+            card.setVisibility(View.GONE);
+        }
+        for(List<ImageButton> playerCards : otherPlayerButtonLists){
+            for(ImageButton card : playerCards){
+                card.setVisibility(View.GONE);
+            }
+        }
+        pickCardsStackButton.setVisibility(View.GONE);
+        playedCardsStackButton.setVisibility(View.GONE);
+        caboButton.setVisibility(View.GONE);
+        updateText.setVisibility(View.GONE);
+        endGameStars.setVisibility(View.VISIBLE);
+        endGameReturnButton.setVisibility(View.VISIBLE);
+
+        cardSwapBg.setVisibility(View.VISIBLE);
+        if(winner.getId()==me.getId()){
+            centerText.setVisibility(View.VISIBLE);
+            centerText.setText("You won! Congrats!");
+        }
+        else{
+            centerText.setVisibility(View.VISIBLE);
+            centerText.setText(winner.getName()+" won!");
+        }
     }
 
 }
