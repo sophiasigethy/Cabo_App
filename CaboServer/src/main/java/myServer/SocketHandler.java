@@ -1,6 +1,5 @@
 package myServer;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -125,22 +124,26 @@ public class SocketHandler extends TextWebSocketHandler {
                 boolean isSenderInParty = isInParty(sender);
                 boolean isReceiverInParty = isInParty(receiver);
                 boolean isSenderLeader = isPartyLeader(sender);
-                if (!isSenderInParty && !isReceiverInParty) {
-                    sendMessage(getSessionByPlayerNick(receiver.getNick()), JSON_commands.sendPartyRequest2(sender));
-                    return;
-                }
-                if (!isReceiverInParty && isSenderLeader) {
-                    sendMessage(getSessionByPlayerNick(receiver.getNick()), JSON_commands.sendPartyRequest2(sender));
-                    return;
-                }
-                if (isReceiverInParty) {
-                    sendMessage(session, JSON_commands.partyRequestFailed(receiver.getNick() + " is already in another Party"));
-                    return;
+                if (isReceiverInGame(receiver)) {
+                    sendMessage(session, JSON_commands.partyRequestFailed("This player is already playing at the moment"));
+                } else {
+                    if (!isSenderInParty && !isReceiverInParty) {
+                        sendMessage(getSessionByPlayerNick(receiver.getNick()), JSON_commands.sendPartyRequest2(sender));
+                        return;
+                    }
+                    if (!isReceiverInParty && isSenderLeader) {
+                        sendMessage(getSessionByPlayerNick(receiver.getNick()), JSON_commands.sendPartyRequest2(sender));
+                        return;
+                    }
+                    if (isReceiverInParty) {
+                        sendMessage(session, JSON_commands.partyRequestFailed(receiver.getNick() + " is already in another Party"));
+                        return;
 
-                }
-                if (isSenderInParty && !isSenderLeader) {
-                    sendMessage(session, JSON_commands.partyRequestFailed("You are already in a Party. Only the party Leader can invite other players"));
-                    return;
+                    }
+                    if (isSenderInParty && !isSenderLeader) {
+                        sendMessage(session, JSON_commands.partyRequestFailed("You are already in a Party. Only the party Leader can invite other players"));
+                        return;
+                    }
                 }
 
 
@@ -187,19 +190,24 @@ public class SocketHandler extends TextWebSocketHandler {
                     newParty.add(sender);
                     partyPeople.add(newParty);
 
-                }
-                if (!isSenderInParty && isReceiverLeader) {
-                    addPlayerInPartyOfLeader(receiver, sender);
-
-                }
-
-                if (receiverSession != null) {
+                    if (receiverSession != null) {
                    /* sendMessage(receiverSession, JSON_commands.sendPartyAccepted(new Player(senderDbId, senderNick, senderAvatarId),
                         new Player(receiverDbId, receiverNick, 9)));
                     System.out.println(senderNick + " accepted PartyInvite from " + receiverNick);*/
-                    sendMessage(receiverSession, JSON_commands.sendPartyAccepted(sender, receiver));
-                    System.out.println(sender.getNick() + " accepted PartyInvite from " + receiver.getNick());
+                        sendPartyAcceptation(sender, receiver, receiverSession);
+                    }
                 }
+                if (!isSenderInParty && isReceiverLeader) {
+                    addPlayerInPartyOfLeader(receiver, sender);
+                    if (receiverSession != null) {
+                   /* sendMessage(receiverSession, JSON_commands.sendPartyAccepted(new Player(senderDbId, senderNick, senderAvatarId),
+                        new Player(receiverDbId, receiverNick, 9)));
+                    System.out.println(senderNick + " accepted PartyInvite from " + receiverNick);*/
+                        sendPartyAcceptation(sender, receiver, receiverSession);
+                    }
+                }
+
+
             }
 
             if (jsonObject.has("startNewGame")) {
@@ -245,6 +253,11 @@ public class SocketHandler extends TextWebSocketHandler {
         }
     }
 
+    private void sendPartyAcceptation(Player sender, Player receiver, WebSocketSession receiverSession) throws IOException {
+        sendMessage(receiverSession, JSON_commands.sendPartyAccepted(sender, receiver));
+        System.out.println(sender.getNick() + " accepted PartyInvite from " + receiver.getNick());
+    }
+
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         /*
@@ -286,8 +299,8 @@ public class SocketHandler extends TextWebSocketHandler {
 
 
     public void sendMessage(WebSocketSession webSocketSession, JSONObject jsonMsg) throws IOException {
-        if (webSocketSession!=null)
-        webSocketSession.sendMessage(new TextMessage(jsonMsg.toString()));
+        if (webSocketSession != null)
+            webSocketSession.sendMessage(new TextMessage(jsonMsg.toString()));
     }
 
     /**
@@ -461,8 +474,8 @@ public class SocketHandler extends TextWebSocketHandler {
 
     public void addPlayerInPartyOfLeader(Player leader, Player newPlayer) {
         for (int i = 0; i < partyPeople.size(); i++) {
-            ArrayList<Player>currentList= partyPeople.get(i);
-            for (int j=0; j<currentList.size(); j++) {
+            ArrayList<Player> currentList = partyPeople.get(i);
+            for (int j = 0; j < currentList.size(); j++) {
                 if (currentList.get(j).getNick().equalsIgnoreCase(leader.getNick())) {
                     partyPeople.get(i).add(newPlayer);
                 }
@@ -484,8 +497,8 @@ public class SocketHandler extends TextWebSocketHandler {
 
     public void removePlayerOfParty(Player logout) throws IOException {
         for (int i = 0; i < partyPeople.size(); i++) {
-            ArrayList<Player> currentParty=partyPeople.get(i);
-            for (int j=0; j<currentParty.size(); j++) {
+            ArrayList<Player> currentParty = partyPeople.get(i);
+            for (int j = 0; j < currentParty.size(); j++) {
                 if (currentParty.get(j).getNick().equalsIgnoreCase(logout.getNick())) {
                     removePlayerofParty(currentParty, logout);
                     sendRemovedPartyPlayer(currentParty, logout);
@@ -504,22 +517,42 @@ public class SocketHandler extends TextWebSocketHandler {
     public void sendRemovedLeader(ArrayList<Player> otherPlayers, Player leader) throws IOException {
         for (Player player : otherPlayers) {
             if (!player.getNick().equalsIgnoreCase(leader.getNick()))
-            sendMessage(getSessionByPlayerNick(player.getNick()), JSON_commands.leaderRemovedFromParty(leader));
+                sendMessage(getSessionByPlayerNick(player.getNick()), JSON_commands.leaderRemovedFromParty(leader));
         }
     }
 
-    public void removePartyLeader(Player leader){
-        for (int i=0; i<partyLeader.size(); i++){
-            if (partyLeader.get(i).getNick().equalsIgnoreCase(leader.getNick())){
+    public void removePartyLeader(Player leader) {
+        for (int i = 0; i < partyLeader.size(); i++) {
+            if (partyLeader.get(i).getNick().equalsIgnoreCase(leader.getNick())) {
                 partyLeader.remove(i);
             }
         }
     }
-    public void removePlayerofParty(ArrayList<Player> party, Player partyPLayer){
-        for (int i=0; i<party.size(); i++){
-            if (party.get(i).getNick().equalsIgnoreCase(partyPLayer.getNick())){
+
+    public void removePlayerofParty(ArrayList<Player> party, Player partyPLayer) {
+        for (int i = 0; i < party.size(); i++) {
+            if (party.get(i).getNick().equalsIgnoreCase(partyPLayer.getNick())) {
                 party.remove(i);
             }
         }
+    }
+
+    public Player getPlayerByNick(String nick) {
+        for (Player connectedPlayer : connectedPlayers.values()) {
+            if (connectedPlayer.getNick().equalsIgnoreCase(nick)) {
+                return connectedPlayer;
+            }
+        }
+        return null;
+    }
+
+    public boolean isReceiverInGame(Player player) {
+        Player receiver = getPlayerByNick(player.getNick());
+        if (receiver != null) {
+            if (receiver.getGamestate() != null) {
+                return true;
+            }
+        }
+        return false;
     }
 }
