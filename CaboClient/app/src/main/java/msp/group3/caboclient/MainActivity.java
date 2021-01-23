@@ -241,7 +241,7 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
                 DatabaseOperation.getDao().saveObjectToSharedPreference(
                         sharedPref, String.valueOf(R.string.preference_all_users), allUsers);
             }
-            if (me.getFriendList().contains(player)) {
+            if (isPlayerInFriendList(player)) {
                 boolean finalIsOnline = isOnline;
                 Player finalPlayer = player;
                 Player finalPlayer1 = player;
@@ -459,5 +459,14 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
     protected void onResume() {
         super.onResume();
         //TODO: Establish Connection
+    }
+
+    public boolean isPlayerInFriendList(Player player){
+        for (Player friend: me.getFriendList()){
+            if (friend.getNick().equalsIgnoreCase(player.getNick())){
+                return true;
+            }
+        }
+        return false;
     }
 }
