@@ -74,6 +74,8 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
     private ImageView cardContainerOverlaySwap;
     private ImageView cardContainerOverlayPeek;
     private ImageView cardContainerOverlaySpy;
+    private TextView centerText;
+    private int round = 1;
 
     private com.airbnb.lottie.LottieAnimationView cardSwapAnimation;
     private com.airbnb.lottie.LottieAnimationView tapPickCardAnimation;
@@ -110,6 +112,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
     private final List<Integer> player3CardClickCounts = new ArrayList<>();
     private final List<Integer> player4CardClickCounts = new ArrayList<>();
     private final List<com.airbnb.lottie.LottieAnimationView> playerHighlightAnimations = new ArrayList<>();
+    private final List<com.airbnb.lottie.LottieAnimationView> playerCaboAnimations = new ArrayList<>();
     private final List<ImageView> otherPlayerEmojis = new ArrayList<>();
     private List<ImageView> otherPlayersCardGlows = new ArrayList<>();
 
@@ -160,6 +163,8 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         angryEmojiButton = (ImageButton) findViewById(R.id.emoji_angry);
         updateText = (TextView) findViewById(R.id.update_text);
         updateText.setVisibility(View.INVISIBLE);
+        centerText = findViewById(R.id.center_text);
+        centerText.setVisibility(View.INVISIBLE);
         cardSwapAnimation = findViewById(R.id.card_swap_animationView);
         cardSwapAnimation.setVisibility(View.INVISIBLE);
         cardSwapBg = findViewById(R.id.card_swap_animationView_bg);
@@ -254,8 +259,6 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         caboButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getApplicationContext(),
-                        "CABO!.", Toast.LENGTH_SHORT).show();
                 try {
                     webSocketClient.send(String.valueOf(JSON_commands.sendCabo("cabo")));
                     webSocketClient.send(String.valueOf(JSON_commands.sendFinishMove("finish")));
@@ -590,6 +593,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
     private void deactivateAllButtons(){
         deactivateAllOnCardClickListeners();
         caboButton.setEnabled(false);
+        caboButton.setAlpha(0.3f);
         pickCardsStackButton.setEnabled(false);
         pickCardsStackButton.setEnabled(false);
         tapPickCardAnimation.setVisibility(View.INVISIBLE);
@@ -697,6 +701,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
 
         Collections.addAll(otherPlayersCardGlows, findViewById(R.id.player2_card_glow_imageview), findViewById(R.id.player3_card_glow_imageview), findViewById(R.id.player4_card_glow_imageview));
 
+        Collections.addAll(playerCaboAnimations, findViewById(R.id.player1_cabo), findViewById(R.id.player2_cabo), findViewById(R.id.player3_cabo), findViewById(R.id.player4_cabo));
         for(int i=0; i<4; i++){
             player1CardButtons.get(i).setVisibility(View.INVISIBLE);
             player2CardButtons.get(i).setVisibility(View.INVISIBLE);
@@ -707,6 +712,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             playerNames.get(i).setVisibility(View.INVISIBLE);
             playerOverviews.get(i).setVisibility(View.INVISIBLE);
             playerHighlightAnimations.get(i).setVisibility(View.INVISIBLE);
+            playerCaboAnimations.get(i).setVisibility(View.INVISIBLE);
         }
 
         for(ImageView glow : otherPlayersCardGlows){
@@ -1276,8 +1282,6 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                         }
                     }
                     try {
-                        //TimeUnit.SECONDS.sleep(10);
-                        //TODO send player that is spied on NOT me
                         webSocketClient.send(String.valueOf(JSON_commands.useFunctionalitySpy(selectedCard, spiedOnPlayer)));
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -1352,6 +1356,8 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
     }
 
     private void initiateInitialCardLookUp(){
+        caboButton.setEnabled(false);
+        caboButton.setAlpha(0.3f);
         peekButton.setVisibility(View.VISIBLE);
         updateText.setVisibility(View.VISIBLE);
         updateText.setText("Select 2 of your cards to look at");
@@ -1637,6 +1643,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         if (jsonObject.has("chatMessage")) {
            // String chatText = jsonObject.get("chatMessage").toString();
             JSONObject js = jsonObject.getJSONObject("chatMessage");
+            Player sender = null;
             if (me != null) {
                 if (js.has("message")) {
                     chatText = js.get("message").toString();
@@ -1646,18 +1653,25 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             if (js.has("sender")) {
                 String jsonString = js.get("sender").toString();
                 Gson gson = new Gson();
-                Player sender = gson.fromJson(jsonString, Player.class);
+                sender = gson.fromJson(jsonString, Player.class);
             }
             entireChatText = entireChatText+"\n"+chatText;
             InGameChatFragment fragment_obj = (InGameChatFragment)getSupportFragmentManager().
                     findFragmentById(R.id.fragment_chat);
-            fragment_obj.chatMessagesList.add(new ChatMessage("Sender", chatText, true));
-
-            //fragment_obj.textMsg.setText(entireChatText);
+            if(sender!=null){
+                if(sender.getId()==me.getId()){
+                    fragment_obj.chatMessagesList.add(new ChatMessage(me.getName(), chatText, true, me.getAvatar()));
+                }
+                else{
+                    fragment_obj.chatMessagesList.add(new ChatMessage(sender.getName(), chatText, false, sender.getAvatar()));
+                }
+            }
 
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    fragment_obj.chatMessageListView.setAdapter(null);
+                    fragment_obj.chatMessageListView.setAdapter(fragment_obj.adapter);
                     fragment_obj.adapter.notifyDataSetChanged();
                     fragment_obj.scrollMyListViewToBottom();
                     if(chatFragmentContainer.getVisibility() == View.INVISIBLE){
@@ -1665,10 +1679,6 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                     }
                 }
             });
-
-            // TODO pauline: den String chatText einfach nur anzeigen :) -> zum testen server auf eine person stellen
-            //edittext leeren und namen dazu schreiben
-            //symbol anzeigen, wenn neue nachricht kommt
         }
 
         if (jsonObject.has("sendMAXPlayer")) {
@@ -1676,7 +1686,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             MAX_PLAYERS=maxPlayer;
             Log.d("----------------------MAXPLAYERS", "playerNr: "+maxPlayer);
             visualizePlayerStats(maxPlayer);
-            // TODO pauline: hier wurde die Anzahl Spieler geschickt
+            deactivateAllButtons();
         }
         if (jsonObject.has("initialMe")) {
             JSONObject js = jsonObject.getJSONObject("initialMe");
@@ -1697,7 +1707,24 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                         playerNames.get(0).setText(me.getName());
                         playerPics.get(0).setImageResource(me.getAvatar());
                         playerStats.get(0).setText("Score: "+me.getScore());
-                        initiateInitialCardLookUp();
+                        if(initialRound){
+                            initiateInitialCardLookUp();
+                        }
+                        else{
+                            round++;
+                            showNewRound();
+                            new CountDownTimer(3000, 1000) {
+
+                                public void onTick(long millisUntilFinished) {
+                                }
+
+                                public void onFinish() {
+                                    hideNewRound();
+                                    initiateInitialCardLookUp();
+                                }
+
+                            }.start();
+                        }
                     }
                 });
             }
@@ -1711,19 +1738,20 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 String jsonString = js.get("players").toString();
                 List<Player> players = gson.fromJson(jsonString, new TypeToken<List<Player>>() {
                 }.getType());
-                if (initialRound){
-                    otherPlayers.addAll(players);
-                    showPlayers();
-                }else{
-                    nextRound(players);
-                }
-
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (initialRound){
+                            otherPlayers.addAll(players);
+                            showPlayers();
+                        }else{
+                            nextRound(players);
+                        }
+                    }
+                });
             }
 
         }
-
-        //TODO: wenn alles angezeigt wurde und der Spieler seine Karten angeschaut hat, muss folgendes gesendet werden:
-        // webSocketClient.send(String.valueOf(JSON_commands.sendMemorized("memorized")));
 
         if (jsonObject.has("nextPlayer")) {
             int nextPlayerId = jsonObject.getInt("nextPlayer");
@@ -1737,7 +1765,10 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                     @Override
                     public void run() {
                         indicatePlayerTurn(me);
-                        caboButton.setEnabled(true);
+                        if(caboplayer==null){
+                            caboButton.setEnabled(true);
+                            caboButton.setAlpha(1f);
+                        }
                         updateText.setVisibility(View.VISIBLE);
                         updateText.setText("Pick a card");
                         tapPickCardAnimation.setVisibility(View.VISIBLE);
@@ -1758,10 +1789,6 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                     }
                 });
             }
-            //TODO pauline: call method which shows Client who's turn it is
-            // dann muss der player auf den nachziehstapel tippen, um eine karte zu ziehen
-            // du kannst immer über me.getStatus() überprüfen, ob der Client wirklich spielen darf -> der Stautus muss gleich "playing" siehe typeDefs sein
-            //webSocketClient.send(String.valueOf(JSON_commands.sendPickCard("memorized")));
         }
 
         if (jsonObject.has("pickedCard")) {
@@ -1772,7 +1799,6 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 Card card = gson.fromJson(jsonString, Card.class);
                 Log.d("----------------------PICKED CARD", "card value: " + card.getValue());
 
-                //TODO pauline: das ist die Karte, die der Spieler von Nachziehstapel gezogen hat
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -1815,7 +1841,6 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 String jsonString = js.get("card").toString();
                 Gson gson = new Gson();
                 Card card = gson.fromJson(jsonString, Card.class);
-                //TODO Pauline: dies ist die Karte, die der Spieler (der gerade an der Reihe ist)gezogen und abgelegt hat (auf den Ablegestapel)
                 displayDiscardedCard(card);
                 Log.d("----------------------MY STATUS", me.getStatus());
 
@@ -1861,7 +1886,6 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             Gson gson = new Gson();
             Card card = gson.fromJson(json, Card.class);
 
-            //TODO Pauline: das ist die Karte, die der Spieler bei sich selbst anschaut -> anzeigen für alle Spieler
             if (me.getStatus().equals(waiting)) {
                 runOnUiThread(new Runnable() {
                     @Override
@@ -1912,7 +1936,6 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
 
             Player spyedPlayer = gson.fromJson(json2, Player.class);
 
-            //TODO pauline: das ist der Spieler und die Karte des Spielers, die angeschaut wird, von dem Spieler der gerade dran ist
             //Hier das spyen anzeigen bzw erlauben
             // danach finish aufrufen
             if (me.getStatus().equals(waiting)) {
@@ -2016,12 +2039,6 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             }
         }
 
-        //TODO Pauline: wenn der Spieler seinen Zug beendet hat sende:
-        //webSocketClient.send(String.valueOf(JSON_commands.sendFinishMove("finish")));
-
-        //TODO Pauline: wenn der Spieler Cabo Button drückt, sende:
-        //webSocketClient.send(String.valueOf(JSON_commands.sendCabo("cabo")));
-
         if (jsonObject.has("score")) {
             JSONObject js = jsonObject.getJSONObject("score");
             if (js.has("player")) {
@@ -2032,7 +2049,6 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 updateScoreDisplays();
                 String winner = getNameOfWinner();
                 initialRound=false;
-                //TODO Pauline: die Scores sind jetzt in allen Spielern upgedated : player.getScore(); und können somit angezeigt werden
                 // winner ist der Name des Gewinners
             }
         }
@@ -2060,9 +2076,20 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 Gson gson = new Gson();
                 Player player = gson.fromJson(jsonString, Player.class);
                 caboplayer = player;
-                fadeCaboPlayerCards(0.3f);
+                fadeCaboPlayerCardsAndShowAnimation(0.3f);
             }
         }
+    }
+
+    public void showNewRound(){
+        centerText.setVisibility(View.VISIBLE);
+        centerText.setText("Round "+round);
+        cardSwapBg.setVisibility(View.VISIBLE);
+    }
+
+    public void hideNewRound(){
+        centerText.setVisibility(View.INVISIBLE);
+        cardSwapBg.setVisibility(View.INVISIBLE);
     }
 
     private void showPlayerSmiley(Player player){
@@ -2137,7 +2164,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         });
     }
 
-    private void fadeCaboPlayerCards(float alpha){
+    private void fadeCaboPlayerCardsAndShowAnimation(float alpha){
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -2145,12 +2172,14 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                     for(ImageButton card : player1CardButtons){
                         card.setAlpha(alpha);
                     }
+                    playerCaboAnimations.get(0).setVisibility(View.VISIBLE);
                 }
                 for(int i=0; i<otherPlayers.size(); i++){
                     if(otherPlayers.get(i).getId()==caboplayer.getId()){
                         for(ImageButton card : otherPlayerButtonLists.get(i)){
                             card.setAlpha(alpha);
                         }
+                        playerCaboAnimations.get(i+1).setVisibility(View.VISIBLE);
                     }
                 }
             }
@@ -2164,10 +2193,12 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 for(ImageButton card : player1CardButtons){
                     card.setAlpha(alpha);
                 }
+                playerCaboAnimations.get(0).setVisibility(View.INVISIBLE);
                 for(int i=0; i<otherPlayers.size(); i++){
                         for(ImageButton card : otherPlayerButtonLists.get(i)){
                             card.setAlpha(alpha);
                         }
+                        playerCaboAnimations.get(i+1).setVisibility(View.INVISIBLE);
                 }
             }
         });
