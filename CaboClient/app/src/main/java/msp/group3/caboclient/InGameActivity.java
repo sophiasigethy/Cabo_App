@@ -204,7 +204,6 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
 
         pickCardsStackButton.setEnabled(false);
 
-        //TODO: Chat fragment integration
         if (savedInstanceState == null) {
             Bundle bundle = new Bundle();
             bundle.putInt("some_int", 0);
@@ -671,7 +670,6 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         }
 
         if(overlay!=null){
-            //growCardGlowAnimation(overlay);
             overlay.setVisibility(View.VISIBLE);
         }
 
@@ -783,7 +781,6 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         card.startAnimation(grow_out);
     }
 
-    //TODO check if player said cabo
     private void visualizeOtherPlayerCardGlows(){
         for(int i=0; i<otherPlayers.size(); i++){
             otherPlayersCardGlows.get(i).setVisibility(View.VISIBLE);
@@ -808,7 +805,6 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         button.startAnimation(grow_out);
     }
 
-    //TODO insert actual image of card depending on value
     private void animateCardTurn(ImageButton cardButton){
         final ObjectAnimator oa1 = ObjectAnimator.ofFloat(cardButton, "scaleX", 1f, 0f);
         final ObjectAnimator oa2 = ObjectAnimator.ofFloat(cardButton, "scaleX", 0f, 1f);
@@ -859,7 +855,6 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         oa1.start();
     }
 
-    //TODO put card as parameter
     private void showPickedCardInContainer(Card card){
         runOnUiThread(new Runnable() {
             @Override
@@ -945,8 +940,6 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                         growCardGlowAnimationOut(player1CardsGlow);
                         growCardGlowAnimationOut(playedCardsStackGlow);
                         cardPopAnimation(playedCardsStackButton);
-                        /*Toast.makeText(getApplicationContext(),
-                                "Discard card...", Toast.LENGTH_SHORT).show();*/
                         makePickedCardContainerDisappear();
                         switchButton.setVisibility(View.INVISIBLE);
                         for(ImageButton cardButton : player1CardButtons){
@@ -1004,12 +997,6 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         return 0;
     }
 
-    private void showCardsDisabled(List<ImageButton> cards){
-        for(ImageButton card : cards){
-            card.setAlpha(0.3f);
-        }
-    }
-
     private void initiateCardAction(Card pickedCard) throws JSONException {
         int value = pickedCard.getValue();
         switch (value) {
@@ -1034,13 +1021,10 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             case 13:
                 //initiatePeekAndSwapAction();
                 break;
-           // default:
-           //     webSocketClient.send(String.valueOf(JSON_commands.sendFinishMove("finish")));
-           //     break;
+
         }
     }
 
-    //TODO
     private void initiatePeekAndSwapAction() {
         peekButton.setVisibility(View.VISIBLE);
         updateText.setVisibility(View.VISIBLE);
@@ -1099,7 +1083,6 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         });
     }
 
-    //TODO send selected cards to server
     private void initiateBlindSwapAction() {
         if(caboplayer!=null && otherPlayers.size()==1 && otherPlayers.get(0).getId()==caboplayer.getId()){
             updateText.setText("All other players are blocked");
@@ -1160,7 +1143,6 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                     updateText.setVisibility(View.INVISIBLE);
                     switchButton.setVisibility(View.INVISIBLE);
                     deactivateAllOnCardClickListeners();
-                    //TODO
                     try {
                         Card card1 = getCardFromButton(selectedCards.get(0));
                         Player card1Owner = getCardOwner(selectedCards.get(0));
@@ -1479,7 +1461,6 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         }
     }
 
-    //TODO
     private void showSwappedCards(Player swappingPlayer, Card card){
         if(swappingPlayer==me){
             int cardIndex = me.getMyCards().indexOf(card);
@@ -1558,7 +1539,6 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         return null;
     }
 
-    //TODO write own indexOf
     private void showPeekedOnCard(Player peekingPlayer, Card card){
         int playerIndex = otherPlayers.indexOf(peekingPlayer);
         //int cardIndex = peekingPlayer.getMyCards().indexOf(card); //for some reason returns -1
@@ -1841,7 +1821,6 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 String jsonString = js.get("card").toString();
                 Gson gson = new Gson();
                 Card card = gson.fromJson(jsonString, Card.class);
-                //TODO Pauline: dies ist die Karte, die der Spieler (der gerade an der Reihe ist) abgelegt (auf den Ablegestapel),
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -2003,7 +1982,6 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
 
             Log.d("----------------------SWAP ACTION CONFIRMED BY SERVER", me.getStatus());
 
-            //TODO Pauline: das sind die Karten und zugehörigen Spieler, die vertauscht wurden
             if (me.getStatus().equals(waiting)) {
                 runOnUiThread(new Runnable() {
                     @Override

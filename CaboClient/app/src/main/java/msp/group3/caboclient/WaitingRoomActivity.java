@@ -161,7 +161,6 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
 
         //this is received when client is allowed to join the game
         if (jsonObject.has("Hallo")) {
-            // TODO Server Nachricht anzeigen
             //String mes = TypeDefs.server + jsonObject.get("Hallo").toString();
             String mes = jsonObject.get("Hallo").toString();
             if (me.getNick().equalsIgnoreCase("") || me.getNick() == null || me.getNick().equalsIgnoreCase("None")) {
@@ -186,7 +185,6 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
                 String jsonString = welcome.get("Player").toString();
                 Gson gson = new Gson();
                 Player player = gson.fromJson(jsonString, Player.class);
-                //TODO Server Nachricht anzeigen
                 String mes =  "Hello " + player.getName() + " with id: " + player.getId();
                // String mes = "Hello " + player.getNick() + " with id: " + player.getNick();
                 me = new Player(player.getId(), player.getName(), player.getNick());
@@ -214,8 +212,6 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
                 runOnUiThread(new Runnable() {
                     public void run() {
                         returnFreeTextView().setText(newPlayer.getNick());
-                        //TODO Server Nachricht anzeigen
-                        // String mes = "(Server): " + newPlayer.getNick() + " joined the game";
                         String mes = newPlayer.getNick() + " joined the game";
                         showText(mes, true, null);
                         setPictureOfOtherPlayer(newPlayer);
@@ -229,7 +225,6 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
         if (jsonObject.has("usernameInUse")) {
             String name = jsonObject.get("usernameInUse").toString();
             //String mes = TypeDefs.server + name + " is already in use. Please state another username.";
-            // //TODO Server Nachricht anzeigen
             String mes = name + " is already in use. Please state another username.";
             runOnUiThread(new Runnable() {
                 public void run() {
@@ -252,7 +247,6 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
                 Gson gson = new Gson();
                 Player player = gson.fromJson(jsonString, Player.class);
                 if (player.getId() != me.getId()) {
-                    //TODO Server Nachricht anzeigen
                     //String mes = TypeDefs.server + player.getNick() + " with id: " + player.getId() + "has already entered the game.";
                     String mes = player.getName() + " with id: " + player.getId() + "has already entered the game.";
                     players.add(player);
@@ -296,7 +290,7 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
                 if (player.getId() == me.getId()) {
                     me.updateStatus(player);
                 }
-                //TODO nur für testzwecke sonst auskommentieren
+                // nur für testzwecke sonst auskommentieren
                 // showCards();
                 webSocketClient.send(JSON_commands.statusupdate(TypeDefs.readyForGamestart).toString());
             }
@@ -336,8 +330,7 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
             }
         }
         if (jsonObject.has("notAccepted")) {
-            //TODO Server Nachricht anzeigen
-            // String mes = TypeDefs.server + jsonObject.get("notAccepted").toString();
+
             String mes = jsonObject.get("notAccepted").toString();
             showText(mes, true, null);
         }
@@ -353,7 +346,6 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
                             me.setPicture(player.getPicture());
                         }
                     });
-                    //TODO set picture here
                 } else {
                     Player otherPlayer = getPlayerById(player.getId());
                     if (otherPlayer != null) {
@@ -482,7 +474,6 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
      */
     private void checkStatus(String status) {
         if (status.equalsIgnoreCase(TypeDefs.MATCHING)) {
-            // TODO Server Nachricht anzeigen
             //String mes = TypeDefs.server + "We are still waiting for other players.";
             String mes = "We are still waiting for other players.";
             showText(mes, true, null);
@@ -538,7 +529,6 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
             }
         }
         updateTextViews(removedPlayer.getNick());
-        //TODO Server Nachricht anzeigen
         //String text = "(Server): " + removedPlayer.getNick() + " has disconnected.";
         String text = removedPlayer.getNick() + " has disconnected.";
         showText(text, true, null);
