@@ -304,7 +304,7 @@ public class JSON_commands {
         return jmsg;
     }
 
-    public static JSONObject sendPartyRequest(Player sender, Player receiver) throws JsonProcessingException {
+    /*public static JSONObject sendPartyRequest(Player sender, Player receiver) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         JSONObject jmsg = new JSONObject();
         JSONObject jsubmsg = new JSONObject();
@@ -315,10 +315,20 @@ public class JSON_commands {
         jsubmsg.put("receiverNick", objectMapper.writeValueAsString(receiver.getNick()));
         jmsg.put("partyrequest", jsubmsg);
         return jmsg;
+    }*/
+    public static JSONObject sendPartyRequest2(Player sender) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        JSONObject jmsg = new JSONObject();
+        JSONObject jsubmsg = new JSONObject();
+
+        jsubmsg.put("sender", objectMapper.writeValueAsString(sender));
+        jmsg.put("partyrequest", jsubmsg);
+
+        return jmsg;
     }
 
     public static JSONObject sendPartyAccepted(Player sender, Player receiver) throws JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
+       /* ObjectMapper objectMapper = new ObjectMapper();
         JSONObject jmsg = new JSONObject();
         JSONObject jsubmsg = new JSONObject();
         jsubmsg.put("senderDbID", objectMapper.writeValueAsString(sender.getDbId()));
@@ -326,6 +336,14 @@ public class JSON_commands {
         jsubmsg.put("senderAvatarID", objectMapper.writeValueAsString(sender.getAvatarID()));
         jsubmsg.put("receiverDbID", objectMapper.writeValueAsString(receiver.getDbId()));
         jsubmsg.put("receiverNick", objectMapper.writeValueAsString(receiver.getNick()));
+        jmsg.put("partyaccepted", jsubmsg);
+        return jmsg;*/
+        ObjectMapper objectMapper = new ObjectMapper();
+        JSONObject jmsg = new JSONObject();
+        JSONObject jsubmsg = new JSONObject();
+
+        jsubmsg.put("sender", objectMapper.writeValueAsString(sender));
+        jsubmsg.put("receiver", objectMapper.writeValueAsString(receiver));
         jmsg.put("partyaccepted", jsubmsg);
         return jmsg;
     }
@@ -425,4 +443,39 @@ public class JSON_commands {
 
         return new JSONObject().put("noStartYet", "");
     }
+
+    public static JSONObject partyRequestFailed(String message) throws JSONException {
+
+        return new JSONObject().put("partyRequestFailed", message);
+    }
+
+    public static JSONObject playerRemovedFromParty(Player player) throws JSONException{
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        JSONObject jmsg = new JSONObject();
+        JSONObject jsubmsg = new JSONObject();
+
+        try {
+            jsubmsg.put("player", objectMapper.writeValueAsString(player));
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        jmsg.put("playerRemovedFromParty", jsubmsg);
+
+        return jmsg;
+
+    }
+    public static JSONObject leaderRemovedFromParty(Player leader) throws JSONException, JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        JSONObject jmsg = new JSONObject();
+        JSONObject jsubmsg = new JSONObject();
+
+        jsubmsg.put("player", objectMapper.writeValueAsString(leader));
+        jmsg.put("leaderRemovedFromParty", jsubmsg);
+
+        return jmsg;
+
+    }
+
 }

@@ -93,11 +93,16 @@ public class FriendListAdapter extends ArrayAdapter {
             invite_btn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    try {
-                        communicator.sendMessage(JSON_commands.sendPartyRequest(me, friends.get(i)));
-                    } catch (JSONException e) {
-                        Log.e("SendPartyRequest", "Could not send Party Invitation");
+                    if (me.getFriendList().size()<4){
+                        try {
+                            communicator.sendMessage(JSON_commands.sendPartyRequest2(me, friends.get(i)));
+                        } catch (JSONException e) {
+                            Log.e("SendPartyRequest", "Could not send Party Invitation");
+                        }
+                    }else{
+                        //TODO: Toast that already 4 people in the party
                     }
+
                 }
             });
         }
