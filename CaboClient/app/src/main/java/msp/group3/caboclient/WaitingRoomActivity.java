@@ -38,7 +38,6 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
     private CircleImageView player3_image;
     private TextView player4_name;
     private CircleImageView player4_image;
-    private TextView name;
     protected ListView messagesListView;
     private ArrayList<CircleImageView> otherPlayerImages = new ArrayList<>();
     private ArrayList<TextView> otherPlayerNamesTextViews = new ArrayList<>();
@@ -82,7 +81,6 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
 
         showPresentPlayers();
 
-        name = (TextView) findViewById(R.id.name);
         readParty(getIntent());
 
         ChatMessage welcomeMsg = new ChatMessage("BOT1", "Welcome!", true, R.drawable.robot);
@@ -190,7 +188,6 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
                 me = new Player(player.getId(), player.getName(), player.getNick());
                 runOnUiThread(new Runnable() {
                     public void run() {
-                        name.setText(player.getNick());
                         player1_name.setText(me.getNick());
                         usernameAccepted = true;
                         showText(mes, true, null);
