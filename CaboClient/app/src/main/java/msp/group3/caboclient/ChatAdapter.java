@@ -8,6 +8,8 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 import java.util.ArrayList;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 class ChatAdapter extends BaseAdapter {
 
     private ArrayList<ChatMessage> chatMessageList = new ArrayList<ChatMessage>();
@@ -46,6 +48,8 @@ class ChatAdapter extends BaseAdapter {
             }
             else{
                 convertView = layoutinflater.inflate(R.layout.their_chat_message, null);
+                holder.avatar = (CircleImageView) convertView.findViewById(R.id.avatar);
+                holder.avatar.setImageResource(msg.getAvatar());
             }
 
             holder.senderNameView = (TextView) convertView.findViewById(R.id.name);
@@ -65,6 +69,7 @@ class ChatAdapter extends BaseAdapter {
     static class ViewHolder {
         TextView senderNameView;
         TextView chatMessageView;
+        CircleImageView avatar;
 
     }
 }

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -50,7 +51,6 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
     // contains all other players
     private ArrayList<Player> players = new ArrayList();
     protected ArrayList<ChatMessage> messageList = new ArrayList<>();
-    ChatAdapter adapter;
 
     // player object which represent this client
     private Player me;
@@ -85,13 +85,14 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
         name = (TextView) findViewById(R.id.name);
         readParty(getIntent());
 
-        ChatMessage welcomeMsg = new ChatMessage("BOT1", "Welcome!", true);
-        ChatMessage welcomeMsg2 = new ChatMessage("BOT2", "Welcome!", false);
+        ChatMessage welcomeMsg = new ChatMessage("BOT1", "Welcome!", true, R.drawable.robot);
+        ChatMessage welcomeMsg2 = new ChatMessage("BOT2", "Welcome!", false, R.drawable.robot);
 
         messageList.add(welcomeMsg);
         messageList.add(welcomeMsg2);
 
-        adapter = new ChatAdapter(getApplicationContext(), messageList);
+        ChatAdapter adapter = new ChatAdapter(getApplicationContext(), messageList);
+        messagesListView.setAdapter(null);
         messagesListView.setAdapter(adapter);
 
         communicator = Communicator.getInstance(this);
@@ -166,7 +167,7 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
             if (me.getNick().equalsIgnoreCase("") || me.getNick() == null || me.getNick().equalsIgnoreCase("None")) {
                 runOnUiThread(new Runnable() {
                     public void run() {
-                        showText(mes);
+                        showText(mes, false, null);
                     }
                 });
             } else {
@@ -194,7 +195,7 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
                         name.setText(player.getNick());
                         player1_name.setText(me.getNick());
                         usernameAccepted = true;
-                        showText(mes);
+                        showText(mes, true, null);
                     }
                 });
 
@@ -216,7 +217,7 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
                         //TODO Server Nachricht anzeigen
                         // String mes = "(Server): " + newPlayer.getNick() + " joined the game";
                         String mes = newPlayer.getNick() + " joined the game";
-                        showText(mes);
+                        showText(mes, true, null);
                         setPictureOfOtherPlayer(newPlayer);
                         showPresentPlayers();                    }
                 });
@@ -232,7 +233,7 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
             String mes = name + " is already in use. Please state another username.";
             runOnUiThread(new Runnable() {
                 public void run() {
-                    showText(mes);
+                    showText(mes, true, null);
                 }
             });
         }
@@ -258,7 +259,7 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
                     runOnUiThread(new Runnable() {
                         public void run() {
                             returnFreeTextView().setText(player.getNick());
-                            showText(mes);
+                            showText(mes, true, null);
                             setPictureOfOtherPlayer(player);
                             showPresentPlayers();
                         }
@@ -269,16 +270,20 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
         // this is received when another client sent a chat message
         if (jsonObject.has("chatMessage")) {
             JSONObject js = jsonObject.getJSONObject("chatMessage");
+            String mes = "";
+            Player sender = null;
             if (me != null) {
                 if (js.has("message")) {
-                    String mes = js.get("message").toString();
-                    showText(mes);
+                    mes = js.get("message").toString();
                 }
             }
             if (js.has("sender")) {
                 String jsonString = js.get("sender").toString();
                 Gson gson = new Gson();
-                Player sender = gson.fromJson(jsonString, Player.class);
+                sender = gson.fromJson(jsonString, Player.class);
+            }
+            if(sender!= null){
+                showText(mes, false, sender);
             }
         }
 
@@ -334,7 +339,7 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
             //TODO Server Nachricht anzeigen
             // String mes = TypeDefs.server + jsonObject.get("notAccepted").toString();
             String mes = jsonObject.get("notAccepted").toString();
-            showText(mes);
+            showText(mes, true, null);
         }
         if (jsonObject.has("picture")) {
             JSONObject js = jsonObject.getJSONObject("picture");
@@ -363,7 +368,7 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
         }
         if (jsonObject.has("noStartYet")) {
            String text="There are not enough player yet!";
-           showText(text);
+           showText(text, true, null);
         }
 
     }
@@ -384,15 +389,29 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
      *
      * @param message
      */
-    private void showText(String message) {
+    private void showText(String message, boolean serverMsg, Player sender) {
 
+        Log.d("-----------SHOW TEXT", "trying to show text");
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 // mTextView.setText(mTextView.getText() + "\n" + getTextMessage());
                 //mTextView.setText(mTextView.getText() + "\n" + message);
-                messageList.add(new ChatMessage("Player", message, true));
+                if(sender==null && serverMsg){
+                    messageList.add(new ChatMessage("Server", message, false, R.drawable.robot));
+                }
+                if(sender!=null){
+                    if(sender.getId() == me.getId()){
+                        messageList.add(new ChatMessage(me.getName(), message, true, me.getAvatar()));
+                    }
+                    else{
+                        messageList.add(new ChatMessage(sender.getName(), message, false, sender.getAvatar()));
+                    }
+                }
+                ChatAdapter adapter = new ChatAdapter(getApplicationContext(), messageList);
+                messagesListView.setAdapter(null);
                 messagesListView.setAdapter(adapter);
+                //messagesListView.setAdapter(adapter);
                /* if (mTextView.getLayout() != null) {
                     final int scrollAmount = mTextView.getLayout().getLineTop(mTextView.getLineCount()) - mTextView.getHeight();
                     // if there is no need to scroll, scrollAmount will be <=0
@@ -439,7 +458,7 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
 
         }
         mMessage = c;
-        showText(c);
+        showText(c, true, null);
     }
 
     public void showNextPlayer(int id) {
@@ -453,7 +472,7 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
                 }
             }
         }
-        showText(c);
+        showText(c, true, null);
     }
 
     /**
@@ -466,7 +485,7 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
             // TODO Server Nachricht anzeigen
             //String mes = TypeDefs.server + "We are still waiting for other players.";
             String mes = "We are still waiting for other players.";
-            showText(mes);
+            showText(mes, true, null);
         }
         if (status.equalsIgnoreCase(TypeDefs.GAMESTART)) {
             state = TypeDefs.GAMESTART;
@@ -522,7 +541,7 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
         //TODO Server Nachricht anzeigen
         //String text = "(Server): " + removedPlayer.getNick() + " has disconnected.";
         String text = removedPlayer.getNick() + " has disconnected.";
-        showText(text);
+        showText(text, true, null);
     }
 
     public void updateTextViews(String name) {

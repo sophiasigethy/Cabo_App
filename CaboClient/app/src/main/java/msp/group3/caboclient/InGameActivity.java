@@ -1637,6 +1637,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         if (jsonObject.has("chatMessage")) {
            // String chatText = jsonObject.get("chatMessage").toString();
             JSONObject js = jsonObject.getJSONObject("chatMessage");
+            Player sender = null;
             if (me != null) {
                 if (js.has("message")) {
                     chatText = js.get("message").toString();
@@ -1646,18 +1647,25 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             if (js.has("sender")) {
                 String jsonString = js.get("sender").toString();
                 Gson gson = new Gson();
-                Player sender = gson.fromJson(jsonString, Player.class);
+                sender = gson.fromJson(jsonString, Player.class);
             }
             entireChatText = entireChatText+"\n"+chatText;
             InGameChatFragment fragment_obj = (InGameChatFragment)getSupportFragmentManager().
                     findFragmentById(R.id.fragment_chat);
-            fragment_obj.chatMessagesList.add(new ChatMessage("Sender", chatText, true));
-
-            //fragment_obj.textMsg.setText(entireChatText);
+            if(sender!=null){
+                if(sender.getId()==me.getId()){
+                    fragment_obj.chatMessagesList.add(new ChatMessage(me.getName(), chatText, true, me.getAvatar()));
+                }
+                else{
+                    fragment_obj.chatMessagesList.add(new ChatMessage(sender.getName(), chatText, false, sender.getAvatar()));
+                }
+            }
 
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    fragment_obj.chatMessageListView.setAdapter(null);
+                    fragment_obj.chatMessageListView.setAdapter(fragment_obj.adapter);
                     fragment_obj.adapter.notifyDataSetChanged();
                     fragment_obj.scrollMyListViewToBottom();
                     if(chatFragmentContainer.getVisibility() == View.INVISIBLE){
