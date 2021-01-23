@@ -74,6 +74,8 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
     private ImageView cardContainerOverlaySwap;
     private ImageView cardContainerOverlayPeek;
     private ImageView cardContainerOverlaySpy;
+    private TextView centerText;
+    private int round = 1;
 
     private com.airbnb.lottie.LottieAnimationView cardSwapAnimation;
     private com.airbnb.lottie.LottieAnimationView tapPickCardAnimation;
@@ -161,6 +163,8 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         angryEmojiButton = (ImageButton) findViewById(R.id.emoji_angry);
         updateText = (TextView) findViewById(R.id.update_text);
         updateText.setVisibility(View.INVISIBLE);
+        centerText = findViewById(R.id.center_text);
+        centerText.setVisibility(View.INVISIBLE);
         cardSwapAnimation = findViewById(R.id.card_swap_animationView);
         cardSwapAnimation.setVisibility(View.INVISIBLE);
         cardSwapBg = findViewById(R.id.card_swap_animationView_bg);
@@ -255,8 +259,6 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         caboButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getApplicationContext(),
-                        "CABO!.", Toast.LENGTH_SHORT).show();
                 try {
                     webSocketClient.send(String.valueOf(JSON_commands.sendCabo("cabo")));
                     webSocketClient.send(String.valueOf(JSON_commands.sendFinishMove("finish")));
@@ -1705,8 +1707,24 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                         playerNames.get(0).setText(me.getName());
                         playerPics.get(0).setImageResource(me.getAvatar());
                         playerStats.get(0).setText("Score: "+me.getScore());
-                        //TODO wenn initialround=false -> Warten einbauen und Ergebnis der Runde anzeigen
-                        initiateInitialCardLookUp();
+                        if(initialRound){
+                            initiateInitialCardLookUp();
+                        }
+                        else{
+                            round++;
+                            showNewRound();
+                            new CountDownTimer(3000, 1000) {
+
+                                public void onTick(long millisUntilFinished) {
+                                }
+
+                                public void onFinish() {
+                                    hideNewRound();
+                                    initiateInitialCardLookUp();
+                                }
+
+                            }.start();
+                        }
                     }
                 });
             }
@@ -1720,13 +1738,17 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 String jsonString = js.get("players").toString();
                 List<Player> players = gson.fromJson(jsonString, new TypeToken<List<Player>>() {
                 }.getType());
-                if (initialRound){
-                    otherPlayers.addAll(players);
-                    showPlayers();
-                }else{
-                    nextRound(players);
-                }
-
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (initialRound){
+                            otherPlayers.addAll(players);
+                            showPlayers();
+                        }else{
+                            nextRound(players);
+                        }
+                    }
+                });
             }
 
         }
@@ -1743,8 +1765,10 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                     @Override
                     public void run() {
                         indicatePlayerTurn(me);
-                        caboButton.setEnabled(true);
-                        caboButton.setAlpha(1f);
+                        if(caboplayer==null){
+                            caboButton.setEnabled(true);
+                            caboButton.setAlpha(1f);
+                        }
                         updateText.setVisibility(View.VISIBLE);
                         updateText.setText("Pick a card");
                         tapPickCardAnimation.setVisibility(View.VISIBLE);
@@ -2055,6 +2079,17 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 fadeCaboPlayerCardsAndShowAnimation(0.3f);
             }
         }
+    }
+
+    public void showNewRound(){
+        centerText.setVisibility(View.VISIBLE);
+        centerText.setText("Round "+round);
+        cardSwapBg.setVisibility(View.VISIBLE);
+    }
+
+    public void hideNewRound(){
+        centerText.setVisibility(View.INVISIBLE);
+        cardSwapBg.setVisibility(View.INVISIBLE);
     }
 
     private void showPlayerSmiley(Player player){

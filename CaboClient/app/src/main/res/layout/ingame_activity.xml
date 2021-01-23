@@ -956,6 +956,26 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"/>
 
+    <TextView
+        android:id="@+id/center_text"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
+        android:text="Round 2"
+        android:textAlignment="center"
+        android:gravity="center_vertical"
+        android:textColor="@color/turquoise_highlight"
+        android:fontFamily="sans-serif-black"
+        android:shadowRadius="25"
+        android:shadowDy="5"
+        android:shadowDx="5"
+        android:textSize="42sp"
+        android:shadowColor="@color/turquoise_highlight"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        tools:ignore="RtlCompat" />
+
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/card_swap_animationView"
         android:layout_width="300dp"
