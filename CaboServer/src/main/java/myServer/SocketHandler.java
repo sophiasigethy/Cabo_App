@@ -283,7 +283,7 @@ public class SocketHandler extends TextWebSocketHandler {
             if (sess != null)
                 sendMessage(sess, JSON_commands.sendPlayerOnlineStatus(false, logoutPlayer));
         }
-        System.out.println("User " + logoutPlayer.getNick() + " disconnected");
+     //   System.out.println("User " + logoutPlayer.getNick() + " disconnected");
         //gamestate.afterConnectionClosed(session);
 
         if (isPartyLeader(logoutPlayer)) {
@@ -554,5 +554,14 @@ public class SocketHandler extends TextWebSocketHandler {
             }
         }
         return false;
+    }
+
+    public void removeGamestate(Gamestate gamestate){
+        for (int i=0; i<games.size(); i++){
+            if (games.get(i).getGamestateID()==gamestate.getGamestateID()){
+                games.remove(i);
+            }
+        }
+
     }
 }

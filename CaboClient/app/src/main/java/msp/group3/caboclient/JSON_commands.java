@@ -290,4 +290,12 @@ public class JSON_commands {
     public static JSONObject askForStart() throws JSONException {
         return new JSONObject().put("askForStart", "");
     }
+
+    public static JSONObject leaveGame() throws JSONException {
+        return new JSONObject().put("leaveGame", "");
+    }
+
+    public static JSONObject sendMaxPoints(int maxpoints) throws JSONException {
+        return new JSONObject().put("maxPoints", maxpoints);
+    }
 }

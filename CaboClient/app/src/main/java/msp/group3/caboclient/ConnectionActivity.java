@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 public class ConnectionActivity extends AppCompatActivity implements Communicator.CommunicatorCallback{
     private Communicator communicator;
     private WebSocketClient mWebSocketClient;
+    private final int NO_LOGIN=0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -40,6 +41,7 @@ public class ConnectionActivity extends AppCompatActivity implements Communicato
 
     public void moveToWaitingRoomActivity() throws JSONException {
         Intent intent = new Intent(ConnectionActivity.this, WaitingRoomActivity.class);
+        intent.putExtra("NO_LOGIN", "noAccount");
         ConnectionActivity.this.startActivity(intent);
     }
 }

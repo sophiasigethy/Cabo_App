@@ -478,4 +478,21 @@ public class JSON_commands {
 
     }
 
+    public static JSONObject sendEndGame(Player player) throws JSONException, JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        JSONObject jmsg = new JSONObject();
+        JSONObject jsubmsg = new JSONObject();
+
+        jsubmsg.put("player", objectMapper.writeValueAsString(player));
+        jmsg.put("endGame", jsubmsg);
+
+        return jmsg;
+
+    }
+
+    public static JSONObject sendMaxPoints(int maxpoints) throws JSONException {
+        return new JSONObject().put("maxPoints", maxpoints);
+    }
+
 }

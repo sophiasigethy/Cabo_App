@@ -42,6 +42,7 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
     protected ListView messagesListView;
     private ArrayList<CircleImageView> otherPlayerImages = new ArrayList<>();
     private ArrayList<TextView> otherPlayerNamesTextViews = new ArrayList<>();
+    private String noAccount="";
 
 
 
@@ -84,6 +85,7 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
 
         name = (TextView) findViewById(R.id.name);
         readParty(getIntent());
+        readNoLogIn(getIntent());
 
         ChatMessage welcomeMsg = new ChatMessage("BOT1", "Welcome!", true, R.drawable.robot);
         ChatMessage welcomeMsg2 = new ChatMessage("BOT2", "Welcome!", false, R.drawable.robot);
@@ -528,6 +530,7 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
      */
     public void startGame() {
         Intent intent = new Intent(WaitingRoomActivity.this, InGameActivity.class);
+        intent.putExtra("NO_LOGIN", noAccount);
         startActivity(intent);
     }
 
@@ -599,6 +602,10 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
 
         }
 
+    }
+    public void readNoLogIn(Intent intent){
+        String NO_LOGIN = intent.getStringExtra("NO_LOGIN");
+        noAccount=NO_LOGIN;
     }
 
     public void setPictureOfOtherPlayer(Player newPlayer){
