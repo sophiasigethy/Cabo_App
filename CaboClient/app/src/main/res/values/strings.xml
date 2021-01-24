@@ -41,6 +41,7 @@
     <string name="enter_nick">Enter a Nickname</string>
     <string name="search">Search</string>
     <string name="friend_request_received">You received a friend request from </string>
+    <string name="party_invitation_received">You received a party invitation</string>
 
     <!-- Strings for SharedPref -->
     <string name="preference_file_key">user</string>

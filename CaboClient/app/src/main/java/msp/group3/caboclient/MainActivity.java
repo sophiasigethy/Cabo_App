@@ -130,7 +130,7 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
                 int senderAvatar = Integer.parseInt(friendrequest.get("senderAvatarID").toString().replace("\"", "").replace("\\", ""));
                 Player sender = new Player(senderDbID, senderNick, senderAvatar);
                 //TODO: Find better way to display this Dialog
-                activity.runOnUiThread(new Runnable() {
+                runOnUiThread(new Runnable() {
                     public void run() {
                         acceptFriendRequestDialog(sender);
                     }
@@ -147,7 +147,7 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
                 int senderAvatar = Integer.parseInt(friendrequest.get("senderAvatarID").toString().replace("\"", "").replace("\\", ""));
                 Player sender = new Player(senderDbID, senderNick, senderAvatar);
                 //TODO: Find better way to display this Dialog
-                activity.runOnUiThread(new Runnable() {
+                runOnUiThread(new Runnable() {
                     public void run() {
                         updateFriendList(sender, true);
                     }
@@ -174,10 +174,12 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
                 sender = gson.fromJson(jsonString, Player.class);
             }
             //TODO only for testing
-            showMessageForTesting("Friendrequest von"+sender.getNick());
-            communicator.sendMessage(JSON_commands.sendPartyAccepted(me, sender));
+            //showMessageForTesting("Friendrequest von"+sender.getNick());
+            //communicator.sendMessage(JSON_commands.sendPartyAccepted(me, sender));
 
-            View v = friendList.getChildAt(friendListAdapter.getPlayerIndex(sender) - friendList.getFirstVisiblePosition());
+            acceptPartyInvitationDialog(sender);
+
+            /*View v = friendList.getChildAt(friendListAdapter.getPlayerIndex(sender) - friendList.getFirstVisiblePosition());
             if (v != null) {
                 @SuppressLint("WrongViewCast") Button inviteButton = (Button) v.findViewById(R.id.friendlist_invite);
                 inviteButton.setBackgroundResource(R.drawable.party_invitation);
@@ -202,7 +204,7 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
                         }
                     }
                 });
-            }
+            }*/
 
         }
 
@@ -231,7 +233,7 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
             showMessageForTesting("Einladung angenommen");
 
             Player finalSender = sender;
-            activity.runOnUiThread(new Runnable() {
+            runOnUiThread(new Runnable() {
                 public void run() {
                     View v = friendList.getChildAt(
                             friendListAdapter.getPlayerIndex(finalSender) - friendList.getFirstVisiblePosition());
@@ -273,11 +275,11 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
             if (isPlayerInFriendList(player)) {
                 boolean finalIsOnline = isOnline;
                 Player finalPlayer = player;
-                Player finalPlayer1 = player;
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
-                        View v = friendList.getChildAt(
-                                friendListAdapter.getPlayerIndex(finalPlayer) - friendList.getFirstVisiblePosition());
+                        //View v = friendList.getChildAt(
+                                //friendListAdapter.getPlayerIndex(finalPlayer) - friendList.getFirstVisiblePosition());
+                        View v = friendList.getChildAt(friendListAdapter.getPlayerIndex(finalPlayer));
                         if (v != null) {
                             ImageView friendlistStatus = (ImageView) v.findViewById(R.id.friendlist_status);
                             if (finalIsOnline) {
@@ -481,6 +483,54 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
             }
         });
 
+    }
+
+    private void acceptPartyInvitationDialog(Player sender) {
+        activity.runOnUiThread(new Runnable() {
+            public void run() {
+                AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+                builder.setTitle(
+                        getApplicationContext().getResources().getString(R.string.party_invitation_received)
+                                + ": " + sender.getNick());
+                builder.setPositiveButton(R.string.accept, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                });
+                builder.setNegativeButton(R.string.decline, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+                final AlertDialog dialog = builder.create();
+                dialog.show();
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (!party.contains(sender)) {
+                            // Since you accepted the request, add player to party and send confirmation
+                            party.add(sender);
+                            updateFriendList(sender, false);
+                            try {
+                                communicator.sendMessage(
+                                        JSON_commands.sendPartyAccepted(me, sender));
+                                dialog.dismiss();
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                });
+
+                dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //TODO: Return declinefriendrequest message to sender
+                    }
+                });
+            }
+        });
     }
 
     public void enableButtons() {

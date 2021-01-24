@@ -2094,7 +2094,6 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 Gson gson = new Gson();
                 Player winnerOfGame = gson.fromJson(jsonString, Player.class);
                 showEndOfGame(winnerOfGame);
-                //TODO this is the winner of whole game
                 //TODO update global score in shared preferences?
 
             }
