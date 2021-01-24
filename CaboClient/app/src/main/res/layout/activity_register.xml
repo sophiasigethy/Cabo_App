@@ -9,65 +9,64 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
+    android:background="@drawable/cabo_bg"
     tools:context=".LoginActivity">
 
-    <EditText
-        android:id="@+id/register_mail"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:autofillHints="@string/prompt_email"
-        android:hint="@string/prompt_email"
-        android:inputType="textEmailAddress"
-        android:selectAllOnFocus="true"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/particle_animationView_register"
+        android:layout_width="400dp"
+        android:layout_height="200dp"
+        app:lottie_rawRes="@raw/particles"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        android:alpha="0.2"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"/>
 
-    <EditText
-        android:id="@+id/register_name"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:autofillHints="@string/prompt_displayname"
-        android:hint="@string/prompt_displayname"
-        android:inputType="textPersonName"
-        android:selectAllOnFocus="true"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/register_mail" />
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/particle_animationView2_register"
+        android:layout_width="400dp"
+        android:layout_height="200dp"
+        app:lottie_rawRes="@raw/particles"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        android:alpha="0.2"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"/>
 
-    <EditText
-        android:id="@+id/register_nick"
-        android:layout_width="0dp"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:autofillHints="@string/prompt_nick"
-        android:hint="@string/prompt_nick"
-        android:inputType="textEmailAddress"
-        android:selectAllOnFocus="true"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:orientation="horizontal"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/register_name" />
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:weightSum="2">
 
-    <EditText
-        android:id="@+id/register_password"
+    <LinearLayout
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:autofillHints="@string/prompt_password"
-        android:hint="@string/prompt_password"
-        android:imeActionLabel="@string/action_sign_in_short"
-        android:imeOptions="actionDone"
-        android:inputType="textPassword"
-        android:selectAllOnFocus="true"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/register_nick" />
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_marginLeft="50dp"
+        android:layout_weight="1"
+        android:weightSum="5">
 
     <TextView
         android:id="@+id/avatar_text"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dip"
+        android:layout_height="0dp"
         android:gravity="start"
         android:text="@string/choose_avatar"
+        android:textSize="16dp"
+        android:textColor="@color/beige"
+        android:fontFamily="sans-serif-black"
+        android:shadowColor="@color/dark_purple"
+        android:shadowRadius="15"
+        android:shadowDx="5"
+        android:shadowDy="5"
+        android:layout_weight="0.5"
+        android:layout_marginBottom="12dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
@@ -76,12 +75,13 @@
     <LinearLayout
         android:id="@+id/avatar_layout"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_gravity="start"
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
+        android:layout_weight="2.2"
         app:layout_constraintTop_toBottomOf="@+id/avatar_text">
 
         <LinearLayout
@@ -94,7 +94,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
 
-                <ImageView
+                <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/avatar0"
                     android:layout_width="60dip"
                     android:layout_height="60dip"
@@ -110,7 +110,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
 
-                <ImageView
+                <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/avatar1"
                     android:layout_width="60dip"
                     android:layout_height="60dip"
@@ -126,7 +126,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
 
-                <ImageView
+                <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/avatar2"
                     android:layout_width="60dip"
                     android:layout_height="60dip"
@@ -148,7 +148,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
 
-                <ImageView
+                <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/avatar3"
                     android:layout_width="60dip"
                     android:layout_height="60dip"
@@ -164,7 +164,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
 
-                <ImageView
+                <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/avatar4"
                     android:layout_width="60dip"
                     android:layout_height="60dip"
@@ -180,7 +180,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
 
-                <ImageView
+                <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/avatar5"
                     android:layout_width="60dip"
                     android:layout_height="60dip"
@@ -192,36 +192,141 @@
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
+        <ImageView
+            android:id="@+id/login_logo"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:src="@drawable/cabo_logo"
+            android:translationX="-50dp"
+            android:paddingTop="60dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_gravity="bottom"
+            android:layout_weight="2"
+            />
+    </LinearLayout>
 
-    <Button
-        android:id="@+id/register_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="start"
-        android:layout_marginStart="48dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="48dp"
-        android:layout_marginBottom="64dp"
-        android:text="@string/action_register"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/avatar_layout"
-        app:layout_constraintVertical_bias="0.2" />
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_weight="1"
+            android:paddingRight="24dp"
+            android:weightSum="8">
 
+            <TextView
+                android:id="@+id/register_title"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:text="Create an account"
+                android:textSize="16dp"
+                android:textColor="@color/beige"
+                android:fontFamily="sans-serif-black"
+                android:shadowColor="@color/dark_purple"
+                android:shadowRadius="15"
+                android:shadowDx="5"
+                android:shadowDy="5"
+                android:layout_weight="1"
+                android:layout_marginBottom="12dp"/>
 
-    <ImageView
-        android:id="@+id/login_logo"
-        android:layout_width="150dip"
-        android:layout_height="100dip"
-        android:layout_marginTop="100dip"
-        android:src="@drawable/cabo_logo"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/register_btn"
-        tools:ignore="MissingConstraints">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="4"
+                android:weightSum="4"
+                android:orientation="vertical"
+                android:padding="6dp"
+                android:background="@drawable/rounded_button">
 
-    </ImageView>
+            <EditText
+                android:id="@+id/register_mail"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:autofillHints="@string/prompt_email"
+                android:hint="@string/prompt_email"
+                android:inputType="textEmailAddress"
+                android:selectAllOnFocus="true"
+                android:textColor="@color/beige"
+                android:textSize="12dp"
+                android:layout_weight="1"
+                android:imeOptions="flagNoFullscreen"
+                android:textColorHint="@color/turquoise_highlight"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <EditText
+                android:id="@+id/register_name"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:autofillHints="@string/prompt_displayname"
+                android:hint="@string/prompt_displayname"
+                android:inputType="textPersonName"
+                android:selectAllOnFocus="true"
+                android:textColor="@color/beige"
+                android:textSize="12dp"
+                android:layout_weight="1"
+                android:imeOptions="flagNoFullscreen"
+                android:textColorHint="@color/turquoise_highlight"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/register_mail" />
+
+            <EditText
+                android:id="@+id/register_nick"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:autofillHints="@string/prompt_nick"
+                android:hint="@string/prompt_nick"
+                android:inputType="textEmailAddress"
+                android:selectAllOnFocus="true"
+                android:textColor="@color/beige"
+                android:textSize="12dp"
+                android:layout_weight="1"
+                android:imeOptions="flagNoFullscreen"
+                android:textColorHint="@color/turquoise_highlight"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/register_name" />
+
+            <EditText
+                android:id="@+id/register_password"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:autofillHints="@string/prompt_password"
+                android:hint="@string/prompt_password"
+                android:imeActionLabel="@string/action_sign_in_short"
+                android:inputType="textPassword"
+                android:textColor="@color/beige"
+                android:textSize="12dp"
+                android:imeOptions="flagNoFullscreen"
+                android:textColorHint="@color/turquoise_highlight"
+                android:selectAllOnFocus="true"
+                android:layout_weight="1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/register_nick" />
+
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/register_btn"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_gravity="start"
+                android:layout_marginTop="10dp"
+                android:text="@string/action_register"
+                android:layout_weight="1"
+                android:background="@drawable/outlined_button"
+                android:textColor="@drawable/outlined_button_text"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/avatar_layout"
+                app:layout_constraintVertical_bias="0.2" />
+
+        </LinearLayout>
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

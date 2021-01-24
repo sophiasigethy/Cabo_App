@@ -12,7 +12,7 @@ public class Player {
 
     private String name="";
     private String dbId;
-    private int avatarId;
+    private int avatarID;
 
     // The cards belong to this player
     private ArrayList<Card> cards = new ArrayList<>();
@@ -43,10 +43,11 @@ public class Player {
         this.smiley=TypeDefs.smiling;
     }
 
-    public Player(String dbId, String nick, int avatarId) {
+    public Player(String dbId, String nick, int avatarID) {
         this.nick = nick;
+        this.name = nick;
         this.dbId = dbId;
-        this.avatarId = avatarId;
+        this.avatarID = avatarID;
     }
 
     public Player(int id, String nick, Gamestate gs) {
@@ -80,12 +81,12 @@ public class Player {
         this.nick = nick;
     }
 
-    public int getAvatarId() {
-        return avatarId;
+    public int getAvatarID() {
+        return avatarID;
     }
 
-    public void setAvatarId(int avatarId) {
-        this.avatarId = avatarId;
+    public void setAvatarID(int avatarID) {
+        this.avatarID = avatarID;
     }
 
     /**

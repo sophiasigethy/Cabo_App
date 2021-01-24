@@ -59,6 +59,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         }
         setContentView(R.layout.activity_login);
+        noLogIn= findViewById(R.id.noLogIn);
         final EditText usernameEditText = findViewById(R.id.username);
         final EditText passwordEditText = findViewById(R.id.password);
         final Button loginButton = findViewById(R.id.login);
@@ -95,12 +96,12 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        /*noLogIn.setOnClickListener(new View.OnClickListener() {
+        noLogIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 moveToWaitingRoomActivity();
             }
-        });*/
+        });
 
 
         registerButton.setOnClickListener(new View.OnClickListener() {
@@ -205,4 +206,9 @@ public class LoginActivity extends AppCompatActivity {
             (new Handler()).postDelayed(this::moveToMainActivity, 350);
         }
     }
+    public void moveToWaitingRoomActivity()  {
+        Intent intent = new Intent(LoginActivity.this, ConnectionActivity.class);
+        LoginActivity.this.startActivity(intent);
+    }
+
 }
