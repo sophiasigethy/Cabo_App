@@ -5,11 +5,13 @@ public class ChatMessage {
     String name;
     String message;
     boolean myMessage;
+    int avatar;
 
-    public ChatMessage(String name, String message, boolean myMessage){
+    public ChatMessage(String name, String message, boolean myMessage, int avatar){
         this.name = name;
         this.message = message;
         this.myMessage = myMessage;
+        this.avatar = avatar;
     }
 
     public String getName(){
@@ -23,4 +25,6 @@ public class ChatMessage {
     public boolean getIfMyMessage(){
         return this.myMessage;
     }
+
+    public int getAvatar(){ return this.avatar; }
 }

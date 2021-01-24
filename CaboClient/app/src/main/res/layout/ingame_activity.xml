@@ -127,6 +127,36 @@
                 app:layout_constraintTop_toBottomOf="@id/player2_cards"
                 app:srcCompat="@drawable/card_stack" />
 
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/hint_arrow_card_stack"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                app:lottie_rawRes="@raw/animation_arrow"
+                app:lottie_autoPlay="true"
+                app:lottie_loop="true"
+                android:translationZ="20dp"
+                android:rotation="90"
+                android:layout_marginLeft="12dp"
+                app:layout_constraintTop_toTopOf="@id/played_cards_imageButton"
+                app:layout_constraintBottom_toBottomOf="@id/played_cards_imageButton"
+                app:layout_constraintStart_toEndOf="@id/played_cards_imageButton"
+                app:layout_constraintLeft_toRightOf="@id/played_cards_imageButton" />
+
+            <TextView
+                android:id="@+id/hint_card_stack_text"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:text="play/discard the card"
+                android:textColor="@color/beige"
+                android:textSize="12sp"
+                android:layout_marginLeft="6dp"
+                android:gravity="center"
+                android:fontFamily="sans-serif-black"
+                app:layout_constraintTop_toTopOf="@id/hint_arrow_card_stack"
+                app:layout_constraintBottom_toBottomOf="@id/hint_arrow_card_stack"
+                app:layout_constraintStart_toEndOf="@id/hint_arrow_card_stack"
+                app:layout_constraintLeft_toRightOf="@id/hint_arrow_card_stack"/>
+
             <!-- The primary full-screen view. This can be replaced with whatever view
                  is needed to present your content, e.g. VideoView, SurfaceView,
                  TextureView, etc. -->
@@ -139,6 +169,19 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent">
+
+                <com.airbnb.lottie.LottieAnimationView
+                    android:id="@+id/player1_cabo"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    app:lottie_rawRes="@raw/animation_cabo"
+                    app:lottie_autoPlay="true"
+                    app:lottie_loop="true"
+                    android:translationZ="20dp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent" />
 
                 <ImageView
                     android:id="@+id/player1_card_glow_imageview"
@@ -216,6 +259,37 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/hint_arrow_player_cards"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                app:lottie_rawRes="@raw/animation_arrow"
+                app:lottie_autoPlay="true"
+                app:lottie_loop="true"
+                android:translationZ="20dp"
+                android:rotation="-90"
+                android:layout_marginLeft="6dp"
+                android:translationY="-40dp"
+                app:layout_constraintBottom_toBottomOf="@id/player1_cards"
+                app:layout_constraintEnd_toStartOf="@id/player1_cards"
+                app:layout_constraintRight_toLeftOf="@id/player1_cards" />
+
+            <TextView
+                android:id="@+id/hint_player_cards_text"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:text="swap with own card"
+                android:textColor="@color/beige"
+                android:textSize="12sp"
+                android:layout_marginRight="6dp"
+                android:fontFamily="sans-serif-black"
+                android:gravity="center"
+                android:translationY="-40dp"
+                app:layout_constraintTop_toTopOf="@id/hint_arrow_player_cards"
+                app:layout_constraintBottom_toBottomOf="@id/hint_arrow_player_cards"
+                app:layout_constraintEnd_toStartOf="@id/hint_arrow_player_cards"
+                app:layout_constraintRight_toLeftOf="@id/hint_arrow_player_cards"/>
+
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/player2_cards"
                 android:layout_width="wrap_content"
@@ -224,6 +298,19 @@
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
+
+                <com.airbnb.lottie.LottieAnimationView
+                    android:id="@+id/player2_cabo"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    app:lottie_rawRes="@raw/animation_cabo"
+                    app:lottie_autoPlay="true"
+                    app:lottie_loop="true"
+                    android:translationZ="20dp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent" />
 
                 <ImageView
                     android:id="@+id/player2_card_glow_imageview"
@@ -312,6 +399,19 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintRight_toLeftOf="@id/player1_cards">
 
+                <com.airbnb.lottie.LottieAnimationView
+                    android:id="@+id/player3_cabo"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    app:lottie_rawRes="@raw/animation_cabo"
+                    app:lottie_autoPlay="true"
+                    app:lottie_loop="true"
+                    android:translationZ="20dp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent" />
+
                 <ImageView
                     android:id="@+id/player3_card_glow_imageview"
                     android:layout_width="120dp"
@@ -398,6 +498,19 @@
                 android:rotation="-45"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toRightOf="@id/player1_cards">
+
+                <com.airbnb.lottie.LottieAnimationView
+                    android:id="@+id/player4_cabo"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:translationZ="20dp"
+                    app:lottie_rawRes="@raw/animation_cabo"
+                    app:lottie_autoPlay="true"
+                    app:lottie_loop="true"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent" />
 
                 <ImageView
                     android:id="@+id/player4_card_glow_imageview"
@@ -903,6 +1016,52 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"/>
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/game_end_stars"
+        android:layout_width="600dp"
+        android:layout_height="500dp"
+        app:lottie_rawRes="@raw/stars"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        app:lottie_speed="0.5"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"/>
+
+    <TextView
+        android:id="@+id/center_text"
+        android:layout_width="250dp"
+        android:layout_height="70dp"
+        android:text="Round 2"
+        android:textAlignment="center"
+        android:gravity="center_vertical"
+        android:textColor="@color/turquoise_highlight"
+        android:fontFamily="sans-serif-black"
+        android:shadowRadius="25"
+        android:shadowDy="5"
+        android:shadowDx="5"
+        android:textSize="42sp"
+        android:shadowColor="@color/turquoise_highlight"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        tools:ignore="RtlCompat" />
+
+    <Button
+        android:id="@+id/end_game_return_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Return"
+        android:padding="12dp"
+        android:textColor="@drawable/outlined_button_text"
+        android:background="@drawable/outlined_button"
+        app:layout_constraintTop_toBottomOf="@id/center_text"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        />
 
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/card_swap_animationView"

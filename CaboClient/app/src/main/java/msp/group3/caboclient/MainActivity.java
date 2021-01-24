@@ -1,5 +1,6 @@
 package msp.group3.caboclient;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -46,7 +47,7 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
     private SharedPreferences sharedPref;
     private Activity activity;
     private FriendListAdapter friendListAdapter;
-    private boolean accepted= false;
+    private boolean accepted = false;
 
 
     @Override
@@ -156,73 +157,101 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
 
         if (jsonObject.has("partyrequest")) {
             // Invite a Player to join your party
-            JSONObject partyRequest = (JSONObject) jsonObject.get("partyrequest");
+           /* JSONObject partyRequest = (JSONObject) jsonObject.get("partyrequest");
             String destinationDbID = partyRequest.get("receiverDbID").toString().replace("\"", "").replace("\\", "");
             if (destinationDbID.equals(me.getDbID())) {
                 String senderDbID = partyRequest.get("senderDbID").toString().replace("\"", "").replace("\\", "");
                 String senderNick = partyRequest.get("senderNick").toString().replace("\"", "").replace("\\", "");
 
                 int senderAvatar = Integer.parseInt(partyRequest.get("senderAvatarID").toString().replace("\"", "").replace("\\", ""));
-                Player sender = new Player(senderDbID, senderNick, senderAvatar);
-                View v = friendList.getChildAt(friendListAdapter.getPlayerIndex(sender) - friendList.getFirstVisiblePosition());
-                if (v != null) {
-                    Button inviteButton = (Button) v.findViewById(R.id.friendlist_invite);
-                    inviteButton.setBackgroundResource(R.drawable.party_invitation);
-                    inviteButton.setBackgroundColor(getResources().getColor(R.color.teal_200));
-                    inviteButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            View v = friendList.getChildAt(friendListAdapter.getPlayerIndex(sender) - friendList.getFirstVisiblePosition());
-                            if (v != null) {
-                                if (!party.contains(sender)) {
-                                    // Since you accepted the request, add player to party and send confirmation
-                                    party.add(sender);
-                                    updateFriendList(sender, false);
-                                    try {
-                                        communicator.sendMessage(
-                                                JSON_commands.sendPartyAccepted(me, sender));
-                                    } catch (JSONException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                            }
-                        }
-                    });
-                }
+                Player sender = new Player(senderDbID, senderNick, senderAvatar);*/
+            Gson gson = new Gson();
+            Player sender = null;
+            JSONObject js = jsonObject.getJSONObject("partyrequest");
+
+            if (js.has("sender")) {
+                String jsonString = js.get("sender").toString();
+                sender = gson.fromJson(jsonString, Player.class);
             }
-        }
+            //TODO only for testing
+            showMessageForTesting("Friendrequest von"+sender.getNick());
+            communicator.sendMessage(JSON_commands.sendPartyAccepted(me, sender));
 
-        if (jsonObject.has("partyaccepted")) {
-            // If a player has accepted your party invitation, you receive this
-            JSONObject partyAccepted = (JSONObject) jsonObject.get("partyaccepted");
-            String destinationDbID = partyAccepted.get("receiverDbID").toString().replace("\"", "").replace("\\", "");
-            if (destinationDbID.equals(me.getDbID())) {
-                String senderDbID = partyAccepted.get("senderDbID").toString().replace("\"", "").replace("\\", "");
-                String senderNick = partyAccepted.get("senderNick").toString().replace("\"", "").replace("\\", "");
-                int senderAvatar = Integer.parseInt(partyAccepted.get("senderAvatarID").toString().replace("\"", "").replace("\\", ""));
-                Player sender = new Player(senderDbID, senderNick, senderAvatar);
-
-                activity.runOnUiThread(new Runnable() {
-                    public void run() {
-                        View v = friendList.getChildAt(
-                                friendListAdapter.getPlayerIndex(sender) - friendList.getFirstVisiblePosition());
+            View v = friendList.getChildAt(friendListAdapter.getPlayerIndex(sender) - friendList.getFirstVisiblePosition());
+            if (v != null) {
+                @SuppressLint("WrongViewCast") Button inviteButton = (Button) v.findViewById(R.id.friendlist_invite);
+                inviteButton.setBackgroundResource(R.drawable.party_invitation);
+                inviteButton.setBackgroundColor(getResources().getColor(R.color.teal_200));
+                Player finalSender = sender;
+                inviteButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        View v = friendList.getChildAt(friendListAdapter.getPlayerIndex(finalSender) - friendList.getFirstVisiblePosition());
                         if (v != null) {
-                            if (!party.contains(sender)) {
-                                party.add(sender);
-                                updateFriendList(sender, false);
+                            if (!party.contains(finalSender)) {
+                                // Since you accepted the request, add player to party and send confirmation
+                                party.add(finalSender);
+                                updateFriendList(finalSender, false);
+                                try {
+                                    communicator.sendMessage(
+                                            JSON_commands.sendPartyAccepted(me, finalSender));
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
                             }
                         }
                     }
                 });
             }
+
+        }
+
+        if (jsonObject.has("partyaccepted")) {
+            // If a player has accepted your party invitation, you receive this
+            /*JSONObject partyAccepted = (JSONObject) jsonObject.get("partyaccepted");
+            String destinationDbID = partyAccepted.get("receiverDbID").toString().replace("\"", "").replace("\\", "");
+            if (destinationDbID.equals(me.getDbID())) {
+                String senderDbID = partyAccepted.get("senderDbID").toString().replace("\"", "").replace("\\", "");
+                String senderNick = partyAccepted.get("senderNick").toString().replace("\"", "").replace("\\", "");
+                int senderAvatar = Integer.parseInt(partyAccepted.get("senderAvatarID").toString().replace("\"", "").replace("\\", ""));
+                Player sender = new Player(senderDbID, senderNick, senderAvatar);*/
+            Gson gson = new Gson();
+            Player sender = null;
+            Player receiver = null;
+            JSONObject js = jsonObject.getJSONObject("partyaccepted");
+
+            if (js.has("sender")) {
+                String jsonString = js.get("sender").toString();
+                sender = gson.fromJson(jsonString, Player.class);
+            }
+            if (js.has("receiver")) {
+                String jsonString = js.get("sender").toString();
+                receiver = gson.fromJson(jsonString, Player.class);
+            }
+            showMessageForTesting("Einladung angenommen");
+
+            Player finalSender = sender;
+            activity.runOnUiThread(new Runnable() {
+                public void run() {
+                    View v = friendList.getChildAt(
+                            friendListAdapter.getPlayerIndex(finalSender) - friendList.getFirstVisiblePosition());
+                    if (v != null) {
+                        if (!party.contains(finalSender)) {
+                            party.add(finalSender);
+                            updateFriendList(finalSender, false);
+                        }
+                    }
+                }
+            });
+
         }
         if (jsonObject.has("onlinestatus")) {
             JSONObject js = jsonObject.getJSONObject("onlinestatus");
             Player player = null;
-            boolean isOnline=false;
-                if (js.has("isOnline")) {
-                    isOnline = (boolean) js.get("isOnline");
-                }
+            boolean isOnline = false;
+            if (js.has("isOnline")) {
+                isOnline = (boolean) js.get("isOnline");
+            }
 
             if (js.has("player")) {
                 String jsonString = js.get("player").toString();
@@ -241,7 +270,7 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
                 DatabaseOperation.getDao().saveObjectToSharedPreference(
                         sharedPref, String.valueOf(R.string.preference_all_users), allUsers);
             }
-            if (me.getFriendList().contains(player)) {
+            if (isPlayerInFriendList(player)) {
                 boolean finalIsOnline = isOnline;
                 Player finalPlayer = player;
                 Player finalPlayer1 = player;
@@ -253,11 +282,13 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
                             ImageView friendlistStatus = (ImageView) v.findViewById(R.id.friendlist_status);
                             if (finalIsOnline) {
                                 //friendlistStatus.setBackgroundColor(Color.GREEN);
-                                friendlistStatus.setBackground(ContextCompat.getDrawable(activity, R.drawable.circle_green));
+                                //friendlistStatus.setBackground(ContextCompat.getDrawable(activity, R.drawable.circle_green));
+                                friendlistStatus.setImageResource(R.drawable.online);
                                 me.getFriendList().get(me.getFriendList().indexOf(finalPlayer)).setOnline(true);
                             } else {
                                 //friendlistStatus.setBackgroundColor(Color.RED);
-                                friendlistStatus.setBackground(ContextCompat.getDrawable(activity, R.drawable.circle_red));
+                                //friendlistStatus.setBackground(ContextCompat.getDrawable(activity, R.drawable.circle_red));
+                                friendlistStatus.setImageResource(R.drawable.offline);
                                 me.getFriendList().get(me.getFriendList().indexOf(finalPlayer)).setOnline(true);
                             }
                             //TODO Check if this is enough
@@ -271,6 +302,38 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
         if (jsonObject.has("startPrivateParty")) {
             startMatching();
         }
+        if (jsonObject.has("partyRequestFailed")) {
+            String text = (String) jsonObject.get("partyRequestFailed");
+            //TODO show text why party request failed
+        }
+
+        if (jsonObject.has("playerRemovedFromParty")) {
+            JSONObject js = jsonObject.getJSONObject("playerRemovedFromParty");
+            Player player = null;
+
+            if (js.has("player")) {
+                String jsonString = js.get("player").toString();
+                Gson gson = new Gson();
+                player = gson.fromJson(jsonString, Player.class);
+            }
+            removePlayerFromParty(player);
+            //TODO show  that player has disconnected and is no longer part of party
+        }
+        if (jsonObject.has("leaderRemovedFromParty")) {
+            JSONObject js = jsonObject.getJSONObject("leaderRemovedFromParty");
+            Player player = null;
+
+            if (js.has("player")) {
+                String jsonString = js.get("player").toString();
+                Gson gson = new Gson();
+                player = gson.fromJson(jsonString, Player.class);
+            }
+            party.clear();
+            party.add(me);
+            //TODO show  that player Leader has disconnected and party is empty
+        }
+
+
     }
 
 
@@ -287,7 +350,7 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
         friendListAdapter.notifyDataSetChanged();
     }
 
-    public void startMatching()  {
+    public void startMatching() {
         Intent intent = new Intent(activity, WaitingRoomActivity.class);
         int i;
         for (i = 0; i < party.size(); i++) {
@@ -307,8 +370,6 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
 
         startActivity(intent);
     }
-
-
 
 
     private void searchFriendDialog() {
@@ -459,5 +520,42 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
     protected void onResume() {
         super.onResume();
         //TODO: Establish Connection
+    }
+
+    public boolean isPlayerInFriendList(Player player) {
+        for (Player friend : me.getFriendList()) {
+            if (friend.getNick().equalsIgnoreCase(player.getNick())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+
+    public Player getPlayerByNickInFriendlist(String nick) {
+        for (Player friend : me.getFriendList()) {
+            if (friend.getNick().equalsIgnoreCase(nick)) {
+                return friend;
+            }
+        }
+        return null;
+    }
+
+    public void showMessageForTesting(String text){
+        activity.runOnUiThread(new Runnable() {
+            public void run() {
+                Toast.makeText(MainActivity.this, text, Toast.LENGTH_LONG);
+
+            }
+        });
+    }
+
+    public void removePlayerFromParty(Player player){
+        for (int i=0; i<party.size(); i++){
+            if (party.get(i).getNick().equalsIgnoreCase(player.getNick())){
+                party.remove(i);
+            }
+        }
     }
 }

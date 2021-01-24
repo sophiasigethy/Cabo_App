@@ -195,7 +195,7 @@ public class JSON_commands {
         return jmsg;
     }
 
-    public static JSONObject sendPartyRequest(Player sender, Player receiver) throws JSONException {
+    /*public static JSONObject sendPartyRequest(Player sender, Player receiver) throws JSONException {
         Gson gson= new Gson();
 
         JSONObject jmsg = new JSONObject();
@@ -209,9 +209,23 @@ public class JSON_commands {
         jmsg.put("partyrequest", jsubmsg);
 
         return jmsg;
+    }*/
+
+    public static JSONObject sendPartyRequest2(Player sender, Player receiver) throws JSONException {
+        Gson gson= new Gson();
+
+        JSONObject jmsg = new JSONObject();
+        JSONObject jsubmsg = new JSONObject();
+
+        jsubmsg.put("sender", gson.toJson(sender));
+        jsubmsg.put("receiver", gson.toJson(receiver));
+        jmsg.put("partyrequest2", jsubmsg);
+
+        return jmsg;
+
     }
 
-    public static JSONObject sendPartyAccepted(Player sender, Player receiver) throws JSONException {
+    /*public static JSONObject sendPartyAccepted(Player sender, Player receiver) throws JSONException {
         Gson gson= new Gson();
 
         JSONObject jmsg = new JSONObject();
@@ -222,6 +236,19 @@ public class JSON_commands {
         jsubmsg.put("senderAvatarID", gson.toJson(sender.getAvatarID()));
         jsubmsg.put("receiverDbID", gson.toJson(receiver.getDbID()));
         jsubmsg.put("receiverNick", gson.toJson(receiver.getNick()));
+        jmsg.put("partyaccepted", jsubmsg);
+
+        return jmsg;
+    }*/
+
+    public static JSONObject sendPartyAccepted(Player sender, Player receiver) throws JSONException {
+        Gson gson= new Gson();
+
+        JSONObject jmsg = new JSONObject();
+        JSONObject jsubmsg = new JSONObject();
+
+        jsubmsg.put("sender", gson.toJson(sender));
+        jsubmsg.put("receiver", gson.toJson(receiver));
         jmsg.put("partyaccepted", jsubmsg);
 
         return jmsg;
@@ -262,5 +289,13 @@ public class JSON_commands {
     }
     public static JSONObject askForStart() throws JSONException {
         return new JSONObject().put("askForStart", "");
+    }
+
+    public static JSONObject leaveGame() throws JSONException {
+        return new JSONObject().put("leaveGame", "");
+    }
+
+    public static JSONObject sendMaxPoints(int maxpoints) throws JSONException {
+        return new JSONObject().put("maxPoints", maxpoints);
     }
 }

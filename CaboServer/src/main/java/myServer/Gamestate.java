@@ -25,6 +25,8 @@ public class Gamestate {
     // determines how many players are already registered
     private int countPlayer = 0;
 
+    private int maxPoints=100;
+
     private boolean privateParty= false;
 
     private int gamestateID=0;
@@ -327,6 +329,26 @@ public class Gamestate {
             Player currentPlayer = getPlayerBySessionId(session.getId());
             currentPlayer.setSmiley(smiley);
             sendSmileyOfOnePlayerToAll(currentPlayer);
+        }
+        if (jsonObject.has("maxPoints")) {
+            maxPoints = (int) jsonObject.get("sendMAXPlayer");
+            sendToAll(JSON_commands.sendMaxPoints(maxPoints));
+        }
+        if (jsonObject.has("leaveGame")) {
+            Player player= getPlayerBySessionId(session.getId());
+            if (privateParty){
+                player.setNick(player.getName());
+                if (socketHandler.isPartyLeader(player)){
+                    socketHandler.removePartyLeader(player);
+                    socketHandler.deletePartyofPartyLeader(player);
+                }else{
+                    socketHandler.removePlayerOfParty(player);
+                }
+            }
+            afterConnectionClosed(session);
+            if (players.size()==0){
+                socketHandler.removeGamestate(this);
+            }
         }
     }
 
@@ -702,6 +724,8 @@ public class Gamestate {
             socketHandler.sendMessage(session, JSON_commands.sendScores(getPlayerBySessionId(session.getId())));
         }
         if (terminated) {
+            sendToAll(JSON_commands.sendEndGame(getWinner()));
+            state= TypeDefs.GAMEEND;
             //TODO send Game End
             //remove this object in sockethandler
         } else {
@@ -785,6 +809,22 @@ public class Gamestate {
 
     public void setPrivateParty(boolean privateParty) {
         this.privateParty = privateParty;
+    }
+
+    public Player getWinner(){
+        ArrayList<Integer> scores= new ArrayList<Integer>();
+        for (Player player: players.values()){
+            scores.add(player.getScore());
+        }
+        if(scores!=null){
+            Collections.sort(scores);
+            for (Player player: players.values()){
+                if (player.getScore()==scores.get(0)){
+                    return player;
+                }
+            }
+        }
+        return null;
     }
 
     /*****************************************
@@ -922,7 +962,7 @@ public class Gamestate {
                             if (_player.getScore() == 100 || _player.getScore() == 50) {
                                 _player.setScore(_player.getScore() / 2);
                             }
-                            if (_player.getScore() > 100) {
+                            if (_player.getScore() >= maxPoints) {
                                 this.terminate();
                             }
                         }

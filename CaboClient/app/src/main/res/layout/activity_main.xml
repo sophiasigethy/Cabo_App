@@ -127,11 +127,11 @@
                 android:id="@+id/find_game_btn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
-                android:textColor="@drawable/outlined_button_text"
                 android:layout_marginTop="6dp"
+                android:background="@android:color/transparent"
                 android:enabled="false"
-                android:text="@string/find_game" />
+                android:text="@string/find_game"
+                android:textColor="@drawable/outlined_button_text" />
         </LinearLayout>
 
     </RelativeLayout>

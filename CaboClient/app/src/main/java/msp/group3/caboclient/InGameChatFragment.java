@@ -46,8 +46,8 @@ public class InGameChatFragment extends Fragment {
 
         ImageButton sendButton = view.findViewById(R.id.button);
 
-        ChatMessage welcomeMsg = new ChatMessage("BOT1", "Welcome!", true);
-        ChatMessage welcomeMsg2 = new ChatMessage("BOT2", "Welcome!", false);
+        ChatMessage welcomeMsg = new ChatMessage("BOT1", "Welcome!", true, R.drawable.robot);
+        ChatMessage welcomeMsg2 = new ChatMessage("BOT2", "Welcome!", false, R.drawable.robot);
 
         chatMessagesList.add(welcomeMsg);
         chatMessagesList.add(welcomeMsg2);
