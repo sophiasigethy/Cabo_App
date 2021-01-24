@@ -282,11 +282,13 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
                             ImageView friendlistStatus = (ImageView) v.findViewById(R.id.friendlist_status);
                             if (finalIsOnline) {
                                 //friendlistStatus.setBackgroundColor(Color.GREEN);
-                                friendlistStatus.setBackground(ContextCompat.getDrawable(activity, R.drawable.circle_green));
+                                //friendlistStatus.setBackground(ContextCompat.getDrawable(activity, R.drawable.circle_green));
+                                friendlistStatus.setImageResource(R.drawable.online);
                                 me.getFriendList().get(me.getFriendList().indexOf(finalPlayer)).setOnline(true);
                             } else {
                                 //friendlistStatus.setBackgroundColor(Color.RED);
-                                friendlistStatus.setBackground(ContextCompat.getDrawable(activity, R.drawable.circle_red));
+                                //friendlistStatus.setBackground(ContextCompat.getDrawable(activity, R.drawable.circle_red));
+                                friendlistStatus.setImageResource(R.drawable.offline);
                                 me.getFriendList().get(me.getFriendList().indexOf(finalPlayer)).setOnline(true);
                             }
 
