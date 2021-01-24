@@ -252,6 +252,7 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
         }
     }
 
+
     private void updateFriendList(Player sender, boolean isNewFriend) {
         ArrayList<Player> friends = me.getFriendList();
         if (!isNewFriend) {
