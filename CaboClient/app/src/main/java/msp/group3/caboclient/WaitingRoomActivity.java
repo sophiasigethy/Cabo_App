@@ -166,7 +166,7 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
             if (me.getNick().equalsIgnoreCase("") || me.getNick() == null || me.getNick().equalsIgnoreCase("None")) {
                 runOnUiThread(new Runnable() {
                     public void run() {
-                        showText(mes, false, null);
+                        showText(mes, true, null);
                     }
                 });
             } else {
@@ -233,6 +233,8 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
         }
 
         //this is received when the state of the game changes
+
+
         if (jsonObject.has("statusupdateServer")) {
             String status = jsonObject.get("statusupdateServer").toString();
             checkStatus(status);

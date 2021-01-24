@@ -119,11 +119,13 @@ public class Gamestate {
      */
     public void handleTextMessage(WebSocketSession session, TextMessage message) throws IOException {
         currentSession = session;
-        JSONObject jsonObject=null;
-        if (message==null){
-             jsonObject= KIJsonObject;
-        }else{
-             jsonObject = getMessage(message.getPayload());
+        boolean authorised = false;
+        Player currPlayer=null;
+        JSONObject jsonObject = null;
+        if (message == null) {
+            jsonObject = KIJsonObject;
+        } else {
+            jsonObject = getMessage(message.getPayload());
         }
 
 
@@ -212,17 +214,23 @@ public class Gamestate {
 
         if (jsonObject.has("pickCard")) {
 
-            if (checkIfPlayerIsAuthorised(getPlayerBySessionId(session.getId()))) {
+            if (session != null) {
+                authorised = checkIfPlayerIsAuthorised(getPlayerBySessionId(session.getId()));
+                currPlayer = getPlayerBySessionId(session.getId());
+            } else {
+                authorised = KIsTurn();
+                currPlayer= returnKI();
+            }
+            if (authorised) {
 
-                Player currentPlayer = getPlayerBySessionId(session.getId());
-                if (currentPlayer != null) {
+                if (currPlayer != null) {
                     if (availableCards.size() != 0) {
                         currentPickedCard = availableCards.get(0);
                     } else {
                         mixCards();
                         currentPickedCard = availableCards.get(0);
                     }
-                    lastDrawnPlayerId = currentPlayer.getId();
+                    lastDrawnPlayerId = currPlayer.getId();
 
                     socketHandler.sendMessage(session, JSON_commands.sendFirstCard(currentPickedCard));
                     if (KIsTurn()) {
@@ -233,22 +241,40 @@ public class Gamestate {
         }
 
         if (jsonObject.has("swapPickedCardWithOwnCards")) {
-            if (checkIfPlayerIsAuthorised(getPlayerBySessionId(session.getId()))) {
+            if (session != null) {
+                authorised = checkIfPlayerIsAuthorised(getPlayerBySessionId(session.getId()));
+                currPlayer = getPlayerBySessionId(session.getId());
+            } else {
+                authorised = KIsTurn();
+                currPlayer= returnKI();
+            }
+            if (authorised) {
+            //if (checkIfPlayerIsAuthorised(getPlayerBySessionId(session.getId()))) {
                 JSONObject js = jsonObject.getJSONObject("swapPickedCardWithOwnCards");
                 String json = js.get("card").toString();
                 ObjectMapper objectMapper = new ObjectMapper();
                 objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
                 Card ownCard = objectMapper.readValue(json, Card.class);
-                Player currentPlayer = getPlayerBySessionId(session.getId());
+                //Player currentPlayer = getPlayerBySessionId(session.getId());
 
-                currentPlayer.swapWithOwnCard(ownCard, currentPickedCard);
+                //currentPlayer.swapWithOwnCard(ownCard, currentPickedCard);
+                currPlayer.swapWithOwnCard(ownCard, currentPickedCard);
                 sendToAll(JSON_commands.sendDiscardedCard(ownCard));
-                sendToAll(JSON_commands.sendUpdatePlayer(currentPlayer));
+                //sendToAll(JSON_commands.sendUpdatePlayer(currentPlayer));
+                sendToAll(JSON_commands.sendUpdatePlayer(currPlayer));
             }
         }
 
         if (jsonObject.has("playPickedCard")) {
-            if (checkIfPlayerIsAuthorised(getPlayerBySessionId(session.getId()))) {
+            if (session != null) {
+                authorised = checkIfPlayerIsAuthorised(getPlayerBySessionId(session.getId()));
+                currPlayer = getPlayerBySessionId(session.getId());
+            } else {
+                authorised = KIsTurn();
+                currPlayer= returnKI();
+            }
+            if (authorised) {
+            //if (checkIfPlayerIsAuthorised(getPlayerBySessionId(session.getId()))) {
                 takeFirstCardFromAvailableCards();
                 availableCards.remove(0);
                 playedCards.add(currentPickedCard);
@@ -312,8 +338,15 @@ public class Gamestate {
         }
 
         if (jsonObject.has("finishMove")) {
-            Player player = getPlayerBySessionId(session.getId());
-            if (checkIfPlayerIsAuthorised(player)) {
+            Player player = null;
+            if (session != null) {
+                authorised = checkIfPlayerIsAuthorised(getPlayerBySessionId(session.getId()));
+                player = getPlayerBySessionId(session.getId());
+            } else {
+                authorised = KIsTurn();
+                player= returnKI();
+            }
+            if (authorised) {
                 if (hasPlayerDrawn(player.getId())) {
                     finishMove();
                     // sendStatusupdatePlayer();
@@ -321,8 +354,10 @@ public class Gamestate {
                         finishRound();
                     } else {
                         sendStatusupdateOfAllPlayer();
-                        sendToAll(JSON_commands.sendNextPlayer(currentPlayerId));
+                       // sendToAll(JSON_commands.sendNextPlayer(currentPlayerId));
+                        sendNextPlayer();
                     }
+
                 }
 
             }
@@ -431,6 +466,7 @@ public class Gamestate {
         sessions.add(null);
         //player is informed that he can join the game
         newPlayer.setAvatarID(1);
+        newPlayer.setKI(true);
         initialSetUp++;
         newPlayer.setStatus(TypeDefs.readyForGamestart);
     }
@@ -577,8 +613,8 @@ public class Gamestate {
             if (player.getId() != other.getId()) {
                 list.add(other);
             } else {
-                WebSocketSession webSocketSession=getSessionByPlayerID(player.getId());
-                if (webSocketSession!=null){
+                WebSocketSession webSocketSession = getSessionByPlayerID(player.getId());
+                if (webSocketSession != null) {
                     socketHandler.sendMessage(getSessionByPlayerID(player.getId()), JSON_commands.sendInitialME(player));
                 }
             }
@@ -610,7 +646,7 @@ public class Gamestate {
      */
     public WebSocketSession getSessionBySessionId(String id) {
         for (WebSocketSession session : sessions) {
-            if (session!=null){
+            if (session != null) {
                 if (id.equalsIgnoreCase(session.getId())) {
                     return session;
                 }
@@ -889,7 +925,7 @@ public class Gamestate {
         }
         if (action.equalsIgnoreCase("decideForMove")) {
             KIJsonObject = decideForMove(me);
-            if (currentPickedCard.getValue()<7){
+            if (currentPickedCard.getValue() < 7) {
                 try {
                     handleTextMessage(null, null);
                 } catch (IOException e) {
@@ -898,6 +934,8 @@ public class Gamestate {
                 finishKIMove();
             }
 
+        }else{
+            finishKIMove();
         }
     }
 
@@ -947,10 +985,10 @@ public class Gamestate {
                 jsonObject = JSON_commands.swapPickedCardWithOwnCardsKI(returnHighestKnownCard(playerKI));
                 break;
             case 5:
-                jsonObject= JSON_commands.playPickedCardKI();
+                jsonObject = JSON_commands.playPickedCardKI();
                 break;
             case 6:
-                jsonObject= JSON_commands.playPickedCardKI();
+                jsonObject = JSON_commands.playPickedCardKI();
                 break;
             case 7:
 
@@ -995,8 +1033,8 @@ public class Gamestate {
     }
 
     public void finishKIMove() throws IOException {
-        JSONObject jsonObject= JSON_commands.sendFinishMoveKI("");
-        KIJsonObject=jsonObject;
+        JSONObject jsonObject = JSON_commands.sendFinishMoveKI("");
+        KIJsonObject = jsonObject;
         handleTextMessage(null, null);
     }
 
