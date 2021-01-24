@@ -495,4 +495,42 @@ public class JSON_commands {
         return new JSONObject().put("maxPoints", maxpoints);
     }
 
+
+
+
+
+
+    //KI messages
+    public static JSONObject sendPickCardKI(String message) throws JSONException {
+        return new JSONObject().put("pickCard", message);
+    }
+
+
+    public static JSONObject swapPickedCardWithOwnCardsKI(Card card) throws JSONException, JsonProcessingException {
+        ObjectMapper objectMapper= new ObjectMapper();
+
+        JSONObject jmsg = new JSONObject();
+        JSONObject jsubmsg = new JSONObject();
+
+        jsubmsg.put("card", objectMapper.writeValueAsString(card));
+        jmsg.put("swapPickedCardWithOwnCards", jsubmsg);
+
+        return jmsg;
+
+    }
+
+    public static JSONObject playPickedCardKI() throws JSONException {
+        ObjectMapper objectMapper= new ObjectMapper();
+
+        JSONObject jmsg = new JSONObject();
+        JSONObject jsubmsg = new JSONObject();
+
+        jmsg.put("playPickedCard", jsubmsg);
+
+        return jmsg;
+    }
+    public static JSONObject sendFinishMoveKI(String message) throws JSONException {
+        return new JSONObject().put("finishMove", message);
+    }
+
 }

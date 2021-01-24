@@ -174,8 +174,8 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
                 sender = gson.fromJson(jsonString, Player.class);
             }
             //TODO only for testing
-            showMessageForTesting("Friendrequest von"+sender.getNick());
-            communicator.sendMessage(JSON_commands.sendPartyAccepted(me, sender));
+            //showMessageForTesting("Friendrequest von"+sender.getNick());
+           // communicator.sendMessage(JSON_commands.sendPartyAccepted(me, sender));
 
             View v = friendList.getChildAt(friendListAdapter.getPlayerIndex(sender) - friendList.getFirstVisiblePosition());
             if (v != null) {

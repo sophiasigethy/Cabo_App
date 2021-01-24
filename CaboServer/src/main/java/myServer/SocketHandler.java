@@ -195,6 +195,7 @@ public class SocketHandler extends TextWebSocketHandler {
                         new Player(receiverDbId, receiverNick, 9)));
                     System.out.println(senderNick + " accepted PartyInvite from " + receiverNick);*/
                         sendPartyAcceptation(sender, receiver, receiverSession);
+
                     }
                 }
                 if (!isSenderInParty && isReceiverLeader) {
@@ -299,8 +300,10 @@ public class SocketHandler extends TextWebSocketHandler {
 
 
     public void sendMessage(WebSocketSession webSocketSession, JSONObject jsonMsg) throws IOException {
-        if (webSocketSession != null)
+        if (webSocketSession != null){
             webSocketSession.sendMessage(new TextMessage(jsonMsg.toString()));
+        }
+
     }
 
     /**

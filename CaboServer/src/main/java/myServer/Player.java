@@ -14,6 +14,14 @@ public class Player {
     private String dbId;
     private int avatarID;
 
+    @JsonIgnore
+    private boolean isKI= false;
+
+
+
+    @JsonIgnore
+    private ArrayList<Card> knownCards= new ArrayList<>();
+
     // The cards belong to this player
     private ArrayList<Card> cards = new ArrayList<>();
 
@@ -332,5 +340,20 @@ public class Player {
         this.gamestate = gamestate;
     }
 
+    public boolean isKI() {
+        return isKI;
+    }
+
+    public void setKI(boolean KI) {
+        isKI = KI;
+    }
+
+    public ArrayList<Card> getKnownCards() {
+        return knownCards;
+    }
+
+    public void setKnownCards(ArrayList<Card> knownCards) {
+        this.knownCards = knownCards;
+    }
 
 }
