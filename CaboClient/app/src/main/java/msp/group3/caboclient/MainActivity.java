@@ -173,9 +173,9 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
                 String jsonString = js.get("sender").toString();
                 sender = gson.fromJson(jsonString, Player.class);
             }
-            //TODO only for testing
-            showMessageForTesting("Friendrequest von"+sender.getNick());
-            communicator.sendMessage(JSON_commands.sendPartyAccepted(me, sender));
+            //TODO only for testing -> am Screen anzeigen, dass sender request gesendet hat
+            //showMessageForTesting("Friendrequest von"+sender.getNick());
+            //communicator.sendMessage(JSON_commands.sendPartyAccepted(me, sender));
 
             View v = friendList.getChildAt(friendListAdapter.getPlayerIndex(sender) - friendList.getFirstVisiblePosition());
             if (v != null) {
@@ -193,6 +193,7 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
                                 party.add(finalSender);
                                 updateFriendList(finalSender, false);
                                 try {
+                                    //TODO das zurücksernden, wenn akzeptiert
                                     communicator.sendMessage(
                                             JSON_commands.sendPartyAccepted(me, finalSender));
                                 } catch (JSONException e) {
@@ -205,7 +206,7 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
             }
 
         }
-
+        // für den, der eigeladen hat; wird nur an den, der eingeladen hat geschickt
         if (jsonObject.has("partyaccepted")) {
             // If a player has accepted your party invitation, you receive this
             /*JSONObject partyAccepted = (JSONObject) jsonObject.get("partyaccepted");
@@ -227,6 +228,8 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
             if (js.has("receiver")) {
                 String jsonString = js.get("sender").toString();
                 receiver = gson.fromJson(jsonString, Player.class);
+                //bei dem freund icon ändern
+                //text you are part of ... party
             }
             showMessageForTesting("Einladung angenommen");
 
@@ -258,6 +261,7 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
                 Gson gson = new Gson();
                 player = gson.fromJson(jsonString, Player.class);
             }
+            Log.d("-----------ONLINE STATUS", player.getName()+"'s online status changed to "+isOnline);
 
            /* JSONObject onlineRequest = (JSONObject) jsonObject.get("onlinestatus");
             Boolean isOnline = Boolean.parseBoolean(onlineRequest.get("isonline").toString().replace("\"", "").replace("\\", ""));
@@ -273,14 +277,21 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
             if (isPlayerInFriendList(player)) {
                 boolean finalIsOnline = isOnline;
                 Player finalPlayer = player;
-                Player finalPlayer1 = player;
-                activity.runOnUiThread(new Runnable() {
+                //Player finalPlayer1 = player;
+                Log.d("-----------ONLINE STATUS", "Verifying friend in list: "+player.getName()+"'s online status changed to "+isOnline);
+
+                runOnUiThread(new Runnable() {
                     public void run() {
                         View v = friendList.getChildAt(
                                 friendListAdapter.getPlayerIndex(finalPlayer) - friendList.getFirstVisiblePosition());
+                        Log.d("-----------ONLINE STATUS", "Selecting view");
+
                         if (v != null) {
+                            Log.d("-----------ONLINE STATUS", "View is not null and player is "+v.findViewById(R.id.name));
+
                             ImageView friendlistStatus = (ImageView) v.findViewById(R.id.friendlist_status);
                             if (finalIsOnline) {
+                                Log.d("-----------ONLINE STATUS", "a friend came online");
                                 //friendlistStatus.setBackgroundColor(Color.GREEN);
                                 //friendlistStatus.setBackground(ContextCompat.getDrawable(activity, R.drawable.circle_green));
                                 friendlistStatus.setImageResource(R.drawable.online);
@@ -288,13 +299,15 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
                             } else {
                                 //friendlistStatus.setBackgroundColor(Color.RED);
                                 //friendlistStatus.setBackground(ContextCompat.getDrawable(activity, R.drawable.circle_red));
+                                Log.d("-----------ONLINE STATUS", "a friend came offline");
                                 friendlistStatus.setImageResource(R.drawable.offline);
-                                me.getFriendList().get(me.getFriendList().indexOf(finalPlayer)).setOnline(true);
+                                me.getFriendList().get(me.getFriendList().indexOf(finalPlayer)).setOnline(false);
                             }
-
                             //TODO Check if this is enough
                             updateFriendList(finalPlayer, false);
-                            friendListAdapter.notifyDataSetChanged();
+                            friendList.setAdapter(null);
+                            friendList.setAdapter(friendListAdapter);
+                            //friendListAdapter.notifyDataSetChanged();
                         }
                     }
                 });
@@ -305,7 +318,7 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
         }
         if (jsonObject.has("partyRequestFailed")) {
             String text = (String) jsonObject.get("partyRequestFailed");
-            //TODO show text why party request failed
+            //TODO show text why party request failed -> toast
         }
 
         if (jsonObject.has("playerRemovedFromParty")) {
@@ -318,7 +331,7 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
                 player = gson.fromJson(jsonString, Player.class);
             }
             removePlayerFromParty(player);
-            //TODO show  that player has disconnected and is no longer part of party
+            //TODO show  that player has disconnected and is no longer part of party -> toast
         }
         if (jsonObject.has("leaderRemovedFromParty")) {
             JSONObject js = jsonObject.getJSONObject("leaderRemovedFromParty");
@@ -331,7 +344,7 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
             }
             party.clear();
             party.add(me);
-            //TODO show  that player Leader has disconnected and party is empty
+            //TODO show  that player Leader has disconnected and party is empty -> party icons resetten
         }
 
 

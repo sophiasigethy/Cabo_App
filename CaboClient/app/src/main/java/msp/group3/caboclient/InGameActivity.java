@@ -2093,6 +2093,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 String jsonString = js.get("player").toString();
                 Gson gson = new Gson();
                 Player winnerOfGame = gson.fromJson(jsonString, Player.class);
+                showEndOfGame(winnerOfGame);
                 //TODO this is the winner of whole game
                 //TODO update global score in shared preferences?
 
@@ -2367,6 +2368,16 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             centerText.setVisibility(View.VISIBLE);
             centerText.setText(winner.getName()+" won!");
         }
+        endGameReturnButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                try {
+                    leaveGame();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     public void leaveGame() throws JSONException {
@@ -2378,7 +2389,6 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             Intent intent = new Intent(InGameActivity.this, MainActivity.class);
             startActivity(intent);
         }
-
     }
 
     public void readNoLogIn(Intent intent){
