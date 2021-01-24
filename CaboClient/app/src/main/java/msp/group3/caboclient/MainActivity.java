@@ -260,7 +260,6 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
                                 friendlistStatus.setBackground(ContextCompat.getDrawable(activity, R.drawable.circle_red));
                                 me.getFriendList().get(me.getFriendList().indexOf(finalPlayer)).setOnline(true);
                             }
-
                             //TODO Check if this is enough
                             updateFriendList(finalPlayer, false);
                             friendListAdapter.notifyDataSetChanged();
