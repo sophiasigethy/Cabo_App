@@ -54,7 +54,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="top"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="12dp"
         android:layout_gravity="center_horizontal"
         android:orientation="horizontal">
 
@@ -63,6 +63,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center|top"
+            android:textSize="16dp"
+            android:fontFamily="sans-serif-black"
+            android:shadowColor="@color/dark_purple"
+            android:shadowRadius="15"
+            android:shadowDx="5"
+            android:shadowDy="5"
             android:textColor="@color/beige"/>
 
         <TextView
@@ -91,21 +97,26 @@
 
             <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
+                android:layout_height="200dp"
                 android:background="@drawable/rounded_button"
                 android:layout_weight="1">
                 <ListView
                     android:id="@+id/list_friends"
                     android:layout_width="match_parent"
-                    android:layout_height="200dp"
-                    android:background="@drawable/rounded_button"/>
+                    android:layout_height="150dp"
+                    android:scrollbars="vertical"
+                    android:stackFromBottom="false"
+                    android:transcriptMode="alwaysScroll"
+                    android:divider="@null"
+                    android:dividerHeight="0dp"
+                    android:background="@android:color/transparent"/>
                 <ImageButton
                     android:id="@+id/add_friend_btn"
                     android:layout_width="46dp"
                     android:layout_height="46dp"
                     android:layout_margin="12dp"
                     android:layout_gravity="right|bottom"
-                    android:padding="8dp"
+                    android:padding="12dp"
                     app:srcCompat="@drawable/add_friend"
                     android:scaleType="centerInside"
                     android:background="@drawable/zoom_button_bg"
@@ -119,7 +130,7 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/outlined_button"
                 android:textColor="@drawable/outlined_button_text"
-                android:layout_marginTop="6dp"
+                android:layout_marginTop="16dp"
                 android:enabled="false"
                 android:text="@string/start_game" />
 

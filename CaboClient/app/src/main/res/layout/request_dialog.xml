@@ -2,36 +2,36 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/chat_bg">
+    android:background="@color/medium_purple">
 
     <LinearLayout
         android:id="@+id/dialog_text_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_height="140dp"
+        android:orientation="vertical">
     <ImageView
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:id="@+id/a"
-        android:background="@android:color/transparent"
-        android:src="@drawable/send"
-        android:padding="6dp"
-        android:layout_weight=".1"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:id="@+id/dialog_image"
+        android:background="@color/beige"
+        android:src="@drawable/request"
+        android:padding="12dp"
+        android:layout_weight=".7"
         android:scaleType="fitCenter" />
 
     <TextView
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_height="0.dp"
         android:text="TEXTO"
         android:id="@+id/text_dialog"
         android:layout_marginTop="12dp"
-        android:layout_marginLeft="12dp"
+        android:layout_marginLeft="16dp"
         android:layout_marginRight="12dp"
         android:layout_marginBottom="12dp"
         android:textSize="14sp"
         android:textColor="@color/beige"
         android:layout_gravity="center_vertical"
-        android:layout_weight="0.9"/>
+        android:layout_weight="0.4"/>
 
     </LinearLayout>
 
@@ -46,12 +46,12 @@
             android:text="Decline"
             android:id="@+id/btn_dialog_decline"
             android:gravity="center_vertical|center_horizontal"
-            android:layout_marginBottom="20dp"
             android:background="@android:color/transparent"
             android:layout_centerHorizontal="true"
             android:layout_weight=".5"
             android:layout_marginLeft="12dp"
             android:layout_marginRight="6dp"
+            android:textSize="12sp"
             android:textColor="@drawable/outlined_button_text" />
         <Button
             android:layout_width="wrap_content"
@@ -65,6 +65,7 @@
             android:layout_weight=".5"
             android:layout_marginRight="12dp"
             android:layout_marginLeft="6dp"
+            android:textSize="12sp"
             android:textColor="@drawable/outlined_button_text" />
     </LinearLayout>
 

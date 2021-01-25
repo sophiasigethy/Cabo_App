@@ -6,4 +6,10 @@
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowContentOverlay">@null</item>
     </style>
+
+    <style name="MyEditTextTheme">
+        <item name="colorControlNormal">@color/beige</item>
+        <item name="colorControlActivated">@color/turquoise_highlight</item>
+        <item name="colorControlHighlight">@color/turquoise_highlight</item>
+    </style>
 </resources>

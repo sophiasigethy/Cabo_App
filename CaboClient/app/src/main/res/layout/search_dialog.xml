@@ -2,7 +2,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#773C36">
+    android:background="@color/medium_purple">
 
         <TextView
             android:layout_width="match_parent"
@@ -14,7 +14,7 @@
             android:layout_marginLeft="12dp"
             android:layout_marginRight="12dp"
             android:layout_marginBottom="12dp"
-            android:textSize="16sp"
+            android:textSize="14sp"
             android:textColor="@color/beige"
             android:layout_gravity="center_vertical"/>
 
@@ -26,8 +26,12 @@
         android:textColor="@color/beige"
         android:layout_marginLeft="12dp"
         android:layout_marginRight="12dp"
-        android:textSize="16dp"
+        android:textSize="12dp"
+        android:backgroundTint="@color/beige"
+        android:theme="@style/MyEditTextTheme"
+        android:imeOptions="flagNoExtractUi"
         android:textColorHint="@color/turquoise_highlight"
+        android:textColorHighlight="@color/dark_purple"
         android:layout_below="@id/text_dialog_title"/>
 
     <LinearLayout
@@ -42,12 +46,12 @@
             android:text="Cancel"
             android:id="@+id/btn_dialog_cancel"
             android:gravity="center_vertical|center_horizontal"
-            android:layout_marginBottom="20dp"
             android:background="@android:color/transparent"
             android:layout_centerHorizontal="true"
             android:layout_weight=".5"
             android:layout_marginLeft="12dp"
             android:layout_marginRight="6dp"
+            android:textSize="12dp"
             android:textColor="@drawable/outlined_button_text" />
         <Button
             android:layout_width="wrap_content"
@@ -61,6 +65,7 @@
             android:layout_weight=".5"
             android:layout_marginRight="12dp"
             android:layout_marginLeft="6dp"
+            android:textSize="12dp"
             android:textColor="@drawable/outlined_button_text" />
     </LinearLayout>
 
