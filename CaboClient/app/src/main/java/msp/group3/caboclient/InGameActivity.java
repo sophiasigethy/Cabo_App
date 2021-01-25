@@ -80,7 +80,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
     private ImageView cardContainerOverlaySpy;
     private TextView centerText;
     private int round = 1;
-    private String noAccount="";
+    private String noAccount = "";
     private int cardDrawCount = 0;
     private TextView hintTextCardStack;
     private TextView hintTextOwnCards;
@@ -94,12 +94,10 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
     private com.airbnb.lottie.LottieAnimationView endGameStars;
 
 
-
     private ImageView cardSwapBg;
     private int zoomBtnCount = 0;
     private int chatButtonCount = 0;
     private int nrCardsSelected = 0;
-
 
 
     private ImageButton playedCardsStackButton;
@@ -186,8 +184,8 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         timerAnimation = findViewById(R.id.timer_animationView);
         timerAnimation.setVisibility(View.INVISIBLE);
         cardContainerOverlaySwap = findViewById(R.id.picked_card_big_imageview_swap);
-        cardContainerOverlayPeek= findViewById(R.id.picked_card_big_imageview_peek);
-        cardContainerOverlaySpy= findViewById(R.id.picked_card_big_imageview_spy);
+        cardContainerOverlayPeek = findViewById(R.id.picked_card_big_imageview_peek);
+        cardContainerOverlaySpy = findViewById(R.id.picked_card_big_imageview_spy);
         hintArrowOwnCards = findViewById(R.id.hint_arrow_player_cards);
         hintArrowOwnCards.setVisibility(View.INVISIBLE);
         hintArrowCardStack = findViewById(R.id.hint_arrow_card_stack);
@@ -278,7 +276,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 chatNotificationBubble.setVisibility(View.INVISIBLE);
                 chatButtonCount++;
                 if (chatButtonCount % 2 == 0) {
-                    InGameChatFragment fragment_obj = (InGameChatFragment)getSupportFragmentManager().
+                    InGameChatFragment fragment_obj = (InGameChatFragment) getSupportFragmentManager().
                             findFragmentById(R.id.fragment_chat);
                     fragment_obj.textInput.onEditorAction(EditorInfo.IME_ACTION_DONE);
                     chatFragmentContainer.setVisibility(View.INVISIBLE);
@@ -442,34 +440,34 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                                     nrCardsSelected--;
                                 }
                             }
-                            for( ImageButton otherCard : player3CardButtons){
-                                if(otherCard.isSelected()){
+                            for (ImageButton otherCard : player3CardButtons) {
+                                if (otherCard.isSelected()) {
                                     otherCard.setSelected(false);
                                     nrCardsSelected--;
                                 }
                             }
-                            for( ImageButton otherCard : player4CardButtons){
-                                if(otherCard.isSelected()){
+                            for (ImageButton otherCard : player4CardButtons) {
+                                if (otherCard.isSelected()) {
                                     otherCard.setSelected(false);
                                     nrCardsSelected--;
                                 }
                             }
-                            for( ImageButton otherCard : player2CardButtons){
-                                if(otherCard.isSelected()){
+                            for (ImageButton otherCard : player2CardButtons) {
+                                if (otherCard.isSelected()) {
                                     otherCard.setSelected(false);
                                     nrCardsSelected--;
                                 }
                             }
                         }
                     }
-                    if(pickedCardButtonContainer.getVisibility()==View.VISIBLE){
+                    if (pickedCardButtonContainer.getVisibility() == View.VISIBLE) {
                         switchButton.setVisibility(View.VISIBLE);
                     }
-                    if(nrCardsSelected==cardsAllowed){
+                    if (nrCardsSelected == cardsAllowed) {
                         peekButton.setEnabled(true);
                     }
-                    Log.d("-----------ON CLICK LISTENER PLAYER 1", "#selected: "+nrCardsSelected);
-                    Log.d("-----------ON CLICK LISTENER PLAYER 1", "#allowed: "+cardsAllowed);
+                    Log.d("-----------ON CLICK LISTENER PLAYER 1", "#selected: " + nrCardsSelected);
+                    Log.d("-----------ON CLICK LISTENER PLAYER 1", "#allowed: " + cardsAllowed);
 
                     player1CardsGlow.setVisibility(View.INVISIBLE);
                     playedCardsStackGlow.setVisibility(View.INVISIBLE);
@@ -478,8 +476,8 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         }
     }
 
-    private void setPlayer2CardsOnClickListeners(int cardsAllowed){
-        for(ImageButton cardButton : player2CardButtons){
+    private void setPlayer2CardsOnClickListeners(int cardsAllowed) {
+        for (ImageButton cardButton : player2CardButtons) {
             cardButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -488,34 +486,33 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
 
                     zoomInOnSelectedCard(cardButton);
 
-                    if(cardButton.isSelected()){
+                    if (cardButton.isSelected()) {
                         cardButton.setSelected(false);
                         nrCardsSelected--;
-                    }
-                    else{
+                    } else {
                         cardButton.setSelected(true);
                         nrCardsSelected++;
-                        if(nrCardsSelected>cardsAllowed){
-                            for( ImageButton otherCard : player2CardButtons){
-                                if(otherCard != cardButton && otherCard.isSelected()){
+                        if (nrCardsSelected > cardsAllowed) {
+                            for (ImageButton otherCard : player2CardButtons) {
+                                if (otherCard != cardButton && otherCard.isSelected()) {
                                     otherCard.setSelected(false);
                                     nrCardsSelected--;
                                 }
                             }
-                            for( ImageButton otherCard : player3CardButtons){
-                                if(otherCard.isSelected()){
+                            for (ImageButton otherCard : player3CardButtons) {
+                                if (otherCard.isSelected()) {
                                     otherCard.setSelected(false);
                                     nrCardsSelected--;
                                 }
                             }
-                            for( ImageButton otherCard : player4CardButtons){
-                                if(otherCard.isSelected()){
+                            for (ImageButton otherCard : player4CardButtons) {
+                                if (otherCard.isSelected()) {
                                     otherCard.setSelected(false);
                                     nrCardsSelected--;
                                 }
                             }
-                            for( ImageButton otherCard : player1CardButtons){
-                                if(otherCard.isSelected()){
+                            for (ImageButton otherCard : player1CardButtons) {
+                                if (otherCard.isSelected()) {
                                     otherCard.setSelected(false);
                                     nrCardsSelected--;
                                 }
@@ -523,7 +520,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                         }
 
                     }
-                    if(nrCardsSelected==cardsAllowed){
+                    if (nrCardsSelected == cardsAllowed) {
                         spyButton.setEnabled(true);
                         peekButton.setEnabled(true);
                     }
@@ -532,8 +529,8 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         }
     }
 
-    private void setPlayer3CardsOnClickListeners(int cardsAllowed){
-        for(ImageButton cardButton : player3CardButtons){
+    private void setPlayer3CardsOnClickListeners(int cardsAllowed) {
+        for (ImageButton cardButton : player3CardButtons) {
             cardButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -542,34 +539,33 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
 
                     zoomInOnSelectedCard(cardButton);
 
-                    if(cardButton.isSelected()){
+                    if (cardButton.isSelected()) {
                         cardButton.setSelected(false);
                         nrCardsSelected--;
-                    }
-                    else{
+                    } else {
                         cardButton.setSelected(true);
                         nrCardsSelected++;
-                        if(nrCardsSelected>cardsAllowed){
-                            for( ImageButton otherCard : player3CardButtons){
-                                if(otherCard != cardButton && otherCard.isSelected()){
+                        if (nrCardsSelected > cardsAllowed) {
+                            for (ImageButton otherCard : player3CardButtons) {
+                                if (otherCard != cardButton && otherCard.isSelected()) {
                                     otherCard.setSelected(false);
                                     nrCardsSelected--;
                                 }
                             }
-                            for( ImageButton otherCard : player2CardButtons){
-                                if(otherCard.isSelected()){
+                            for (ImageButton otherCard : player2CardButtons) {
+                                if (otherCard.isSelected()) {
                                     otherCard.setSelected(false);
                                     nrCardsSelected--;
                                 }
                             }
-                            for( ImageButton otherCard : player4CardButtons){
-                                if(otherCard.isSelected()){
+                            for (ImageButton otherCard : player4CardButtons) {
+                                if (otherCard.isSelected()) {
                                     otherCard.setSelected(false);
                                     nrCardsSelected--;
                                 }
                             }
-                            for( ImageButton otherCard : player1CardButtons){
-                                if(otherCard.isSelected()){
+                            for (ImageButton otherCard : player1CardButtons) {
+                                if (otherCard.isSelected()) {
                                     otherCard.setSelected(false);
                                     nrCardsSelected--;
                                 }
@@ -577,7 +573,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                         }
 
                     }
-                    if(nrCardsSelected==cardsAllowed){
+                    if (nrCardsSelected == cardsAllowed) {
                         spyButton.setEnabled(true);
                         peekButton.setEnabled(true);
                     }
@@ -586,8 +582,8 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         }
     }
 
-    private void setPlayer4CardsOnClickListeners(int cardsAllowed){
-        for(ImageButton cardButton : player4CardButtons){
+    private void setPlayer4CardsOnClickListeners(int cardsAllowed) {
+        for (ImageButton cardButton : player4CardButtons) {
             cardButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -596,41 +592,40 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
 
                     zoomInOnSelectedCard(cardButton);
 
-                    if(cardButton.isSelected()){
+                    if (cardButton.isSelected()) {
                         cardButton.setSelected(false);
                         nrCardsSelected--;
-                    }
-                    else{
+                    } else {
                         cardButton.setSelected(true);
                         nrCardsSelected++;
-                        if(nrCardsSelected>cardsAllowed){
-                            for( ImageButton otherCard : player4CardButtons){
-                                if(otherCard != cardButton && otherCard.isSelected()){
+                        if (nrCardsSelected > cardsAllowed) {
+                            for (ImageButton otherCard : player4CardButtons) {
+                                if (otherCard != cardButton && otherCard.isSelected()) {
                                     otherCard.setSelected(false);
                                     nrCardsSelected--;
                                 }
                             }
-                            for( ImageButton otherCard : player3CardButtons){
-                                if(otherCard.isSelected()){
+                            for (ImageButton otherCard : player3CardButtons) {
+                                if (otherCard.isSelected()) {
                                     otherCard.setSelected(false);
                                     nrCardsSelected--;
                                 }
                             }
-                            for( ImageButton otherCard : player2CardButtons){
-                                if(otherCard.isSelected()){
+                            for (ImageButton otherCard : player2CardButtons) {
+                                if (otherCard.isSelected()) {
                                     otherCard.setSelected(false);
                                     nrCardsSelected--;
                                 }
                             }
-                            for( ImageButton otherCard : player1CardButtons){
-                                if(otherCard.isSelected()){
+                            for (ImageButton otherCard : player1CardButtons) {
+                                if (otherCard.isSelected()) {
                                     otherCard.setSelected(false);
                                     nrCardsSelected--;
                                 }
                             }
                         }
                     }
-                    if(nrCardsSelected==cardsAllowed){
+                    if (nrCardsSelected == cardsAllowed) {
                         spyButton.setEnabled(true);
                         peekButton.setEnabled(true);
                     }
@@ -639,14 +634,14 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         }
     }
 
-    private void deactivateAllOnCardClickListeners(){
+    private void deactivateAllOnCardClickListeners() {
         deactivatePlayer1OnClickListeners();
         deactivatePlayer2OnClickListeners();
         deactivatePlayer3OnClickListeners();
         deactivatePlayer4OnClickListeners();
     }
 
-    private void deactivateAllButtons(){
+    private void deactivateAllButtons() {
         deactivateAllOnCardClickListeners();
         caboButton.setEnabled(false);
         caboButton.setAlpha(0.3f);
@@ -655,38 +650,38 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         tapPickCardAnimation.setVisibility(View.INVISIBLE);
     }
 
-    private void deactivatePlayer1OnClickListeners(){
-        for(ImageButton cardButton : player1CardButtons){
+    private void deactivatePlayer1OnClickListeners() {
+        for (ImageButton cardButton : player1CardButtons) {
             cardButton.setOnClickListener(null);
         }
     }
 
-    private void deactivatePlayer2OnClickListeners(){
-        for(ImageButton cardButton : player2CardButtons){
+    private void deactivatePlayer2OnClickListeners() {
+        for (ImageButton cardButton : player2CardButtons) {
             cardButton.setOnClickListener(null);
         }
     }
 
-    private void deactivatePlayer3OnClickListeners(){
-        for(ImageButton cardButton : player3CardButtons){
+    private void deactivatePlayer3OnClickListeners() {
+        for (ImageButton cardButton : player3CardButtons) {
             cardButton.setOnClickListener(null);
         }
     }
 
-    private void deactivatePlayer4OnClickListeners(){
-        for(ImageButton cardButton : player4CardButtons){
+    private void deactivatePlayer4OnClickListeners() {
+        for (ImageButton cardButton : player4CardButtons) {
             cardButton.setOnClickListener(null);
         }
     }
 
-    private void hideActionDisplay(){
+    private void hideActionDisplay() {
         cardContainerOverlaySwap.setVisibility(View.INVISIBLE);
         cardContainerOverlaySpy.setVisibility(View.INVISIBLE);
         cardContainerOverlayPeek.setVisibility(View.INVISIBLE);
 
     }
 
-    private void showCardAction(Card pickedCard){
+    private void showCardAction(Card pickedCard) {
         int value = pickedCard.getValue();
         ImageView overlay = null;
         switch (value) {
@@ -710,7 +705,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 break;
         }
 
-        if(overlay!=null){
+        if (overlay != null) {
             overlay.setVisibility(View.VISIBLE);
         }
 
@@ -757,7 +752,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         Collections.addAll(otherPlayersCardGlows, findViewById(R.id.player2_card_glow_imageview), findViewById(R.id.player3_card_glow_imageview), findViewById(R.id.player4_card_glow_imageview));
 
         Collections.addAll(playerCaboAnimations, findViewById(R.id.player1_cabo), findViewById(R.id.player2_cabo), findViewById(R.id.player3_cabo), findViewById(R.id.player4_cabo));
-        for(int i=0; i<4; i++){
+        for (int i = 0; i < 4; i++) {
             player1CardButtons.get(i).setVisibility(View.INVISIBLE);
             player2CardButtons.get(i).setVisibility(View.INVISIBLE);
             player3CardButtons.get(i).setVisibility(View.INVISIBLE);
@@ -770,33 +765,33 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             playerCaboAnimations.get(i).setVisibility(View.INVISIBLE);
         }
 
-        for(ImageView glow : otherPlayersCardGlows){
+        for (ImageView glow : otherPlayersCardGlows) {
             glow.setVisibility(View.INVISIBLE);
         }
     }
 
-    private void visualizePlayerStats(int nrPlayers){
+    private void visualizePlayerStats(int nrPlayers) {
         playerPics.get(0).setVisibility(View.VISIBLE);
         playerStats.get(0).setVisibility(View.VISIBLE);
         playerNames.get(0).setVisibility(View.VISIBLE);
         playerOverviews.get(0).setVisibility(View.VISIBLE);
 
-        for(ImageButton card : player1CardButtons){
+        for (ImageButton card : player1CardButtons) {
             card.setVisibility(View.VISIBLE);
         }
 
-        for(int i=1; i<nrPlayers; i++){
+        for (int i = 1; i < nrPlayers; i++) {
             playerPics.get(i).setVisibility(View.VISIBLE);
             playerStats.get(i).setVisibility(View.VISIBLE);
             playerNames.get(i).setVisibility(View.VISIBLE);
             playerOverviews.get(i).setVisibility(View.VISIBLE);
-            for(ImageButton cardButton : otherPlayerButtonLists.get(i-1)){
+            for (ImageButton cardButton : otherPlayerButtonLists.get(i - 1)) {
                 cardButton.setVisibility(View.VISIBLE);
             }
         }
     }
 
-    private void growCardGlowAnimation(ImageView card){
+    private void growCardGlowAnimation(ImageView card) {
         //bounds remain the same only image changes
         AlphaAnimation fade_in = new AlphaAnimation(0f, 1f);
         fade_in.setDuration(2000);
@@ -809,7 +804,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         card.startAnimation(grow_in);
     }
 
-    private void growCardGlowAnimationOut(ImageView card){
+    private void growCardGlowAnimationOut(ImageView card) {
         //bounds remain the same only image changes
         AlphaAnimation fade_out = new AlphaAnimation(1f, 0f);
         fade_out.setDuration(2000);
@@ -822,20 +817,20 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         card.startAnimation(grow_out);
     }
 
-    private void visualizeOtherPlayerCardGlows(){
-        for(int i=0; i<otherPlayers.size(); i++){
+    private void visualizeOtherPlayerCardGlows() {
+        for (int i = 0; i < otherPlayers.size(); i++) {
             otherPlayersCardGlows.get(i).setVisibility(View.VISIBLE);
             growCardGlowAnimation(otherPlayersCardGlows.get(i));
         }
     }
 
-    private void hideOtherPlayerCardGlows(){
-        for(int i=0; i<otherPlayers.size(); i++){
+    private void hideOtherPlayerCardGlows() {
+        for (int i = 0; i < otherPlayers.size(); i++) {
             growCardGlowAnimationOut(otherPlayersCardGlows.get(i));
         }
     }
 
-    private void cardPopAnimation(ImageButton button){
+    private void cardPopAnimation(ImageButton button) {
         ScaleAnimation grow_in = new ScaleAnimation(1f, 1.2f, 1f, 1.2f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
         grow_in.setDuration(500);
         grow_in.setStartOffset(500);
@@ -846,7 +841,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         button.startAnimation(grow_out);
     }
 
-    private void animateCardTurn(ImageButton cardButton){
+    private void animateCardTurn(ImageButton cardButton) {
         final ObjectAnimator oa1 = ObjectAnimator.ofFloat(cardButton, "scaleX", 1f, 0f);
         final ObjectAnimator oa2 = ObjectAnimator.ofFloat(cardButton, "scaleX", 0f, 1f);
         oa1.setInterpolator(new DecelerateInterpolator());
@@ -863,23 +858,23 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         oa1.start();
     }
 
-    private Card getCardFromButton(ImageButton cardButton){
-        if(player1CardButtons.contains(cardButton)){
+    private Card getCardFromButton(ImageButton cardButton) {
+        if (player1CardButtons.contains(cardButton)) {
             return me.getMyCards().get(player1CardButtons.indexOf(cardButton));
         }
-        if(player2CardButtons.contains(cardButton)){
+        if (player2CardButtons.contains(cardButton)) {
             return otherPlayers.get(0).getMyCards().get(player2CardButtons.indexOf(cardButton));
         }
-        if(player3CardButtons.contains(cardButton)){
+        if (player3CardButtons.contains(cardButton)) {
             return otherPlayers.get(1).getMyCards().get(player3CardButtons.indexOf(cardButton));
         }
-        if(player4CardButtons.contains(cardButton)){
+        if (player4CardButtons.contains(cardButton)) {
             return otherPlayers.get(2).getMyCards().get(player4CardButtons.indexOf(cardButton));
         }
         return null;
     }
 
-    private void animateCardTurnBack(ImageButton cardButton){
+    private void animateCardTurnBack(ImageButton cardButton) {
         final ObjectAnimator oa1 = ObjectAnimator.ofFloat(cardButton, "scaleX", 1f, 0f);
         final ObjectAnimator oa2 = ObjectAnimator.ofFloat(cardButton, "scaleX", 0f, 1f);
         oa1.setInterpolator(new DecelerateInterpolator());
@@ -897,7 +892,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
     }
 
     //TODO put card as parameter
-    private void showPickedCardInContainer(Card card){
+    private void showPickedCardInContainer(Card card) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -914,7 +909,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                         pickedCardBigImageview.setImageResource(getCardResource(card));
                         oa2.start();
                         showCardAction(card);
-                        if(cardDrawCount==1){
+                        if (cardDrawCount == 1) {
                             showHint();
                         }
                     }
@@ -932,8 +927,8 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                         makePickedCardContainerDisappear();
                         growCardGlowAnimationOut(playedCardsStackGlow);
                         growCardGlowAnimationOut(player1CardsGlow);
-                        for(int i = 0; i<player1CardButtons.size(); i++){
-                            if(player1CardButtons.get(i).isSelected()){
+                        for (int i = 0; i < player1CardButtons.size(); i++) {
+                            if (player1CardButtons.get(i).isSelected()) {
                                 try {
                                     webSocketClient.send(String.valueOf(JSON_commands.swapPickedCardWithOwnCards(me.getMyCards().get(i))));
                                 } catch (JSONException e) {
@@ -944,7 +939,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                for(ImageButton cardButton : player1CardButtons){
+                                for (ImageButton cardButton : player1CardButtons) {
                                     cardButton.setSelected(false);
                                 }
                             }
@@ -956,7 +951,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         });
     }
 
-    private void enablePlayedCardStackButton(Card pickedCard){
+    private void enablePlayedCardStackButton(Card pickedCard) {
         playedCardsStackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -966,7 +961,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                if(pickedCard.getValue()!=7 && pickedCard.getValue()!=8 && pickedCard.getValue()!=9 && pickedCard.getValue()!=10 && pickedCard.getValue()!=11 && pickedCard.getValue()!=12){
+                if (pickedCard.getValue() != 7 && pickedCard.getValue() != 8 && pickedCard.getValue() != 9 && pickedCard.getValue() != 10 && pickedCard.getValue() != 11 && pickedCard.getValue() != 12) {
                     try {
                         Log.d("----------------------SEND", "finish");
                         webSocketClient.send(String.valueOf(JSON_commands.sendFinishMove("finish")));
@@ -984,7 +979,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                         cardPopAnimation(playedCardsStackButton);
                         makePickedCardContainerDisappear();
                         switchButton.setVisibility(View.INVISIBLE);
-                        for(ImageButton cardButton : player1CardButtons){
+                        for (ImageButton cardButton : player1CardButtons) {
                             cardButton.setSelected(false);
                         }
                         deactivateAllOnCardClickListeners();
@@ -995,12 +990,12 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         playedCardsStackButton.setEnabled(true);
     }
 
-    private void makePickedCardContainerDisappear(){
+    private void makePickedCardContainerDisappear() {
         pickedCardButtonContainer.setVisibility(View.INVISIBLE);
         pickedCardBigImageview.setImageResource(R.drawable.card_back);
     }
 
-    private void zoomInOnSelectedCard(ImageButton cardButton){
+    private void zoomInOnSelectedCard(ImageButton cardButton) {
         int[] location = new int[2];
         cardButton.getLocationOnScreen(location);
         int x = location[0];
@@ -1011,30 +1006,45 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         display.getSize(size);
         int width = size.x;
         int height = size.y;
-        Log.d("-----------PAN", "x: "+zoomLayout.getPanX()/zoomLayout.getZoom()+ " y: "+zoomLayout.getPanY()/zoomLayout.getZoom());
-        Log.d("-----------SCREEN", "x: "+width+ " y: "+height);
-        Log.d("-----------CARD POSITION", "x: "+x+ " y: "+y);
+        Log.d("-----------PAN", "x: " + zoomLayout.getPanX() / zoomLayout.getZoom() + " y: " + zoomLayout.getPanY() / zoomLayout.getZoom());
+        Log.d("-----------SCREEN", "x: " + width + " y: " + height);
+        Log.d("-----------CARD POSITION", "x: " + x + " y: " + y);
         //zoomLayout.panTo( 2*width-zoomLayout.getScaledPanX()+x, 2*height-zoomLayout.getScaledPanY()+y, true);
     }
 
     //TODO replace resources
-    private int getCardResource(Card card){
-        switch(card.getValue()){
-            case -1: return R.drawable.card_joker_1;
-            case 0: return R.drawable.card_hearts_k;
-            case 1: return R.drawable.card_hearts_a;
-            case 2: return R.drawable.card_clubs_2;
-            case 3: return R.drawable.card_clubs_3;
-            case 4: return R.drawable.card_clubs_4;
-            case 5: return R.drawable.card_clubs_5;
-            case 6: return R.drawable.card_clubs_6;
-            case 7: return R.drawable.card_clubs_7;
-            case 8: return R.drawable.card_clubs_8;
-            case 9: return R.drawable.card_clubs_9;
-            case 10: return R.drawable.card_clubs_10;
-            case 11: return R.drawable.card_clubs_j;
-            case 12: return R.drawable.card_clubs_q;
-            case 13: return R.drawable.card_clubs_k;
+    private int getCardResource(Card card) {
+        switch (card.getValue()) {
+            case -1:
+                return R.drawable.card_joker_1;
+            case 0:
+                return R.drawable.card_hearts_k;
+            case 1:
+                return R.drawable.card_hearts_a;
+            case 2:
+                return R.drawable.card_clubs_2;
+            case 3:
+                return R.drawable.card_clubs_3;
+            case 4:
+                return R.drawable.card_clubs_4;
+            case 5:
+                return R.drawable.card_clubs_5;
+            case 6:
+                return R.drawable.card_clubs_6;
+            case 7:
+                return R.drawable.card_clubs_7;
+            case 8:
+                return R.drawable.card_clubs_8;
+            case 9:
+                return R.drawable.card_clubs_9;
+            case 10:
+                return R.drawable.card_clubs_10;
+            case 11:
+                return R.drawable.card_clubs_j;
+            case 12:
+                return R.drawable.card_clubs_q;
+            case 13:
+                return R.drawable.card_clubs_k;
         }
         return 0;
     }
@@ -1082,27 +1092,27 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         peekButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                for(ImageButton cardButton : player1CardButtons){
-                    if(cardButton.isSelected()){
+                for (ImageButton cardButton : player1CardButtons) {
+                    if (cardButton.isSelected()) {
                         selectedCards.add(cardButton);
                     }
                 }
-                for(ImageButton cardButton : player2CardButtons){
-                    if(cardButton.isSelected()){
+                for (ImageButton cardButton : player2CardButtons) {
+                    if (cardButton.isSelected()) {
                         selectedCards.add(cardButton);
                     }
                 }
-                for(ImageButton cardButton : player3CardButtons){
-                    if(cardButton.isSelected()){
+                for (ImageButton cardButton : player3CardButtons) {
+                    if (cardButton.isSelected()) {
                         selectedCards.add(cardButton);
                     }
                 }
-                for(ImageButton cardButton : player4CardButtons){
-                    if(cardButton.isSelected()){
+                for (ImageButton cardButton : player4CardButtons) {
+                    if (cardButton.isSelected()) {
                         selectedCards.add(cardButton);
                     }
                 }
-                for(ImageButton card : selectedCards){
+                for (ImageButton card : selectedCards) {
                     animateCardTurn(card);
                 }
                 updateText.setText("Do you want to swap?");
@@ -1111,7 +1121,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 switchButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        for(ImageButton card : selectedCards){
+                        for (ImageButton card : selectedCards) {
                             animateCardTurnBack(card);
                         }
                         playSwapAnimation();
@@ -1126,7 +1136,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
     }
 
     private void initiateBlindSwapAction() {
-        if(caboplayer!=null && otherPlayers.size()==1 && otherPlayers.get(0).getId()==caboplayer.getId()){
+        if (caboplayer != null && otherPlayers.size() == 1 && otherPlayers.get(0).getId() == caboplayer.getId()) {
             updateText.setText("All other players are blocked");
             try {
                 webSocketClient.send(String.valueOf(JSON_commands.sendFinishMove("finish")));
@@ -1134,8 +1144,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 e.printStackTrace();
             }
 
-        }
-        else{
+        } else {
             switchButton.setVisibility(View.VISIBLE);
             updateText.setVisibility(View.VISIBLE);
             updateText.setText("Please choose 2 cards");
@@ -1156,26 +1165,26 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 public void onClick(View view) {
                     growCardGlowAnimationOut(player1CardsGlow);
                     hideOtherPlayerCardGlows();
-                    for(ImageButton cardButton : player1CardButtons){
-                        if(cardButton.isSelected()){
+                    for (ImageButton cardButton : player1CardButtons) {
+                        if (cardButton.isSelected()) {
                             selectedCards.add(cardButton);
                             cardButton.setSelected(false);
                         }
                     }
-                    for(ImageButton cardButton : player2CardButtons){
-                        if(cardButton.isSelected()){
+                    for (ImageButton cardButton : player2CardButtons) {
+                        if (cardButton.isSelected()) {
                             selectedCards.add(cardButton);
                             cardButton.setSelected(false);
                         }
                     }
-                    for(ImageButton cardButton : player3CardButtons){
-                        if(cardButton.isSelected()){
+                    for (ImageButton cardButton : player3CardButtons) {
+                        if (cardButton.isSelected()) {
                             selectedCards.add(cardButton);
                             cardButton.setSelected(false);
                         }
                     }
-                    for(ImageButton cardButton : player4CardButtons){
-                        if(cardButton.isSelected()){
+                    for (ImageButton cardButton : player4CardButtons) {
+                        if (cardButton.isSelected()) {
                             selectedCards.add(cardButton);
                             cardButton.setSelected(false);
                         }
@@ -1190,8 +1199,8 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                         Player card1Owner = getCardOwner(selectedCards.get(0));
                         Card card2 = getCardFromButton(selectedCards.get(1));
                         Player card2Owner = getCardOwner(selectedCards.get(1));
-                        Log.d("-----------SEND TO SERVER SWAP", "card1 "+card1.getValue()+" by "+card1Owner.getName());
-                        Log.d("-----------SEND TO SERVER SWAP", "card2 "+card2.getValue()+" by "+card2Owner.getName());
+                        Log.d("-----------SEND TO SERVER SWAP", "card1 " + card1.getValue() + " by " + card1Owner.getName());
+                        Log.d("-----------SEND TO SERVER SWAP", "card2 " + card2.getValue() + " by " + card2Owner.getName());
 
                         webSocketClient.send(String.valueOf(JSON_commands.useFunctionalitySwap(card1, card1Owner, card2, card2Owner)));
                     } catch (JSONException e) {
@@ -1201,20 +1210,21 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             });
         }
     }
-    private Player getCardOwner(ImageButton cardButton){
-        if(player1CardButtons.contains(cardButton)){
+
+    private Player getCardOwner(ImageButton cardButton) {
+        if (player1CardButtons.contains(cardButton)) {
             int index = player1CardButtons.indexOf(cardButton);
             return me;
         }
-        if(player2CardButtons.contains(cardButton)){
+        if (player2CardButtons.contains(cardButton)) {
             int index = player2CardButtons.indexOf(cardButton);
             return otherPlayers.get(0);
         }
-        if(player3CardButtons.contains(cardButton)){
+        if (player3CardButtons.contains(cardButton)) {
             int index = player3CardButtons.indexOf(cardButton);
             return otherPlayers.get(1);
         }
-        if(player4CardButtons.contains(cardButton)){
+        if (player4CardButtons.contains(cardButton)) {
             int index = player4CardButtons.indexOf(cardButton);
             return otherPlayers.get(2);
         }
@@ -1252,19 +1262,19 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 cardSwapAnimation.playAnimation();
                 cardSwapAnimation.setVisibility(View.INVISIBLE);
                 cardSwapBg.setVisibility(View.INVISIBLE);
-                    try {
-                        Log.d("----------------------SEND FINISH:", "after swap");
-                        webSocketClient.send(String.valueOf(JSON_commands.sendFinishMove("finish")));
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+                try {
+                    Log.d("----------------------SEND FINISH:", "after swap");
+                    webSocketClient.send(String.valueOf(JSON_commands.sendFinishMove("finish")));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
 
         }.start();
     }
 
     private void initiateSpyAction() {
-        if(caboplayer!=null && otherPlayers.size()==1 && otherPlayers.get(0).getId()==caboplayer.getId()){
+        if (caboplayer != null && otherPlayers.size() == 1 && otherPlayers.get(0).getId() == caboplayer.getId()) {
             updateText.setText("All other players are blocked");
             try {
                 webSocketClient.send(String.valueOf(JSON_commands.sendFinishMove("finish")));
@@ -1272,8 +1282,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 e.printStackTrace();
             }
 
-        }
-        else{
+        } else {
             spyButton.setVisibility(View.VISIBLE);
             spyButton.setEnabled(false);
             updateText.setVisibility(View.VISIBLE);
@@ -1291,22 +1300,22 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 @Override
                 public void onClick(View view) {
                     hideOtherPlayerCardGlows();
-                    for(ImageButton cardButton : player2CardButtons){
-                        if(cardButton.isSelected()){
+                    for (ImageButton cardButton : player2CardButtons) {
+                        if (cardButton.isSelected()) {
                             animateCardTurn(cardButton);
                             setCountdownTimer(cardButton);
                             spyButton.setVisibility(View.INVISIBLE);
                         }
                     }
-                    for(ImageButton cardButton : player3CardButtons){
-                        if(cardButton.isSelected()){
+                    for (ImageButton cardButton : player3CardButtons) {
+                        if (cardButton.isSelected()) {
                             animateCardTurn(cardButton);
                             setCountdownTimer(cardButton);
                             spyButton.setVisibility(View.INVISIBLE);
                         }
                     }
-                    for(ImageButton cardButton : player4CardButtons){
-                        if(cardButton.isSelected()){
+                    for (ImageButton cardButton : player4CardButtons) {
+                        if (cardButton.isSelected()) {
                             animateCardTurn(cardButton);
                             setCountdownTimer(cardButton);
                             spyButton.setVisibility(View.INVISIBLE);
@@ -1315,12 +1324,12 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                     updateText.setVisibility(View.INVISIBLE);
                     deactivateAllOnCardClickListeners();
                     nrCardsSelected = 0;
-                    Card selectedCard=null;
+                    Card selectedCard = null;
                     Player spiedOnPlayer = null;
-                    for(int i = 0; i<otherPlayers.size(); i++){
-                        if(getSelectedCard(otherPlayerButtonLists.get(i), otherPlayers.get(i))!=null){
-                            selectedCard=getSelectedCard(otherPlayerButtonLists.get(i), otherPlayers.get(0));
-                            spiedOnPlayer=otherPlayers.get(i);
+                    for (int i = 0; i < otherPlayers.size(); i++) {
+                        if (getSelectedCard(otherPlayerButtonLists.get(i), otherPlayers.get(i)) != null) {
+                            selectedCard = getSelectedCard(otherPlayerButtonLists.get(i), otherPlayers.get(0));
+                            spiedOnPlayer = otherPlayers.get(i);
                             hideOtherPlayerCardGlows();
                         }
                     }
@@ -1333,11 +1342,12 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             });
         }
     }
-    private void deactivateCaboPlayer(){
-        if(caboplayer!=null){
-            for(int i=0; i<otherPlayers.size(); i++){
-                if(otherPlayers.get(i).getId()==caboplayer.getId()){
-                    for(ImageButton card : otherPlayerButtonLists.get(i)){
+
+    private void deactivateCaboPlayer() {
+        if (caboplayer != null) {
+            for (int i = 0; i < otherPlayers.size(); i++) {
+                if (otherPlayers.get(i).getId() == caboplayer.getId()) {
+                    for (ImageButton card : otherPlayerButtonLists.get(i)) {
                         card.setOnClickListener(null);
                     }
                     otherPlayersCardGlows.get(i).setVisibility(View.INVISIBLE);
@@ -1361,8 +1371,8 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             public void onClick(View view) {
                 Log.d("-----------Peek", "button clicked");
 
-                for(ImageButton cardButton : player1CardButtons){
-                    if(cardButton.isSelected()){
+                for (ImageButton cardButton : player1CardButtons) {
+                    if (cardButton.isSelected()) {
                         animateCardTurn(cardButton);
                         setCountdownTimer(cardButton);
                         peekButton.setVisibility(View.INVISIBLE);
@@ -1389,16 +1399,16 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         });
     }
 
-    private Card getSelectedCard(List<ImageButton> cardButtons, Player owner){
-        for(int i=0; i<cardButtons.size(); i++){
-            if(cardButtons.get(i).isSelected()){
+    private Card getSelectedCard(List<ImageButton> cardButtons, Player owner) {
+        for (int i = 0; i < cardButtons.size(); i++) {
+            if (cardButtons.get(i).isSelected()) {
                 return owner.getMyCards().get(i);
             }
         }
         return null;
     }
 
-    private void initiateInitialCardLookUp(){
+    private void initiateInitialCardLookUp() {
         caboButton.setEnabled(false);
         caboButton.setAlpha(0.3f);
         peekButton.setVisibility(View.VISIBLE);
@@ -1415,11 +1425,11 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             @Override
             public void onClick(View view) {
                 growCardGlowAnimationOut(player1CardsGlow);
-                for(ImageButton cardButton : player1CardButtons){
-                    if(cardButton.isSelected()){
+                for (ImageButton cardButton : player1CardButtons) {
+                    if (cardButton.isSelected()) {
                         selectedCards.add(cardButton);
                     }
-                    for(ImageButton card: selectedCards){
+                    for (ImageButton card : selectedCards) {
                         animateCardTurn(card);
                         setCountdownTimer(card);
                     }
@@ -1444,7 +1454,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         });
     }
 
-    private void setCountdownTimer(ImageButton cardButton){
+    private void setCountdownTimer(ImageButton cardButton) {
         updateText.setText("Please remember the card");
         timerAnimation.setVisibility(View.VISIBLE);
         timerAnimation.playAnimation();
@@ -1466,8 +1476,8 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         }.start();
     }
 
-    private void showSpiedOnCard(Player spiedOnPlayer, Card card){
-        if(spiedOnPlayer.getId()==me.getId()){
+    private void showSpiedOnCard(Player spiedOnPlayer, Card card) {
+        if (spiedOnPlayer.getId() == me.getId()) {
             ImageButton cardButton = player1CardButtons.get(getCardIndex(me, card));
             updateText.setText("You are being spied on");
             cardButton.setImageResource(R.drawable.card_spied);
@@ -1482,13 +1492,12 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 }
 
             }.start();
-        }
-        else{
+        } else {
             int playerIndex = otherPlayers.indexOf(spiedOnPlayer);
             int cardIndex = getCardIndex(spiedOnPlayer, card);
             ImageButton cardButton = otherPlayerButtonLists.get(playerIndex).get(cardIndex);
             cardButton.setImageResource(R.drawable.card_spied);
-            updateText.setText(spiedOnPlayer.getName()+" is being spied on");
+            updateText.setText(spiedOnPlayer.getName() + " is being spied on");
             new CountDownTimer(10000, 1000) {
 
                 public void onTick(long millisUntilFinished) {
@@ -1503,8 +1512,8 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         }
     }
 
-    private void showSwappedCards(Player swappingPlayer, Card card){
-        if(swappingPlayer==me){
+    private void showSwappedCards(Player swappingPlayer, Card card) {
+        if (swappingPlayer == me) {
             int cardIndex = me.getMyCards().indexOf(card);
             ImageButton cardButton = player1CardButtons.get(cardIndex);
             cardButton.setImageResource(R.drawable.card_swapped);
@@ -1520,8 +1529,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 }
 
             }.start();
-        }
-        else{
+        } else {
             int playerIndex = otherPlayers.indexOf(swappingPlayer);
             int cardIndex = swappingPlayer.getMyCards().indexOf(card);
             ImageButton cardButton = otherPlayerButtonLists.get(playerIndex).get(cardIndex);
@@ -1542,38 +1550,40 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         }
     }
 
-    private void showTwoSwappedCards(Player player1, Card card1, Player player2, Card card2){
+    private void showTwoSwappedCards(Player player1, Card card1, Player player2, Card card2) {
 
         ImageButton card1Button = getButtonFromCard(player1, card1);
         ImageButton card2Button = getButtonFromCard(player2, card2);
         card1Button.setImageResource(R.drawable.card_swapped);
         card2Button.setImageResource(R.drawable.card_swapped);
 
-            new CountDownTimer(10000, 1000) {
+        new CountDownTimer(10000, 1000) {
 
-                public void onTick(long millisUntilFinished) {
+            public void onTick(long millisUntilFinished) {
 
-                }
+            }
 
-                public void onFinish() {
-                    card1Button.setImageResource(R.drawable.card_button);
-                    card2Button.setImageResource(R.drawable.card_button);
-                }
+            public void onFinish() {
+                card1Button.setImageResource(R.drawable.card_button);
+                card2Button.setImageResource(R.drawable.card_button);
+            }
 
-            }.start();
+        }.start();
     }
 
-    private ImageButton getButtonFromCard(Player owner, Card card){
-        if(owner.getId()==me.getId()){
+    private ImageButton getButtonFromCard(Player owner, Card card) {
+        if (owner.getId() == me.getId()) {
             return player1CardButtons.get(getCardIndex(me, card));
-        }
-        else{
-            for(int i=0; i< otherPlayers.size(); i++){
-                if(otherPlayers.get(i).getId()==owner.getId()){
-                    switch(i){
-                        case 0: return player2CardButtons.get(getCardIndex(otherPlayers.get(i), card));
-                        case 1: return player3CardButtons.get(getCardIndex(otherPlayers.get(i), card));
-                        case 2: return player4CardButtons.get(getCardIndex(otherPlayers.get(i), card));
+        } else {
+            for (int i = 0; i < otherPlayers.size(); i++) {
+                if (otherPlayers.get(i).getId() == owner.getId()) {
+                    switch (i) {
+                        case 0:
+                            return player2CardButtons.get(getCardIndex(otherPlayers.get(i), card));
+                        case 1:
+                            return player3CardButtons.get(getCardIndex(otherPlayers.get(i), card));
+                        case 2:
+                            return player4CardButtons.get(getCardIndex(otherPlayers.get(i), card));
                     }
                 }
             }
@@ -1581,13 +1591,13 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         return null;
     }
 
-    private void showPeekedOnCard(Player peekingPlayer, Card card){
+    private void showPeekedOnCard(Player peekingPlayer, Card card) {
         int playerIndex = otherPlayers.indexOf(peekingPlayer);
         //int cardIndex = peekingPlayer.getMyCards().indexOf(card); //for some reason returns -1
         int cardIndex = getCardIndex(peekingPlayer, card);
         ImageButton cardButton = otherPlayerButtonLists.get(playerIndex).get(cardIndex);
         cardButton.setImageResource(R.drawable.card_spied);
-        updateText.setText(peekingPlayer.getName()+" is peeking");
+        updateText.setText(peekingPlayer.getName() + " is peeking");
 
         new CountDownTimer(10000, 1000) {
 
@@ -1603,26 +1613,25 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
 
     }
 
-    private int getCardIndex(Player peekingPlayer, Card card){
-        for(int i=0; i<peekingPlayer.getMyCards().size(); i++){
-            if(peekingPlayer.getMyCards().get(i).equalsCard(card)){
+    private int getCardIndex(Player peekingPlayer, Card card) {
+        for (int i = 0; i < peekingPlayer.getMyCards().size(); i++) {
+            if (peekingPlayer.getMyCards().get(i).equalsCard(card)) {
                 return i;
             }
         }
         return 0;
     }
 
-    private void indicatePlayerTurn(Player player){
-        for(com.airbnb.lottie.LottieAnimationView animation : playerHighlightAnimations){
+    private void indicatePlayerTurn(Player player) {
+        for (com.airbnb.lottie.LottieAnimationView animation : playerHighlightAnimations) {
             animation.setVisibility(View.INVISIBLE);
             animation.cancelAnimation();
         }
-        if(player==me){
+        if (player == me) {
             playerHighlightAnimations.get(0).setVisibility(View.VISIBLE);
             playerHighlightAnimations.get(0).playAnimation();
-        }
-        else{
-            int index = otherPlayers.indexOf(player)+1;
+        } else {
+            int index = otherPlayers.indexOf(player) + 1;
             playerHighlightAnimations.get(index).setVisibility(View.VISIBLE);
             playerHighlightAnimations.get(index).playAnimation();
         }
@@ -1638,7 +1647,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         v.startAnimation(anim);
     }
 
-    private void displayDiscardedCard(Card card){
+    private void displayDiscardedCard(Card card) {
         playedCardsStackButton.setImageResource(getCardResource(card));
     }
 
@@ -1679,10 +1688,10 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
     public void handleTextMessage(String message) throws JSONException {
         JSONObject jsonObject = new JSONObject(message);
 
-        String chatText="";
+        String chatText = "";
 
         if (jsonObject.has("chatMessage")) {
-           // String chatText = jsonObject.get("chatMessage").toString();
+            // String chatText = jsonObject.get("chatMessage").toString();
             JSONObject js = jsonObject.getJSONObject("chatMessage");
             Player sender = null;
             if (me != null) {
@@ -1696,14 +1705,13 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 Gson gson = new Gson();
                 sender = gson.fromJson(jsonString, Player.class);
             }
-            entireChatText = entireChatText+"\n"+chatText;
-            InGameChatFragment fragment_obj = (InGameChatFragment)getSupportFragmentManager().
+            entireChatText = entireChatText + "\n" + chatText;
+            InGameChatFragment fragment_obj = (InGameChatFragment) getSupportFragmentManager().
                     findFragmentById(R.id.fragment_chat);
-            if(sender!=null){
-                if(sender.getId()==me.getId()){
+            if (sender != null) {
+                if (sender.getId() == me.getId()) {
                     fragment_obj.chatMessagesList.add(new ChatMessage(me.getName(), chatText, true, me.getAvatar()));
-                }
-                else{
+                } else {
                     fragment_obj.chatMessagesList.add(new ChatMessage(sender.getName(), chatText, false, sender.getAvatar()));
                 }
             }
@@ -1715,7 +1723,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                     fragment_obj.chatMessageListView.setAdapter(fragment_obj.adapter);
                     fragment_obj.adapter.notifyDataSetChanged();
                     fragment_obj.scrollMyListViewToBottom();
-                    if(chatFragmentContainer.getVisibility() == View.INVISIBLE){
+                    if (chatFragmentContainer.getVisibility() == View.INVISIBLE) {
                         chatNotificationBubble.setVisibility(View.VISIBLE);
                     }
                 }
@@ -1724,8 +1732,8 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
 
         if (jsonObject.has("sendMAXPlayer")) {
             int maxPlayer = (int) jsonObject.get("sendMAXPlayer");
-            MAX_PLAYERS=maxPlayer;
-            Log.d("----------------------MAXPLAYERS", "playerNr: "+maxPlayer);
+            MAX_PLAYERS = maxPlayer;
+            Log.d("----------------------MAXPLAYERS", "playerNr: " + maxPlayer);
             visualizePlayerStats(maxPlayer);
             deactivateAllButtons();
         }
@@ -1734,24 +1742,23 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             if (js.has("me")) {
                 String jsonString = js.get("me").toString();
                 Gson gson = new Gson();
-                Player myself= gson.fromJson(jsonString, Player.class);
-                if (me==null){
+                Player myself = gson.fromJson(jsonString, Player.class);
+                if (me == null) {
                     me = myself;
-                }else{
+                } else {
                     me.replacePlayerForNextRound(myself);
                 }
                 // hier wurde me gesetzt
-                Log.d("----------------------ME", "my name: "+me.getName());
+                Log.d("----------------------ME", "my name: " + me.getName());
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         playerNames.get(0).setText(me.getName());
                         playerPics.get(0).setImageResource(me.getAvatar());
-                        playerStats.get(0).setText("Score: "+me.getScore());
-                        if(initialRound){
+                        playerStats.get(0).setText("Score: " + me.getScore());
+                        if (initialRound) {
                             initiateInitialCardLookUp();
-                        }
-                        else{
+                        } else {
                             round++;
                             showNewRound();
                             new CountDownTimer(3000, 1000) {
@@ -1782,10 +1789,10 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        if (initialRound){
+                        if (initialRound) {
                             otherPlayers.addAll(players);
                             showPlayers();
-                        }else{
+                        } else {
                             nextRound(players);
                         }
                     }
@@ -1806,7 +1813,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                     @Override
                     public void run() {
                         indicatePlayerTurn(me);
-                        if(caboplayer==null){
+                        if (caboplayer == null) {
                             caboButton.setEnabled(true);
                             caboButton.setAlpha(1f);
                         }
@@ -1898,8 +1905,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                             }
                         }
                     });
-                }
-                else{
+                } else {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -1932,10 +1938,10 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                     @Override
                     public void run() {
                         Player peekingPlayer = null;
-                        for(Player player : otherPlayers){
-                            if(player.getId()==playingPlayerId){
-                                peekingPlayer=player;
-                                Log.d("----------------------PEEK ACTION CONFIRMED BY SERVER", "peeker:" +peekingPlayer.getName());
+                        for (Player player : otherPlayers) {
+                            if (player.getId() == playingPlayerId) {
+                                peekingPlayer = player;
+                                Log.d("----------------------PEEK ACTION CONFIRMED BY SERVER", "peeker:" + peekingPlayer.getName());
                             }
                         }
                         showPeekedOnCard(peekingPlayer, card);
@@ -1943,7 +1949,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 });
             }
 
-            if (me.getStatus().equals(playing)){
+            if (me.getStatus().equals(playing)) {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -1987,7 +1993,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                     }
                 });
             }
-            if (me.getStatus().equals(playing)){
+            if (me.getStatus().equals(playing)) {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -2033,7 +2039,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 });
             }
 
-            if (me.getStatus().equals(playing)){
+            if (me.getStatus().equals(playing)) {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -2073,7 +2079,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 Player player = gson.fromJson(jsonString, Player.class);
                 if (player.getId() == me.getId()) {
                     me.setStatus(player.getStatus());
-                }else{
+                } else {
                     getPlayerById(player.getId()).setStatus(player.getStatus());
                 }
             }
@@ -2088,7 +2094,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 updateScores(player);
                 updateScoreDisplays();
                 String winner = getNameOfWinner();
-                initialRound=false;
+                initialRound = false;
                 // winner ist der Name des Gewinners
             }
         }
@@ -2101,8 +2107,8 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 if (player.getId() == me.getId()) {
                     me.setSmiley(player.getSmiley());
                 } else {
-                    Player otherPlayer= getPlayerById(player.getId());
-                    if (otherPlayer!=null){
+                    Player otherPlayer = getPlayerById(player.getId());
+                    if (otherPlayer != null) {
                         otherPlayer.setSmiley(player.getSmiley());
                         showPlayerSmiley(otherPlayer);
                     }
@@ -2132,7 +2138,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         }
         if (jsonObject.has("maxPoints")) {
             int maxPoints = (int) jsonObject.get("sendMAXPlayer");
-           //TODO show max Points
+            //TODO show max Points
             // vorher: communicator.sendMessage(JSON_commands.sendMaxPoints(100)); aber nur wenn firstRound==true
 
         }
@@ -2156,56 +2162,52 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         hintArrowCardStack.setVisibility(View.VISIBLE);
     }
 
-    private void hideHint(){
+    private void hideHint() {
         hintTextOwnCards.setVisibility(View.GONE);
         hintTextCardStack.setVisibility(View.GONE);
         hintArrowOwnCards.setVisibility(View.GONE);
         hintArrowCardStack.setVisibility(View.GONE);
     }
 
-    public void showNewRound(){
+    public void showNewRound() {
         centerText.setVisibility(View.VISIBLE);
-        centerText.setText("Round "+round);
+        centerText.setText("Round " + round);
         cardSwapBg.setVisibility(View.VISIBLE);
     }
 
-    public void hideNewRound(){
+    public void hideNewRound() {
         centerText.setVisibility(View.INVISIBLE);
         cardSwapBg.setVisibility(View.INVISIBLE);
     }
 
-    private void showPlayerSmiley(Player player){
+    private void showPlayerSmiley(Player player) {
         int playerIndex = otherPlayers.indexOf(player);
 
-            if(player.getSmiley().equals(smiling)){
-                otherPlayerEmojis.get(playerIndex).setImageResource(R.drawable.emoji_happy);
-            }
-            else if (player.getSmiley().equals(laughing)){
-                otherPlayerEmojis.get(playerIndex).setImageResource(R.drawable.emoji_very_happy);
-            }
-            else if (player.getSmiley().equals(angry)){
-                otherPlayerEmojis.get(playerIndex).setImageResource(R.drawable.emoji_angry);
-            }
-            else if (player.getSmiley().equals(shocked)){
-                otherPlayerEmojis.get(playerIndex).setImageResource(R.drawable.emoji_shocked);
-            }
-            else if (player.getSmiley().equals(tongueOut)){
-                otherPlayerEmojis.get(playerIndex).setImageResource(R.drawable.emoji_tounge);
-            }
+        if (player.getSmiley().equals(smiling)) {
+            otherPlayerEmojis.get(playerIndex).setImageResource(R.drawable.emoji_happy);
+        } else if (player.getSmiley().equals(laughing)) {
+            otherPlayerEmojis.get(playerIndex).setImageResource(R.drawable.emoji_very_happy);
+        } else if (player.getSmiley().equals(angry)) {
+            otherPlayerEmojis.get(playerIndex).setImageResource(R.drawable.emoji_angry);
+        } else if (player.getSmiley().equals(shocked)) {
+            otherPlayerEmojis.get(playerIndex).setImageResource(R.drawable.emoji_shocked);
+        } else if (player.getSmiley().equals(tongueOut)) {
+            otherPlayerEmojis.get(playerIndex).setImageResource(R.drawable.emoji_tounge);
+        }
 
     }
 
-    public void nextRound(List<Player>players){
-        caboplayer=null;
+    public void nextRound(List<Player> players) {
+        caboplayer = null;
         fadePlayerCardsRestore(1f);
-        for (Player oldPlayer: otherPlayers){
-            for (Player newPlayer: players){
-                if (oldPlayer.getId()==newPlayer.getId()){
+        for (Player oldPlayer : otherPlayers) {
+            for (Player newPlayer : players) {
+                if (oldPlayer.getId() == newPlayer.getId()) {
                     oldPlayer.replacePlayerForNextRound(newPlayer);
                 }
             }
         }
-        for(LottieAnimationView playerHighlight : playerHighlightAnimations) {
+        for (LottieAnimationView playerHighlight : playerHighlightAnimations) {
             playerHighlight.setVisibility(View.INVISIBLE);
         }
         playedCardsStackButton.setImageResource(R.drawable.card_stack);
@@ -2218,8 +2220,8 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 for (int i = 0; i < otherPlayers.size(); i++) {
                     if (i + 1 < playerNames.size()) {
                         playerNames.get(i + 1).setText(otherPlayers.get(i).getName());
-                        playerPics.get(i+1).setImageResource(otherPlayers.get(i).getAvatar());
-                        playerStats.get(i+1).setText("Score: "+otherPlayers.get(i).getScore());
+                        playerPics.get(i + 1).setImageResource(otherPlayers.get(i).getAvatar());
+                        playerStats.get(i + 1).setText("Score: " + otherPlayers.get(i).getScore());
                     } else {
                         Log.d("----------------------NAMES", "OUT OF BOUNDS");
                     }
@@ -2229,14 +2231,14 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         });
     }
 
-    private void updateScoreDisplays(){
+    private void updateScoreDisplays() {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                playerStats.get(0).setText("Score: "+me.getScore());
+                playerStats.get(0).setText("Score: " + me.getScore());
                 for (int i = 0; i < otherPlayers.size(); i++) {
                     if (i + 1 < playerNames.size()) {
-                        playerStats.get(i+1).setText("Score: "+otherPlayers.get(i).getScore());
+                        playerStats.get(i + 1).setText("Score: " + otherPlayers.get(i).getScore());
                     } else {
                         Log.d("----------------------NAMES", "OUT OF BOUNDS");
                     }
@@ -2246,59 +2248,58 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         });
     }
 
-    private void fadeCaboPlayerCardsAndShowAnimation(float alpha){
+    private void fadeCaboPlayerCardsAndShowAnimation(float alpha) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if(caboplayer.getId() == me.getId()){
-                    for(ImageButton card : player1CardButtons){
+                if (caboplayer.getId() == me.getId()) {
+                    for (ImageButton card : player1CardButtons) {
                         card.setAlpha(alpha);
                     }
                     playerCaboAnimations.get(0).setVisibility(View.VISIBLE);
                 }
-                for(int i=0; i<otherPlayers.size(); i++){
-                    if(otherPlayers.get(i).getId()==caboplayer.getId()){
-                        for(ImageButton card : otherPlayerButtonLists.get(i)){
+                for (int i = 0; i < otherPlayers.size(); i++) {
+                    if (otherPlayers.get(i).getId() == caboplayer.getId()) {
+                        for (ImageButton card : otherPlayerButtonLists.get(i)) {
                             card.setAlpha(alpha);
                         }
-                        playerCaboAnimations.get(i+1).setVisibility(View.VISIBLE);
+                        playerCaboAnimations.get(i + 1).setVisibility(View.VISIBLE);
                     }
                 }
             }
         });
     }
 
-    private void fadePlayerCardsRestore(float alpha){
+    private void fadePlayerCardsRestore(float alpha) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                for(ImageButton card : player1CardButtons){
+                for (ImageButton card : player1CardButtons) {
                     card.setAlpha(alpha);
                 }
                 playerCaboAnimations.get(0).setVisibility(View.INVISIBLE);
-                for(int i=0; i<otherPlayers.size(); i++){
-                        for(ImageButton card : otherPlayerButtonLists.get(i)){
-                            card.setAlpha(alpha);
-                        }
-                        playerCaboAnimations.get(i+1).setVisibility(View.INVISIBLE);
+                for (int i = 0; i < otherPlayers.size(); i++) {
+                    for (ImageButton card : otherPlayerButtonLists.get(i)) {
+                        card.setAlpha(alpha);
+                    }
+                    playerCaboAnimations.get(i + 1).setVisibility(View.INVISIBLE);
                 }
             }
         });
     }
-
 
 
     public void updateCards(Player updatedPlayer) {
         if (updatedPlayer.getId() == me.getId()) {
             ArrayList<Card> oldcards = me.getMyCards();
             me.updateCards(updatedPlayer);
-            if(!me.getStatus().equals(playing)){
+            if (!me.getStatus().equals(playing)) {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        for (int i=0; i <me.getMyCards().size(); i++){
-                            if(!oldcards.get(i).equalsCard(me.getMyCards().get(i))){
-                                Log.d("----------------------SWAPPED CARD", "index: "+i);
+                        for (int i = 0; i < me.getMyCards().size(); i++) {
+                            if (!oldcards.get(i).equalsCard(me.getMyCards().get(i))) {
+                                Log.d("----------------------SWAPPED CARD", "index: " + i);
                                 showSwappedCards(me, me.getMyCards().get(i));
                             }
                         }
@@ -2309,10 +2310,10 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             for (Player player : otherPlayers) {
                 if (player.getId() == updatedPlayer.getId()) {
                     ArrayList<Card> oldcards = player.getMyCards();
-                    Log.d("-----------OLD CARDS", "cards: "+oldcards.get(0).getValue()+" "+oldcards.get(1).getValue()+" "+oldcards.get(2).getValue()+" "+oldcards.get(3).getValue()+" ");
+                    Log.d("-----------OLD CARDS", "cards: " + oldcards.get(0).getValue() + " " + oldcards.get(1).getValue() + " " + oldcards.get(2).getValue() + " " + oldcards.get(3).getValue() + " ");
                     player.updateCards(updatedPlayer);
-                    Log.d("-----------NEW CARDS", "cards: "+updatedPlayer.getMyCards().get(0).getValue()+" "+updatedPlayer.getMyCards().get(1).getValue()+" "+updatedPlayer.getMyCards().get(2).getValue()+" "+updatedPlayer.getMyCards().get(3).getValue()+" ");
-                    if(!me.getStatus().equals(playing)) {
+                    Log.d("-----------NEW CARDS", "cards: " + updatedPlayer.getMyCards().get(0).getValue() + " " + updatedPlayer.getMyCards().get(1).getValue() + " " + updatedPlayer.getMyCards().get(2).getValue() + " " + updatedPlayer.getMyCards().get(3).getValue() + " ");
+                    if (!me.getStatus().equals(playing)) {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -2385,15 +2386,15 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         return null;
     }
 
-    private void showEndOfGame(Player winner){
+    private void showEndOfGame(Player winner) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                for(ImageButton card : player1CardButtons){
+                for (ImageButton card : player1CardButtons) {
                     card.setVisibility(View.GONE);
                 }
-                for(List<ImageButton> playerCards : otherPlayerButtonLists){
-                    for(ImageButton card : playerCards){
+                for (List<ImageButton> playerCards : otherPlayerButtonLists) {
+                    for (ImageButton card : playerCards) {
                         card.setVisibility(View.GONE);
                     }
                 }
@@ -2408,13 +2409,12 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 endGameReturnButton.setVisibility(View.VISIBLE);
 
                 cardSwapBg.setVisibility(View.VISIBLE);
-                if(winner.getId()==me.getId()){
+                if (winner.getId() == me.getId()) {
                     centerText.setVisibility(View.VISIBLE);
                     centerText.setText("You won! Congrats!");
-                }
-                else{
+                } else {
                     centerText.setVisibility(View.VISIBLE);
-                    centerText.setText(winner.getName()+" won!");
+                    centerText.setText(winner.getName() + " won!");
                 }
 
                 endGameReturnButton.setOnClickListener(new View.OnClickListener() {
@@ -2433,19 +2433,21 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
 
     public void leaveGame() throws JSONException {
         communicator.sendMessage(JSON_commands.leaveGame());
-        if (noAccount.equalsIgnoreCase("noAccount")){
-            Intent intent = new Intent(InGameActivity.this, LoginActivity.class);
-            startActivity(intent);
-        }else{
+        if (noAccount != null) {
+            if (noAccount.equalsIgnoreCase("noAccount")) {
+                Intent intent = new Intent(InGameActivity.this, LoginActivity.class);
+                startActivity(intent);
+            }
+        } else {
             Intent intent = new Intent(InGameActivity.this, MainActivity.class);
             startActivity(intent);
         }
 
     }
 
-    public void readNoLogIn(Intent intent){
+    public void readNoLogIn(Intent intent) {
         String NO_LOGIN = intent.getStringExtra("NO_LOGIN");
-        noAccount=NO_LOGIN;
+        noAccount = NO_LOGIN;
     }
 
 }

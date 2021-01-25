@@ -247,7 +247,9 @@ public class SocketHandler extends TextWebSocketHandler {
             }
         }
         if (jsonObject.has("noAccount")) {
-            connectedPlayers.put(session.getId(), new Player());
+            Player newPlayer= new Player();
+            newPlayer.setNoAccount(true);
+            connectedPlayers.put(session.getId(), newPlayer);
             Gamestate gamestate = getNextFreeGame();
             getPlayerBySessionId(session.getId()).setGamestate(gamestate);
             sendMessage(session, JSON_commands.allowedToMove());

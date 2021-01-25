@@ -27,7 +27,7 @@ public class Gamestate {
     // determines how many players are already registered
     private int countPlayer = 0;
 
-    private int maxPoints = 100;
+    private int maxPoints = 10;
 
     private boolean privateParty = false;
 
@@ -104,12 +104,22 @@ public class Gamestate {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            if (state.equalsIgnoreCase(TypeDefs.GAMESTART)){
+                for (Player player: players.values()){
+                    for (Player socketPlayer: socketHandler.getConnectedPlayers().values()){
+                        if (player.getNick().equalsIgnoreCase(socketPlayer.getNick())){
+                            socketPlayer.setGamestate(null);
+                        }
+                    }
+                }
+            }
             if (players.size() == 0) {
                 socketHandler.removeGamestate(this);
             }
             if (players.size() == 1 && playWithKI) {
                 socketHandler.removeGamestate(this);
             }
+
         }
 
     }
@@ -517,6 +527,7 @@ public class Gamestate {
         this.countPlayer++;
         // Player newPlayer = new Player(generateId(), name, cardSuiteMgr);
         Player newPlayer = new Player(generateId(), name, this);
+        newPlayer.setNick(name);
         this.players.put(webSocketSession.getId(), newPlayer);
         //player is informed that he can join the game
         saveAvatar(newPlayer);
@@ -590,8 +601,10 @@ public class Gamestate {
     public boolean isExist(String name) {
         if (players != null) {
             for (Player player : players.values()) {
-                if (player.getNick().equalsIgnoreCase(name)) {
-                    return true;
+                if (player.getNick()!=null){
+                    if (player.getNick().equalsIgnoreCase(name)) {
+                        return true;
+                    }
                 }
             }
         }
@@ -1465,7 +1478,7 @@ public class Gamestate {
             if (player.getScore() == 100 || player.getScore() == 50) {
                 player.setScore(player.getScore() / 2);
             }
-            if (player.getScore() > 100) {
+            if (player.getScore() > maxPoints) {
                 this.terminate();
             }
         }

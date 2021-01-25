@@ -20,6 +20,11 @@ public class Player {
 
 
     @JsonIgnore
+    private boolean noAccount= false;
+
+
+
+    @JsonIgnore
     private ArrayList<Card> knownCards= new ArrayList<>();
 
      @JsonIgnore
@@ -366,6 +371,13 @@ public class Player {
         this.knownCardsOfOther = knownCardsOfOther;
     }
 
+    public boolean isNoAccount() {
+        return noAccount;
+    }
+
+    public void setNoAccount(boolean noAccount) {
+        this.noAccount = noAccount;
+    }
 
 
 }
