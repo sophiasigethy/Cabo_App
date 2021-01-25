@@ -181,8 +181,9 @@ public class DatabaseOperation {
                     if (dbId != null) {
                         String nick = user.child("nick").getValue().toString();
                         int avatarID = Integer.parseInt(user.child("avatarID").getValue().toString());
-                        if (nick != null)
-                            users.add(new Player(dbId, nick, avatarID));
+                        if (nick == null || nick.equals(""))
+                            continue;
+                        users.add(new Player(dbId, nick, avatarID));
                     }
                 }
                 saveObjectToSharedPreference(
