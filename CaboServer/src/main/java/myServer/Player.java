@@ -8,15 +8,14 @@ import java.util.Objects;
 public class Player {
 
     private int id;
-    private String nick;
+    private String nick = "";
 
-    private String name="";
-    private String dbId;
-    private int avatarID;
+    private String name = "";
+    private String dbId = "";
+    private int avatarID = 9;
 
     // The cards belong to this player
     private ArrayList<Card> cards = new ArrayList<>();
-
 
 
     @JsonIgnore
@@ -28,19 +27,19 @@ public class Player {
     private int score = 0;
     @JsonIgnore
     private boolean calledCabo = false;
-    private String picture="";
-    private String smiley="";
+    private String picture = "";
+    private String smiley = "";
 
     public Player() {
 
     }
 
-    public Player(int id, String name){
-        this.id= id;
-        this.nick =name;
-        this.name= name;
-        this.status=TypeDefs.MATCHING;
-        this.smiley=TypeDefs.smiling;
+    public Player(int id, String name) {
+        this.id = id;
+        this.nick = name;
+        this.name = name;
+        this.status = TypeDefs.MATCHING;
+        this.smiley = TypeDefs.smiling;
     }
 
     public Player(String dbId, String nick, int avatarID) {
@@ -53,10 +52,10 @@ public class Player {
     public Player(int id, String nick, Gamestate gs) {
         this.id = id;
         this.name = nick;
-        this.nick= nick;
+        this.nick = nick;
         this.gamestate = gs;
         this.status = TypeDefs.MATCHING;
-        this.smiley=TypeDefs.smiling;
+        this.smiley = TypeDefs.smiling;
     }
 
     public int getId() {
@@ -66,6 +65,7 @@ public class Player {
     public void setId(int id) {
         this.id = id;
     }
+
     public String getName() {
         return name;
     }
@@ -73,6 +73,7 @@ public class Player {
     public void setName(String name) {
         this.name = name;
     }
+
     public String getNick() {
         return nick;
     }
@@ -123,13 +124,14 @@ public class Player {
 
     /**
      * A play discard a given card
+     *
      * @param cardsToRemove a list of cards to be discarded
      */
     public void tryDiscardCards(ArrayList<Card> cardsToRemove) {
         if (this.calledCabo) return;
 
         Card card = cardsToRemove.get(0);
-        for (int i = 1; i < cardsToRemove.size(); i ++) {
+        for (int i = 1; i < cardsToRemove.size(); i++) {
             if (card.getValue() != cardsToRemove.get(i).getValue()) {
                 // not equal, return
                 return;
@@ -137,7 +139,7 @@ public class Player {
         }
 
         // Remove all of them
-        for (int i = 0; i < cardsToRemove.size(); i ++) {
+        for (int i = 0; i < cardsToRemove.size(); i++) {
             this.gamestate.getDiscardedCards().add(cardsToRemove.get(i));
             this.cards.remove(cardsToRemove.get(i));
         }
@@ -146,6 +148,7 @@ public class Player {
     /**
      * Swap with other player.
      * No need to invoke this method if client part already knows the detailed card information
+     *
      * @param other
      * @param myCard
      * @param otherCard
@@ -153,13 +156,13 @@ public class Player {
     public void swapWithOtherPlayer(Player other, Card myCard, Card otherCard) {
         if (this.calledCabo) return;
 
-        for (int i = 0; i < other.cards.size(); i ++) {
+        for (int i = 0; i < other.cards.size(); i++) {
             if (otherCard.equalsCard(other.cards.get(i))) {
                 other.cards.set(i, myCard);
                 break;
             }
         }
-        for (int i = 0; i < this.cards.size(); i ++) {
+        for (int i = 0; i < this.cards.size(); i++) {
             if (myCard.equalsCard(this.cards.get(i))) {
                 this.cards.set(i, otherCard);
                 break;
@@ -167,9 +170,11 @@ public class Player {
         }
 
     }
+
     /**
      * Swap with card pile
      * No need to invoke this method if client part already knows the detailed card information
+     *
      * @param cardsToSwap
      * @param myCard
      * @param otherCard
@@ -179,13 +184,13 @@ public class Player {
 
         if (this.calledCabo) return;
         boolean swapped = false;
-        for (int i = 0; i < cardsToSwap.size(); i ++) {
+        for (int i = 0; i < cardsToSwap.size(); i++) {
             if (swapped) {
                 break;
             }
             if (otherCard.equals(cardsToSwap.get(i))) {
                 // `otherCard` is really inside cards, can swap;
-                for (int j = 0; j < this.cards.size(); j ++) {
+                for (int j = 0; j < this.cards.size(); j++) {
                     if (myCard.equals(this.cards.get(j))) {
                         // `myCard` is really inside cards, can swap
                         this.cards.set(j, otherCard);
@@ -201,32 +206,38 @@ public class Player {
             }
         }
     }
+
     /**
      * Swap with available card pile
      * No need to invoke this method if client part already knows the detailed card information
+     *
      * @param myCard
      * @param otherCard
      */
     public void swapWithAvailableCards(Card myCard, Card otherCard) {
         this.swapWithPileCards(this.gamestate.getAvailableCards(), myCard, otherCard, true);
     }
+
     /**
      * Swap with discarded card pile
      * No need to invoke this method if client part already knows the detailed card information
+     *
      * @param myCard
      * @param otherCard
      */
     public void swapWithDiscardedCards(Card myCard, Card otherCard) {
         this.swapWithPileCards(this.gamestate.getDiscardedCards(), myCard, otherCard, false);
     }
+
     /**
      * Get the points of all cards play obtains
+     *
      * @return
      */
     public int calculatePoints() {
         int points = 0;
 
-        for (int i = 0; i < this.cards.size(); i ++) {
+        for (int i = 0; i < this.cards.size(); i++) {
             points += this.cards.get(i).getValue();
         }
         return points;
@@ -250,7 +261,8 @@ public class Player {
     public void setScore(int score) {
         this.score = score;
     }
-//
+
+    //
     public int getScore() {
         return this.score;
     }
@@ -271,12 +283,12 @@ public class Player {
         this.status = status;
     }
 
-    public void swapWithOwnCard(Card ownCard, Card currentPickedCard){
+    public void swapWithOwnCard(Card ownCard, Card currentPickedCard) {
         //gezogene Karte wird von availableCards entfernt und in playedCards hinzugefügt-> ist letzter Eintrag von playedCards jetzt
         //diese Karte muss currentPickedCard entsprechen
         gamestate.takeFirstCardFromAvailableCards();
-        for (int i=0; i<this.cards.size(); i++ ){
-            if (ownCard.equalsCard(cards.get(i))){
+        for (int i = 0; i < this.cards.size(); i++) {
+            if (ownCard.equalsCard(cards.get(i))) {
                 cards.remove(i);
                 cards.add(i, currentPickedCard);
             }
@@ -307,7 +319,6 @@ public class Player {
     public void setDbId(String dbId) {
         this.dbId = dbId;
     }
-
 
 
     @Override
