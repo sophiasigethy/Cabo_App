@@ -21,8 +21,8 @@ build:
     key: "$CI_COMMIT_REF_NAME"
     policy: push
     paths:
-      - build
-      - .gradle
+      - CaboServer/build
+      - CaboServer/.gradle
 
 test:
   stage: test
