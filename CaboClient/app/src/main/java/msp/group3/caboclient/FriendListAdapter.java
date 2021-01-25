@@ -80,7 +80,7 @@ public class FriendListAdapter extends ArrayAdapter {
         }
 
         ImageButton invite_btn = (ImageButton) vi.findViewById(R.id.friendlist_invite);
-        if (party.contains(myFriendList.get(i))) {
+        if (isInParty(myFriendList.get(i))) {
             //TODO Check why Icon is not changed
             invite_btn.setOnClickListener(null);
             invite_btn.setImageResource(R.drawable.partyhat);
@@ -90,7 +90,8 @@ public class FriendListAdapter extends ArrayAdapter {
                 @Override
                 public void onClick(View view) {
                     Log.e("SendPartyRequest", "click");
-                    if (me.getFriendList().size()<4){
+                    //if (me.getFriendList().size()<4){ //todo müsste das nicht party size sein?
+                    if(party.size()<4){
                         try {
                             communicator.sendMessage(JSON_commands.sendPartyRequest2(me, myFriendList.get(i)));
                             Log.e("SendPartyRequest", "Send Party Invitation");
@@ -105,5 +106,14 @@ public class FriendListAdapter extends ArrayAdapter {
             });
         }
         return vi;
+    }
+
+    private boolean isInParty(Player player){
+        for(Player partyPlayer : party){
+            if(partyPlayer.getNick().equalsIgnoreCase(player.getNick())){
+                return true;
+            }
+        }
+        return false;
     }
 }

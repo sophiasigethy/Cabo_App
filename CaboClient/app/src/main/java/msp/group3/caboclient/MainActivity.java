@@ -98,6 +98,7 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
                     enableButtons();
                     if (!party.contains(me))
                         party.add(me);
+                    Log.d("---------------PARTY", "me added to party");
                     friendListAdapter = new FriendListAdapter(activity, me, party, communicator);
                     friendList.setAdapter(friendListAdapter);
                     //updateFriendList();
@@ -186,14 +187,17 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
             Player finalSender = sender;
             runOnUiThread(new Runnable() {
                 public void run() {
-                    View v = friendList.getChildAt(
+
+                    party.add(finalSender);
+                    updateFriendList(finalSender, false);
+                    /*View v = friendList.getChildAt(
                             friendListAdapter.getPlayerIndex(finalSender) - friendList.getFirstVisiblePosition());
                     if (v != null) {
                         if (!party.contains(finalSender)) {
                             party.add(finalSender);
                             updateFriendList(finalSender, false);
                         }
-                    }
+                    }*/
                 }
             });
 
@@ -233,27 +237,6 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
                         Log.d("-----------------ONLINE STATUS", "friend set online: "+me.getFriendList().get(indexInFriendList(finalPlayer)).getName());
 
                         friendListAdapter.notifyDataSetChanged();
-                        /*View v = friendList.getChildAt(
-                                friendListAdapter.getPlayerIndex(finalPlayer) - friendList.getFirstVisiblePosition());
-                        //View v = friendList.getChildAt(friendListAdapter.getPlayerIndex(finalPlayer));
-
-                        if (v != null) {
-                            Log.d("-----------------ONLINE STATUS", "view not null ");
-                            ImageView friendlistStatus = (ImageView) v.findViewById(R.id.friendlist_status);
-                            if (finalIsOnline) {
-                                friendlistStatus.setImageResource(R.drawable.online);
-                                me.getFriendList().get(me.getFriendList().indexOf(finalPlayer)).setOnline(true);
-                            } else {
-                                friendlistStatus.setImageResource(R.drawable.offline);
-                                me.getFriendList().get(me.getFriendList().indexOf(finalPlayer)).setOnline(true);
-                            }
-                            //TODO Check if this is enough
-                            updateFriendList(finalPlayer, false);
-                            friendListAdapter.notifyDataSetChanged();
-                        }
-                        else {
-                            Log.d("-----------------ONLINE STATUS", "view is null");
-                        }*/
                     }
                 });
             }
