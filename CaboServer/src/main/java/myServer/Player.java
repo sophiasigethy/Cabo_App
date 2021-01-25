@@ -22,6 +22,9 @@ public class Player {
     @JsonIgnore
     private ArrayList<Card> knownCards= new ArrayList<>();
 
+     @JsonIgnore
+    private ArrayList<Card> knownCardsOfOther= new ArrayList<>();
+
     // The cards belong to this player
     private ArrayList<Card> cards = new ArrayList<>();
 
@@ -355,5 +358,14 @@ public class Player {
     public void setKnownCards(ArrayList<Card> knownCards) {
         this.knownCards = knownCards;
     }
+    public ArrayList<Card> getKnownCardsOfOther() {
+        return knownCardsOfOther;
+    }
+
+    public void setKnownCardsOfOther(ArrayList<Card> knownCardsOfOther) {
+        this.knownCardsOfOther = knownCardsOfOther;
+    }
+
+
 
 }
