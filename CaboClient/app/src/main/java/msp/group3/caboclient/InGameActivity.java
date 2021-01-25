@@ -2093,6 +2093,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 String jsonString = js.get("player").toString();
                 Gson gson = new Gson();
                 Player winnerOfGame = gson.fromJson(jsonString, Player.class);
+                showEndOfGame(winnerOfGame);
                 //TODO this is the winner of whole game
                 //TODO update global score in shared preferences?
 
@@ -2343,30 +2344,46 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
     }
 
     private void showEndOfGame(Player winner){
-        for(ImageButton card : player1CardButtons){
-            card.setVisibility(View.GONE);
-        }
-        for(List<ImageButton> playerCards : otherPlayerButtonLists){
-            for(ImageButton card : playerCards){
-                card.setVisibility(View.GONE);
-            }
-        }
-        pickCardsStackButton.setVisibility(View.GONE);
-        playedCardsStackButton.setVisibility(View.GONE);
-        caboButton.setVisibility(View.GONE);
-        updateText.setVisibility(View.GONE);
-        endGameStars.setVisibility(View.VISIBLE);
-        endGameReturnButton.setVisibility(View.VISIBLE);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                for(ImageButton card : player1CardButtons){
+                    card.setVisibility(View.GONE);
+                }
+                for(List<ImageButton> playerCards : otherPlayerButtonLists){
+                    for(ImageButton card : playerCards){
+                        card.setVisibility(View.GONE);
+                    }
+                }
+                pickCardsStackButton.setVisibility(View.GONE);
+                playedCardsStackButton.setVisibility(View.GONE);
+                caboButton.setVisibility(View.GONE);
+                updateText.setVisibility(View.GONE);
+                endGameStars.setVisibility(View.VISIBLE);
+                endGameReturnButton.setVisibility(View.VISIBLE);
 
-        cardSwapBg.setVisibility(View.VISIBLE);
-        if(winner.getId()==me.getId()){
-            centerText.setVisibility(View.VISIBLE);
-            centerText.setText("You won! Congrats!");
-        }
-        else{
-            centerText.setVisibility(View.VISIBLE);
-            centerText.setText(winner.getName()+" won!");
-        }
+                cardSwapBg.setVisibility(View.VISIBLE);
+                if(winner.getId()==me.getId()){
+                    centerText.setVisibility(View.VISIBLE);
+                    centerText.setText("You won! Congrats!");
+                }
+                else{
+                    centerText.setVisibility(View.VISIBLE);
+                    centerText.setText(winner.getName()+" won!");
+                }
+
+                endGameReturnButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        try {
+                            leaveGame();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+            }
+        });
     }
 
     public void leaveGame() throws JSONException {

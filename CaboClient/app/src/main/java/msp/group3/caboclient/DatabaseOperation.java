@@ -66,7 +66,7 @@ public class DatabaseOperation {
                         String dbID = (String) ((LinkedTreeMap) deserializedFriends.get(i)).get("dbID").toString().replace("\"", "").replace("\\", "");
                         String nick = (String) ((LinkedTreeMap) deserializedFriends.get(i)).get("nick").toString().replace("\"", "").replace("\\", "");
                         //TODO Find out why double is read here
-                        int avatarId = (int)Double.parseDouble((String) ((LinkedTreeMap) deserializedFriends.get(i)).get("avatarID").toString().replace("\"", "").replace("\\", ""));
+                        int avatarId = (int) Double.parseDouble((String) ((LinkedTreeMap) deserializedFriends.get(i)).get("avatarID").toString().replace("\"", "").replace("\\", ""));
                         friendList.add(new Player(dbID, nick, avatarId));
                     }
                     if (friendList != null)
@@ -134,9 +134,9 @@ public class DatabaseOperation {
                             Integer.parseInt(cleanString(friend.child("avatarID").getValue().toString()))));
                 }
                 String myDbID = cleanString(String.valueOf(snapshot.child("dbID").getValue().toString()));
-                String name = cleanString(String.valueOf( snapshot.child("name").getValue().toString()));
-                String mail = cleanString(String.valueOf( snapshot.child("mail").getValue().toString()));
-                String nick = cleanString(String.valueOf( snapshot.child("nick").getValue().toString()));
+                String name = cleanString(String.valueOf(snapshot.child("name").getValue().toString()));
+                String mail = cleanString(String.valueOf(snapshot.child("mail").getValue().toString()));
+                String nick = cleanString(String.valueOf(snapshot.child("nick").getValue().toString()));
                 int avatarId = Integer.parseInt(
                         cleanString(String.valueOf(snapshot.child("avatarID").getValue().toString())));
                 Player player = new Player(myDbID, name, mail, nick, avatarId);
@@ -158,7 +158,7 @@ public class DatabaseOperation {
         editor.putString(String.valueOf(R.string.preference_username), player.getName());
         editor.putString(String.valueOf(R.string.preference_usermail), player.getMail());
         editor.putString(String.valueOf(R.string.preference_usernick), player.getNick());
-        editor.putString(String.valueOf(R.string.preference_useravatar), player.getAvatarID()+"");
+        editor.putString(String.valueOf(R.string.preference_useravatar), player.getAvatarID() + "");
         editor.apply();
         saveObjectToSharedPreference(
                 sharedPref, String.valueOf(R.string.preference_friendlist), player.getFriendList());
@@ -211,15 +211,17 @@ public class DatabaseOperation {
                     sharedPref, String.valueOf(R.string.preference_all_users), ArrayList.class);
             if (deserializedUsers.size() > 0) {
                 for (int i = 0; i < deserializedUsers.size(); i++) {
-                    String dbID = cleanString((String) ((LinkedTreeMap) deserializedUsers.get(i)).get("dbID")
-                            .toString());
+                    if (deserializedUsers.get(i) != null) {
+                        String dbID = cleanString((String) ((LinkedTreeMap) deserializedUsers.get(i)).get("dbID")
+                                .toString());
 
-                    String nick = cleanString((String) ((LinkedTreeMap) deserializedUsers.get(i)).get("nick")
-                            .toString());
-                    //TODO: Find out why we get double
-                    int avatarId = (int) Double.parseDouble(cleanString((String) ((LinkedTreeMap) deserializedUsers.get(i)).get("avatarID")
-                            .toString()));
-                    allUsers.add(new Player(dbID, nick, avatarId));
+                        String nick = cleanString((String) ((LinkedTreeMap) deserializedUsers.get(i)).get("nick")
+                                .toString());
+                        //TODO: Find out why we get double
+                        int avatarId = (int) Double.parseDouble(cleanString((String) ((LinkedTreeMap) deserializedUsers.get(i)).get("avatarID")
+                                .toString()));
+                        allUsers.add(new Player(dbID, nick, avatarId));
+                    }
                 }
             }
         }
@@ -227,7 +229,7 @@ public class DatabaseOperation {
     }
 
     public boolean isNickFree(SharedPreferences sharedPref, String nick) {
-        for (Player player : getAllUsersList(sharedPref))   {
+        for (Player player : getAllUsersList(sharedPref)) {
             if (player.getNick().equals(nick))
                 return false;
         }
@@ -311,7 +313,7 @@ public class DatabaseOperation {
         return currentUser;
     }
 
-    public String cleanString(String string)    {
+    public String cleanString(String string) {
         return string
                 .replace("\"", "").replace("\\", "");
     }

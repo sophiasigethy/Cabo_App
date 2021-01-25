@@ -291,7 +291,6 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
                                 friendlistStatus.setImageResource(R.drawable.offline);
                                 me.getFriendList().get(me.getFriendList().indexOf(finalPlayer)).setOnline(true);
                             }
-
                             //TODO Check if this is enough
                             updateFriendList(finalPlayer, false);
                             friendListAdapter.notifyDataSetChanged();
@@ -336,6 +335,7 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
 
 
     }
+
 
     private void updateFriendList(Player sender, boolean isNewFriend) {
         ArrayList<Player> friends = me.getFriendList();
