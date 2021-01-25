@@ -476,7 +476,13 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
     private void checkStatus(String status) {
         if (status.equalsIgnoreCase(TypeDefs.MATCHING)) {
             //String mes = TypeDefs.server + "We are still waiting for other players.";
-            String mes = "Wait for other players or start the game now with a KI player.";
+            String mes="";
+            if (players.size()==0){
+                mes = "Wait for other players or start the game now with a KI player.";
+            }else{
+                 mes = "Wait for other players or start the game now.";
+            }
+
             showText(mes, true, null);
         }
         if (status.equalsIgnoreCase(TypeDefs.GAMESTART)) {
