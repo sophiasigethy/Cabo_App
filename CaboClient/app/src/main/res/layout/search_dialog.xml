@@ -1,0 +1,67 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#773C36">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Search Friend"
+            android:fontFamily="sans-serif-black"
+            android:id="@+id/text_dialog_title"
+            android:layout_marginTop="12dp"
+            android:layout_marginLeft="12dp"
+            android:layout_marginRight="12dp"
+            android:layout_marginBottom="12dp"
+            android:textSize="16sp"
+            android:textColor="@color/beige"
+            android:layout_gravity="center_vertical"/>
+
+    <EditText
+        android:id="@+id/search_friend_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter Nickname"
+        android:textColor="@color/beige"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
+        android:textSize="16dp"
+        android:textColorHint="@color/turquoise_highlight"
+        android:layout_below="@id/text_dialog_title"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="12dp"
+        android:layout_below="@id/search_friend_input">
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cancel"
+            android:id="@+id/btn_dialog_cancel"
+            android:gravity="center_vertical|center_horizontal"
+            android:layout_marginBottom="20dp"
+            android:background="@android:color/transparent"
+            android:layout_centerHorizontal="true"
+            android:layout_weight=".5"
+            android:layout_marginLeft="12dp"
+            android:layout_marginRight="6dp"
+            android:textColor="@drawable/outlined_button_text" />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Search"
+            android:id="@+id/btn_dialog_search"
+            android:gravity="center_vertical|center_horizontal"
+            android:layout_marginBottom="12dp"
+            android:background="@drawable/outlined_button"
+            android:layout_centerHorizontal="true"
+            android:layout_weight=".5"
+            android:layout_marginRight="12dp"
+            android:layout_marginLeft="6dp"
+            android:textColor="@drawable/outlined_button_text" />
+    </LinearLayout>
+
+</RelativeLayout>

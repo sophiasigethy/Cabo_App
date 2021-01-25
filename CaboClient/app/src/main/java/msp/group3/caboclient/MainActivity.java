@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -373,8 +374,13 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
         startActivity(intent);
     }
 
-
     private void searchFriendDialog() {
+        DatabaseOperation.getDao().updateAllPlayers(sharedPref);
+        CustomSearchDialog dialog = new CustomSearchDialog();
+        dialog.showDialog(activity, me, allUsers, communicator);
+    }
+
+    /*private void searchFriendDialog() {
         DatabaseOperation.getDao().updateAllPlayers(sharedPref);
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setTitle(R.string.search_friend);
@@ -384,6 +390,7 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
         final EditText searchNick = new EditText(activity);
         searchNick.setHint(R.string.enter_nick);
         searchNick.setWidth(70);
+        //searchNick.setHintTextColor(getColor(R.color.turquoise_highlight));
         linearLayout.addView(searchNick);
         // Set up the buttons
         builder.setPositiveButton(R.string.search, new DialogInterface.OnClickListener() {
@@ -399,6 +406,9 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
         });
         builder.setView(linearLayout);
         final AlertDialog dialog = builder.create();
+        //dialog.getButton(AlertDialog.BUTTON_POSITIVE).setBackgroundResource(R.drawable.rounded_button);
+        //dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getColor(R.color.beige));
+        //dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getColor(R.color.beige));
         dialog.show();
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -435,7 +445,7 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
                 dialog.cancel();
             }
         });
-    }
+    }*/
 
     private void acceptFriendRequestDialog(Player sender) {
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
