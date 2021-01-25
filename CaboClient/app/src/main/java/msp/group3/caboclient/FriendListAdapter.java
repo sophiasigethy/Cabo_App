@@ -87,15 +87,20 @@ public class FriendListAdapter extends ArrayAdapter {
         ImageButton invite_btn = (ImageButton) vi.findViewById(R.id.friendlist_invite);
         if (party.contains(friends.get(i))) {
             //TODO Check why Icon is not changed
+            invite_btn.setOnClickListener(null);
             invite_btn.setImageResource(R.drawable.partyhat);
+            invite_btn.setPadding(0, 0, 0,0);
         } else {
-            invite_btn.setImageResource(R.drawable.ic_baseline_add_circle_outline_24);
+            //invite_btn.setImageResource(R.drawable.ic_baseline_add_circle_outline_24);
             invite_btn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    Log.e("SendPartyRequest", "click");
                     if (me.getFriendList().size()<4){
                         try {
                             communicator.sendMessage(JSON_commands.sendPartyRequest2(me, friends.get(i)));
+                            Log.e("SendPartyRequest", "Send Party Invitation");
+
                         } catch (JSONException e) {
                             Log.e("SendPartyRequest", "Could not send Party Invitation");
                         }

@@ -2,6 +2,8 @@ package msp.group3.caboclient;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.fragment.app.FragmentContainer;
+import androidx.fragment.app.FragmentTransaction;
 
 
 import android.animation.Animator;
@@ -48,6 +50,8 @@ import static msp.group3.caboclient.TypeDefs.*;
  * this is an example for a zoomable and scrollable layout
  */
 public class InGameActivity extends AppCompatActivity implements Communicator.CommunicatorCallback {
+    private static final String TAG_CHAT = "chat_fragment";
+    private static final String TAG_SETTINGS = "settings_fragment";
     protected WebSocketClient webSocketClient;
     private Communicator communicator;
 
@@ -133,6 +137,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
 
     private boolean initialRound = true;
     private Player caboplayer = null;
+    private androidx.fragment.app.FragmentContainerView settingsFragmentContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -207,18 +212,24 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
 
         pickCardsStackButton.setEnabled(false);
 
-        //TODO: Chat fragment integration
         if (savedInstanceState == null) {
             Bundle bundle = new Bundle();
             bundle.putInt("some_int", 0);
             getSupportFragmentManager().beginTransaction()
                     .setReorderingAllowed(true)
                     .add(R.id.fragment_chat, InGameChatFragment.class, bundle)
+                    //.add(R.id.fragment_settings, SettingsFragment.class, bundle)
+                    //.add(R.id.fragment_chat, new InGameChatFragment(), TAG_CHAT)
+                    //.add(R.id.fragment_settings, new SettingsFragment(), TAG_SETTINGS)
                     .commit();
         }
 
         chatFragmentContainer = findViewById(R.id.fragment_chat);
         chatFragmentContainer.setVisibility(View.INVISIBLE);
+
+        //settingsFragmentContainer = findViewById(R.id.fragment_settings);
+
+        //switchToSettingsFragment();
 
 
         communicator = Communicator.getInstance(this);
@@ -235,6 +246,27 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
 
     }
 
+    private void switchToSettingsFragment() {
+        SettingsFragment fragA = (SettingsFragment) getSupportFragmentManager().findFragmentByTag(TAG_SETTINGS);
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.detach(getSupportFragmentManager().findFragmentByTag(TAG_CHAT));
+        fragmentTransaction.attach(fragA);
+        fragmentTransaction.addToBackStack(null);
+
+        fragmentTransaction.commitAllowingStateLoss();
+        getSupportFragmentManager().executePendingTransactions();
+    }
+
+    private void switchToChatFragment() {
+        InGameChatFragment fragA = (InGameChatFragment) getSupportFragmentManager().findFragmentByTag(TAG_CHAT);
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.detach(getSupportFragmentManager().findFragmentByTag(TAG_CHAT));
+        fragmentTransaction.attach(fragA);
+        fragmentTransaction.addToBackStack(null);
+
+        fragmentTransaction.commitAllowingStateLoss();
+        getSupportFragmentManager().executePendingTransactions();
+    }
 
     private void setUpOnClickListeners() {
 
@@ -2100,7 +2132,6 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 Gson gson = new Gson();
                 Player winnerOfGame = gson.fromJson(jsonString, Player.class);
                 showEndOfGame(winnerOfGame);
-                //TODO this is the winner of whole game
                 //TODO update global score in shared preferences?
 
             }
@@ -2366,6 +2397,9 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                     for (ImageButton card : playerCards) {
                         card.setVisibility(View.GONE);
                     }
+                }
+                for(LottieAnimationView caboAnim : playerCaboAnimations){
+                    caboAnim.setVisibility(View.INVISIBLE);
                 }
                 pickCardsStackButton.setVisibility(View.GONE);
                 playedCardsStackButton.setVisibility(View.GONE);
