@@ -313,7 +313,10 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
             //showNextPlayer(nextPlayerId);
         }
         if (jsonObject.has("startGame")) {
-            startGame();
+            if (!me.getName().equalsIgnoreCase("")){
+                startGame();
+            }
+
         }
         if (jsonObject.has("removePlayer")) {
             JSONObject js = jsonObject.getJSONObject("removePlayer");
@@ -476,6 +479,7 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
     private void checkStatus(String status) {
         if (status.equalsIgnoreCase(TypeDefs.MATCHING)) {
             //String mes = TypeDefs.server + "We are still waiting for other players.";
+            state=TypeDefs.MATCHING;
             String mes="";
             if (players.size()==0){
                 mes = "Wait for other players or start the game now with a KI player.";

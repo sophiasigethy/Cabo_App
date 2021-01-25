@@ -2105,6 +2105,17 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             // vorher: communicator.sendMessage(JSON_commands.sendMaxPoints(100)); aber nur wenn firstRound==true
 
         }
+        if (jsonObject.has("removePlayer")) {
+            JSONObject js = jsonObject.getJSONObject("removePlayer");
+            if (js.has("player")) {
+                String jsonString = js.get("player").toString();
+                Gson gson = new Gson();
+                Player player = gson.fromJson(jsonString, Player.class);
+                //TODO show that player has removed
+                //handle this: at the moment game ends
+                leaveGame();
+            }
+        }
     }
 
     private void showHint() {

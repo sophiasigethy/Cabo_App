@@ -96,13 +96,19 @@ public class Gamestate {
             Player disconnectedPlayer = getPlayerBySessionId(session.getId());
             players.remove(session.getId());
             // if (countPlayer!=MAX_PLAYER){
-            if (countPlayer < 2) {
+           /* if (countPlayer < 2) {
                 state = TypeDefs.MATCHING;
-            }
+            }*/
             try {
                 sendToAll(JSON_commands.removePlayer(disconnectedPlayer));
             } catch (IOException e) {
                 e.printStackTrace();
+            }
+            if (players.size() == 0) {
+                socketHandler.removeGamestate(this);
+            }
+            if (players.size() == 1 && playWithKI) {
+                socketHandler.removeGamestate(this);
             }
         }
 
@@ -148,18 +154,17 @@ public class Gamestate {
                     //sends username is already in use
                     socketHandler.sendMessage(session, JSON_commands.usernameInUse(name));
                 } else {
-                    addPlayer(session, name);
-                    sendOtherPlayers();
-                    if (isMaxPlayer()) {
-                        //sends gamestart and players start to play cabo
-                        sendToAll(JSON_commands.statusupdateServer(state));
-                       /* //send 4 cards to every client
-                        distributeCardsAtBeginning();
-                        sendInitialCards();*/
+                    if (!state.equalsIgnoreCase(TypeDefs.MATCHING)) {
+                        assignToNewGamestate(session, message);
+
                     } else {
-                        //send status update to inform client that system is waiting for other players
-                        socketHandler.sendMessage(session, JSON_commands.statusupdateServer(state));
-                        //sendOtherPlayers();
+                        addPlayer(session, name);
+                        sendOtherPlayers();
+                        if (isMaxPlayer()) {
+                            sendToAll(JSON_commands.statusupdateServer(state));
+                        } else {
+                            socketHandler.sendMessage(session, JSON_commands.statusupdateServer(state));
+                        }
                     }
                 }
             }
@@ -174,15 +179,15 @@ public class Gamestate {
             }else{
                 socketHandler.sendMessage(session, JSON_commands.noStartYet());
             }*/
-            if (players.size() > 1 ) {
+            if (players.size() > 1) {
                 startGame();
             } else {
-                if (players.size()==1){
+                if (players.size() == 1) {
                     addKI("KI");
                     state = TypeDefs.GAMESTART;
 
                     startGame();
-                }else{
+                } else {
                     socketHandler.sendMessage(session, JSON_commands.noStartYet());
                 }
 
@@ -270,7 +275,7 @@ public class Gamestate {
                 //sendToAll(JSON_commands.sendUpdatePlayer(currentPlayer));
                 sendToAll(JSON_commands.sendUpdatePlayer(currPlayer));
             }
-            if (session!=null && playWithKI){
+            if (session != null && playWithKI) {
                 updateKnownListsOfKIaferRealPlayerMove();
             }
         }
@@ -369,7 +374,7 @@ public class Gamestate {
                 sendToAll(JSON_commands.sendUpdatePlayer(getPlayerById(player2.getId())));
                 sendToAll(JSON_commands.useFunctionalitySwap(card1, player1, card2, player2));
 
-                if (session!=null&& playWithKI){
+                if (session != null && playWithKI) {
                     updateKnownListsOfKIaferRealPlayerMove();
                 }
             }
@@ -454,9 +459,12 @@ public class Gamestate {
                 }
             }
             afterConnectionClosed(session);
-            if (players.size() == 0) {
+            /*if (players.size() == 0) {
                 socketHandler.removeGamestate(this);
             }
+            if (players.size() == 1 && playWithKI) {
+                socketHandler.removeGamestate(this);
+            }*/
         }
     }
 
@@ -543,6 +551,20 @@ public class Gamestate {
                 socketHandler.sendMessage(getSessionBySessionId(key), jsonObject);
             }
 
+        }
+    }
+
+    public void assignToNewGamestate(WebSocketSession session, TextMessage message) throws IOException {
+        if (session!=null){
+            Player player =socketHandler.getPlayerBySessionId(session.getId());
+            player.setGamestate(socketHandler.getNextFreeGame());
+            if (!player.getGamestate().sessionAlreadyAdded(session)) {
+                player.getGamestate().sessions.add(session);
+            }
+            String stateNewGamestate=player.getGamestate().state;
+            player.getGamestate().socketHandler.sendMessage(session, JSON_commands.statusupdateServer(stateNewGamestate));
+            player.getGamestate().handleTextMessage(session, message);
+            sessions.remove(session);
         }
     }
 
@@ -1165,7 +1187,7 @@ public class Gamestate {
             }
         }
         Collections.sort(cardValues);
-        if (cardValues != null && cardValues.size()!=0) {
+        if (cardValues != null && cardValues.size() != 0) {
             int highestValue = cardValues.get(cardValues.size() - 1);
             for (Card card : player.getKnownCards()) {
                 if (card.getValue() == highestValue) {
@@ -1184,7 +1206,7 @@ public class Gamestate {
             }
         }
         Collections.sort(cardValues);
-        if (cardValues != null&& cardValues.size()!=0) {
+        if (cardValues != null && cardValues.size() != 0) {
             int lowestValue = cardValues.get(0);
             for (Card card : ki.getKnownCardsOfOther()) {
                 if (card.getValue() == lowestValue) {
@@ -1262,12 +1284,13 @@ public class Gamestate {
         }
         return currentPickedCard;
     }
-    public void updateKnownListsOfKIaferRealPlayerMove(){
-        Player ki= returnKI();
-        Player realPlayer= getRealPlayer();
 
-        for (int i=0; i< ki.getKnownCardsOfOther().size(); i++){
-            if (!ki.getKnownCardsOfOther().get(i).equalsCard(realPlayer.getCards().get(i))){
+    public void updateKnownListsOfKIaferRealPlayerMove() {
+        Player ki = returnKI();
+        Player realPlayer = getRealPlayer();
+
+        for (int i = 0; i < ki.getKnownCardsOfOther().size(); i++) {
+            if (!ki.getKnownCardsOfOther().get(i).equalsCard(realPlayer.getCards().get(i))) {
                 ki.getKnownCardsOfOther().remove(i);
                 return;
             }
