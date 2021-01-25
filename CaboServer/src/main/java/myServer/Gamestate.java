@@ -1,5 +1,6 @@
 package myServer;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONException;
@@ -7,6 +8,7 @@ import org.json.JSONObject;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
+import javax.xml.soap.Text;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -19,17 +21,20 @@ public class Gamestate {
     // contains websocketsession-id and the associated player object
     public HashMap<String, Player> players = new HashMap<String, Player>();
 
-   // private ArrayList<Player> privatePartyPlayers= new ArrayList<>();
+    // private ArrayList<Player> privatePartyPlayers= new ArrayList<>();
     private int MAX_PLAYER = 4;
     private int test = 0;
     // determines how many players are already registered
     private int countPlayer = 0;
 
-    private int maxPoints=100;
+    private int maxPoints = 100;
 
-    private boolean privateParty= false;
+    private boolean privateParty = false;
 
-    private int gamestateID=0;
+    private boolean playWithKI = false;
+    private JSONObject KIJsonObject;
+
+    private int gamestateID = 0;
     //status of the game- see Type Defs for all 3 state
     private String state = TypeDefs.MATCHING;
     private int lastDrawnPlayerId = 0;
@@ -90,9 +95,9 @@ public class Gamestate {
             countPlayer--;
             Player disconnectedPlayer = getPlayerBySessionId(session.getId());
             players.remove(session.getId());
-           // if (countPlayer!=MAX_PLAYER){
-            if (countPlayer<2){
-                state=TypeDefs.MATCHING;
+            // if (countPlayer!=MAX_PLAYER){
+            if (countPlayer < 2) {
+                state = TypeDefs.MATCHING;
             }
             try {
                 sendToAll(JSON_commands.removePlayer(disconnectedPlayer));
@@ -114,19 +119,27 @@ public class Gamestate {
      */
     public void handleTextMessage(WebSocketSession session, TextMessage message) throws IOException {
         currentSession = session;
-        JSONObject jsonObject = getMessage(message.getPayload());
+        boolean authorised = false;
+        Player currPlayer = null;
+        JSONObject jsonObject = null;
+        if (message == null) {
+            jsonObject = KIJsonObject;
+        } else {
+            jsonObject = getMessage(message.getPayload());
+        }
+
 
         if (jsonObject.has("welcomeMessage")) {
             String text = "Welcome to the game. Please state your username";
             socketHandler.sendMessage(session, JSON_commands.Hallo(text));
-            if (!sessionAlreadyAdded(session)){
+            if (!sessionAlreadyAdded(session)) {
                 sessions.add(session);
             }
         }
         //client sent the username he would like to have
         if (jsonObject.has("username")) {
-           // if (isMaxPlayer()) {
-            if (players.size()==4) {
+            // if (isMaxPlayer()) {
+            if (players.size() == 4) {
                 String msg = "Sorry enough players have registered in the meantime. You can no longer join this game.";
                 socketHandler.sendMessage(session, JSON_commands.connectionNotAccepted(msg));
             } else {
@@ -156,10 +169,18 @@ public class Gamestate {
             sendToAll(jsonObject);
         }
         if (jsonObject.has("askForStart")) {
-            if (players.size()>1){
+            /*if (players.size()>1){
                 startGame();
             }else{
                 socketHandler.sendMessage(session, JSON_commands.noStartYet());
+            }*/
+            if (players.size() > 1) {
+                startGame();
+            } else {
+                addKI("KI");
+                state = TypeDefs.GAMESTART;
+
+                startGame();
             }
         }
 
@@ -193,53 +214,90 @@ public class Gamestate {
 
         if (jsonObject.has("pickCard")) {
 
-            if (checkIfPlayerIsAuthorised(getPlayerBySessionId(session.getId()))) {
-                //TODO draw card ? discard card?
-                //getPlayerBySessionId(session.getId()).drawCard();
-                //currentPickedCard = takeFirstCardFromAvailableCards();
-                Player currentPlayer = getPlayerBySessionId(session.getId());
-                if (currentPlayer != null) {
+            if (session != null) {
+                authorised = checkIfPlayerIsAuthorised(getPlayerBySessionId(session.getId()));
+                currPlayer = getPlayerBySessionId(session.getId());
+            } else {
+                authorised = KIsTurn();
+                currPlayer = returnKI();
+            }
+            if (authorised) {
+
+                if (currPlayer != null) {
                     if (availableCards.size() != 0) {
                         currentPickedCard = availableCards.get(0);
+                        //currentPickedCard = new Card(11, "", "");
+
                     } else {
                         mixCards();
                         currentPickedCard = availableCards.get(0);
                     }
-                    lastDrawnPlayerId = currentPlayer.getId();
+                    lastDrawnPlayerId = currPlayer.getId();
 
-                    //currentPickedCard = new Card(11, "", "");
-                    // Player firstPlayer = getPlayerById(currentPlayerId);
                     socketHandler.sendMessage(session, JSON_commands.sendFirstCard(currentPickedCard));
+                    if (KIsTurn()) {
+                        handleKI("decideForMove");
+                    }
                 }
             }
         }
 
         if (jsonObject.has("swapPickedCardWithOwnCards")) {
-            if (checkIfPlayerIsAuthorised(getPlayerBySessionId(session.getId()))) {
+            if (session != null) {
+                authorised = checkIfPlayerIsAuthorised(getPlayerBySessionId(session.getId()));
+                currPlayer = getPlayerBySessionId(session.getId());
+            } else {
+                authorised = KIsTurn();
+                currPlayer = returnKI();
+            }
+            if (authorised) {
+                //if (checkIfPlayerIsAuthorised(getPlayerBySessionId(session.getId()))) {
                 JSONObject js = jsonObject.getJSONObject("swapPickedCardWithOwnCards");
                 String json = js.get("card").toString();
                 ObjectMapper objectMapper = new ObjectMapper();
                 objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
                 Card ownCard = objectMapper.readValue(json, Card.class);
-                Player currentPlayer = getPlayerBySessionId(session.getId());
+                //Player currentPlayer = getPlayerBySessionId(session.getId());
 
-                currentPlayer.swapWithOwnCard(ownCard, currentPickedCard);
+                //currentPlayer.swapWithOwnCard(ownCard, currentPickedCard);
+                currPlayer.swapWithOwnCard(ownCard, currentPickedCard);
                 sendToAll(JSON_commands.sendDiscardedCard(ownCard));
-                sendToAll(JSON_commands.sendUpdatePlayer(currentPlayer));
+                //sendToAll(JSON_commands.sendUpdatePlayer(currentPlayer));
+                sendToAll(JSON_commands.sendUpdatePlayer(currPlayer));
+            }
+            if (session!=null){
+                updateKnownListsOfKIaferRealPlayerMove();
             }
         }
 
         if (jsonObject.has("playPickedCard")) {
-            if (checkIfPlayerIsAuthorised(getPlayerBySessionId(session.getId()))) {
+            if (session != null) {
+                authorised = checkIfPlayerIsAuthorised(getPlayerBySessionId(session.getId()));
+                currPlayer = getPlayerBySessionId(session.getId());
+            } else {
+                authorised = KIsTurn();
+                currPlayer = returnKI();
+            }
+            if (authorised) {
+                //if (checkIfPlayerIsAuthorised(getPlayerBySessionId(session.getId()))) {
                 takeFirstCardFromAvailableCards();
-                availableCards.remove(0);
+                if (availableCards.size() != 0) {
+                    availableCards.remove(0);
+                }
                 playedCards.add(currentPickedCard);
                 sendToAll(JSON_commands.sendPlayedCard(currentPickedCard));
             }
         }
 
         if (jsonObject.has("useFunctionalityPeek")) {
-            if (checkIfPlayerIsAuthorised(getPlayerBySessionId(session.getId()))) {
+            if (session != null) {
+                authorised = checkIfPlayerIsAuthorised(getPlayerBySessionId(session.getId()));
+                currPlayer = getPlayerBySessionId(session.getId());
+            } else {
+                authorised = KIsTurn();
+                currPlayer = returnKI();
+            }
+            if (authorised) {
                 JSONObject js = jsonObject.getJSONObject("useFunctionalityPeek");
                 String json = js.get("card").toString();
                 ObjectMapper objectMapper = new ObjectMapper();
@@ -247,12 +305,20 @@ public class Gamestate {
                 Card card = objectMapper.readValue(json, Card.class);
 
                 sendToAll(JSON_commands.useFunctionalityPeek(card));
-                Player currentPlayer = getPlayerBySessionId(session.getId());
+                //Player currentPlayer = getPlayerBySessionId(session.getId());
 
             }
         }
         if (jsonObject.has("useFunctionalitySpy")) {
-            if (checkIfPlayerIsAuthorised(getPlayerBySessionId(session.getId()))) {
+            // if (checkIfPlayerIsAuthorised(getPlayerBySessionId(session.getId()))) {
+            if (session != null) {
+                authorised = checkIfPlayerIsAuthorised(getPlayerBySessionId(session.getId()));
+                currPlayer = getPlayerBySessionId(session.getId());
+            } else {
+                authorised = KIsTurn();
+                currPlayer = returnKI();
+            }
+            if (authorised) {
                 JSONObject js = jsonObject.getJSONObject("useFunctionalitySpy");
                 String json1 = js.get("card").toString();
                 String json3 = js.get("spyedPlayer").toString();
@@ -264,12 +330,20 @@ public class Gamestate {
 
 
                 sendToAll(JSON_commands.useFunctionalitySpy(card, spyedPlayer));
-                Player currentPlayer = getPlayerBySessionId(session.getId());
+                //Player currentPlayer = getPlayerBySessionId(session.getId());
 
             }
         }
         if (jsonObject.has("useFunctionalitySwap")) {
-            if (checkIfPlayerIsAuthorised(getPlayerBySessionId(session.getId()))) {
+            // if (checkIfPlayerIsAuthorised(getPlayerBySessionId(session.getId()))) {
+            if (session != null) {
+                authorised = checkIfPlayerIsAuthorised(getPlayerBySessionId(session.getId()));
+                currPlayer = getPlayerBySessionId(session.getId());
+            } else {
+                authorised = KIsTurn();
+                currPlayer = returnKI();
+            }
+            if (authorised) {
                 JSONObject js = jsonObject.getJSONObject("useFunctionalitySwap");
                 String json = js.get("card1").toString();
                 String json2 = js.get("card2").toString();
@@ -290,21 +364,33 @@ public class Gamestate {
                 sendToAll(JSON_commands.sendUpdatePlayer(getPlayerById(player2.getId())));
                 sendToAll(JSON_commands.useFunctionalitySwap(card1, player1, card2, player2));
 
+                if (session!=null){
+                    updateKnownListsOfKIaferRealPlayerMove();
+                }
             }
         }
 
         if (jsonObject.has("finishMove")) {
-            Player player = getPlayerBySessionId(session.getId());
-            if (checkIfPlayerIsAuthorised(player)) {
-                if (hasPlayerDrawn(player.getId())){
+            Player player = null;
+            if (session != null) {
+                authorised = checkIfPlayerIsAuthorised(getPlayerBySessionId(session.getId()));
+                player = getPlayerBySessionId(session.getId());
+            } else {
+                authorised = KIsTurn();
+                player = returnKI();
+            }
+            if (authorised) {
+                if (hasPlayerDrawn(player.getId())) {
                     finishMove();
                     // sendStatusupdatePlayer();
                     if (getPlayerById(currentPlayerId).getCalledCabo()) {
                         finishRound();
                     } else {
                         sendStatusupdateOfAllPlayer();
-                        sendToAll(JSON_commands.sendNextPlayer(currentPlayerId));
+                        // sendToAll(JSON_commands.sendNextPlayer(currentPlayerId));
+                        sendNextPlayer();
                     }
+
                 }
 
             }
@@ -312,10 +398,22 @@ public class Gamestate {
         }
 
         if (jsonObject.has("cabo")) {
-            Player currentPlayer = getPlayerBySessionId(session.getId());
-            currentPlayer.setCalledCabo(true);
-            lastDrawnPlayerId=currentPlayer.getId();
-            sendToAll(JSON_commands.calledCabo(currentPlayer));
+            if (session != null) {
+                authorised = checkIfPlayerIsAuthorised(getPlayerBySessionId(session.getId()));
+                currPlayer = getPlayerBySessionId(session.getId());
+            } else {
+                authorised = KIsTurn();
+                currPlayer = returnKI();
+            }
+            if (authorised) {
+                //Player currentPlayer = getPlayerBySessionId(session.getId());
+                //currentPlayer.setCalledCabo(true);
+                currPlayer.setCalledCabo(true);
+                //lastDrawnPlayerId = currentPlayer.getId();
+                lastDrawnPlayerId = currPlayer.getId();
+                //sendToAll(JSON_commands.calledCabo(currentPlayer));}
+                sendToAll(JSON_commands.calledCabo(currPlayer));
+            }
 
         }
         if (jsonObject.has("picture")) {
@@ -335,25 +433,30 @@ public class Gamestate {
             sendToAll(JSON_commands.sendMaxPoints(maxPoints));
         }
         if (jsonObject.has("leaveGame")) {
-            Player player= getPlayerBySessionId(session.getId());
-            if (privateParty){
-                player.setNick(player.getName());
-                if (socketHandler.isPartyLeader(player)){
-                    socketHandler.removePartyLeader(player);
-                    socketHandler.deletePartyofPartyLeader(player);
-                }else{
-                    socketHandler.removePlayerOfParty(player);
+            // Player player = getPlayerBySessionId(session.getId());
+            if (session != null) {
+                currPlayer = getPlayerBySessionId(session.getId());
+            } else {
+                currPlayer = returnKI();
+            }
+            if (privateParty) {
+                currPlayer.setNick(currPlayer.getName());
+                if (socketHandler.isPartyLeader(currPlayer)) {
+                    socketHandler.removePartyLeader(currPlayer);
+                    socketHandler.deletePartyofPartyLeader(currPlayer);
+                } else {
+                    socketHandler.removePlayerOfParty(currPlayer);
                 }
             }
             afterConnectionClosed(session);
-            if (players.size()==0){
+            if (players.size() == 0) {
                 socketHandler.removeGamestate(this);
             }
         }
     }
 
     private void startGame() throws IOException {
-        MAX_PLAYER= players.size();
+        MAX_PLAYER = players.size();
         state = TypeDefs.GAMESTART;
         sendToAll(JSON_commands.statusupdateServer(state));
         sendToAll(JSON_commands.startGame("start"));
@@ -369,6 +472,17 @@ public class Gamestate {
 
         for (Player player : players.values()) {
             sendInitialSetUp(player);
+        }
+
+        if (playWithKI) {
+            Player KI = returnKI();
+
+            if (KI != null) {
+                KI.getKnownCards().clear();
+                KI.getKnownCards().add(KI.getCards().get(0));
+                KI.getKnownCards().add(KI.getCards().get(1));
+                KI.setStatus(TypeDefs.readyForGamestart);
+            }
         }
     }
 
@@ -394,6 +508,20 @@ public class Gamestate {
         saveAvatar(newPlayer);
         socketHandler.sendMessage(webSocketSession, JSON_commands.Welcome(newPlayer));
         informOtherPlayers(JSON_commands.newPlayer(newPlayer));
+    }
+
+    private void addKI(String name) throws IOException {
+        playWithKI = true;
+        this.countPlayer++;
+        // Player newPlayer = new Player(generateId(), name, cardSuiteMgr);
+        Player newPlayer = new Player(generateId(), name, this);
+        this.players.put("KI", newPlayer);
+        sessions.add(null);
+        //player is informed that he can join the game
+        newPlayer.setAvatarID(1);
+        newPlayer.setKI(true);
+        initialSetUp++;
+        newPlayer.setStatus(TypeDefs.readyForGamestart);
     }
 
     /**
@@ -462,7 +590,7 @@ public class Gamestate {
      */
     public boolean isMaxPlayer() {
         //if (players.size() == MAX_PLAYER) {
-        if (players.size() ==4) {
+        if (players.size() == 4) {
             state = TypeDefs.GAMESTART;
             return true;
         }
@@ -538,7 +666,10 @@ public class Gamestate {
             if (player.getId() != other.getId()) {
                 list.add(other);
             } else {
-                socketHandler.sendMessage(getSessionByPlayerID(player.getId()), JSON_commands.sendInitialME(player));
+                WebSocketSession webSocketSession = getSessionByPlayerID(player.getId());
+                if (webSocketSession != null) {
+                    socketHandler.sendMessage(getSessionByPlayerID(player.getId()), JSON_commands.sendInitialME(player));
+                }
             }
         }
         WebSocketSession session = getSessionByPlayerID(player.getId());
@@ -568,8 +699,10 @@ public class Gamestate {
      */
     public WebSocketSession getSessionBySessionId(String id) {
         for (WebSocketSession session : sessions) {
-            if (id.equalsIgnoreCase(session.getId())) {
-                return session;
+            if (session != null) {
+                if (id.equalsIgnoreCase(session.getId())) {
+                    return session;
+                }
             }
         }
         return null;
@@ -663,7 +796,11 @@ public class Gamestate {
      */
     public void sendNextPlayer() throws IOException {
         for (WebSocketSession session : sessions) {
-            socketHandler.sendMessage(session, JSON_commands.sendNextPlayer(currentPlayerId));
+            if (session == null && playWithKI) {
+                handleKI("nextPlayer");
+            } else {
+                socketHandler.sendMessage(session, JSON_commands.sendNextPlayer(currentPlayerId));
+            }
         }
     }
 
@@ -721,11 +858,14 @@ public class Gamestate {
     private void finishRound() throws IOException {
         calcScores();
         for (WebSocketSession session : sessions) {
-            socketHandler.sendMessage(session, JSON_commands.sendScores(getPlayerBySessionId(session.getId())));
+            if (session != null) {
+                socketHandler.sendMessage(session, JSON_commands.sendScores(getPlayerBySessionId(session.getId())));
+            }
+
         }
         if (terminated) {
             sendToAll(JSON_commands.sendEndGame(getWinner()));
-            state= TypeDefs.GAMEEND;
+            state = TypeDefs.GAMEEND;
             //TODO send Game End
             //remove this object in sockethandler
         } else {
@@ -780,23 +920,25 @@ public class Gamestate {
         this.gamestateID = gamestateID;
     }
 
-    public boolean sessionAlreadyAdded(WebSocketSession newSession){
-        for (WebSocketSession session: sessions){
-            if (session.getId()==newSession.getId()){
-                return true;
+    public boolean sessionAlreadyAdded(WebSocketSession newSession) {
+        for (WebSocketSession session : sessions) {
+            if (session != null) {
+                if (session.getId() == newSession.getId()) {
+                    return true;
+                }
             }
         }
         return false;
     }
 
-    public void saveAvatar(Player player){
-        for (Player socketHandlerPlayer: socketHandler.getConnectedPlayers().values()){
-            String nick =socketHandlerPlayer.getNick();
-            if (nick!=null){
-                if (socketHandlerPlayer.getNick().equalsIgnoreCase(player.getName())){
+    public void saveAvatar(Player player) {
+        for (Player socketHandlerPlayer : socketHandler.getConnectedPlayers().values()) {
+            String nick = socketHandlerPlayer.getNick();
+            if (nick != null) {
+                if (socketHandlerPlayer.getNick().equalsIgnoreCase(player.getName())) {
                     player.setAvatarID(socketHandlerPlayer.getAvatarID());
                 }
-            }else{
+            } else {
                 player.setAvatarID(1);
             }
 
@@ -811,20 +953,319 @@ public class Gamestate {
         this.privateParty = privateParty;
     }
 
-    public Player getWinner(){
-        ArrayList<Integer> scores= new ArrayList<Integer>();
-        for (Player player: players.values()){
+    public Player getWinner() {
+        ArrayList<Integer> scores = new ArrayList<Integer>();
+        for (Player player : players.values()) {
             scores.add(player.getScore());
         }
-        if(scores!=null){
+        if (scores != null) {
             Collections.sort(scores);
-            for (Player player: players.values()){
-                if (player.getScore()==scores.get(0)){
+            for (Player player : players.values()) {
+                if (player.getScore() == scores.get(0)) {
                     return player;
                 }
             }
         }
         return null;
+    }
+
+    public void handleKI(String action) throws IOException {
+        Player me = players.get("KI");
+        if (action.equalsIgnoreCase("nextPlayer")) {
+            if (currentPlayerId == me.getId()) {
+                KIJsonObject = JSON_commands.sendPickCardKI("");
+                try {
+                    handleTextMessage(null, null);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        if (action.equalsIgnoreCase("decideForMove")) {
+
+            pause(2);
+            if (currentPickedCard.getValue() >= 7 && currentPickedCard.getValue() != 13) {
+                KIJsonObject = JSON_commands.playPickedCardKI();
+                try {
+                    handleTextMessage(null, null);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                pause(2);
+                if (!getRealPlayer().getCalledCabo()) {
+                    KIJsonObject = decideForMove(me);
+                    try {
+                        handleTextMessage(null, null);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    pause(3);
+                }
+
+                finishKIMove();
+
+            } else {
+                KIJsonObject = decideForMove(me);
+                try {
+                    handleTextMessage(null, null);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+
+                pause(2);
+                finishKIMove();
+            }
+        }
+    }
+
+    public boolean KIsTurn() {
+        for (Player player : players.values()) {
+            if (player.isKI()) {
+                if (currentPlayerId == player.getId()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public Player returnKI() {
+        for (Player player : players.values()) {
+            if (player.isKI()) {
+                return player;
+            }
+        }
+        return null;
+    }
+
+    public JSONObject decideForMove(Player playerKI) throws JsonProcessingException {
+        JSONObject jsonObject = null;
+        switch (currentPickedCard.getValue()) {
+            case -1:
+                jsonObject = JSON_commands.swapPickedCardWithOwnCardsKI(returnHighestKnownCard(playerKI));
+                updateKnownCardsOfKI(playerKI);
+                break;
+            case 0:
+                jsonObject = JSON_commands.swapPickedCardWithOwnCardsKI(returnHighestKnownCard(playerKI));
+                updateKnownCardsOfKI(playerKI);
+                break;
+            case 1:
+                jsonObject = JSON_commands.swapPickedCardWithOwnCardsKI(returnHighestKnownCard(playerKI));
+                updateKnownCardsOfKI(playerKI);
+                break;
+            case 2:
+                jsonObject = JSON_commands.swapPickedCardWithOwnCardsKI(returnHighestKnownCard(playerKI));
+                updateKnownCardsOfKI(playerKI);
+                break;
+            case 3:
+                jsonObject = JSON_commands.swapPickedCardWithOwnCardsKI(returnHighestKnownCard(playerKI));
+                updateKnownCardsOfKI(playerKI);
+                break;
+            case 4:
+                jsonObject = JSON_commands.swapPickedCardWithOwnCardsKI(returnHighestKnownCard(playerKI));
+                updateKnownCardsOfKI(playerKI);
+                break;
+            case 5:
+                jsonObject = JSON_commands.playPickedCardKI();
+                break;
+            case 6:
+                jsonObject = JSON_commands.playPickedCardKI();
+                break;
+            case 7:
+                jsonObject = JSON_commands.useFunctionalityPeekKI(returnPeekCardForKI(playerKI));
+                break;
+            case 8:
+                jsonObject = JSON_commands.useFunctionalityPeekKI(returnPeekCardForKI(playerKI));
+                break;
+            case 9:
+                jsonObject = JSON_commands.useFunctionalitySpyKI(returnSpyCardForKI(playerKI), getRealPlayer());
+                break;
+            case 10:
+                jsonObject = JSON_commands.useFunctionalitySpyKI(returnSpyCardForKI(playerKI), getRealPlayer());
+                break;
+            case 11:
+                Card highestKnownCard = returnHighestKnownCard(playerKI);
+                Card lowestKnownCardOfOther = returnLowestKnownCardOfOtherPlayer(playerKI);
+                Player other = getRealPlayer();
+                jsonObject = JSON_commands.useFunctionalitySwap(highestKnownCard, playerKI, lowestKnownCardOfOther, other);
+                updateKnownListsAfterSwapping(playerKI, highestKnownCard, lowestKnownCardOfOther);
+                break;
+            case 12:
+                Card highestKnownCard2 = returnHighestKnownCard(playerKI);
+                Card lowestKnownCardOfOther2 = returnLowestKnownCardOfOtherPlayer(playerKI);
+                Player other2 = getRealPlayer();
+                jsonObject = JSON_commands.useFunctionalitySwap(highestKnownCard2, playerKI, lowestKnownCardOfOther2, other2);
+                updateKnownListsAfterSwapping(playerKI, highestKnownCard2, lowestKnownCardOfOther2);
+                break;
+            case 13:
+                jsonObject = JSON_commands.playPickedCardKI();
+                break;
+            default:
+                jsonObject = JSON_commands.swapPickedCardWithOwnCardsKI(returnHighestKnownCard(playerKI));
+                break;
+
+        }
+
+        return jsonObject;
+    }
+
+    public void removeCardofList(ArrayList<Card> cardList, Card removedCard) {
+        if (cardList != null) {
+            for (int i = 0; i < cardList.size(); i++) {
+                if (cardList.get(i).equalsCard(removedCard)) {
+                    cardList.remove(i);
+                }
+            }
+        }
+    }
+
+    public void updateKnownCardsOfKI(Player playerKI) {
+        removeCardofList(playerKI.getKnownCards(), returnHighestKnownCard(playerKI));
+        playerKI.getKnownCards().add(currentPickedCard);
+    }
+
+    public void updateKnownListsAfterSwapping(Player playerKI, Card highestCard, Card lowestCard) {
+        if (playerKI != null && highestCard != null && lowestCard != null && playerKI.getKnownCardsOfOther() != null && playerKI.getKnownCardsOfOther() != null) {
+            for (int i = 0; i < playerKI.getKnownCards().size(); i++) {
+                if (playerKI.getKnownCards().get(i).equalsCard(highestCard)) {
+                    playerKI.getKnownCards().remove(i);
+                    playerKI.getKnownCards().add(i, lowestCard);
+                }
+            }
+            for (int i = 0; i < playerKI.getKnownCardsOfOther().size(); i++) {
+                if (playerKI.getKnownCardsOfOther().get(i).equalsCard(lowestCard)) {
+                    playerKI.getKnownCardsOfOther().remove(i);
+                    playerKI.getKnownCardsOfOther().add(i, highestCard);
+                }
+            }
+        }
+    }
+
+    public void pause(double seconds) {
+        try {
+            Thread.sleep((long) (seconds * 1000));
+        } catch (InterruptedException e) {
+        }
+    }
+
+    public Card returnHighestKnownCard(Player player) {
+        ArrayList<Integer> cardValues = new ArrayList<>();
+        if (player.getKnownCards() != null) {
+            for (Card card : player.getKnownCards()) {
+                cardValues.add(card.getValue());
+            }
+        }
+        Collections.sort(cardValues);
+        if (cardValues != null && cardValues.size()!=0) {
+            int highestValue = cardValues.get(cardValues.size() - 1);
+            for (Card card : player.getKnownCards()) {
+                if (card.getValue() == highestValue) {
+                    return card;
+                }
+            }
+        }
+        return player.getCards().get(0);
+    }
+
+    public Card returnLowestKnownCardOfOtherPlayer(Player ki) {
+        ArrayList<Integer> cardValues = new ArrayList<>();
+        if (ki.getKnownCardsOfOther() != null) {
+            for (Card card : ki.getKnownCardsOfOther()) {
+                cardValues.add(card.getValue());
+            }
+        }
+        Collections.sort(cardValues);
+        if (cardValues != null&& cardValues.size()!=0) {
+            int lowestValue = cardValues.get(0);
+            for (Card card : ki.getKnownCardsOfOther()) {
+                if (card.getValue() == lowestValue) {
+                    return card;
+                }
+            }
+        }
+        return ki.getCards().get(0);
+    }
+
+    public void finishKIMove() throws IOException {
+        JSONObject jsonObject = JSON_commands.sendFinishMoveKI("");
+        KIJsonObject = jsonObject;
+        handleTextMessage(null, null);
+    }
+
+    public Player getRealPlayer() {
+        for (Player player : players.values()) {
+            if (!player.isKI()) {
+                return player;
+            }
+        }
+        //TODO end game wenn null
+        return null;
+    }
+
+    public Card returnPeekCardForKI(Player ki) {
+        if (ki.getCards() != null && ki.getCards().size() == 4) {
+            if (ki.getKnownCards().size() == 4) {
+                return ki.getCards().get(0);
+            }
+            if (ki.getKnownCards().size() == 3) {
+                ki.getKnownCards().add(ki.getCards().get(3));
+                return ki.getCards().get(3);
+            }
+            if (ki.getKnownCards().size() == 2) {
+                ki.getKnownCards().add(ki.getCards().get(2));
+                return ki.getCards().get(2);
+            }
+            if (ki.getKnownCards().size() == 1) {
+                ki.getKnownCards().add(ki.getCards().get(1));
+                return ki.getCards().get(1);
+            }
+            if (ki.getKnownCards().size() == 0) {
+                ki.getKnownCards().add(ki.getCards().get(0));
+                return ki.getCards().get(0);
+            }
+        }
+        return currentPickedCard;
+    }
+
+    public Card returnSpyCardForKI(Player ki) {
+        if (ki.getKnownCardsOfOther() != null) {
+            if (ki.getKnownCardsOfOther().size() == 0) {
+                ki.getKnownCardsOfOther().add(getRealPlayer().getCards().get(0));
+                return getRealPlayer().getCards().get(0);
+            }
+            if (ki.getKnownCardsOfOther().size() == 1) {
+                ki.getKnownCardsOfOther().add(getRealPlayer().getCards().get(1));
+                return getRealPlayer().getCards().get(1);
+            }
+            if (ki.getKnownCardsOfOther().size() == 2) {
+                ki.getKnownCardsOfOther().add(getRealPlayer().getCards().get(2));
+                return getRealPlayer().getCards().get(2);
+            }
+            if (ki.getKnownCardsOfOther().size() == 3) {
+                ki.getKnownCardsOfOther().add(getRealPlayer().getCards().get(3));
+                return getRealPlayer().getCards().get(3);
+            }
+            if (ki.getKnownCardsOfOther().size() == 4) {
+                ki.getKnownCardsOfOther().add(getRealPlayer().getCards().get(4));
+                return getRealPlayer().getCards().get(0);
+            }
+
+        }
+        return currentPickedCard;
+    }
+    public void updateKnownListsOfKIaferRealPlayerMove(){
+        Player ki= returnKI();
+        Player realPlayer= getRealPlayer();
+
+        for (int i=0; i< ki.getKnownCardsOfOther().size(); i++){
+            if (!ki.getKnownCardsOfOther().get(i).equalsCard(realPlayer.getCards().get(i))){
+                ki.getKnownCardsOfOther().remove(i);
+                return;
+            }
+        }
     }
 
     /*****************************************

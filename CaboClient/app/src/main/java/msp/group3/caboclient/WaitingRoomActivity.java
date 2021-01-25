@@ -233,6 +233,8 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
         }
 
         //this is received when the state of the game changes
+
+
         if (jsonObject.has("statusupdateServer")) {
             String status = jsonObject.get("statusupdateServer").toString();
             checkStatus(status);
