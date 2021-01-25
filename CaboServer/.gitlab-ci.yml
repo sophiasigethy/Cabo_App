@@ -1,0 +1,21 @@
+image: gradle:alpine
+
+stages:
+  - build
+
+variables:
+  GRADLE_OPTS: "-Dorg.gradle.daemon=false"
+
+
+build:
+  stage: build
+  script:
+    gradle --build-cache build
+  artifacts:
+    paths:
+      - build/libs/*.jar
+    expire_in: 1 week
+
+
+after_script:
+  - echo "End CI"
