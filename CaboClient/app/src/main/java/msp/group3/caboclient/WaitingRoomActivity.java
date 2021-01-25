@@ -360,7 +360,7 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
             }
         }
         if (jsonObject.has("noStartYet")) {
-           String text="There are not enough player yet!";
+           String text="State your username first!";
            showText(text, true, null);
         }
 
@@ -476,7 +476,7 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
     private void checkStatus(String status) {
         if (status.equalsIgnoreCase(TypeDefs.MATCHING)) {
             //String mes = TypeDefs.server + "We are still waiting for other players.";
-            String mes = "We are still waiting for other players.";
+            String mes = "Wait for other players or start the game now with a KI player.";
             showText(mes, true, null);
         }
         if (status.equalsIgnoreCase(TypeDefs.GAMESTART)) {

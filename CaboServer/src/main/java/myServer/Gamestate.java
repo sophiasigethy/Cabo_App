@@ -174,13 +174,18 @@ public class Gamestate {
             }else{
                 socketHandler.sendMessage(session, JSON_commands.noStartYet());
             }*/
-            if (players.size() > 1) {
+            if (players.size() > 1 ) {
                 startGame();
             } else {
-                addKI("KI");
-                state = TypeDefs.GAMESTART;
+                if (players.size()==1){
+                    addKI("KI");
+                    state = TypeDefs.GAMESTART;
 
-                startGame();
+                    startGame();
+                }else{
+                    socketHandler.sendMessage(session, JSON_commands.noStartYet());
+                }
+
             }
         }
 
