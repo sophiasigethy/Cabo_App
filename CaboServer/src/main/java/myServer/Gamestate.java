@@ -265,7 +265,7 @@ public class Gamestate {
                 //sendToAll(JSON_commands.sendUpdatePlayer(currentPlayer));
                 sendToAll(JSON_commands.sendUpdatePlayer(currPlayer));
             }
-            if (session!=null){
+            if (session!=null && playWithKI){
                 updateKnownListsOfKIaferRealPlayerMove();
             }
         }
@@ -364,7 +364,7 @@ public class Gamestate {
                 sendToAll(JSON_commands.sendUpdatePlayer(getPlayerById(player2.getId())));
                 sendToAll(JSON_commands.useFunctionalitySwap(card1, player1, card2, player2));
 
-                if (session!=null){
+                if (session!=null&& playWithKI){
                     updateKnownListsOfKIaferRealPlayerMove();
                 }
             }
@@ -479,6 +479,7 @@ public class Gamestate {
 
             if (KI != null) {
                 KI.getKnownCards().clear();
+                KI.getKnownCardsOfOther().clear();
                 KI.getKnownCards().add(KI.getCards().get(0));
                 KI.getKnownCards().add(KI.getCards().get(1));
                 KI.setStatus(TypeDefs.readyForGamestart);
