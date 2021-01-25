@@ -2397,6 +2397,9 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                         card.setVisibility(View.GONE);
                     }
                 }
+                for(LottieAnimationView caboAnim : playerCaboAnimations){
+                    caboAnim.setVisibility(View.INVISIBLE);
+                }
                 pickCardsStackButton.setVisibility(View.GONE);
                 playedCardsStackButton.setVisibility(View.GONE);
                 caboButton.setVisibility(View.GONE);
