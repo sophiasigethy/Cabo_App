@@ -6,12 +6,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import androidx.core.content.ContextCompat;
 
 import org.json.JSONException;
 
@@ -22,7 +19,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class FriendListAdapter extends ArrayAdapter {
     int NOT_FOUND = 32000;
     Context context;
-    ArrayList<Player> friends;
+    ArrayList<Player> myFriendList;
     ArrayList<Player> party;
     private static LayoutInflater inflater = null;
     private Player me;
@@ -31,7 +28,7 @@ public class FriendListAdapter extends ArrayAdapter {
     public FriendListAdapter(Context context, Player me, ArrayList<Player> party, Communicator communicator) {
         super(context, 0, me.getFriendList());
         this.context = context;
-        this.friends = me.getFriendList();
+        this.myFriendList = me.getFriendList();
         this.me = me;
         this.party = party;
         this.communicator = communicator;
@@ -41,8 +38,8 @@ public class FriendListAdapter extends ArrayAdapter {
     }
 
     public int getPlayerIndex(Player player) {
-        for (int i = 0; i < friends.size(); i++) {
-            if (friends.get(i).getDbID().equals(player.getDbID()) && friends.get(i).getNick().equals(player.getNick())) {
+        for (int i = 0; i < myFriendList.size(); i++) {
+            if (myFriendList.get(i).getDbID().equals(player.getDbID()) && myFriendList.get(i).getNick().equals(player.getNick())) {
                 return i;
             }
         }
@@ -51,12 +48,12 @@ public class FriendListAdapter extends ArrayAdapter {
 
     @Override
     public int getCount() {
-        return friends.size();
+        return myFriendList.size();
     }
 
     @Override
     public Object getItem(int i) {
-        return friends.get(i);
+        return myFriendList.get(i);
     }
 
     @Override
@@ -70,35 +67,32 @@ public class FriendListAdapter extends ArrayAdapter {
         if (vi == null)
             vi = inflater.inflate(R.layout.friendlist_item, null);
         CircleImageView playerIcon = (CircleImageView) vi.findViewById(R.id.friendlist_image);
-        playerIcon.setImageResource(friends.get(i).getAvatar());
+        playerIcon.setImageResource(myFriendList.get(i).getAvatar());
         TextView player_nick = (TextView) vi.findViewById(R.id.friendlist_name);
-        player_nick.setText(friends.get(i).getNick());
+        player_nick.setText(myFriendList.get(i).getNick());
         ImageView status = (ImageView) vi.findViewById(R.id.friendlist_status);
-        //TODO Check why online status does not work
-        if (friends.get(i).isOnline()){
+        //TODO Check why online status does not work -> in in view stimmen vielleicht nicht mit i in freindlist überein?
+        if (myFriendList.get(i).isOnline()){
             status.setImageResource(R.drawable.online);
-            //status.setBackground(ContextCompat.getDrawable(context, R.drawable.circle_green));
         }
         else{
             status.setImageResource(R.drawable.offline);
-            //status.setBackground(ContextCompat.getDrawable(context, R.drawable.circle_red));
         }
 
         ImageButton invite_btn = (ImageButton) vi.findViewById(R.id.friendlist_invite);
-        if (party.contains(friends.get(i))) {
+        if (party.contains(myFriendList.get(i))) {
             //TODO Check why Icon is not changed
             invite_btn.setOnClickListener(null);
             invite_btn.setImageResource(R.drawable.partyhat);
             invite_btn.setPadding(0, 0, 0,0);
         } else {
-            //invite_btn.setImageResource(R.drawable.ic_baseline_add_circle_outline_24);
             invite_btn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Log.e("SendPartyRequest", "click");
                     if (me.getFriendList().size()<4){
                         try {
-                            communicator.sendMessage(JSON_commands.sendPartyRequest2(me, friends.get(i)));
+                            communicator.sendMessage(JSON_commands.sendPartyRequest2(me, myFriendList.get(i)));
                             Log.e("SendPartyRequest", "Send Party Invitation");
 
                         } catch (JSONException e) {
@@ -107,7 +101,6 @@ public class FriendListAdapter extends ArrayAdapter {
                     }else{
                         //TODO: Toast that already 4 people in the party
                     }
-
                 }
             });
         }
