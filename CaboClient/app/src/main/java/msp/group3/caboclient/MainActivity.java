@@ -27,6 +27,8 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class MainActivity extends AppCompatActivity implements Communicator.CommunicatorCallback {
 
     private Player me;
@@ -36,12 +38,15 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
     private ArrayList<Player> party = new ArrayList<>();
     private ArrayList<Player> allUsers = new ArrayList<>();
     private TextView userNameTxt;
-    private Button startGameBtn;
-    private Button findGameBtn;
+    private ImageButton startGameBtn;
     private ImageButton addFriendBtn;
     private SharedPreferences sharedPref;
     private Activity activity;
     private FriendListAdapter friendListAdapter;
+    private CircleImageView playerImage;
+    private TextView playerName;
+    private TextView playerScoreTextView;
+    private TextView playerPartyText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,9 +55,12 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
         activity = this;
         friendList = (ListView) findViewById(R.id.list_friends);
         userNameTxt = (TextView) findViewById(R.id.username);
-        startGameBtn = (Button) findViewById(R.id.start_game_btn);
-        findGameBtn = (Button) findViewById(R.id.find_game_btn);
+        startGameBtn = (ImageButton) findViewById(R.id.start_game_btn);
         addFriendBtn = (ImageButton) findViewById(R.id.add_friend_btn);
+        playerImage = (CircleImageView) findViewById(R.id.player1_image_main);
+        playerName = (TextView) findViewById(R.id.player1_name_textview_main);
+        playerScoreTextView = (TextView) findViewById(R.id.player1_score_textview_main);
+        playerPartyText = (TextView) findViewById(R.id.player1_party_textview_main);
         sharedPref = getApplicationContext().getSharedPreferences(
                 R.string.preference_file_key + "", Context.MODE_PRIVATE);
 
@@ -62,7 +70,10 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
         mWebSocketClient = communicator.getmWebSocketClient();
         communicator.setActivity(this);
         me = DatabaseOperation.getDao().readPlayerFromSharedPrefs(sharedPref);
-        userNameTxt.setText("Welcome " + me.getNick());
+        //userNameTxt.setText("Welcome " + me.getNick());
+
+        playerName.setText(me.getName());
+        playerImage.setImageResource(me.getAvatar());
         startGameBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -98,6 +109,7 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
                     enableButtons();
                     if (!party.contains(me))
                         party.add(me);
+                    playerPartyText.setText("Party: "+party.size());
                     Log.d("---------------PARTY", "me added to party");
                     friendListAdapter = new FriendListAdapter(activity, me, party, communicator);
                     friendList.setAdapter(friendListAdapter);
@@ -191,6 +203,7 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
                 public void run() {
 
                     party.add(finalSender);
+                    playerPartyText.setText("Party: "+party.size());
                     updateFriendList(finalSender, false);
                     /*View v = friendList.getChildAt(
                             friendListAdapter.getPlayerIndex(finalSender) - friendList.getFirstVisiblePosition());
@@ -399,7 +412,6 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
     public void enableButtons() {
         addFriendBtn.setEnabled(true);
         startGameBtn.setEnabled(true);
-        findGameBtn.setEnabled(true);
     }
 
     /**
