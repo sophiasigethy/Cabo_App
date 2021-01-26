@@ -259,6 +259,7 @@ public class Player {
         this.NO_AVATAR_CHOSEN = NO_AVATAR_CHOSEN;
     }
 
-
-
+    public Boolean getOnline() {
+        return isOnline;
+    }
 }
