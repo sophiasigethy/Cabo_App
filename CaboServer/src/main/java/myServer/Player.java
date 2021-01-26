@@ -245,6 +245,7 @@ public class Player {
         for (int i = 0; i < this.cards.size(); i ++) {
             points += this.cards.get(i).getValue();
         }
+        score=score+points;
         return points;
     }
 

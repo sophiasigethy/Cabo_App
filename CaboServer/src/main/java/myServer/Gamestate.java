@@ -104,10 +104,10 @@ public class Gamestate {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            if (state.equalsIgnoreCase(TypeDefs.GAMESTART)){
-                for (Player player: players.values()){
-                    for (Player socketPlayer: socketHandler.getConnectedPlayers().values()){
-                        if (player.getNick().equalsIgnoreCase(socketPlayer.getNick())){
+            if (state.equalsIgnoreCase(TypeDefs.GAMESTART)) {
+                for (Player player : players.values()) {
+                    for (Player socketPlayer : socketHandler.getConnectedPlayers().values()) {
+                        if (player.getNick().equalsIgnoreCase(socketPlayer.getNick())) {
                             socketPlayer.setGamestate(null);
                         }
                     }
@@ -246,7 +246,7 @@ public class Gamestate {
                 if (currPlayer != null) {
                     if (availableCards.size() != 0) {
                         currentPickedCard = availableCards.get(0);
-                        //currentPickedCard = new Card(11, "", "");
+                        //currentPickedCard = new Card(-1, "", "");
 
                     } else {
                         mixCards();
@@ -566,13 +566,13 @@ public class Gamestate {
     }
 
     public void assignToNewGamestate(WebSocketSession session, TextMessage message) throws IOException {
-        if (session!=null){
-            Player player =socketHandler.getPlayerBySessionId(session.getId());
+        if (session != null) {
+            Player player = socketHandler.getPlayerBySessionId(session.getId());
             player.setGamestate(socketHandler.getNextFreeGame());
             if (!player.getGamestate().sessionAlreadyAdded(session)) {
                 player.getGamestate().sessions.add(session);
             }
-            String stateNewGamestate=player.getGamestate().state;
+            String stateNewGamestate = player.getGamestate().state;
             player.getGamestate().socketHandler.sendMessage(session, JSON_commands.statusupdateServer(stateNewGamestate));
             player.getGamestate().handleTextMessage(session, message);
             sessions.remove(session);
@@ -601,7 +601,7 @@ public class Gamestate {
     public boolean isExist(String name) {
         if (players != null) {
             for (Player player : players.values()) {
-                if (player.getNick()!=null){
+                if (player.getNick() != null) {
                     if (player.getNick().equalsIgnoreCase(name)) {
                         return true;
                     }
@@ -898,6 +898,13 @@ public class Gamestate {
 
     private void finishRound() throws IOException {
         calcScores();
+        for (Player player : players.values()) {
+            if (player != null) {
+                if (player.getScore() == 0) {
+                    player.calculatePoints();
+                }
+            }
+        }
         for (WebSocketSession session : sessions) {
             if (session != null) {
                 socketHandler.sendMessage(session, JSON_commands.sendScores(getPlayerBySessionId(session.getId())));
@@ -1354,7 +1361,7 @@ public class Gamestate {
      * Generate cards
      */
     private void generateUnShuffledCards() {
-        for (int i = 0; i <= 13; i++) {
+        for (int i = -1; i <= 13; i++) {
             if (i == 0 || i == 13) {
                 this.availableCards.add(new Card(i, TypeDefs.SPADE));
                 this.availableCards.add(new Card(i, TypeDefs.CLUB));

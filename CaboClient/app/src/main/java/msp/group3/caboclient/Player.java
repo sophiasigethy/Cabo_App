@@ -20,7 +20,7 @@ public class Player {
 
 
     private int avatarID ;
-    private int score;
+    private int score=0;
     private ArrayList<Player> friendList = new ArrayList<>();
     private ArrayList<Card> myCards = new ArrayList<>();
     private Boolean isOnline = false;
