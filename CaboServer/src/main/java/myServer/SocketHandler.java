@@ -283,18 +283,20 @@ public class SocketHandler extends TextWebSocketHandler {
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus closedStatus) throws Exception {
-        if (isAssignedToGame(getPlayerBySessionId(session.getId()))) {
-            getPlayerBySessionId(session.getId()).getGamestate().afterConnectionClosed(session);
-        }
         Player logoutPlayer = connectedPlayers.get(session.getId());
-        connectedPlayers.remove(session.getId());
-        sessions.remove(session);
         for (String storedSession : connectedPlayers.keySet()) {
             // Other people who are online, want to know, that I am offline now
             WebSocketSession sess = getSessionFromString(storedSession);
             if (sess != null)
                 sendMessage(sess, JSON_commands.sendPlayerOnlineStatus(false, logoutPlayer));
         }
+        if (isAssignedToGame(getPlayerBySessionId(session.getId()))) {
+            getPlayerBySessionId(session.getId()).getGamestate().afterConnectionClosed(session);
+        }
+
+        connectedPlayers.remove(session.getId());
+        sessions.remove(session);
+
         //   System.out.println("User " + logoutPlayer.getNick() + " disconnected");
         //gamestate.afterConnectionClosed(session);
 

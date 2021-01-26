@@ -29,7 +29,7 @@ public class Gamestate {
 
 
 
-    private int maxPoints = 100;
+    private int maxPoints = 10;
 
     private boolean privateParty = false;
 
