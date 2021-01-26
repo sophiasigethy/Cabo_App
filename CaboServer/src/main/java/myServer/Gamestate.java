@@ -27,7 +27,9 @@ public class Gamestate {
     // determines how many players are already registered
     private int countPlayer = 0;
 
-    private int maxPoints = 10;
+
+
+    private int maxPoints = 100;
 
     private boolean privateParty = false;
 
@@ -245,8 +247,8 @@ public class Gamestate {
 
                 if (currPlayer != null) {
                     if (availableCards.size() != 0) {
-                        currentPickedCard = availableCards.get(0);
-                        //currentPickedCard = new Card(-1, "", "");
+                        //currentPickedCard = availableCards.get(0);
+                        currentPickedCard = new Card(8, "", "");
 
                     } else {
                         mixCards();
@@ -587,7 +589,9 @@ public class Gamestate {
      */
     public void sendToAll(JSONObject jsonObject) throws IOException {
         for (WebSocketSession webSocketSession : sessions) {
-            socketHandler.sendMessage(webSocketSession, jsonObject);
+            if (webSocketSession != null) {
+                socketHandler.sendMessage(webSocketSession, jsonObject);
+            }
         }
     }
 
@@ -749,6 +753,14 @@ public class Gamestate {
         return null;
     }
 
+    public int getMaxPoints() {
+        return maxPoints;
+    }
+
+    public void setMaxPoints(int maxPoints) {
+        this.maxPoints = maxPoints;
+    }
+
     /**
      * this method returns the associated player to a specific sessionId
      *
@@ -897,20 +909,17 @@ public class Gamestate {
     }
 
     private void finishRound() throws IOException {
-        calcScores();
+        //calcScores();
         for (Player player : players.values()) {
             if (player != null) {
-                if (player.getScore() == 0) {
-                    player.calculatePoints();
-                }
+                player.calculatePoints();
             }
         }
-        for (WebSocketSession session : sessions) {
-            if (session != null) {
-                socketHandler.sendMessage(session, JSON_commands.sendScores(getPlayerBySessionId(session.getId())));
-            }
+        for (Player player : players.values()) {
+            sendToAll(JSON_commands.sendScores(player));
+        }
 
-        }
+
         if (terminated) {
             sendToAll(JSON_commands.sendEndGame(getWinner()));
             state = TypeDefs.GAMEEND;
@@ -1410,7 +1419,7 @@ public class Gamestate {
     /**
      * Terminate the game
      */
-    private void terminate() {
+    public void terminate() {
         this.terminated = true;
     }
 
