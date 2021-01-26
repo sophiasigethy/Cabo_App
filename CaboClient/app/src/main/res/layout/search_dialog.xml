@@ -29,7 +29,7 @@
         android:textSize="12dp"
         android:backgroundTint="@color/beige"
         android:theme="@style/MyEditTextTheme"
-        android:imeOptions="flagNoExtractUi"
+        android:imeOptions="flagNoFullscreen"
         android:textColorHint="@color/turquoise_highlight"
         android:textColorHighlight="@color/dark_purple"
         android:layout_below="@id/text_dialog_title"/>

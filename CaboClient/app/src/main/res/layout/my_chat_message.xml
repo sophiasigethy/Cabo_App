@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingVertical="10dp"
-    android:paddingRight="15dp"
+    android:paddingRight="12dp"
     android:paddingLeft="60dp"
     android:clipToPadding="false">
 
@@ -14,7 +14,7 @@
         android:textColor="@color/beige"
         android:padding="2dp"
         android:elevation="2dp"
-        android:textSize="10sp"
+        android:textSize="8sp"
         android:layout_alignStart="@id/message_body"
         android:text="Username"
         />
@@ -25,9 +25,9 @@
         android:id="@+id/message_body"
         android:background="@drawable/my_message"
         android:textColor="@color/dark_purple"
-        android:padding="10dp"
+        android:padding="8dp"
         android:elevation="2dp"
-        android:textSize="12sp"
+        android:textSize="10sp"
         android:layout_alignParentRight="true"
         android:layout_below="@id/name"
         android:text="Placeholder message"

@@ -54,8 +54,8 @@
             android:fontFamily="sans-serif-black"
             android:textAlignment="center"
             android:textSize="12sp"
-            android:textColor="@color/white"
-            android:shadowColor="#2C613E"
+            android:textColor="@color/beige"
+            android:shadowColor="@color/dark_purple"
             android:shadowDx="2"
             android:shadowDy="2"
             android:shadowRadius="2"
@@ -85,8 +85,8 @@
             android:fontFamily="sans-serif-black"
             android:textAlignment="center"
             android:textSize="12sp"
-            android:textColor="@color/white"
-            android:shadowColor="#2C613E"
+            android:textColor="@color/beige"
+            android:shadowColor="@color/dark_purple"
             android:shadowDx="2"
             android:shadowDy="2"
             android:shadowRadius="2"
@@ -115,8 +115,8 @@
             android:fontFamily="sans-serif-black"
             android:textAlignment="center"
             android:textSize="12sp"
-            android:textColor="@color/white"
-            android:shadowColor="#2C613E"
+            android:textColor="@color/beige"
+            android:shadowColor="@color/dark_purple"
             android:shadowDx="2"
             android:shadowDy="2"
             android:shadowRadius="2"
@@ -145,8 +145,8 @@
             android:fontFamily="sans-serif-black"
             android:textAlignment="center"
             android:textSize="12sp"
-            android:textColor="@color/white"
-            android:shadowColor="#2C613E"
+            android:textColor="@color/beige"
+            android:shadowColor="@color/dark_purple"
             android:shadowDx="2"
             android:shadowDy="2"
             android:shadowRadius="2"
@@ -178,7 +178,7 @@
             android:id="@+id/editText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="0dp"
+            android:layout_marginBottom="6dp"
             android:layout_marginLeft="16dp"
             android:layout_marginStart="16dp"
             android:ems="10"
@@ -186,6 +186,8 @@
             android:hint="@string/edit_message"
             android:textColorHint="@color/beige"
             android:inputType="text"
+            android:backgroundTint="@color/beige"
+            android:theme="@style/MyEditTextTheme"
             android:textColor="@color/beige"
             android:imeOptions="flagNoFullscreen"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -246,6 +248,18 @@
         android:weightSum="2">
 
         <Button
+            android:id="@+id/cancel_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/cancel"
+            android:layout_marginLeft="4dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:textColor="@drawable/outlined_button_text"
+            android:background="@android:color/transparent"
+            android:layout_weight="1"/>
+
+        <Button
             android:id="@+id/start_game_button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -257,17 +271,6 @@
             android:background="@drawable/outlined_button"
             android:textColor="@drawable/outlined_button_text"
             android:text="@string/start_game" />
-        <Button
-            android:id="@+id/cancel_button"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="@string/cancel"
-            android:layout_marginLeft="4dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            android:textColor="@drawable/outlined_button_text"
-            android:background="@android:color/transparent"
-            android:layout_weight="1"/>
 
     </LinearLayout>
     </LinearLayout>
