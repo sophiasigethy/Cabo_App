@@ -473,10 +473,13 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                     }
                     if (pickedCardButtonContainer.getVisibility() == View.VISIBLE) {
                         switchButton.setVisibility(View.VISIBLE);
+
                     }
                     if (nrCardsSelected == cardsAllowed) {
                         peekButton.setEnabled(true);
                         peekButton.setAlpha(1f);
+                        switchButton.setEnabled(true);
+                        switchButton.setAlpha(1f);
                     }
                     Log.d("-----------ON CLICK LISTENER PLAYER 1", "#selected: " + nrCardsSelected);
                     Log.d("-----------ON CLICK LISTENER PLAYER 1", "#allowed: " + cardsAllowed);
@@ -1487,14 +1490,14 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
     }
 
     private void setCountdownTimer(ImageButton cardButton) {
-        updateText.setText("Please remember the card");
         timerAnimation.setVisibility(View.VISIBLE);
         timerAnimation.playAnimation();
 
         new CountDownTimer(10000, 1000) {
 
             public void onTick(long millisUntilFinished) {
-
+                updateText.setText("Please memorize the card");
+                updateText.setVisibility(View.VISIBLE);
             }
 
             public void onFinish() {
