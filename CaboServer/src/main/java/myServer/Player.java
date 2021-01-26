@@ -14,6 +14,22 @@ public class Player {
     private String dbId = "";
     private int avatarID = 9;
 
+    @JsonIgnore
+    private boolean isKI= false;
+
+
+
+    @JsonIgnore
+    private boolean noAccount= false;
+
+
+
+    @JsonIgnore
+    private ArrayList<Card> knownCards= new ArrayList<>();
+
+     @JsonIgnore
+    private ArrayList<Card> knownCardsOfOther= new ArrayList<>();
+
     // The cards belong to this player
     private ArrayList<Card> cards = new ArrayList<>();
 
@@ -240,6 +256,7 @@ public class Player {
         for (int i = 0; i < this.cards.size(); i++) {
             points += this.cards.get(i).getValue();
         }
+        score=score+points;
         return points;
     }
 
@@ -341,6 +358,37 @@ public class Player {
 
     public void setGamestate(Gamestate gamestate) {
         this.gamestate = gamestate;
+    }
+
+    public boolean isKI() {
+        return isKI;
+    }
+
+    public void setKI(boolean KI) {
+        isKI = KI;
+    }
+
+    public ArrayList<Card> getKnownCards() {
+        return knownCards;
+    }
+
+    public void setKnownCards(ArrayList<Card> knownCards) {
+        this.knownCards = knownCards;
+    }
+    public ArrayList<Card> getKnownCardsOfOther() {
+        return knownCardsOfOther;
+    }
+
+    public void setKnownCardsOfOther(ArrayList<Card> knownCardsOfOther) {
+        this.knownCardsOfOther = knownCardsOfOther;
+    }
+
+    public boolean isNoAccount() {
+        return noAccount;
+    }
+
+    public void setNoAccount(boolean noAccount) {
+        this.noAccount = noAccount;
     }
 
 

@@ -298,4 +298,8 @@ public class JSON_commands {
     public static JSONObject sendMaxPoints(int maxpoints) throws JSONException {
         return new JSONObject().put("maxPoints", maxpoints);
     }
+
+    public static JSONObject getOnlinestatusOfNewFriend(String nick) throws JSONException {
+        return new JSONObject().put("onlineStatusOfNewFriend", nick);
+    }
 }

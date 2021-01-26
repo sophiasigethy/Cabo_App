@@ -198,6 +198,7 @@ public class SocketHandler extends TextWebSocketHandler {
                         new Player(receiverDbId, receiverNick, 9)));
                     System.out.println(senderNick + " accepted PartyInvite from " + receiverNick);*/
                         sendPartyAcceptation(sender, receiver, receiverSession);
+
                     }
                 }
                 if (!isSenderInParty && isReceiverLeader) {
@@ -249,10 +250,18 @@ public class SocketHandler extends TextWebSocketHandler {
             }
         }
         if (jsonObject.has("noAccount")) {
-            connectedPlayers.put(session.getId(), new Player());
+            Player newPlayer = new Player();
+            newPlayer.setNoAccount(true);
+            connectedPlayers.put(session.getId(), newPlayer);
             Gamestate gamestate = getNextFreeGame();
             getPlayerBySessionId(session.getId()).setGamestate(gamestate);
             sendMessage(session, JSON_commands.allowedToMove());
+        }
+        if (jsonObject.has("onlineStatusOfNewFriend")) {
+            String nick = jsonObject.get("onlineStatusOfNewFriend").toString();
+            if (isOnline(nick)){
+                sendMessage(session, JSON_commands.sendPlayerOnlineStatus(true, getPlayerByNick(nick)));
+            }
         }
     }
 
@@ -302,8 +311,16 @@ public class SocketHandler extends TextWebSocketHandler {
 
 
     public void sendMessage(WebSocketSession webSocketSession, JSONObject jsonMsg) throws IOException {
-        if (webSocketSession != null)
-            webSocketSession.sendMessage(new TextMessage(jsonMsg.toString()));
+        //TODO TEST THIS SOLUTION
+        if (webSocketSession != null) {
+            try {
+                webSocketSession.sendMessage(new TextMessage(jsonMsg.toString()));
+            } catch (Exception ex) {
+                synchronized (sessions) {
+                    sessions.remove(webSocketSession);
+                }
+            }
+        }
     }
 
     /**
@@ -559,12 +576,23 @@ public class SocketHandler extends TextWebSocketHandler {
         return false;
     }
 
-    public void removeGamestate(Gamestate gamestate){
-        for (int i=0; i<games.size(); i++){
-            if (games.get(i).getGamestateID()==gamestate.getGamestateID()){
+    public void removeGamestate(Gamestate gamestate) {
+        for (int i = 0; i < games.size(); i++) {
+            if (games.get(i).getGamestateID() == gamestate.getGamestateID()) {
                 games.remove(i);
             }
         }
 
+    }
+
+    public boolean isOnline(String nick) {
+        for (Player player : connectedPlayers.values()) {
+            if (player != null) {
+                if (player.getNick().equalsIgnoreCase(nick)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

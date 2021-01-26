@@ -42,6 +42,7 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
     private ArrayList<CircleImageView> otherPlayerImages = new ArrayList<>();
     private ArrayList<TextView> otherPlayerNamesTextViews = new ArrayList<>();
     private String noAccount="";
+    private boolean isParty= false;
 
 
 
@@ -208,10 +209,14 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
                 Gson gson = new Gson();
                 Player newPlayer = gson.fromJson(jsonString, Player.class);
                 players.add(newPlayer);
+                String mes = "You can start the game, all party players are now connected.";
                 runOnUiThread(new Runnable() {
                     public void run() {
                         returnFreeTextView().setText(newPlayer.getNick());
                         String mes = newPlayer.getNick() + " joined the game";
+                        if (isParty && (party.size()-1)==players.size()){
+                            mes = newPlayer.getNick() + " joined the game." +"\n"+ "You can start the game, all party players are now connected.";
+                        }
                         showText(mes, true, null);
                         setPictureOfOtherPlayer(newPlayer);
                         showPresentPlayers();                    }
@@ -233,6 +238,8 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
         }
 
         //this is received when the state of the game changes
+
+
         if (jsonObject.has("statusupdateServer")) {
             String status = jsonObject.get("statusupdateServer").toString();
             checkStatus(status);
@@ -311,7 +318,10 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
             //showNextPlayer(nextPlayerId);
         }
         if (jsonObject.has("startGame")) {
-            startGame();
+            if (!me.getName().equalsIgnoreCase("")){
+                startGame();
+            }
+
         }
         if (jsonObject.has("removePlayer")) {
             JSONObject js = jsonObject.getJSONObject("removePlayer");
@@ -358,7 +368,7 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
             }
         }
         if (jsonObject.has("noStartYet")) {
-           String text="There are not enough player yet!";
+           String text="State your username first!";
            showText(text, true, null);
         }
 
@@ -474,7 +484,27 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
     private void checkStatus(String status) {
         if (status.equalsIgnoreCase(TypeDefs.MATCHING)) {
             //String mes = TypeDefs.server + "We are still waiting for other players.";
-            String mes = "We are still waiting for other players.";
+            state=TypeDefs.MATCHING;
+            String mes="";
+            if (players.size()==0){
+                if (isParty && (players.size()+1)==party.size()){
+                    mes = "Start the game now.";
+                }
+                if (isParty && (players.size()+1)!=party.size()){
+                    mes = "Wait for the other party players to enter the waiting room.";
+                }
+
+                if (!isParty){
+                    mes = "Wait for other players or start the game now with a KI player.";
+                }
+
+            }else{
+                if (isParty){
+                    mes = "You can start the game, all party players are now connected.";
+                }else {
+                 mes = "Wait for other players or start the game now.";}
+            }
+
             showText(mes, true, null);
         }
         if (status.equalsIgnoreCase(TypeDefs.GAMESTART)) {
@@ -587,6 +617,9 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
             }
 
 
+        }
+        if (party.size()>1){
+            isParty=true;
         }
 
     }
