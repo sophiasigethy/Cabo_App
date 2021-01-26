@@ -247,8 +247,8 @@ public class Gamestate {
 
                 if (currPlayer != null) {
                     if (availableCards.size() != 0) {
-                        //currentPickedCard = availableCards.get(0);
-                        currentPickedCard = new Card(8, "", "");
+                        currentPickedCard = availableCards.get(0);
+                        //currentPickedCard = new Card(8, "", "");
 
                     } else {
                         mixCards();
