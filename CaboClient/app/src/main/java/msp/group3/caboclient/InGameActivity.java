@@ -339,6 +339,8 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        caboButton.setEnabled(false);
+                        caboButton.setAlpha(0.3f);
                         tapPickCardAnimation.setVisibility(View.INVISIBLE);
                         growCardGlowAnimation(playedCardsStackGlow);
                         growCardGlowAnimation(player1CardsGlow);
@@ -474,6 +476,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                     }
                     if (nrCardsSelected == cardsAllowed) {
                         peekButton.setEnabled(true);
+                        peekButton.setAlpha(1f);
                     }
                     Log.d("-----------ON CLICK LISTENER PLAYER 1", "#selected: " + nrCardsSelected);
                     Log.d("-----------ON CLICK LISTENER PLAYER 1", "#allowed: " + cardsAllowed);
@@ -530,8 +533,12 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
 
                     }
                     if (nrCardsSelected == cardsAllowed) {
+                        switchButton.setEnabled(true);
+                        switchButton.setAlpha(1f);
                         spyButton.setEnabled(true);
+                        spyButton.setAlpha(1f);
                         peekButton.setEnabled(true);
+                        peekButton.setAlpha(1f);
                     }
                 }
             });
@@ -583,8 +590,12 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
 
                     }
                     if (nrCardsSelected == cardsAllowed) {
+                        switchButton.setEnabled(true);
+                        switchButton.setAlpha(1f);
                         spyButton.setEnabled(true);
+                        spyButton.setAlpha(1f);
                         peekButton.setEnabled(true);
+                        peekButton.setAlpha(1f);
                     }
                 }
             });
@@ -635,8 +646,12 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                         }
                     }
                     if (nrCardsSelected == cardsAllowed) {
+                        switchButton.setEnabled(true);
+                        switchButton.setAlpha(1f);
                         spyButton.setEnabled(true);
+                        spyButton.setAlpha(1f);
                         peekButton.setEnabled(true);
+                        peekButton.setAlpha(1f);
                     }
                 }
             });
@@ -1156,6 +1171,8 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
 
         } else {
             switchButton.setVisibility(View.VISIBLE);
+            switchButton.setAlpha(0.3f);
+            switchButton.setEnabled(false);
             updateText.setVisibility(View.VISIBLE);
             updateText.setText("Please choose 2 cards");
             setPlayer1CardsOnClickListeners(2);
@@ -1295,6 +1312,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         } else {
             spyButton.setVisibility(View.VISIBLE);
             spyButton.setEnabled(false);
+            spyButton.setAlpha(0.3f);
             updateText.setVisibility(View.VISIBLE);
             updateText.setText("Please choose an enemy card");
             setPlayer2CardsOnClickListeners(1);
@@ -1371,6 +1389,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         updateText.setVisibility(View.VISIBLE);
         updateText.setText("Please choose 1 of your cards");
         peekButton.setEnabled(false);
+        peekButton.setAlpha(0.3f);
 
         nrCardsSelected = 0;
         setPlayer1CardsOnClickListeners(1);
@@ -1425,6 +1444,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         updateText.setVisibility(View.VISIBLE);
         updateText.setText("Select 2 of your cards to look at");
         peekButton.setEnabled(false);
+        peekButton.setAlpha(0.3f);
         Log.d("-----------Card lookup", "initiating");
         nrCardsSelected=0;
         deactivatePlayer1OnClickListeners();
