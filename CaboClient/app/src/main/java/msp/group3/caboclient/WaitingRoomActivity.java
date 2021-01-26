@@ -42,6 +42,7 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
     private ArrayList<CircleImageView> otherPlayerImages = new ArrayList<>();
     private ArrayList<TextView> otherPlayerNamesTextViews = new ArrayList<>();
     private String noAccount="";
+    private boolean isParty= false;
 
 
 
@@ -208,10 +209,14 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
                 Gson gson = new Gson();
                 Player newPlayer = gson.fromJson(jsonString, Player.class);
                 players.add(newPlayer);
+                String mes = "You can start the game, all party players are now connected.";
                 runOnUiThread(new Runnable() {
                     public void run() {
                         returnFreeTextView().setText(newPlayer.getNick());
                         String mes = newPlayer.getNick() + " joined the game";
+                        if (isParty && (party.size()-1)==players.size()){
+                            mes = newPlayer.getNick() + " joined the game." +"\n"+ "You can start the game, all party players are now connected.";
+                        }
                         showText(mes, true, null);
                         setPictureOfOtherPlayer(newPlayer);
                         showPresentPlayers();                    }
@@ -482,9 +487,22 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
             state=TypeDefs.MATCHING;
             String mes="";
             if (players.size()==0){
-                mes = "Wait for other players or start the game now with a KI player.";
+                if (isParty && (players.size()+1)==party.size()){
+                    mes = "Start the game now.";
+                }
+                if (isParty && (players.size()+1)!=party.size()){
+                    mes = "Wait for the other party players to enter the waiting room.";
+                }
+
+                if (!isParty){
+                    mes = "Wait for other players or start the game now with a KI player.";
+                }
+
             }else{
-                 mes = "Wait for other players or start the game now.";
+                if (isParty){
+                    mes = "You can start the game, all party players are now connected.";
+                }else {
+                 mes = "Wait for other players or start the game now.";}
             }
 
             showText(mes, true, null);
@@ -599,6 +617,9 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
             }
 
 
+        }
+        if (party.size()>1){
+            isParty=true;
         }
 
     }

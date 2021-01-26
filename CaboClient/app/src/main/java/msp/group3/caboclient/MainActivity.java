@@ -146,7 +146,9 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
                         updateFriendList(sender, true);
                     }
                 });
+                communicator.sendMessage(JSON_commands.getOnlinestatusOfNewFriend(senderNick));
             }
+
         }
 
         if (jsonObject.has("partyrequest")) {
@@ -348,6 +350,7 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
                         updateFriendList(sender, true);
                         try {
                             communicator.sendMessage(JSON_commands.sendFriendRequestAccepted(me, sender));
+                            communicator.sendMessage(JSON_commands.getOnlinestatusOfNewFriend(sender.getNick()));
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }

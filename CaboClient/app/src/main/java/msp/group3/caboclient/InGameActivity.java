@@ -106,6 +106,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
     private ImageButton pickCardsStackButton;
 
     private int MAX_PLAYERS = 0;
+    private boolean isParty= false;
 
     private androidx.fragment.app.FragmentContainerView chatFragmentContainer;
 
