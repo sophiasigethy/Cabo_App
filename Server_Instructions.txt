@@ -1,0 +1,12 @@
+To update CaboServer on the server, use the following steps:
+- Make sure, your version of CaboServer can start locally without errors
+- Enter Gradle Sidebar and run CaboServer->Tasks->build->bootJar
+- If it was executed successfully, you can now find a working executable jar of the server locally under
+CaboServer/build/libs/CaboServer-1.0-SNAPSHOT.jar
+- Connect to the server using the credentials given to us by the tutors in our Discord Channel 
+(Using Putty, WinScp, Filezilla, terminal,...)
+- On the server, navigate to /home/gruppe3/CaboServer and remove CaboServer-1.0-SNAPSHOT.jar (sudo rm CaboServer-1.0-SNAPSHOT.jar)
+- Copy the locally created jar to the server, into the exact location, you just deleted the other jar
+- Execute caboserver_restart.sh (sudo ./caboserver_restart.sh)
+
+In the future there will hopefully be a script, that just pulls the jar from our git repository and starts it automatically
