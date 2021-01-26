@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
+import nonapi.io.github.classgraph.json.JSONUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.context.annotation.PropertySource;
@@ -48,6 +49,7 @@ public class SocketHandler extends TextWebSocketHandler {
 
 
             if (jsonObject.has("sendUserLogin")) {
+                //TODO Rework to player object
                 JSONObject js = jsonObject.getJSONObject("sendUserLogin");
                 String dbId = js.get("senderDbID").toString().replace("\"", "").replace("\\", "");
                 String nick = js.get("senderNick").toString().replace("\"", "").replace("\\", "");
@@ -73,6 +75,7 @@ public class SocketHandler extends TextWebSocketHandler {
                 }
             }
             if (jsonObject.has("sendFriendRequest")) {
+                //TODO Rework to sender, receiver object
                 JSONObject js = jsonObject.getJSONObject("sendFriendRequest");
                 String senderDbId = js.get("senderDbID").toString().replace("\"", "").replace("\\", "");
                 String senderNick = js.get("senderNick").toString().replace("\"", "").replace("\\", "");
@@ -98,6 +101,7 @@ public class SocketHandler extends TextWebSocketHandler {
             }
 
             if (jsonObject.has("sendFriendAccepted")) {
+                //TODO Rework to sender, receiver object
                 JSONObject js = jsonObject.getJSONObject("sendFriendAccepted");
                 String senderDbId = js.get("senderDbID").toString().replace("\"", "").replace("\\", "");
                 String senderNick = js.get("senderNick").toString().replace("\"", "").replace("\\", "");
@@ -108,11 +112,10 @@ public class SocketHandler extends TextWebSocketHandler {
                 if (receiverSession != null) {
                     sendMessage(receiverSession, JSON_commands.sendFriendAccepted(new Player(senderDbId, senderNick, senderAvatarId),
                         new Player(receiverDbId, receiverNick, 9)));
-                    System.out.println(senderNick + "accepted FriendRequest from " + receiverNick);
+                    System.out.println(senderNick + " accepted FriendRequest from " + receiverNick);
                 }
             }
             if (jsonObject.has("partyrequest2")) {
-
                 JSONObject js = jsonObject.getJSONObject("partyrequest2");
                 String json1 = js.get("sender").toString();
                 String json2 = js.get("receiver").toString();
