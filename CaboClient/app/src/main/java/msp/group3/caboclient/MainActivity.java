@@ -109,7 +109,7 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
                     enableButtons();
                     if (!party.contains(me))
                         party.add(me);
-                    playerPartyText.setText("Party: "+party.size());
+                    playerPartyText.setText("Party: " + party.size());
                     Log.d("---------------PARTY", "me added to party");
                     friendListAdapter = new FriendListAdapter(activity, me, party, communicator);
                     friendList.setAdapter(friendListAdapter);
@@ -120,6 +120,7 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
                 communicator.sendMessage(JSON_commands.sendUserLogin(me));
             } catch (JSONException e) {
                 e.printStackTrace();
+
             }
         }
 
@@ -172,9 +173,7 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
                 String jsonString = js.get("sender").toString();
                 sender = gson.fromJson(jsonString, Player.class);
             }
-            //TODO only for testing
-            //showMessageForTesting("Friendrequest von"+sender.getNick());
-            //communicator.sendMessage(JSON_commands.sendPartyAccepted(me, sender));
+
 
             acceptPartyInvitationDialog(sender);
         }
@@ -194,16 +193,16 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
                 String jsonString = js.get("sender").toString();
                 receiver = gson.fromJson(jsonString, Player.class);
             }
-            Log.d("-----------------PARTY INVITATION", "sender: "+sender.getName()+" receiver: "+receiver.getName());
+            Log.d("-----------------PARTY INVITATION", "sender: " + sender.getName() + " receiver: " + receiver.getName());
 
-            showMessageForTesting("Einladung angenommen");
+            showMessageForTesting(sender.getNick()+ " accepted your invitation");
 
             Player finalSender = sender;
             runOnUiThread(new Runnable() {
                 public void run() {
 
                     party.add(finalSender);
-                    playerPartyText.setText("Party: "+party.size());
+                    playerPartyText.setText("Party: " + party.size());
                     updateFriendList(finalSender, false);
                     /*View v = friendList.getChildAt(
                             friendListAdapter.getPlayerIndex(finalSender) - friendList.getFirstVisiblePosition());
@@ -231,8 +230,8 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
                 player = gson.fromJson(jsonString, Player.class);
             }
 
-            Log.d("-----------------ONLINE STATUS", player.getName()+" sendStatus: "+isOnline);
-            Log.d("-----------------ONLINE STATUS", player.getName()+" actualStatus: "+player.getStatus());
+            Log.d("-----------------ONLINE STATUS", player.getName() + " sendStatus: " + isOnline);
+            Log.d("-----------------ONLINE STATUS", player.getName() + " actualStatus: " + player.getStatus());
 
             if (!allUsers.contains(player)) {
                 allUsers.add(player);
@@ -246,10 +245,10 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
                     public void run() {
 
                         int index = indexInFriendList(finalPlayer);
-                        Player changedPlayer =  me.getFriendList().get(index);
+                        Player changedPlayer = me.getFriendList().get(index);
                         me.getFriendList().get(index).setOnline(finalIsOnline);
-                        Log.d("-----------------ONLINE STATUS", "friendlist size: "+me.getFriendList().size());
-                        Log.d("-----------------ONLINE STATUS", "friend set online: "+me.getFriendList().get(indexInFriendList(finalPlayer)).getName());
+                        Log.d("-----------------ONLINE STATUS", "friendlist size: " + me.getFriendList().size());
+                        Log.d("-----------------ONLINE STATUS", "friend set online: " + me.getFriendList().get(indexInFriendList(finalPlayer)).getName());
 
                         friendListAdapter.notifyDataSetChanged();
                     }
@@ -261,7 +260,9 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
         }
         if (jsonObject.has("partyRequestFailed")) {
             String text = (String) jsonObject.get("partyRequestFailed");
-            //TODO show text why party request failed
+
+            showMessageForTesting(text);
+
         }
 
         if (jsonObject.has("playerRemovedFromParty")) {
@@ -274,7 +275,9 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
                 player = gson.fromJson(jsonString, Player.class);
             }
             removePlayerFromParty(player);
-            //TODO show  that player has disconnected and is no longer part of party
+            String mes = player.getNick() + " joins no longer the party!.";
+            showMessageForTesting(mes);
+            //TODO reset party icon for this player
         }
         if (jsonObject.has("leaderRemovedFromParty")) {
             JSONObject js = jsonObject.getJSONObject("leaderRemovedFromParty");
@@ -287,24 +290,44 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
             }
             party.clear();
             party.add(me);
+            String mes = "Party leader " + player.getNick() + " left the party, so you can start a new party now!";
+            showMessageForTesting(mes);
+            //TODO reset party icon for this player
+        }
+
+        if (jsonObject.has("informOthersAboutInvitation")) {
+            JSONObject js = jsonObject.getJSONObject("informOthersAboutInvitation");
+            Player player = null;
+
+
+            if (js.has("player")) {
+                String jsonString = js.get("player").toString();
+                Gson gson = new Gson();
+                player = gson.fromJson(jsonString, Player.class);
+            }
+            if (!alreadyInParty(player)) {
+                party.add(player);
+                String mes = player.getNick() + " was added to the party.";
+                showMessageForTesting(mes);
+            }
             //TODO show  that player Leader has disconnected and party is empty
         }
 
 
     }
 
-    public int indexInFriendList(Player player){
-        for(int i=0; i<me.getFriendList().size(); i++){
-            if(player.getNick().equalsIgnoreCase(me.getFriendList().get(i).getNick())){
+    public int indexInFriendList(Player player) {
+        for (int i = 0; i < me.getFriendList().size(); i++) {
+            if (player.getNick().equalsIgnoreCase(me.getFriendList().get(i).getNick())) {
                 return i;
             }
         }
         return 1000;
     }
 
-    public boolean isFriend(Player player){
-        for(int i=0; i<me.getFriendList().size(); i++){
-            if(player.getId()==me.getFriendList().get(i).getId()){
+    public boolean isFriend(Player player) {
+        for (int i = 0; i < me.getFriendList().size(); i++) {
+            if (player.getId() == me.getFriendList().get(i).getId()) {
                 return true;
             }
         }
@@ -449,13 +472,12 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
 
     public boolean isPlayerInFriendList(Player player) {
         for (Player friend : me.getFriendList()) {
-           if (friend.getNick().equalsIgnoreCase(player.getNick())) {
+            if (friend.getNick().equalsIgnoreCase(player.getNick())) {
                 return true;
             }
         }
         return false;
     }
-
 
 
     public Player getPlayerByNickInFriendlist(String nick) {
@@ -467,20 +489,30 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
         return null;
     }
 
-    public void showMessageForTesting(String text){
+    public void showMessageForTesting(String text) {
         activity.runOnUiThread(new Runnable() {
             public void run() {
-                Toast.makeText(MainActivity.this, text, Toast.LENGTH_LONG);
+                Toast.makeText(getApplicationContext(), text,
+                        Toast.LENGTH_LONG).show();
 
             }
         });
     }
 
-    public void removePlayerFromParty(Player player){
-        for (int i=0; i<party.size(); i++){
-            if (party.get(i).getNick().equalsIgnoreCase(player.getNick())){
+    public void removePlayerFromParty(Player player) {
+        for (int i = 0; i < party.size(); i++) {
+            if (party.get(i).getNick().equalsIgnoreCase(player.getNick())) {
                 party.remove(i);
             }
         }
+    }
+
+    public boolean alreadyInParty(Player player) {
+        for (Player partyPlayer : party) {
+            if (partyPlayer.getNick().equalsIgnoreCase(player.getNick())) {
+                return true;
+            }
+        }
+        return false;
     }
 }

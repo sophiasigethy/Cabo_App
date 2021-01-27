@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
@@ -26,7 +27,6 @@ public class Gamestate {
     private int test = 0;
     // determines how many players are already registered
     private int countPlayer = 0;
-
 
 
     private int maxPoints = 100;
@@ -97,32 +97,30 @@ public class Gamestate {
             countPlayer--;
             Player disconnectedPlayer = getPlayerBySessionId(session.getId());
             players.remove(session.getId());
-            // if (countPlayer!=MAX_PLAYER){
-           /* if (countPlayer < 2) {
-                state = TypeDefs.MATCHING;
-            }*/
+
+
             try {
                 sendToAll(JSON_commands.removePlayer(disconnectedPlayer));
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            if (state.equalsIgnoreCase(TypeDefs.GAMESTART)) {
-                for (Player player : players.values()) {
-                    for (Player socketPlayer : socketHandler.getConnectedPlayers().values()) {
-                        if (player.getNick().equalsIgnoreCase(socketPlayer.getNick())) {
-                            socketPlayer.setGamestate(null);
-                        }
+        }
+        /*if (state.equalsIgnoreCase(TypeDefs.GAMESTART)) {
+            for (Player player : players.values()) {
+                for (Player socketPlayer : socketHandler.getConnectedPlayers().values()) {
+                    if (player.getNick().equalsIgnoreCase(socketPlayer.getNick())) {
+                        socketPlayer.setGamestate(null);
                     }
                 }
             }
-            if (players.size() == 0) {
-                socketHandler.removeGamestate(this);
-            }
-            if (players.size() == 1 && playWithKI) {
-                socketHandler.removeGamestate(this);
-            }
-
+        }*/
+        if (players.size() == 0) {
+            socketHandler.removeGamestate(this);
         }
+        if (players.size() == 1 && playWithKI) {
+            socketHandler.removeGamestate(this);
+        }
+
 
     }
 
@@ -461,6 +459,11 @@ public class Gamestate {
             } else {
                 currPlayer = returnKI();
             }
+
+            socketHandler.getPlayerBySessionId(session.getId()).setGamestate(null);
+            socketHandler.getConnectedPlayers().remove(session.getId());
+            socketHandler.getSessions().remove(session);
+
             if (privateParty) {
                 currPlayer.setNick(currPlayer.getName());
                 if (socketHandler.isPartyLeader(currPlayer)) {
@@ -471,14 +474,16 @@ public class Gamestate {
                 }
             }
             afterConnectionClosed(session);
-            /*if (players.size() == 0) {
-                socketHandler.removeGamestate(this);
+
+        }
+        if (jsonObject.has("leaveWaitingRoom")) {
+            if (session != null) {
+                leaveWaitingRoom(session);
             }
-            if (players.size() == 1 && playWithKI) {
-                socketHandler.removeGamestate(this);
-            }*/
+
         }
     }
+
 
     private void startGame() throws IOException {
         MAX_PLAYER = players.size();
@@ -580,6 +585,30 @@ public class Gamestate {
             sessions.remove(session);
         }
     }
+
+    public void leaveWaitingRoom(WebSocketSession session) throws IOException {
+        Player socketPlayer = socketHandler.getPlayerBySessionId(session.getId());
+        socketPlayer.setGamestate(null);
+        socketHandler.getConnectedPlayers().remove(session.getId());
+        socketHandler.getSessions().remove(session);
+       // socketHandler.getSessions().remove(session);
+
+        //sessions.remove(session);
+        //players.remove(session.getId());
+
+
+        if (privateParty) {
+
+            if (socketHandler.isPartyLeader(socketPlayer)) {
+                socketHandler.removePartyLeader(socketPlayer);
+                socketHandler.deletePartyofPartyLeader(socketPlayer);
+            } else {
+                socketHandler.removePlayerOfParty(socketPlayer);
+            }
+        }
+        afterConnectionClosed(session);
+    }
+
 
     /**
      * this method informs ALL players about an event
