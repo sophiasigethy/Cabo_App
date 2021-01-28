@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -43,6 +44,7 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
     private TextView playerName;
     private TextView playerScoreTextView;
     private TextView playerPartyText;
+    ImageView player1Status;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +59,7 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
         playerName = (TextView) findViewById(R.id.player1_name_textview_main);
         playerScoreTextView = (TextView) findViewById(R.id.player1_score_textview_main);
         playerPartyText = (TextView) findViewById(R.id.player1_party_textview_main);
+        player1Status = (ImageView) findViewById(R.id.player1_status);
         sharedPref = getApplicationContext().getSharedPreferences(
                 R.string.preference_file_key + "", Context.MODE_PRIVATE);
 
@@ -101,6 +104,7 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
         if (jsonObject.has("connectionAccepted")) {
             activity.runOnUiThread(new Runnable() {
                 public void run() {
+                    player1Status.setImageResource(R.drawable.online);
                     Toast.makeText(activity, R.string.welcome + " " + me.getNick(), Toast.LENGTH_LONG);
                     enableButtons();
                     if (!party.contains(me))
@@ -122,6 +126,7 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
 
         if (jsonObject.has("connectionNotAccepted")) {
             String mes = TypeDefs.server + jsonObject.get("connectionNotAccepted").toString();
+            player1Status.setImageResource(R.drawable.offline);
         }
 
         if (jsonObject.has("friendrequest")) {
@@ -169,7 +174,6 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
                 String jsonString = js.get("sender").toString();
                 sender = gson.fromJson(jsonString, Player.class);
             }
-
 
             acceptPartyInvitationDialog(sender);
         }
@@ -386,6 +390,7 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
                             communicator.sendMessage(JSON_commands.getOnlinestatusOfNewFriend(sender.getNick()));
                         } catch (JSONException e) {
                             e.printStackTrace();
+                            player1Status.setImageResource(R.drawable.offline);
                         }
                         requestDialog.getDialog().dismiss();
                     } else {
@@ -421,6 +426,7 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
                                 requestDialog.getDialog().dismiss();
                             } catch (JSONException e) {
                                 e.printStackTrace();
+                                player1Status.setImageResource(R.drawable.offline);
                             }
                         }
                     }

@@ -209,7 +209,7 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
                 Player player = gson.fromJson(jsonString, Player.class);
                 String mes = "Hello " + player.getName() + " with id: " + player.getId();
                 // String mes = "Hello " + player.getNick() + " with id: " + player.getNick();
-                me = new Player(player.getId(), player.getName(), player.getNick());
+                me = player;
                 runOnUiThread(new Runnable() {
                     public void run() {
                         player1_name.setText(me.getNick());

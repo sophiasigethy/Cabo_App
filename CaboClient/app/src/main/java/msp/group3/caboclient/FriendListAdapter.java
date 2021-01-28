@@ -1,5 +1,6 @@
 package msp.group3.caboclient;
 
+import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -9,6 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONException;
 
@@ -71,7 +73,6 @@ public class FriendListAdapter extends ArrayAdapter {
         TextView player_nick = (TextView) vi.findViewById(R.id.friendlist_name);
         player_nick.setText(myFriendList.get(i).getNick());
         ImageView status = (ImageView) vi.findViewById(R.id.friendlist_status);
-        //TODO Check why online status does not work -> in in view stimmen vielleicht nicht mit i in freindlist überein?
         if (myFriendList.get(i).getOnline()){
             status.setImageResource(R.drawable.online);
         }
@@ -81,7 +82,6 @@ public class FriendListAdapter extends ArrayAdapter {
 
         ImageButton invite_btn = (ImageButton) vi.findViewById(R.id.friendlist_invite);
         if (isInParty(myFriendList.get(i))) {
-            //TODO Check why Icon is not changed
             invite_btn.setOnClickListener(null);
             invite_btn.setImageResource(R.drawable.partyhat);
             invite_btn.setPadding(0, 0, 0,0);
@@ -95,7 +95,6 @@ public class FriendListAdapter extends ArrayAdapter {
                         try {
                             communicator.sendMessage(JSON_commands.sendPartyRequest2(me, myFriendList.get(i)));
                             Log.e("SendPartyRequest", "Send Party Invitation");
-
                         } catch (JSONException e) {
                             Log.e("SendPartyRequest", "Could not send Party Invitation");
                         }
