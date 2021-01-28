@@ -65,7 +65,7 @@ public class NewFriendListAdapter extends BaseAdapter {
         holder.friendNameView.setText(friend.getName());
         holder.onlineStatusImage = (ImageView) convertView.findViewById(R.id.friendlist_status);
         holder.invite_btn = (ImageButton) convertView.findViewById(R.id.friendlist_invite);
-        if(friend.isOnline()){
+        if(friend.getOnline()){
             holder.onlineStatusImage.setImageResource(R.drawable.online);
         }
         else{

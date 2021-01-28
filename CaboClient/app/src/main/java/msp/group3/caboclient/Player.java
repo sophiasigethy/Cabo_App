@@ -178,10 +178,6 @@ public class Player {
         this.score = other.getScore();
     }
 
-    public Boolean isOnline() {
-        return isOnline;
-    }
-
     public void setOnline(Boolean online) {
         isOnline = online;
     }
@@ -259,6 +255,7 @@ public class Player {
         this.NO_AVATAR_CHOSEN = NO_AVATAR_CHOSEN;
     }
 
-
-
+    public Boolean getOnline() {
+        return isOnline;
+    }
 }
