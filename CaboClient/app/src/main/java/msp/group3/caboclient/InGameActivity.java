@@ -460,6 +460,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 public void onClick(View view) {
 
                     hideHint();
+                    playedCardsStackButton.setEnabled(false);
 
                     if (cardButton.isSelected()) {
                         nrCardsSelected--;
@@ -698,7 +699,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         caboButton.setEnabled(false);
         caboButton.setAlpha(0.3f);
         pickCardsStackButton.setEnabled(false);
-        pickCardsStackButton.setEnabled(false);
+        playedCardsStackButton.setEnabled(false);
         tapPickCardAnimation.setVisibility(View.INVISIBLE);
     }
 
@@ -984,6 +985,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                             @Override
                             public void run() {
                                 deactivateAllOnCardClickListeners();
+                                deactivateAllButtons();
                                 playSwapAnimation();
                                 switchButton.setVisibility(View.INVISIBLE);
                                 makePickedCardContainerDisappear();
@@ -1005,6 +1007,8 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         playedCardsStackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                deactivateAllOnCardClickListeners();
+                deactivateAllButtons();
                 try {
                     Log.d("----------------------SEND", "play picked card");
                     webSocketClient.send(String.valueOf(JSON_commands.playPickedCard()));
@@ -1032,12 +1036,13 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                         for (ImageButton cardButton : player1CardButtons) {
                             cardButton.setSelected(false);
                         }
-                        deactivateAllOnCardClickListeners();
                     }
                 });
             }
         });
         playedCardsStackButton.setEnabled(true);
+        playedCardsStackButton.setAlpha(1f);
+
     }
 
     private void makePickedCardContainerDisappear() {
@@ -1871,6 +1876,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             playingPlayerId = nextPlayerId;
             Log.d("----------------------NEXT PLAYER", "id: " + nextPlayerId);
             Log.d("----------------------MY ID", "id: " + me.getId());
+            deactivateAllButtons();
             //updateText.setText("Its your turn: "+getPlayerById(nextPlayerId).getName());
             if (me.getId() == nextPlayerId) {
                 //indicatePlayerTurn(me);
