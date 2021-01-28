@@ -397,6 +397,12 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
             String text = "State your username first!";
             showText(text, true, null);
         }
+        if (jsonObject.has("maxPoints")) {
+            int maxPoints = (int) jsonObject.get("sendMAXPlayer");
+            //TODO show max Points
+            // vorher: communicator.sendMessage(JSON_commands.sendMaxPoints(100)); aber nur wenn firstRound==true
+
+        }
     }
 
     /**
