@@ -209,7 +209,8 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
                 Player player = gson.fromJson(jsonString, Player.class);
                 String mes = "Hello " + player.getName() + " with id: " + player.getId();
                 // String mes = "Hello " + player.getNick() + " with id: " + player.getNick();
-                me = new Player(player.getId(), player.getName(), player.getNick());
+                //me = new Player(player.getId(), player.getName(), player.getNick());
+                me=player;
                 runOnUiThread(new Runnable() {
                     public void run() {
                         player1_name.setText(me.getNick());
@@ -622,7 +623,7 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
         me = DatabaseOperation.getDao().readPlayerFromSharedPrefs(sharedPref);
         party.add(me);
         if (me.getAvatarID() == 9) {
-            me.setAvatarID(1);
+            me.setAvatarID(3);
         }
         player1_image.setImageResource(me.getAvatarIcon());
         for (int i = 0; i < 4; i++) {

@@ -850,6 +850,18 @@ public class Gamestate {
         return start;
     }
 
+
+
+    public int getRandomAvatarId() {
+        Random random = new Random();
+        int id = random.nextInt(5) + 1;
+
+        if (id == 0|| id>5) {
+            return getRandomAvatarId();
+        }
+        return id;
+    }
+
     /**
      * this method sends an update when the status changes
      *
@@ -1031,15 +1043,17 @@ public class Gamestate {
     public void saveAvatar(Player player) {
         for (Player socketHandlerPlayer : socketHandler.getConnectedPlayers().values()) {
             String nick = socketHandlerPlayer.getNick();
-            if (nick != null) {
+            if (!nick.equalsIgnoreCase("None")|| nick!=null ) {
                 if (socketHandlerPlayer.getNick().equalsIgnoreCase(player.getName())) {
                     player.setAvatarID(socketHandlerPlayer.getAvatarID());
+                    return;
                 }
             } else {
                 player.setAvatarID(1);
+                return;
             }
-
         }
+        player.setAvatarID(3);
     }
 
     public boolean isPrivateParty() {
