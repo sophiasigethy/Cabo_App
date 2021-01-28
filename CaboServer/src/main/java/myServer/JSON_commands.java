@@ -444,6 +444,20 @@ public class JSON_commands {
         return new JSONObject().put("noStartYet", "");
     }
 
+    public static JSONObject informOthersAboutInvitation(Player player) throws JSONException, JsonProcessingException {
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        JSONObject jmsg = new JSONObject();
+        JSONObject jsubmsg = new JSONObject();
+
+        jsubmsg.put("player", objectMapper.writeValueAsString(player));
+        jmsg.put("informOthersAboutInvitation", jsubmsg);
+
+        return jmsg;
+    }
+
+
     public static JSONObject partyRequestFailed(String message) throws JSONException {
 
         return new JSONObject().put("partyRequestFailed", message);

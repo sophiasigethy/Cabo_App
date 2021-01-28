@@ -257,6 +257,9 @@ public class Player {
             points += this.cards.get(i).getValue();
         }
         score=score+points;
+        if (score>gamestate.getMaxPoints()){
+            gamestate.terminate();
+        }
         return points;
     }
 

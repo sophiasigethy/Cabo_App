@@ -84,13 +84,15 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
     private int cardDrawCount = 0;
     private TextView hintTextCardStack;
     private TextView hintTextOwnCards;
-    private Button endGameReturnButton;
+    private TextView hintEmoji;
+    private ImageButton endGameReturnButton;
 
     private com.airbnb.lottie.LottieAnimationView cardSwapAnimation;
     private com.airbnb.lottie.LottieAnimationView tapPickCardAnimation;
     private com.airbnb.lottie.LottieAnimationView timerAnimation;
     private com.airbnb.lottie.LottieAnimationView hintArrowCardStack;
     private com.airbnb.lottie.LottieAnimationView hintArrowOwnCards;
+    private com.airbnb.lottie.LottieAnimationView hintEmojiArrow;
     private com.airbnb.lottie.LottieAnimationView endGameStars;
 
 
@@ -195,6 +197,10 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         hintTextCardStack.setVisibility(View.INVISIBLE);
         hintTextOwnCards = findViewById(R.id.hint_player_cards_text);
         hintTextOwnCards.setVisibility(View.INVISIBLE);
+        hintEmoji = findViewById(R.id.hint_emoji);
+        hintEmoji.setVisibility(View.INVISIBLE);
+        hintEmojiArrow = findViewById(R.id.hint_arrow_emoji);
+        hintEmojiArrow.setVisibility(View.INVISIBLE);
         endGameStars = findViewById(R.id.game_end_stars);
         endGameStars.setVisibility(View.INVISIBLE);
         endGameReturnButton = findViewById(R.id.end_game_return_button);
@@ -333,6 +339,8 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        caboButton.setEnabled(false);
+                        caboButton.setAlpha(0.3f);
                         tapPickCardAnimation.setVisibility(View.INVISIBLE);
                         growCardGlowAnimation(playedCardsStackGlow);
                         growCardGlowAnimation(player1CardsGlow);
@@ -346,6 +354,8 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         ownEmojiButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                hintEmoji.setVisibility(View.INVISIBLE);
+                hintEmojiArrow.setVisibility(View.INVISIBLE);
                 emojiSelectionContainer.setVisibility(View.VISIBLE);
             }
         });
@@ -463,9 +473,13 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                     }
                     if (pickedCardButtonContainer.getVisibility() == View.VISIBLE) {
                         switchButton.setVisibility(View.VISIBLE);
+
                     }
                     if (nrCardsSelected == cardsAllowed) {
                         peekButton.setEnabled(true);
+                        peekButton.setAlpha(1f);
+                        switchButton.setEnabled(true);
+                        switchButton.setAlpha(1f);
                     }
                     Log.d("-----------ON CLICK LISTENER PLAYER 1", "#selected: " + nrCardsSelected);
                     Log.d("-----------ON CLICK LISTENER PLAYER 1", "#allowed: " + cardsAllowed);
@@ -522,8 +536,12 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
 
                     }
                     if (nrCardsSelected == cardsAllowed) {
+                        switchButton.setEnabled(true);
+                        switchButton.setAlpha(1f);
                         spyButton.setEnabled(true);
+                        spyButton.setAlpha(1f);
                         peekButton.setEnabled(true);
+                        peekButton.setAlpha(1f);
                     }
                 }
             });
@@ -575,8 +593,12 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
 
                     }
                     if (nrCardsSelected == cardsAllowed) {
+                        switchButton.setEnabled(true);
+                        switchButton.setAlpha(1f);
                         spyButton.setEnabled(true);
+                        spyButton.setAlpha(1f);
                         peekButton.setEnabled(true);
+                        peekButton.setAlpha(1f);
                     }
                 }
             });
@@ -627,8 +649,12 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                         }
                     }
                     if (nrCardsSelected == cardsAllowed) {
+                        switchButton.setEnabled(true);
+                        switchButton.setAlpha(1f);
                         spyButton.setEnabled(true);
+                        spyButton.setAlpha(1f);
                         peekButton.setEnabled(true);
+                        peekButton.setAlpha(1f);
                     }
                 }
             });
@@ -654,6 +680,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
     private void deactivatePlayer1OnClickListeners() {
         for (ImageButton cardButton : player1CardButtons) {
             cardButton.setOnClickListener(null);
+            cardButton.setSelected(false);
         }
     }
 
@@ -1147,6 +1174,8 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
 
         } else {
             switchButton.setVisibility(View.VISIBLE);
+            switchButton.setAlpha(0.3f);
+            switchButton.setEnabled(false);
             updateText.setVisibility(View.VISIBLE);
             updateText.setText("Please choose 2 cards");
             setPlayer1CardsOnClickListeners(2);
@@ -1286,6 +1315,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         } else {
             spyButton.setVisibility(View.VISIBLE);
             spyButton.setEnabled(false);
+            spyButton.setAlpha(0.3f);
             updateText.setVisibility(View.VISIBLE);
             updateText.setText("Please choose an enemy card");
             setPlayer2CardsOnClickListeners(1);
@@ -1362,6 +1392,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         updateText.setVisibility(View.VISIBLE);
         updateText.setText("Please choose 1 of your cards");
         peekButton.setEnabled(false);
+        peekButton.setAlpha(0.3f);
 
         nrCardsSelected = 0;
         setPlayer1CardsOnClickListeners(1);
@@ -1416,7 +1447,10 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         updateText.setVisibility(View.VISIBLE);
         updateText.setText("Select 2 of your cards to look at");
         peekButton.setEnabled(false);
+        peekButton.setAlpha(0.3f);
         Log.d("-----------Card lookup", "initiating");
+        nrCardsSelected=0;
+        deactivatePlayer1OnClickListeners();
         setPlayer1CardsOnClickListeners(2);
 
         ArrayList<ImageButton> selectedCards = new ArrayList<>();
@@ -1456,14 +1490,14 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
     }
 
     private void setCountdownTimer(ImageButton cardButton) {
-        updateText.setText("Please remember the card");
         timerAnimation.setVisibility(View.VISIBLE);
         timerAnimation.playAnimation();
 
         new CountDownTimer(10000, 1000) {
 
             public void onTick(long millisUntilFinished) {
-
+                updateText.setText("Please memorize the card");
+                updateText.setVisibility(View.VISIBLE);
             }
 
             public void onFinish() {
@@ -1819,6 +1853,10 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                             caboButton.setAlpha(1f);
                         }
                         cardDrawCount++;
+                        if(cardDrawCount==2){
+                            hintEmoji.setVisibility(View.VISIBLE);
+                            hintEmojiArrow.setVisibility(View.VISIBLE);
+                        }
                         updateText.setVisibility(View.VISIBLE);
                         updateText.setText("Pick a card");
                         tapPickCardAnimation.setVisibility(View.VISIBLE);
@@ -1832,6 +1870,8 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                         deactivateAllButtons();
                         Player player = getPlayerById(nextPlayerId);
                         if (player != null) {
+                            hintEmoji.setVisibility(View.INVISIBLE);
+                            hintEmojiArrow.setVisibility(View.INVISIBLE);
                             indicatePlayerTurn(player);
                             updateText.setVisibility(View.VISIBLE);
                             updateText.setText("It's " + getPlayerById(nextPlayerId).getName() + "'s turn");
@@ -2402,6 +2442,9 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 for(LottieAnimationView caboAnim : playerCaboAnimations){
                     caboAnim.setVisibility(View.INVISIBLE);
                 }
+                for(ConstraintLayout playerLayout : playerOverviews){
+                    playerLayout.setVisibility(View.INVISIBLE);
+                }
                 pickCardsStackButton.setVisibility(View.GONE);
                 playedCardsStackButton.setVisibility(View.GONE);
                 caboButton.setVisibility(View.GONE);
@@ -2412,7 +2455,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 cardSwapBg.setVisibility(View.VISIBLE);
                 if (winner.getId() == me.getId()) {
                     centerText.setVisibility(View.VISIBLE);
-                    centerText.setText("You won! Congrats!");
+                    centerText.setText("You won!");
                 } else {
                     centerText.setVisibility(View.VISIBLE);
                     centerText.setText(winner.getName() + " won!");

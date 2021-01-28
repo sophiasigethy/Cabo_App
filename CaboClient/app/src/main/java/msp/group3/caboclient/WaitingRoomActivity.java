@@ -59,6 +59,7 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
     //determines if username has already been accepted by the server
     private boolean usernameAccepted = false;
     private SharedPreferences sharedPref;
+    private ChatAdapter adapter = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,7 +93,7 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
         messageList.add(welcomeMsg);
         messageList.add(welcomeMsg2);
 
-        ChatAdapter adapter = new ChatAdapter(getApplicationContext(), messageList);
+        adapter = new ChatAdapter(getApplicationContext(), messageList);
         messagesListView.setAdapter(null);
         messagesListView.setAdapter(adapter);
 
@@ -409,19 +410,9 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
                         messageList.add(new ChatMessage(sender.getName(), message, false, sender.getAvatar()));
                     }
                 }
-                ChatAdapter adapter = new ChatAdapter(getApplicationContext(), messageList);
                 messagesListView.setAdapter(null);
                 messagesListView.setAdapter(adapter);
-                //messagesListView.setAdapter(adapter);
-               /* if (mTextView.getLayout() != null) {
-                    final int scrollAmount = mTextView.getLayout().getLineTop(mTextView.getLineCount()) - mTextView.getHeight();
-                    // if there is no need to scroll, scrollAmount will be <=0
-                    if (scrollAmount > 0)
-                        mTextView.scrollTo(0, scrollAmount);
-                    else
-                        mTextView.scrollTo(0, 0);
-                }*/
-            }
+                adapter.notifyDataSetChanged();            }
         });
         if (mMessage.contains("That username is already in use")) {
             //start = false;

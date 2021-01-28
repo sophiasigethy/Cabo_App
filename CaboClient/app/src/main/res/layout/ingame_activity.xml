@@ -678,6 +678,35 @@
             app:layout_constraintTop_toTopOf="@id/player1_image_game"
             android:translationX="-27dp"/>
 
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/hint_arrow_emoji"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            app:lottie_rawRes="@raw/animation_arrow"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            android:translationZ="20dp"
+            android:translationX="-27dp"
+            android:layout_marginBottom="6dp"
+            app:layout_constraintBottom_toTopOf="@id/player1_emoji"
+            app:layout_constraintRight_toRightOf="@id/player1_emoji"
+            app:layout_constraintLeft_toLeftOf="@id/player1_emoji" />
+
+        <TextView
+            android:id="@+id/hint_emoji"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:text="tap to react"
+            android:textColor="@color/beige"
+            android:textSize="12sp"
+            android:gravity="center"
+            android:layout_marginBottom="6dp"
+            android:fontFamily="sans-serif-black"
+            android:translationX="-27dp"
+            app:layout_constraintBottom_toTopOf="@id/hint_arrow_emoji"
+            app:layout_constraintRight_toRightOf="@id/hint_arrow_emoji"
+            app:layout_constraintLeft_toLeftOf="@id/hint_arrow_emoji"/>
+
         <LinearLayout
             android:id="@+id/emoji_selection_container"
             android:layout_width="wrap_content"
@@ -1032,10 +1061,11 @@
 
     <TextView
         android:id="@+id/center_text"
-        android:layout_width="250dp"
+        android:layout_width="wrap_content"
         android:layout_height="70dp"
         android:text="Round 2"
         android:textAlignment="center"
+        android:padding="12dp"
         android:gravity="center_vertical"
         android:textColor="@color/turquoise_highlight"
         android:fontFamily="sans-serif-black"
@@ -1050,14 +1080,17 @@
         app:layout_constraintRight_toRightOf="parent"
         tools:ignore="RtlCompat" />
 
-    <Button
+    <ImageButton
         android:id="@+id/end_game_return_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Return"
-        android:padding="12dp"
-        android:textColor="@drawable/outlined_button_text"
-        android:background="@drawable/outlined_button"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:paddingLeft="17dp"
+        android:paddingTop="14dp"
+        android:paddingBottom="14dp"
+        android:paddingRight="14dp"
+        android:background="@drawable/zoom_button_bg"
+        app:srcCompat="@drawable/exit"
+        android:scaleType="centerInside"
         app:layout_constraintTop_toBottomOf="@id/center_text"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
