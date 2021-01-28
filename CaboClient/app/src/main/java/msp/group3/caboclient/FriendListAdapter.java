@@ -72,7 +72,7 @@ public class FriendListAdapter extends ArrayAdapter {
         player_nick.setText(myFriendList.get(i).getNick());
         ImageView status = (ImageView) vi.findViewById(R.id.friendlist_status);
         //TODO Check why online status does not work -> in in view stimmen vielleicht nicht mit i in freindlist überein?
-        if (myFriendList.get(i).isOnline()){
+        if (myFriendList.get(i).getOnline()){
             status.setImageResource(R.drawable.online);
         }
         else{
