@@ -302,7 +302,7 @@ public class Gamestate {
                 //if (checkIfPlayerIsAuthorised(getPlayerBySessionId(session.getId()))) {
                 //takeFirstCardFromAvailableCards();
                 if (availableCards.size() != 0) {
-                   // availableCards.remove(0);
+                    // availableCards.remove(0);
                     takeFirstCardFromAvailableCards();
                 }
                 playedCards.add(currentPickedCard);
@@ -353,6 +353,10 @@ public class Gamestate {
                 sendToAll(JSON_commands.useFunctionalitySpy(card, spyedPlayer));
                 //Player currentPlayer = getPlayerBySessionId(session.getId());
 
+                if (session != null && playWithKI) {
+                    sendKIsmiely(TypeDefs.angry);
+                }
+
             }
         }
         if (jsonObject.has("useFunctionalitySwap")) {
@@ -387,6 +391,7 @@ public class Gamestate {
 
                 if (session != null && playWithKI) {
                     updateKnownListsOfKIaferRealPlayerMove();
+                    sendKIsmiely(TypeDefs.shocked);
                 }
             }
         }
@@ -404,6 +409,9 @@ public class Gamestate {
                 if (hasPlayerDrawn(player.getId())) {
                     finishMove();
                     // sendStatusupdatePlayer();
+                    // Player turn = getPlayerById(currentPlayerId);
+                    //if (turn != null) {
+                    //    if (turn.getCalledCabo()) {
                     if (getPlayerById(currentPlayerId).getCalledCabo()) {
                         finishRound();
                     } else {
@@ -483,6 +491,7 @@ public class Gamestate {
             }
 
         }
+
     }
 
 
@@ -592,7 +601,7 @@ public class Gamestate {
         socketPlayer.setGamestate(null);
         socketHandler.getConnectedPlayers().remove(session.getId());
         socketHandler.getSessions().remove(session);
-       // socketHandler.getSessions().remove(session);
+        // socketHandler.getSessions().remove(session);
 
         //sessions.remove(session);
         //players.remove(session.getId());
@@ -1128,75 +1137,46 @@ public class Gamestate {
         return null;
     }
 
-    public JSONObject decideForMove(Player playerKI) throws JsonProcessingException {
-        JSONObject jsonObject = null;
-        switch (currentPickedCard.getValue()) {
-            case -1:
-                jsonObject = JSON_commands.swapPickedCardWithOwnCardsKI(returnHighestKnownCard(playerKI));
-                updateKnownCardsOfKI(playerKI);
-                break;
-            case 0:
-                jsonObject = JSON_commands.swapPickedCardWithOwnCardsKI(returnHighestKnownCard(playerKI));
-                updateKnownCardsOfKI(playerKI);
-                break;
-            case 1:
-                jsonObject = JSON_commands.swapPickedCardWithOwnCardsKI(returnHighestKnownCard(playerKI));
-                updateKnownCardsOfKI(playerKI);
-                break;
-            case 2:
-                jsonObject = JSON_commands.swapPickedCardWithOwnCardsKI(returnHighestKnownCard(playerKI));
-                updateKnownCardsOfKI(playerKI);
-                break;
-            case 3:
-                jsonObject = JSON_commands.swapPickedCardWithOwnCardsKI(returnHighestKnownCard(playerKI));
-                updateKnownCardsOfKI(playerKI);
-                break;
-            case 4:
-                jsonObject = JSON_commands.swapPickedCardWithOwnCardsKI(returnHighestKnownCard(playerKI));
-                updateKnownCardsOfKI(playerKI);
-                break;
-            case 5:
-                jsonObject = JSON_commands.playPickedCardKI();
-                break;
-            case 6:
-                jsonObject = JSON_commands.playPickedCardKI();
-                break;
-            case 7:
-                jsonObject = JSON_commands.useFunctionalityPeekKI(returnPeekCardForKI(playerKI));
-                break;
-            case 8:
-                jsonObject = JSON_commands.useFunctionalityPeekKI(returnPeekCardForKI(playerKI));
-                break;
-            case 9:
-                jsonObject = JSON_commands.useFunctionalitySpyKI(returnSpyCardForKI(playerKI), getRealPlayer());
-                break;
-            case 10:
-                jsonObject = JSON_commands.useFunctionalitySpyKI(returnSpyCardForKI(playerKI), getRealPlayer());
-                break;
-            case 11:
-                Card highestKnownCard = returnHighestKnownCard(playerKI);
-                Card lowestKnownCardOfOther = returnLowestKnownCardOfOtherPlayer(playerKI);
-                Player other = getRealPlayer();
-                jsonObject = JSON_commands.useFunctionalitySwap(highestKnownCard, playerKI, lowestKnownCardOfOther, other);
-                updateKnownListsAfterSwapping(playerKI, highestKnownCard, lowestKnownCardOfOther);
-                break;
-            case 12:
-                Card highestKnownCard2 = returnHighestKnownCard(playerKI);
-                Card lowestKnownCardOfOther2 = returnLowestKnownCardOfOtherPlayer(playerKI);
-                Player other2 = getRealPlayer();
-                jsonObject = JSON_commands.useFunctionalitySwap(highestKnownCard2, playerKI, lowestKnownCardOfOther2, other2);
-                updateKnownListsAfterSwapping(playerKI, highestKnownCard2, lowestKnownCardOfOther2);
-                break;
-            case 13:
-                jsonObject = JSON_commands.playPickedCardKI();
-                break;
-            default:
-                jsonObject = JSON_commands.swapPickedCardWithOwnCardsKI(returnHighestKnownCard(playerKI));
-                break;
-
+    public JSONObject decideForMove(Player playerKI) throws IOException {
+        JSONObject jsonObject = JSON_commands.swapPickedCardWithOwnCardsKI(returnHighestKnownCard(playerKI));
+        if (currentPickedCard.getValue() < 5) {
+            jsonObject = JSON_commands.swapPickedCardWithOwnCardsKI(returnHighestKnownCard(playerKI));
+            updateKnownCardsOfKI(playerKI);
+            sendKIsmiely(TypeDefs.tongueOut);
+        }
+        if (currentPickedCard.getValue() == 5 || currentPickedCard.getValue() == 6 || currentPickedCard.getValue() == 13) {
+            jsonObject = JSON_commands.playPickedCardKI();
+            sendKIsmiely(TypeDefs.smiling);
+        }
+        if (currentPickedCard.getValue() == 7 || currentPickedCard.getValue() == 8) {
+            jsonObject = JSON_commands.useFunctionalityPeekKI(returnPeekCardForKI(playerKI));
+            sendKIsmiely(TypeDefs.laughing);
+        }
+        if (currentPickedCard.getValue() == 9 || currentPickedCard.getValue() == 10) {
+            jsonObject = JSON_commands.useFunctionalitySpyKI(returnSpyCardForKI(playerKI), getRealPlayer());
+            sendKIsmiely(TypeDefs.laughing);
+        }
+        if (currentPickedCard.getValue() == 11 || currentPickedCard.getValue() == 12) {
+            Card highestKnownCard = returnHighestKnownCard(playerKI);
+            Card lowestKnownCardOfOther = returnLowestKnownCardOfOtherPlayer(playerKI);
+            Player other = getRealPlayer();
+            jsonObject = JSON_commands.useFunctionalitySwap(highestKnownCard, playerKI, lowestKnownCardOfOther, other);
+            updateKnownListsAfterSwapping(playerKI, highestKnownCard, lowestKnownCardOfOther);
+            sendKIsmiely(TypeDefs.laughing);
         }
 
         return jsonObject;
+    }
+
+    public void sendKIsmiely(String smiley) throws IOException {
+        Player KI = returnKI();
+        Player real = getRealPlayer();
+        if (KI != null) {
+            KI.setSmiley(smiley);
+        }
+        if (real != null) {
+            socketHandler.sendMessage(getSessionByPlayerID(real.getId()), JSON_commands.smileyPlayer(KI));
+        }
     }
 
     public void removeCardofList(ArrayList<Card> cardList, Card removedCard) {
