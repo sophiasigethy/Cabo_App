@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
@@ -39,11 +40,11 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
     private TextView player4_name;
     private CircleImageView player4_image;
     protected ListView messagesListView;
+    protected Button cancelButton;
     private ArrayList<CircleImageView> otherPlayerImages = new ArrayList<>();
     private ArrayList<TextView> otherPlayerNamesTextViews = new ArrayList<>();
-    private String noAccount="";
-    private boolean isParty= false;
-
+    private String noAccount = "";
+    private boolean isParty = false;
 
 
     private String mMessage = "";
@@ -79,6 +80,17 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
         player3_image = (CircleImageView) findViewById(R.id.player3_image_waiting_room);
         player4_name = (TextView) findViewById(R.id.player4_name_textview_waiting_room);
         player4_image = (CircleImageView) findViewById(R.id.player4_image);
+        cancelButton = (Button) findViewById(R.id.cancel_button);
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                try {
+                    cancelAction();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
         Collections.addAll(otherPlayerImages, player2_image, player3_image, player4_image);
         Collections.addAll(otherPlayerNamesTextViews, player2_name, player3_name, player4_name);
 
@@ -118,12 +130,12 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
         // startGame();
     }
 
-    private void showPresentPlayers(){
-        for(int i = 0; i<players.size(); i++){
+    private void showPresentPlayers() {
+        for (int i = 0; i < players.size(); i++) {
             otherPlayerImages.get(i).setVisibility(View.VISIBLE);
             otherPlayerNamesTextViews.get(i).setVisibility(View.VISIBLE);
         }
-        for(int i = players.size(); i<3; i++){
+        for (int i = players.size(); i < 3; i++) {
             otherPlayerImages.get(i).setVisibility(View.INVISIBLE);
             otherPlayerNamesTextViews.get(i).setVisibility(View.INVISIBLE);
         }
@@ -151,14 +163,12 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
     @Override
     public void onBackPressed() {
         try {
-            communicator.sendMessage(JSON_commands.leaveWaitingRoom());
-            leaveWaitingRoom();
+            cancelAction();
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
-
     }
+
     /**
      * this method handles how to proceed when a message from the server is received:
      * every sent message arrives right here
@@ -197,8 +207,8 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
                 String jsonString = welcome.get("Player").toString();
                 Gson gson = new Gson();
                 Player player = gson.fromJson(jsonString, Player.class);
-                String mes =  "Hello " + player.getName() + " with id: " + player.getId();
-               // String mes = "Hello " + player.getNick() + " with id: " + player.getNick();
+                String mes = "Hello " + player.getName() + " with id: " + player.getId();
+                // String mes = "Hello " + player.getNick() + " with id: " + player.getNick();
                 me = new Player(player.getId(), player.getName(), player.getNick());
                 runOnUiThread(new Runnable() {
                     public void run() {
@@ -224,12 +234,13 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
                     public void run() {
                         returnFreeTextView().setText(newPlayer.getNick());
                         String mes = newPlayer.getNick() + " joined the game";
-                        if (isParty && (party.size()-1)==players.size()){
-                            mes = newPlayer.getNick() + " joined the game." +"\n"+ "You can start the game, all party players are now connected.";
+                        if (isParty && (party.size() - 1) == players.size()) {
+                            mes = newPlayer.getNick() + " joined the game." + "\n" + "You can start the game, all party players are now connected.";
                         }
                         showText(mes, true, null);
                         setPictureOfOtherPlayer(newPlayer);
-                        showPresentPlayers();                    }
+                        showPresentPlayers();
+                    }
                 });
             }
 
@@ -292,7 +303,7 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
                 Gson gson = new Gson();
                 sender = gson.fromJson(jsonString, Player.class);
             }
-            if(sender!= null){
+            if (sender != null) {
                 showText(mes, false, sender);
             }
         }
@@ -328,7 +339,7 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
             //showNextPlayer(nextPlayerId);
         }
         if (jsonObject.has("startGame")) {
-            if (!me.getName().equalsIgnoreCase("")){
+            if (!me.getName().equalsIgnoreCase("")) {
                 startGame();
             }
 
@@ -343,18 +354,17 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
                 runOnUiThread(new Runnable() {
                     public void run() {
                         showPresentPlayers();
-                        String mes= player.getName()+ " disconnected";
+                        String mes = player.getName() + " disconnected";
                         showText(mes, true, null);
                     }
                 });
 
             }
-            if (party.size()>1){
+            if (party.size() > 1) {
                 onBackPressed();
             }
         }
         if (jsonObject.has("notAccepted")) {
-
             String mes = jsonObject.get("notAccepted").toString();
             showText(mes, true, null);
         }
@@ -383,14 +393,21 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
             }
         }
         if (jsonObject.has("noStartYet")) {
-           String text="State your username first!";
-           showText(text, true, null);
+            String text = "State your username first!";
+            showText(text, true, null);
         }
-
-
     }
-    public void leaveWaitingRoom() throws JSONException {
 
+    /**
+     * This method handels cancelling of WaitingRoomActivity
+     * If it is called, other players in room are notified and user moves to MainActivity
+     */
+    public void cancelAction() throws JSONException {
+        communicator.sendMessage(JSON_commands.leaveWaitingRoom());
+        leaveWaitingRoom();
+    }
+
+    public void leaveWaitingRoom() throws JSONException {
         if (noAccount != null) {
             if (noAccount.equalsIgnoreCase("noAccount")) {
                 Intent intent = new Intent(WaitingRoomActivity.this, LoginActivity.class);
@@ -400,7 +417,6 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
             Intent intent = new Intent(WaitingRoomActivity.this, MainActivity.class);
             startActivity(intent);
         }
-
     }
 
     public Player getPlayerById(int id) {
@@ -427,20 +443,20 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
             public void run() {
                 // mTextView.setText(mTextView.getText() + "\n" + getTextMessage());
                 //mTextView.setText(mTextView.getText() + "\n" + message);
-                if(sender==null && serverMsg){
+                if (sender == null && serverMsg) {
                     messageList.add(new ChatMessage("Server", message, false, R.drawable.robot));
                 }
-                if(sender!=null){
-                    if(sender.getId() == me.getId()){
-                        messageList.add(new ChatMessage(me.getName(), message, true, me.getAvatar()));
-                    }
-                    else{
-                        messageList.add(new ChatMessage(sender.getName(), message, false, sender.getAvatar()));
+                if (sender != null) {
+                    if (sender.getId() == me.getId()) {
+                        messageList.add(new ChatMessage(me.getName(), message, true, me.getAvatarIcon()));
+                    } else {
+                        messageList.add(new ChatMessage(sender.getName(), message, false, sender.getAvatarIcon()));
                     }
                 }
                 messagesListView.setAdapter(null);
                 messagesListView.setAdapter(adapter);
-                adapter.notifyDataSetChanged();            }
+                adapter.notifyDataSetChanged();
+            }
         });
         if (mMessage.contains("That username is already in use")) {
             //start = false;
@@ -455,14 +471,14 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (i==0){
-                    player2_image.setImageResource(newPlayer.getAvatar());
+                if (i == 0) {
+                    player2_image.setImageResource(newPlayer.getAvatarIcon());
                 }
-                if (i==1){
-                    player3_image.setImageResource(newPlayer.getAvatar());
+                if (i == 1) {
+                    player3_image.setImageResource(newPlayer.getAvatarIcon());
                 }
-                if (i==2){
-                    player4_image.setImageResource(newPlayer.getAvatar());
+                if (i == 2) {
+                    player4_image.setImageResource(newPlayer.getAvatarIcon());
                 }
             }
         });
@@ -503,25 +519,26 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
     private void checkStatus(String status) {
         if (status.equalsIgnoreCase(TypeDefs.MATCHING)) {
             //String mes = TypeDefs.server + "We are still waiting for other players.";
-            state=TypeDefs.MATCHING;
-            String mes="";
-            if (players.size()==0){
-                if (isParty && (players.size()+1)==party.size()){
+            state = TypeDefs.MATCHING;
+            String mes = "";
+            if (players.size() == 0) {
+                if (isParty && (players.size() + 1) == party.size()) {
                     mes = "Start the game now.";
                 }
-                if (isParty && (players.size()+1)!=party.size()){
+                if (isParty && (players.size() + 1) != party.size()) {
                     mes = "Wait for the other party players to enter the waiting room.";
                 }
 
-                if (!isParty){
+                if (!isParty) {
                     mes = "Wait for other players or start the game now with a KI player.";
                 }
 
-            }else{
-                if (isParty){
+            } else {
+                if (isParty) {
                     mes = "You can start the game, all party players are now connected.";
-                }else {
-                 mes = "Wait for other players or start the game now.";}
+                } else {
+                    mes = "Wait for other players or start the game now.";
+                }
             }
 
             showText(mes, true, null);
@@ -604,10 +621,10 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
         party = new ArrayList<>();
         me = DatabaseOperation.getDao().readPlayerFromSharedPrefs(sharedPref);
         party.add(me);
-        if (me.getAvatarID()==9){
+        if (me.getAvatarID() == 9) {
             me.setAvatarID(1);
         }
-        player1_image.setImageResource(me.getAvatar());
+        player1_image.setImageResource(me.getAvatarIcon());
         for (int i = 0; i < 4; i++) {
             String avatarID = intent.getStringExtra("player" + i + "avatar");
             String dbID = intent.getStringExtra("player" + i + "dbid");
@@ -622,13 +639,13 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
                         Integer.parseInt(avatarID));
                 switch (i) {
                     case 1:
-                        player2_image.setImageResource(partyPlayer.getAvatar());
+                        player2_image.setImageResource(partyPlayer.getAvatarIcon());
                         break;
                     case 2:
-                        player3_image.setImageResource(partyPlayer.getAvatar());
+                        player3_image.setImageResource(partyPlayer.getAvatarIcon());
                         break;
                     case 3:
-                        player4_image.setImageResource(partyPlayer.getAvatar());
+                        player4_image.setImageResource(partyPlayer.getAvatarIcon());
                         break;
                 }
                 if (!partyPlayer.isEmpty())
@@ -637,19 +654,20 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
 
 
         }
-        if (party.size()>1){
-            isParty=true;
+        if (party.size() > 1) {
+            isParty = true;
         }
 
     }
-    public void readNoLogIn(Intent intent){
+
+    public void readNoLogIn(Intent intent) {
         String NO_LOGIN = intent.getStringExtra("NO_LOGIN");
-        noAccount=NO_LOGIN;
+        noAccount = NO_LOGIN;
     }
 
-    public void setPictureOfOtherPlayer(Player newPlayer){
-        for (int i=0; i<players.size();i++){
-            if (players.get(i).getId()==newPlayer.getId()){
+    public void setPictureOfOtherPlayer(Player newPlayer) {
+        for (int i = 0; i < players.size(); i++) {
+            if (players.get(i).getId() == newPlayer.getId()) {
                 setAvatarImage(i, newPlayer);
             }
         }
@@ -662,10 +680,10 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
         return displayed;
     }
 
-    public ArrayList<String> returnNicks(){
-        ArrayList<String> nicks= new ArrayList<>();
-        if (party!=null){
-            for (Player player: party){
+    public ArrayList<String> returnNicks() {
+        ArrayList<String> nicks = new ArrayList<>();
+        if (party != null) {
+            for (Player player : party) {
                 nicks.add(player.getNick());
             }
         }

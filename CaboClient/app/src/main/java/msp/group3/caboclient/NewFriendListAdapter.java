@@ -60,7 +60,7 @@ public class NewFriendListAdapter extends BaseAdapter {
             holder = (NewFriendListAdapter.ViewHolder) convertView.getTag();
         }
         holder.friendAvatar = (CircleImageView) convertView.findViewById(R.id.friendlist_image);
-        holder.friendAvatar.setImageResource(friend.getAvatar());
+        holder.friendAvatar.setImageResource(friend.getAvatarIcon());
         holder.friendNameView = (TextView) convertView.findViewById(R.id.friendlist_name);
         holder.friendNameView.setText(friend.getName());
         holder.onlineStatusImage = (ImageView) convertView.findViewById(R.id.friendlist_status);

@@ -2,7 +2,6 @@ package msp.group3.caboclient;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.fragment.app.FragmentContainer;
 import androidx.fragment.app.FragmentTransaction;
 
 
@@ -1748,9 +1747,9 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                     findFragmentById(R.id.fragment_chat);
             if (sender != null) {
                 if (sender.getId() == me.getId()) {
-                    fragment_obj.chatMessagesList.add(new ChatMessage(me.getName(), chatText, true, me.getAvatar()));
+                    fragment_obj.chatMessagesList.add(new ChatMessage(me.getName(), chatText, true, me.getAvatarIcon()));
                 } else {
-                    fragment_obj.chatMessagesList.add(new ChatMessage(sender.getName(), chatText, false, sender.getAvatar()));
+                    fragment_obj.chatMessagesList.add(new ChatMessage(sender.getName(), chatText, false, sender.getAvatarIcon()));
                 }
             }
 
@@ -1799,7 +1798,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                     @Override
                     public void run() {
                         playerNames.get(0).setText(me.getName());
-                        playerPics.get(0).setImageResource(me.getAvatar());
+                        playerPics.get(0).setImageResource(me.getAvatarIcon());
                         playerStats.get(0).setText("Score: " + me.getScore());
                         if (initialRound) {
                             initiateInitialCardLookUp();
@@ -2271,7 +2270,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 for (int i = 0; i < otherPlayers.size(); i++) {
                     if (i + 1 < playerNames.size()) {
                         playerNames.get(i + 1).setText(otherPlayers.get(i).getName());
-                        playerPics.get(i + 1).setImageResource(otherPlayers.get(i).getAvatar());
+                        playerPics.get(i + 1).setImageResource(otherPlayers.get(i).getAvatarIcon());
                         playerStats.get(i + 1).setText("Score: " + otherPlayers.get(i).getScore());
                     } else {
                         Log.d("----------------------NAMES", "OUT OF BOUNDS");

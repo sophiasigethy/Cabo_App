@@ -253,10 +253,12 @@ public class DatabaseOperation {
                 child(receiver.getDbID()).child("friendList").child(sender.getDbID());
         myRef.child("dbID").setValue(sender.getDbID());
         myRef.child("nick").setValue(sender.getNick());
+        myRef.child("avatarID").setValue(sender.getAvatarID());
         myRef = database.getReference("cabo/users").
                 child(sender.getDbID()).child("friendList").child(receiver.getDbID());
         myRef.child("dbID").setValue(receiver.getDbID());
         myRef.child("nick").setValue(receiver.getNick());
+        myRef.child("avatarID").setValue(receiver.getAvatarID());
         return true;
     }
 

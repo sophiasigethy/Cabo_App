@@ -300,7 +300,7 @@ public class Gamestate {
             }
             if (authorised) {
                 //if (checkIfPlayerIsAuthorised(getPlayerBySessionId(session.getId()))) {
-               // takeFirstCardFromAvailableCards();
+                //takeFirstCardFromAvailableCards();
                 if (availableCards.size() != 0) {
                    // availableCards.remove(0);
                     takeFirstCardFromAvailableCards();
