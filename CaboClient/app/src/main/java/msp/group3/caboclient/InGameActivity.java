@@ -1226,7 +1226,6 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                     playSwapAnimation();
                     updateText.setVisibility(View.INVISIBLE);
                     switchButton.setVisibility(View.INVISIBLE);
-                    deactivateAllOnCardClickListeners();
                     try {
                         Card card1 = getCardFromButton(selectedCards.get(0));
                         Player card1Owner = getCardOwner(selectedCards.get(0));
@@ -1239,6 +1238,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
+                    deactivateAllOnCardClickListeners();
                 }
             });
         }
