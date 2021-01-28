@@ -987,7 +987,8 @@ public class Gamestate {
     }
 
     public void mixCards() {
-        availableCards = playedCards;
+        //availableCards = playedCards;
+        generateCards(true);
         for (Player player : players.values()) {
             for (int i = 0; i < player.getCards().size(); i++) {
                 if (availableCards.get(i).equalsCard(player.getCards().get(i))) {
@@ -1438,12 +1439,12 @@ public class Gamestate {
      * @param shouldShuffle the flag to show whether the cards should be shuffled
      */
     private void shuffleCards(boolean shouldShuffle) {
-        if (shouldShuffle) {
-            logger.log(Level.FINER, "Shuffling the cards");
+        //if (shouldShuffle) {
+         //   logger.log(Level.FINER, "Shuffling the cards");
             Collections.shuffle(this.availableCards);
-        } else {
-            logger.log(Level.FINER, "We don't want to shuffle the cards");
-        }
+       // } else {
+       //     logger.log(Level.FINER, "We don't want to shuffle the cards");
+       // }
     }
 
     /**
