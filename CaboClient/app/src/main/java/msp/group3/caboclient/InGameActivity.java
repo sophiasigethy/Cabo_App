@@ -8,6 +8,8 @@ import androidx.fragment.app.FragmentTransaction;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
@@ -58,7 +60,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
 
     private ImageButton chatButton;
     private ImageView chatNotificationBubble;
-    private ImageButton settingsButton;
+    private ImageButton leaveGameButton;
     private Button caboButton;
     private ImageButton zoomButton;
     private Button peekButton;
@@ -149,7 +151,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         chatButton = (ImageButton) findViewById(R.id.chat_button);
         chatNotificationBubble = (ImageView) findViewById(R.id.chat_notification_bubble);
         chatNotificationBubble.setVisibility(View.INVISIBLE);
-        settingsButton = (ImageButton) findViewById(R.id.settings_button);
+        leaveGameButton = (ImageButton) findViewById(R.id.leave_button);
         zoomButton = (ImageButton) findViewById(R.id.zoom_button);
         caboButton = (Button) findViewById(R.id.cabo_button);
         peekButton = (Button) findViewById(R.id.peek_button);
@@ -229,11 +231,6 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         chatFragmentContainer = findViewById(R.id.fragment_chat);
         chatFragmentContainer.setVisibility(View.INVISIBLE);
 
-        //settingsFragmentContainer = findViewById(R.id.fragment_settings);
-
-        //switchToSettingsFragment();
-
-
         communicator = Communicator.getInstance(this);
         webSocketClient = communicator.getmWebSocketClient();
         communicator.setActivity(this);
@@ -297,11 +294,10 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             }
         });
 
-        settingsButton.setOnClickListener(new View.OnClickListener() {
+        leaveGameButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getApplicationContext(),
-                        "Open settings...", Toast.LENGTH_SHORT).show();
+                leaveGameDialog();
             }
         });
 
@@ -429,6 +425,31 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             }
         });
 
+    }
+
+    private void leaveGameDialog() {
+        Activity activity = this;
+        runOnUiThread(new Runnable() {
+            @SuppressLint("SetTextI18n")
+            public void run() {
+                RequestDialog requestDialog = new RequestDialog();
+                requestDialog.showDialog(activity, null);
+                requestDialog.getText().setText("Are you sure you want to leave the game?");
+                requestDialog.getDialogButtonAccept().setText("Yes");
+                requestDialog.getDialogButtonDecline().setText("No");
+                requestDialog.getImage().setImageResource(R.drawable.exit_purple);
+                requestDialog.getDialogButtonAccept().setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        try {
+                            leaveGame();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+            }
+        });
     }
 
     private void setPlayer1CardsOnClickListeners(int cardsAllowed) {
@@ -921,7 +942,6 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         oa1.start();
     }
 
-    //TODO put card as parameter
     private void showPickedCardInContainer(Card card) {
         runOnUiThread(new Runnable() {
             @Override

@@ -13,6 +13,7 @@ public class RequestDialog {
 
     private boolean wantToAccept = false;
     private Button dialogButtonAccept;
+    private Button dialogButtonDecline;
     private Dialog dialog = null;
     private TextView text;
     private ImageView image;
@@ -26,12 +27,14 @@ public class RequestDialog {
 
         image = (ImageView) dialog.findViewById(R.id.dialog_image);
         text = (TextView) dialog.findViewById(R.id.text_dialog);
-        text.setText(activity.getApplicationContext().getResources().getString(R.string.friend_request_received)
-                + ": " + sender.getNick());
+        if(sender!=null){
+            text.setText(activity.getApplicationContext().getResources().getString(R.string.friend_request_received)
+                    + ": " + sender.getNick());
+        }
 
         dialogButtonAccept = (Button) dialog.findViewById(R.id.btn_dialog_accept);
 
-        Button dialogButtonDecline = (Button) dialog.findViewById(R.id.btn_dialog_decline);
+        dialogButtonDecline = (Button) dialog.findViewById(R.id.btn_dialog_decline);
         dialogButtonDecline.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -49,6 +52,10 @@ public class RequestDialog {
 
     public Button getDialogButtonAccept(){
         return dialogButtonAccept;
+    }
+
+    public Button getDialogButtonDecline(){
+        return dialogButtonDecline;
     }
 
     public Dialog getDialog(){

@@ -1242,13 +1242,13 @@
     </LinearLayout>
 
     <ImageButton
-        android:id="@+id/settings_button"
+        android:id="@+id/leave_button"
         android:layout_width="36dp"
         android:layout_height="36dp"
         android:layout_margin="12dp"
         android:background="@drawable/zoom_button_bg"
         android:padding="6dp"
-        app:srcCompat="@drawable/settings"
+        app:srcCompat="@drawable/exit"
         android:scaleType="centerInside"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -1263,7 +1263,7 @@
         app:srcCompat="@drawable/chat_bubbles"
         android:scaleType="centerInside"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/settings_button"/>
+        app:layout_constraintTop_toBottomOf="@id/leave_button"/>
 
     <ImageView
         android:id="@+id/chat_notification_bubble"
@@ -1299,7 +1299,7 @@
         android:background="@drawable/outlined_button"
         android:text="Cabo"
         android:textColor="@drawable/outlined_button_text"
-        app:layout_constraintEnd_toStartOf="@id/settings_button"
+        app:layout_constraintEnd_toStartOf="@id/leave_button"
         app:layout_constraintTop_toTopOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
