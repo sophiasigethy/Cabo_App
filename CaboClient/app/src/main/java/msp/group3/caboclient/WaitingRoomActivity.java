@@ -148,7 +148,17 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
         editText.setText("");
     }
 
+    @Override
+    public void onBackPressed() {
+        try {
+            communicator.sendMessage(JSON_commands.leaveWaitingRoom());
+            leaveWaitingRoom();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
+
+    }
     /**
      * this method handles how to proceed when a message from the server is received:
      * every sent message arrives right here
@@ -210,7 +220,6 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
                 Gson gson = new Gson();
                 Player newPlayer = gson.fromJson(jsonString, Player.class);
                 players.add(newPlayer);
-                String mes = "You can start the game, all party players are now connected.";
                 runOnUiThread(new Runnable() {
                     public void run() {
                         returnFreeTextView().setText(newPlayer.getNick());
@@ -334,9 +343,14 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
                 runOnUiThread(new Runnable() {
                     public void run() {
                         showPresentPlayers();
+                        String mes= player.getName()+ " disconnected";
+                        showText(mes, true, null);
                     }
                 });
 
+            }
+            if (party.size()>1){
+                onBackPressed();
             }
         }
         if (jsonObject.has("notAccepted")) {
@@ -371,6 +385,20 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
         if (jsonObject.has("noStartYet")) {
            String text="State your username first!";
            showText(text, true, null);
+        }
+
+
+    }
+    public void leaveWaitingRoom() throws JSONException {
+
+        if (noAccount != null) {
+            if (noAccount.equalsIgnoreCase("noAccount")) {
+                Intent intent = new Intent(WaitingRoomActivity.this, LoginActivity.class);
+                startActivity(intent);
+            }
+        } else {
+            Intent intent = new Intent(WaitingRoomActivity.this, MainActivity.class);
+            startActivity(intent);
         }
 
     }

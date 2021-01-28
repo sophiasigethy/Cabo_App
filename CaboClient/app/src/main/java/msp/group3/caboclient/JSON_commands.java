@@ -294,6 +294,9 @@ public class JSON_commands {
     public static JSONObject leaveGame() throws JSONException {
         return new JSONObject().put("leaveGame", "");
     }
+    public static JSONObject leaveWaitingRoom() throws JSONException {
+        return new JSONObject().put("leaveWaitingRoom", "");
+    }
 
     public static JSONObject sendMaxPoints(int maxpoints) throws JSONException {
         return new JSONObject().put("maxPoints", maxpoints);

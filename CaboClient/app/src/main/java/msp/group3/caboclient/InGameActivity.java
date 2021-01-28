@@ -108,7 +108,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
     private ImageButton pickCardsStackButton;
 
     private int MAX_PLAYERS = 0;
-    private boolean isParty= false;
+    private boolean isParty = false;
 
     private androidx.fragment.app.FragmentContainerView chatFragmentContainer;
 
@@ -251,6 +251,15 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             e.printStackTrace();
         }
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        try {
+            communicator.sendMessage(JSON_commands.leaveGame());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     private void switchToSettingsFragment() {
@@ -1449,7 +1458,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         peekButton.setEnabled(false);
         peekButton.setAlpha(0.3f);
         Log.d("-----------Card lookup", "initiating");
-        nrCardsSelected=0;
+        nrCardsSelected = 0;
         deactivatePlayer1OnClickListeners();
         setPlayer1CardsOnClickListeners(2);
 
@@ -1769,8 +1778,15 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             int maxPlayer = (int) jsonObject.get("sendMAXPlayer");
             MAX_PLAYERS = maxPlayer;
             Log.d("----------------------MAXPLAYERS", "playerNr: " + maxPlayer);
-            visualizePlayerStats(maxPlayer);
-            deactivateAllButtons();
+            //visualizePlayerStats(maxPlayer);
+            //deactivateAllButtons();
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    visualizePlayerStats(maxPlayer);
+                    deactivateAllButtons();
+                }
+            });
         }
         if (jsonObject.has("initialMe")) {
             JSONObject js = jsonObject.getJSONObject("initialMe");
@@ -1853,7 +1869,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                             caboButton.setAlpha(1f);
                         }
                         cardDrawCount++;
-                        if(cardDrawCount==2){
+                        if (cardDrawCount == 2) {
                             hintEmoji.setVisibility(View.VISIBLE);
                             hintEmojiArrow.setVisibility(View.VISIBLE);
                         }
@@ -2439,10 +2455,10 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                         card.setVisibility(View.GONE);
                     }
                 }
-                for(LottieAnimationView caboAnim : playerCaboAnimations){
+                for (LottieAnimationView caboAnim : playerCaboAnimations) {
                     caboAnim.setVisibility(View.INVISIBLE);
                 }
-                for(ConstraintLayout playerLayout : playerOverviews){
+                for (ConstraintLayout playerLayout : playerOverviews) {
                     playerLayout.setVisibility(View.INVISIBLE);
                 }
                 pickCardsStackButton.setVisibility(View.GONE);
@@ -2494,4 +2510,10 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         noAccount = NO_LOGIN;
     }
 
+    @Override
+    protected void onDestroy () {
+
+        super.onDestroy();
+
+    }
 }
