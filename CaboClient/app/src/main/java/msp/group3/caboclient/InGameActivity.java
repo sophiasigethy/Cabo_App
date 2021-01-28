@@ -1221,7 +1221,6 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                             cardButton.setSelected(false);
                         }
                     }
-                    nrCardsSelected = 0;
                     playSwapAnimation();
                     updateText.setVisibility(View.INVISIBLE);
                     switchButton.setVisibility(View.INVISIBLE);
@@ -1238,6 +1237,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                         e.printStackTrace();
                     }
                     deactivateAllOnCardClickListeners();
+                    nrCardsSelected = 0;
                 }
             });
         }
@@ -1360,7 +1360,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                     Player spiedOnPlayer = null;
                     for (int i = 0; i < otherPlayers.size(); i++) {
                         if (getSelectedCard(otherPlayerButtonLists.get(i), otherPlayers.get(i)) != null) {
-                            selectedCard = getSelectedCard(otherPlayerButtonLists.get(i), otherPlayers.get(0));
+                            selectedCard = getSelectedCard(otherPlayerButtonLists.get(i), otherPlayers.get(i));
                             spiedOnPlayer = otherPlayers.get(i);
                             hideOtherPlayerCardGlows();
                         }
@@ -1371,6 +1371,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                         e.printStackTrace();
                     }
                     deactivateAllOnCardClickListeners();
+                    nrCardsSelected = 0;
                 }
             });
         }
