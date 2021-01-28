@@ -321,6 +321,8 @@ public class SocketHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus closedStatus) throws Exception {
         Player logoutPlayer = connectedPlayers.get(session.getId());
+        if (logoutPlayer == null)
+            return;
         for (String storedSession : connectedPlayers.keySet()) {
             // Other people who are online, want to know, that I am offline now
             WebSocketSession sess = getSessionFromString(storedSession);
@@ -334,9 +336,6 @@ public class SocketHandler extends TextWebSocketHandler {
         connectedPlayers.remove(session.getId());
         sessions.remove(session);
 
-        //   System.out.println("User " + logoutPlayer.getNick() + " disconnected");
-        //gamestate.afterConnectionClosed(session);
-
         if (isPartyLeader(logoutPlayer)) {
             removePartyLeader(logoutPlayer);
             deletePartyofPartyLeader(logoutPlayer);
@@ -346,7 +345,7 @@ public class SocketHandler extends TextWebSocketHandler {
             removePlayerOfParty(logoutPlayer);
             checkIfAnyPartyIsEmpty();
         }
-
+        System.out.println("User " + logoutPlayer.getNick() + " disconnected");
 
     }
 

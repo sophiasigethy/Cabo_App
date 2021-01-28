@@ -396,6 +396,12 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
             String text = "State your username first!";
             showText(text, true, null);
         }
+        if (jsonObject.has("maxPoints")) {
+            int maxPoints = (int) jsonObject.get("sendMAXPlayer");
+            //TODO show max Points
+            // vorher: communicator.sendMessage(JSON_commands.sendMaxPoints(100)); aber nur wenn firstRound==true
+
+        }
     }
 
     /**
@@ -622,7 +628,7 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
         me = DatabaseOperation.getDao().readPlayerFromSharedPrefs(sharedPref);
         party.add(me);
         if (me.getAvatarID() == 9) {
-            me.setAvatarID(1);
+            me.setAvatarID(3);
         }
         player1_image.setImageResource(me.getAvatarIcon());
         for (int i = 0; i < 4; i++) {
