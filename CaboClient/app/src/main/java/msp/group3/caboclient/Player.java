@@ -190,7 +190,7 @@ public class Player {
         this.avatarID = avatarID;
     }
 
-    public int getAvatar() {
+    public int getAvatarIcon() {
         switch (avatarID)   {
             case 0:
                 return R.drawable.avatar0;

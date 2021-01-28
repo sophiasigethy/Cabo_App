@@ -3,22 +3,18 @@ package msp.group3.caboclient;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import org.java_websocket.client.WebSocketClient;
@@ -72,8 +68,8 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
         me = DatabaseOperation.getDao().readPlayerFromSharedPrefs(sharedPref);
         //userNameTxt.setText("Welcome " + me.getNick());
 
-        playerName.setText(me.getName());
-        playerImage.setImageResource(me.getAvatar());
+        playerName.setText(me.getNick());
+        playerImage.setImageResource(me.getAvatarIcon());
         startGameBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -219,6 +215,7 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
         if (jsonObject.has("onlinestatus")) {
             JSONObject js = jsonObject.getJSONObject("onlinestatus");
             Player player = null;
+            //TODO DBID is empty
             boolean isOnline = false;
             if (js.has("isOnline")) {
                 isOnline = (boolean) js.get("isOnline");

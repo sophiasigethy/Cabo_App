@@ -67,7 +67,7 @@ public class FriendListAdapter extends ArrayAdapter {
         if (vi == null)
             vi = inflater.inflate(R.layout.friendlist_item, null);
         CircleImageView playerIcon = (CircleImageView) vi.findViewById(R.id.friendlist_image);
-        playerIcon.setImageResource(myFriendList.get(i).getAvatar());
+        playerIcon.setImageResource(myFriendList.get(i).getAvatarIcon());
         TextView player_nick = (TextView) vi.findViewById(R.id.friendlist_name);
         player_nick.setText(myFriendList.get(i).getNick());
         ImageView status = (ImageView) vi.findViewById(R.id.friendlist_status);
