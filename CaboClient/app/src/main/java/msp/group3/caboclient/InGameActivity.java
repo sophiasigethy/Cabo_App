@@ -137,7 +137,6 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
 
     private boolean initialRound = true;
     private Player caboplayer = null;
-    private androidx.fragment.app.FragmentContainerView settingsFragmentContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

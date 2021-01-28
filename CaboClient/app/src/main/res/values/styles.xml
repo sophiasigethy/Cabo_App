@@ -12,4 +12,7 @@
         <item name="colorControlActivated">@color/turquoise_highlight</item>
         <item name="colorControlHighlight">@color/turquoise_highlight</item>
     </style>
+
+    <style name="settingsTheme" parent="Theme.MaterialComponents.Light.NoActionBar"/>
+
 </resources>

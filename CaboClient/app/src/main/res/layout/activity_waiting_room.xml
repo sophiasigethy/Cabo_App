@@ -8,6 +8,34 @@
     android:background="@drawable/cabo_bg"
     tools:context="msp.group3.caboclient.WaitingRoomActivity">
 
+    <ImageButton
+        android:id="@+id/settings_button"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_marginBottom="6dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginStart="16dp"
+        android:padding="12dp"
+        android:onClick="sendMessage"
+        android:text="@string/button_send"
+        android:background="@drawable/zoom_button_bg"
+        app:srcCompat="@drawable/settings"
+        android:scaleType="centerInside"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/fragment_settings"
+        android:layout_width="500dp"
+        android:layout_height="150dp"
+        android:layout_margin="12dp"
+        android:translationZ="12dp"
+        android:theme="@style/settingsTheme"
+        app:layout_constraintRight_toLeftOf="@id/settings_button"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/particle_animationView_waiting"
         android:layout_width="400dp"
