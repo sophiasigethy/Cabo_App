@@ -205,7 +205,7 @@ public class Player {
             case 5:
                 return R.drawable.avatar5;
         }
-        return NO_AVATAR_CHOSEN;
+        return R.drawable.avatar9;
     }
 
     @Override

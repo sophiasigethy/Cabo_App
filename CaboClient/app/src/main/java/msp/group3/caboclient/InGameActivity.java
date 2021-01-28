@@ -120,10 +120,6 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
     private final List<de.hdodenhof.circleimageview.CircleImageView> playerPics = new ArrayList<>();
     private final List<TextView> playerStats = new ArrayList<>();
     private final List<TextView> playerNames = new ArrayList<>();
-    private final List<Integer> player1CardClickCounts = new ArrayList<>();
-    private final List<Integer> player2CardClickCounts = new ArrayList<>();
-    private final List<Integer> player3CardClickCounts = new ArrayList<>();
-    private final List<Integer> player4CardClickCounts = new ArrayList<>();
     private final List<com.airbnb.lottie.LottieAnimationView> playerHighlightAnimations = new ArrayList<>();
     private final List<com.airbnb.lottie.LottieAnimationView> playerCaboAnimations = new ArrayList<>();
     private final List<ImageView> otherPlayerEmojis = new ArrayList<>();
@@ -695,18 +691,21 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
     private void deactivatePlayer2OnClickListeners() {
         for (ImageButton cardButton : player2CardButtons) {
             cardButton.setOnClickListener(null);
+            cardButton.setSelected(false);
         }
     }
 
     private void deactivatePlayer3OnClickListeners() {
         for (ImageButton cardButton : player3CardButtons) {
             cardButton.setOnClickListener(null);
+            cardButton.setSelected(false);
         }
     }
 
     private void deactivatePlayer4OnClickListeners() {
         for (ImageButton cardButton : player4CardButtons) {
             cardButton.setOnClickListener(null);
+            cardButton.setSelected(false);
         }
     }
 
@@ -770,11 +769,6 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         Collections.addAll(playerStats, findViewById(R.id.player1_info_game), findViewById(R.id.player2_info_game), findViewById(R.id.player3_info_game), findViewById(R.id.player4_info_game));
 
         Collections.addAll(playerNames, findViewById(R.id.player1_name_game), findViewById(R.id.player2_name_game), findViewById(R.id.player3_name_game), findViewById(R.id.player4_name_game));
-
-        Collections.addAll(player1CardClickCounts, 0, 0, 0, 0);
-        Collections.addAll(player2CardClickCounts, 0, 0, 0, 0);
-        Collections.addAll(player3CardClickCounts, 0, 0, 0, 0);
-        Collections.addAll(player4CardClickCounts, 0, 0, 0, 0);
 
         Collections.addAll(playerOverviews, findViewById(R.id.player1_stats_game), findViewById(R.id.player2_stats_game), findViewById(R.id.player3_stats_game), findViewById(R.id.player4_stats_game));
 
@@ -957,12 +951,6 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                     @Override
                     public void onClick(View view) {
 
-                        playSwapAnimation();
-                        deactivateAllOnCardClickListeners();
-                        switchButton.setVisibility(View.INVISIBLE);
-                        makePickedCardContainerDisappear();
-                        growCardGlowAnimationOut(playedCardsStackGlow);
-                        growCardGlowAnimationOut(player1CardsGlow);
                         for (int i = 0; i < player1CardButtons.size(); i++) {
                             if (player1CardButtons.get(i).isSelected()) {
                                 try {
@@ -975,6 +963,12 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+                                deactivateAllOnCardClickListeners();
+                                playSwapAnimation();
+                                switchButton.setVisibility(View.INVISIBLE);
+                                makePickedCardContainerDisappear();
+                                growCardGlowAnimationOut(playedCardsStackGlow);
+                                growCardGlowAnimationOut(player1CardsGlow);
                                 for (ImageButton cardButton : player1CardButtons) {
                                     cardButton.setSelected(false);
                                 }
@@ -1227,11 +1221,9 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                             cardButton.setSelected(false);
                         }
                     }
-                    nrCardsSelected = 0;
                     playSwapAnimation();
                     updateText.setVisibility(View.INVISIBLE);
                     switchButton.setVisibility(View.INVISIBLE);
-                    deactivateAllOnCardClickListeners();
                     try {
                         Card card1 = getCardFromButton(selectedCards.get(0));
                         Player card1Owner = getCardOwner(selectedCards.get(0));
@@ -1244,6 +1236,8 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
+                    deactivateAllOnCardClickListeners();
+                    nrCardsSelected = 0;
                 }
             });
         }
@@ -1361,13 +1355,12 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                         }
                     }
                     updateText.setVisibility(View.INVISIBLE);
-                    deactivateAllOnCardClickListeners();
                     nrCardsSelected = 0;
                     Card selectedCard = null;
                     Player spiedOnPlayer = null;
                     for (int i = 0; i < otherPlayers.size(); i++) {
                         if (getSelectedCard(otherPlayerButtonLists.get(i), otherPlayers.get(i)) != null) {
-                            selectedCard = getSelectedCard(otherPlayerButtonLists.get(i), otherPlayers.get(0));
+                            selectedCard = getSelectedCard(otherPlayerButtonLists.get(i), otherPlayers.get(i));
                             spiedOnPlayer = otherPlayers.get(i);
                             hideOtherPlayerCardGlows();
                         }
@@ -1377,6 +1370,8 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
+                    deactivateAllOnCardClickListeners();
+                    nrCardsSelected = 0;
                 }
             });
         }
