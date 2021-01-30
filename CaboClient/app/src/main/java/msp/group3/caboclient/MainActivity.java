@@ -23,6 +23,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -42,8 +43,9 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
     private FriendListAdapter friendListAdapter;
     private CircleImageView playerImage;
     private TextView playerName;
-    private TextView playerScoreTextView;
-    private TextView playerPartyText;
+    //private TextView playerScoreTextView;
+    ImageView partySymbol;
+    ArrayList<TextView> partyMemberTextviews = new ArrayList<>();
     ImageView player1Status;
 
     @Override
@@ -57,9 +59,15 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
         addFriendBtn = (ImageButton) findViewById(R.id.add_friend_btn);
         playerImage = (CircleImageView) findViewById(R.id.player1_image_main);
         playerName = (TextView) findViewById(R.id.player1_name_textview_main);
-        playerScoreTextView = (TextView) findViewById(R.id.player1_score_textview_main);
-        playerPartyText = (TextView) findViewById(R.id.player1_party_textview_main);
+        //playerScoreTextView = (TextView) findViewById(R.id.player1_score_textview_main);
         player1Status = (ImageView) findViewById(R.id.player1_status);
+        partySymbol = (ImageView) findViewById(R.id.player1_party_side);
+        partySymbol.setVisibility(View.INVISIBLE);
+        Collections.addAll(partyMemberTextviews, findViewById(R.id.player1_party_member1), findViewById(R.id.player1_party_member2), findViewById(R.id.player1_party_member3));
+
+        for(TextView partymembertext: partyMemberTextviews){
+            partymembertext.setVisibility(View.INVISIBLE);
+        }
         sharedPref = getApplicationContext().getSharedPreferences(
                 R.string.preference_file_key + "", Context.MODE_PRIVATE);
 
@@ -90,6 +98,7 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
         startGameBtn.setEnabled(false);
         startGameBtn.setAlpha(0.5f);
         allUsers = DatabaseOperation.getDao().getAllUsersList(sharedPref);
+        showPartyMembers();
     }
 
 
@@ -113,7 +122,6 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
                     enableButtons();
                     if (!party.contains(me))
                         party.add(me);
-                    playerPartyText.setText("Party: " + party.size());
                     Log.d("---------------PARTY", "me added to party");
                     friendListAdapter = new FriendListAdapter(activity, me, party, communicator);
                     friendList.setAdapter(friendListAdapter);
@@ -204,8 +212,8 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
                 public void run() {
 
                     party.add(finalSender);
-                    playerPartyText.setText("Party: " + party.size());
                     updateFriendList(finalSender, false);
+                    showPartyMembers();
                 }
             });
 
@@ -285,6 +293,8 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
             }
             party.clear();
             party.add(me);
+            updateFriendList(player, false);
+            showPartyMembers();
             String mes = "Party leader " + player.getNick() + " left the party, so you can start a new party now!";
             showMessageForTesting(mes);
             //TODO reset party icon for this player
@@ -294,7 +304,6 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
             JSONObject js = jsonObject.getJSONObject("informOthersAboutInvitation");
             Player player = null;
 
-
             if (js.has("player")) {
                 String jsonString = js.get("player").toString();
                 Gson gson = new Gson();
@@ -302,6 +311,8 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
             }
             if (!alreadyInParty(player)) {
                 party.add(player);
+                updateFriendList(player, false);
+                showPartyMembers();
                 String mes = player.getNick() + " was added to the party.";
                 showMessageForTesting(mes);
             }
@@ -413,6 +424,7 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
                             // Since you accepted the request, add player to party and send confirmation
                             party.add(sender);
                             updateFriendList(sender, false);
+                            showPartyMembers();
                             try {
                                 communicator.sendMessage(
                                         JSON_commands.sendPartyAccepted(me, sender));
@@ -433,6 +445,23 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
         startGameBtn.setEnabled(true);
         addFriendBtn.setAlpha(1f);
         startGameBtn.setAlpha(1f);
+    }
+
+    public void showPartyMembers(){
+        Log.d("-----------------------SHOW PARTY", "partymembers: "+party.size());
+        if(party.size()>1){
+            partySymbol.setVisibility(View.VISIBLE);
+        }
+        if(party.size()<=1){
+            partySymbol.setVisibility(View.INVISIBLE);
+        }
+        for(int i=0; i<party.size()-1; i++){
+            partyMemberTextviews.get(i).setVisibility(View.VISIBLE);
+            partyMemberTextviews.get(i).setText(party.get(i+1).getNick());
+        }
+        /*for(int i= party.size()-1; i<3; i++){
+            partyMemberTextviews.get(i).setVisibility(View.INVISIBLE);
+        }*/
     }
 
     /**
