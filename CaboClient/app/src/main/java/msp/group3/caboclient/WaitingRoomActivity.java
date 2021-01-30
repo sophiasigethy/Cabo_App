@@ -668,16 +668,16 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
         player1_image.setImageResource(me.getAvatarIcon());
         for (int i = 0; i < 4; i++) {
             String avatarID = intent.getStringExtra("player" + i + "avatar");
+            String globalScore = intent.getStringExtra("player" + i + "globalscore");
             String dbID = intent.getStringExtra("player" + i + "dbid");
-            if (avatarID == null || avatarID.equals(""))
-                continue;
-            else if (dbID.equals(me.getDbID())) {
-                continue;
-            } else {
+            if (avatarID != null && globalScore != null
+                    && !avatarID.equals("") && !globalScore.equals("")
+                    && !dbID.equals(me.getDbID())) {
                 //TODO Test with unregistered User
                 Player partyPlayer = new Player(dbID,
                         intent.getStringExtra("player" + i + "nick"),
-                        Integer.parseInt(avatarID));
+                        Integer.parseInt(avatarID),
+                        Integer.parseInt(globalScore));
                 switch (i) {
                     case 1:
                         player2_image.setImageResource(partyPlayer.getAvatarIcon());
@@ -692,8 +692,6 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
                 if (!partyPlayer.isEmpty())
                     party.add(partyPlayer);
             }
-
-
         }
         if (party.size() > 1) {
             isParty = true;
