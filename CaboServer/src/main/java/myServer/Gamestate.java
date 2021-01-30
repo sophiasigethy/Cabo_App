@@ -40,6 +40,8 @@ public class Gamestate {
     //status of the game- see Type Defs for all 3 state
     private String state = TypeDefs.MATCHING;
     private int lastDrawnPlayerId = 0;
+    private boolean disconnectedDuringGame = false;
+    private int oldMaxPlayer = 4;
 
     // public CardSuiteManager cardSuiteMgr = null;
 
@@ -97,7 +99,9 @@ public class Gamestate {
             countPlayer--;
             Player disconnectedPlayer = getPlayerBySessionId(session.getId());
             players.remove(session.getId());
+            oldMaxPlayer = MAX_PLAYER;
             MAX_PLAYER--;
+
 
             try {
                 sendToAll(JSON_commands.removePlayer(disconnectedPlayer));
@@ -105,15 +109,7 @@ public class Gamestate {
                 e.printStackTrace();
             }
         }
-        /*if (state.equalsIgnoreCase(TypeDefs.GAMESTART)) {
-            for (Player player : players.values()) {
-                for (Player socketPlayer : socketHandler.getConnectedPlayers().values()) {
-                    if (player.getNick().equalsIgnoreCase(socketPlayer.getNick())) {
-                        socketPlayer.setGamestate(null);
-                    }
-                }
-            }
-        }*/
+
         if (players.size() == 0) {
             socketHandler.removeGamestate(this);
         }
@@ -412,6 +408,7 @@ public class Gamestate {
                     // Player turn = getPlayerById(currentPlayerId);
                     //if (turn != null) {
                     //    if (turn.getCalledCabo()) {
+
                     if (getPlayerById(currentPlayerId).getCalledCabo()) {
                         finishRound();
                     } else {
@@ -483,6 +480,12 @@ public class Gamestate {
                 }
             }
             afterConnectionClosed(session);
+            disconnectedDuringGame = true;
+            if (currentPlayerId == currPlayer.getId()) {
+                finishMove();
+                sendStatusupdateOfAllPlayer();
+                sendNextPlayer();
+            }
 
         }
         if (jsonObject.has("leaveWaitingRoom")) {
@@ -851,12 +854,11 @@ public class Gamestate {
     }
 
 
-
     public int getRandomAvatarId() {
         Random random = new Random();
         int id = random.nextInt(5) + 1;
 
-        if (id == 0|| id>5) {
+        if (id == 0 || id > 5) {
             return getRandomAvatarId();
         }
         return id;
@@ -990,13 +992,59 @@ public class Gamestate {
      * @return
      */
     public int getNextPlayerId() {
-        int oldId = currentPlayerId;
-        if (oldId == MAX_PLAYER) {
-            return 1;
+        if (disconnectedDuringGame) {
+            return getNextPlayerIdWhenDisconnected(currentPlayerId);
         } else {
-            oldId++;
-            return oldId;
+            int oldId = currentPlayerId;
+            if (oldId == MAX_PLAYER) {
+                return 1;
+            } else {
+                oldId++;
+                return oldId;
+            }
         }
+
+    }
+
+    /*public int getNextPlayerIdWhenDisconnected(int oldID){
+        int nextId = 0;
+        //int oldId = currentPlayerId;
+        if (oldID == MAX_PLAYER) {
+            nextId = 1;
+        } if (oldID>MAX_PLAYER){
+            oldID--;
+            return getNextPlayerIdWhenDisconnected(oldID);
+
+        } if (!(oldID == MAX_PLAYER)&& !(oldID>MAX_PLAYER)){
+            oldID++;
+            nextId = oldID;
+        }
+        if (getPlayerById(nextId) != null) {
+            return nextId;
+        }else{
+            return getNextPlayerIdWhenDisconnected(nextId);
+        }
+
+    }*/
+
+
+    public int getNextPlayerIdWhenDisconnected(int oldId) {
+        int nextId = 0;
+        //int oldId = currentPlayerId;
+        if (oldId == oldMaxPlayer) {
+            nextId = 1;
+        } else {
+
+            oldId++;
+            nextId = oldId;
+
+        }
+        if (getPlayerById(nextId) == null) {
+            return getNextPlayerIdWhenDisconnected(nextId);
+        } else {
+            return nextId;
+        }
+
     }
 
     public boolean hasPlayerDrawn(int id) {
@@ -1043,7 +1091,7 @@ public class Gamestate {
     public void saveAvatar(Player player) {
         for (Player socketHandlerPlayer : socketHandler.getConnectedPlayers().values()) {
             String nick = socketHandlerPlayer.getNick();
-            if (!nick.equalsIgnoreCase("None")|| nick!=null ) {
+            if (!nick.equalsIgnoreCase("None") || nick != null) {
                 if (socketHandlerPlayer.getNick().equalsIgnoreCase(player.getName())) {
                     player.setAvatarID(socketHandlerPlayer.getAvatarID());
                     return;
@@ -1434,11 +1482,11 @@ public class Gamestate {
      */
     private void shuffleCards(boolean shouldShuffle) {
         //if (shouldShuffle) {
-         //   logger.log(Level.FINER, "Shuffling the cards");
-            Collections.shuffle(this.availableCards);
-       // } else {
-       //     logger.log(Level.FINER, "We don't want to shuffle the cards");
-       // }
+        //   logger.log(Level.FINER, "Shuffling the cards");
+        Collections.shuffle(this.availableCards);
+        // } else {
+        //     logger.log(Level.FINER, "We don't want to shuffle the cards");
+        // }
     }
 
     /**
