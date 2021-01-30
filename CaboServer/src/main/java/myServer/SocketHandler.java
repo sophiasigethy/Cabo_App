@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
-import nonapi.io.github.classgraph.json.JSONUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.context.annotation.PropertySource;
@@ -51,20 +50,19 @@ public class SocketHandler extends TextWebSocketHandler {
 
 
             if (jsonObject.has("sendUserLogin")) {
-                //TODO Rework to player object
                 JSONObject js = jsonObject.getJSONObject("sendUserLogin");
-                String dbId = js.get("senderDbID").toString().replace("\"", "").replace("\\", "");
-                String nick = js.get("senderNick").toString().replace("\"", "").replace("\\", "");
-                int avatarID = Integer.parseInt(js.get("senderAvatarID").toString().replace("\"", "").replace("\\", ""));
-                Player player = new Player(dbId, nick, avatarID);
-                if (!isAlreadyConnected(session, player)) {
-                    connectedPlayers.put(session.getId(), player);
+                String json = js.get("sender").toString();
+                ObjectMapper objectMapper = new ObjectMapper();
+                objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+                Player sender = objectMapper.readValue(json, Player.class);
+                if (!isAlreadyConnected(session, sender)) {
+                    connectedPlayers.put(session.getId(), sender);
                 } else {
                     // changeSession(session, player);
                 }
-
-                checkPendingFriendRequests(session, dbId, nick);
-                System.out.println("User " + nick + " connected");
+                //Check if there are open friend invitations for LoginPlayer
+                checkPendingFriendRequests(session, sender);
+                System.out.println("User " + sender.getNick() + " connected");
                 for (String storedSession : connectedPlayers.keySet()) {
                     if (session.getId().equals(storedSession)) {
                         // This is my session and I want to know, who is online
@@ -77,59 +75,55 @@ public class SocketHandler extends TextWebSocketHandler {
                         // Other people who are online, want to know, that I am online now
                         WebSocketSession sess = getSessionFromString(storedSession);
                         if (sess != null)
-                            sendMessage(sess, JSON_commands.sendPlayerOnlineStatus(true, player));
+                            sendMessage(sess, JSON_commands.sendPlayerOnlineStatus(true, sender));
                     }
                 }
             }
+
             if (jsonObject.has("sendFriendRequest")) {
-                //TODO Rework to sender, receiver object
                 JSONObject js = jsonObject.getJSONObject("sendFriendRequest");
-                String senderDbId = js.get("senderDbID").toString().replace("\"", "").replace("\\", "");
-                String senderNick = js.get("senderNick").toString().replace("\"", "").replace("\\", "");
-                int senderAvatarId = Integer.parseInt(js.get("senderAvatarID").toString().replace("\"", "").replace("\\", ""));
-                String receiverDbId = js.get("receiverDbID").toString().replace("\"", "").replace("\\", "");
-                String receiverNick = js.get("receiverNick").toString().replace("\"", "").replace("\\", "");
-                WebSocketSession receiverSession = getSessionFromNick(receiverNick);
+                String json = js.get("sender").toString();
+                ObjectMapper objectMapper = new ObjectMapper();
+                objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+                Player sender = objectMapper.readValue(json, Player.class);
+                String json1 = js.get("receiver").toString();
+                Player receiver = objectMapper.readValue(json1, Player.class);
+                WebSocketSession receiverSession = getSessionFromNick(receiver);
                 if (receiverSession == null) {
-                    if (pendingFriendRequests.get(receiverDbId) == null) {
-                        ArrayList<Player> requests = new ArrayList<>();
-                        requests.add(new Player(senderDbId, senderNick, senderAvatarId));
-                        pendingFriendRequests.put(receiverDbId, requests);
-                    } else {
-                        ArrayList<Player> requests = pendingFriendRequests.get(receiverDbId);
-                        requests.add(new Player(senderDbId, senderNick, senderAvatarId));
-                        pendingFriendRequests.put(receiverDbId, requests);
+                    ArrayList<Player> requests = new ArrayList<>();
+                    if (pendingFriendRequests.get(receiver.getDbID()) != null) {
+                        requests = pendingFriendRequests.get(receiver.getDbID());
                     }
+                    requests.add(sender);
+                    pendingFriendRequests.put(receiver.getDbID(), requests);
                 } else {
-                    sendMessage(receiverSession, JSON_commands.sendFriendRequest(new Player(senderDbId, senderNick, senderAvatarId),
-                        new Player(receiverDbId, receiverNick, 9)));
-                    System.out.println("Friendrequest sent from " + senderNick + " to " + receiverNick);
+                    sendMessage(receiverSession, JSON_commands.sendFriendRequest(sender, receiver));
+                    System.out.println("Friendrequest sent from " + sender.getNick() + " to " + receiver.getNick());
                 }
             }
 
             if (jsonObject.has("sendFriendAccepted")) {
-                //TODO Rework to sender, receiver object
                 JSONObject js = jsonObject.getJSONObject("sendFriendAccepted");
-                String senderDbId = js.get("senderDbID").toString().replace("\"", "").replace("\\", "");
-                String senderNick = js.get("senderNick").toString().replace("\"", "").replace("\\", "");
-                int senderAvatarId = Integer.parseInt(js.get("senderAvatarID").toString().replace("\"", "").replace("\\", ""));
-                String receiverDbId = js.get("receiverDbID").toString().replace("\"", "").replace("\\", "");
-                String receiverNick = js.get("receiverNick").toString().replace("\"", "").replace("\\", "");
-                WebSocketSession receiverSession = getSessionFromNick(receiverNick);
-                if (receiverSession != null) {
-                    sendMessage(receiverSession, JSON_commands.sendFriendAccepted(new Player(senderDbId, senderNick, senderAvatarId),
-                        new Player(receiverDbId, receiverNick, 9)));
-                    System.out.println(senderNick + " accepted FriendRequest from " + receiverNick);
-                }
-            }
-            if (jsonObject.has("partyrequest2")) {
-                JSONObject js = jsonObject.getJSONObject("partyrequest2");
-                String json1 = js.get("sender").toString();
-                String json2 = js.get("receiver").toString();
-
                 ObjectMapper objectMapper = new ObjectMapper();
                 objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+                String json = js.get("sender").toString();
+                Player sender = objectMapper.readValue(json, Player.class);
+                String json1 = js.get("receiver").toString();
+                Player receiver = objectMapper.readValue(json1, Player.class);
+                WebSocketSession receiverSession = getSessionFromNick(receiver);
+                if (receiverSession != null) {
+                    sendMessage(receiverSession, JSON_commands.sendFriendAccepted(sender, receiver));
+                    System.out.println(sender.getNick() + " accepted FriendRequest from " + receiver.getNick());
+                }
+            }
+
+            if (jsonObject.has("partyrequest")) {
+                JSONObject js = jsonObject.getJSONObject("partyrequest");
+                ObjectMapper objectMapper = new ObjectMapper();
+                objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+                String json1 = js.get("sender").toString();
                 Player sender = objectMapper.readValue(json1, Player.class);
+                String json2 = js.get("receiver").toString();
                 Player receiver = objectMapper.readValue(json2, Player.class);
                 boolean isSenderInParty = isInParty(sender);
                 boolean isReceiverInParty = isInParty(receiver);
@@ -138,50 +132,26 @@ public class SocketHandler extends TextWebSocketHandler {
                     sendMessage(session, JSON_commands.partyRequestFailed("This player is already playing at the moment"));
                 } else {
                     if (!isSenderInParty && !isReceiverInParty) {
-                        sendMessage(getSessionByPlayerNick(receiver.getNick()), JSON_commands.sendPartyRequest2(sender));
-
+                        sendMessage(getSessionByPlayerNick(receiver.getNick()), JSON_commands.sendPartyRequest(sender));
                         return;
                     }
                     if (!isReceiverInParty && isSenderLeader) {
-                        sendMessage(getSessionByPlayerNick(receiver.getNick()), JSON_commands.sendPartyRequest2(sender));
+                        sendMessage(getSessionByPlayerNick(receiver.getNick()), JSON_commands.sendPartyRequest(sender));
                         return;
                     }
                     if (isReceiverInParty) {
                         sendMessage(session, JSON_commands.partyRequestFailed(receiver.getNick() + " is already in another Party"));
                         return;
-
                     }
                     if (isSenderInParty && !isSenderLeader) {
                         sendMessage(session, JSON_commands.partyRequestFailed("You are already in a Party. Only the party Leader can invite other players"));
                         return;
                     }
                 }
-
-
             }
 
-           /* if (jsonObject.has("partyrequest")) {
-                JSONObject js = jsonObject.getJSONObject("partyrequest");
-                String senderDbId = js.get("senderDbID").toString().replace("\"", "").replace("\\", "");
-                String senderNick = js.get("senderNick").toString().replace("\"", "").replace("\\", "");
-                int senderAvatarId = Integer.parseInt(js.get("senderAvatarID").toString().replace("\"", "").replace("\\", ""));
-                String receiverDbId = js.get("receiverDbID").toString().replace("\"", "").replace("\\", "");
-                String receiverNick = js.get("receiverNick").toString().replace("\"", "").replace("\\", "");
-                WebSocketSession receiverSession = getSessionFromNick(receiverNick);
-                if (receiverSession != null) {
-                    sendMessage(receiverSession, JSON_commands.sendPartyRequest(new Player(senderDbId, senderNick, senderAvatarId),
-                        new Player(receiverDbId, receiverNick, 9)));
-                    System.out.println("Partyrequest sent from " + senderNick + " to " + receiverNick);
-                }
-            }*/
             if (jsonObject.has("partyaccepted")) {
                 JSONObject js = jsonObject.getJSONObject("partyaccepted");
-                /*String senderDbId = js.get("senderDbID").toString().replace("\"", "").replace("\\", "");
-                String senderNick = js.get("senderNick").toString().replace("\"", "").replace("\\", "");
-                int senderAvatarId = Integer.parseInt(js.get("senderAvatarID").toString().replace("\"", "").replace("\\", ""));
-                String receiverDbId = js.get("receiverDbID").toString().replace("\"", "").replace("\\", "");
-                String receiverNick = js.get("receiverNick").toString().replace("\"", "").replace("\\", "");
-               *WebSocketSession receiverSession = getSessionFromNick(receiverNick);*/
                 String json1 = js.get("sender").toString();
                 String json2 = js.get("receiver").toString();
 
@@ -189,7 +159,7 @@ public class SocketHandler extends TextWebSocketHandler {
                 objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
                 Player sender = objectMapper.readValue(json1, Player.class);
                 Player receiver = objectMapper.readValue(json2, Player.class);
-                WebSocketSession receiverSession = getSessionFromNick(receiver.getNick());
+                WebSocketSession receiverSession = getSessionFromNick(receiver);
 
                 boolean isSenderInParty = isInParty(sender);
                 boolean isReceiverInParty = isInParty(receiver);
@@ -202,26 +172,19 @@ public class SocketHandler extends TextWebSocketHandler {
                     partyPeople.add(newParty);
 
                     if (receiverSession != null) {
-                   /* sendMessage(receiverSession, JSON_commands.sendPartyAccepted(new Player(senderDbId, senderNick, senderAvatarId),
-                        new Player(receiverDbId, receiverNick, 9)));
-                    System.out.println(senderNick + " accepted PartyInvite from " + receiverNick);*/
                         sendPartyAcceptation(sender, receiver, receiverSession);
-
                     }
                 }
                 if (!isSenderInParty && isReceiverLeader) {
                     addPlayerInPartyOfLeader(receiver, sender);
                     if (receiverSession != null) {
                         sendPartyAcceptation(sender, receiver, receiverSession);
-
                     }
-                    ArrayList<Player> partyOfLeader= getPartyOfLeader(receiver);
-                    if (partyOfLeader!=null)
-                    informOthersAboutInvitation(partyOfLeader, receiver, sender);
+                    ArrayList<Player> partyOfLeader = getPartyOfLeader(receiver);
+                    if (partyOfLeader != null)
+                        informOthersAboutInvitation(partyOfLeader, receiver, sender);
                     informAboutAlreadyAddedPlayer(partyOfLeader, receiver, sender, getSessionByPlayerNick(sender.getNick()));
                 }
-
-
             }
 
             if (jsonObject.has("startNewGame")) {
@@ -239,8 +202,8 @@ public class SocketHandler extends TextWebSocketHandler {
 
                     if (partyPlayers.size() == 1) {
                         Gamestate gamestate = getNextFreeGame();
-                        Player startPlayer=getPlayerBySessionId(session.getId());
-                        if (startPlayer!=null){
+                        Player startPlayer = getPlayerBySessionId(session.getId());
+                        if (startPlayer != null) {
                             startPlayer.setGamestate(gamestate);
                         }
 
@@ -256,11 +219,8 @@ public class SocketHandler extends TextWebSocketHandler {
                                 sendMessage(webSocketSession, JSON_commands.startPrivateParty());
                             }
                         }
-
                     }
                 }
-
-
             }
         }
         if (jsonObject.has("noAccount")) {
@@ -301,17 +261,6 @@ public class SocketHandler extends TextWebSocketHandler {
         return false;
     }
 
-   /* public void changeSession(WebSocketSession session, Player newPlayer) {
-        for (int i=0; i<connectedPlayers.size();i++) {
-
-            if (connectedPlayers.get(i).getNick().equalsIgnoreCase(newPlayer.getNick())) {
-                connectedPlayers.remove(i);
-                connectedPlayers.put(session.getId(), newPlayer);
-            }
-        }
-
-    }*/
-
     private void sendPartyAcceptation(Player sender, Player receiver, WebSocketSession receiverSession) throws IOException {
         sendMessage(receiverSession, JSON_commands.sendPartyAccepted(sender, receiver));
         System.out.println(sender.getNick() + " accepted PartyInvite from " + receiver.getNick());
@@ -319,11 +268,6 @@ public class SocketHandler extends TextWebSocketHandler {
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-        /*
-        if (gamestate == null)
-            gamestate = new Gamestate(this);
-        gamestate.connectionEstablished(session);
-         */
         sessions.add(session);
         sendMessage(session, JSON_commands.connectionAccepted("Online"));
     }
@@ -401,13 +345,13 @@ public class SocketHandler extends TextWebSocketHandler {
     }
 
 
-    private WebSocketSession getSessionFromNick(String nick) {
+    private WebSocketSession getSessionFromNick(Player player) {
         Iterator it = connectedPlayers.entrySet().iterator();
         String session = "";
         while (it.hasNext()) {
             Map.Entry pair = (Map.Entry) it.next();
-            Player player = (Player) pair.getValue();
-            if (player.getNick().equals(nick)) {
+            Player connectedPlayer = (Player) pair.getValue();
+            if (connectedPlayer.getNick().equals(player.getNick())) {
                 session = pair.getKey().toString();
             }
         }
@@ -428,26 +372,22 @@ public class SocketHandler extends TextWebSocketHandler {
         return null;
     }
 
-    private void sendOnlineStatus() {
-
-    }
-
     private JSONObject getMessage(String message) throws JSONException {
         return new JSONObject(message);
     }
 
-    private void checkPendingFriendRequests(WebSocketSession receiverSession, String receiverDbId, String receiverNick) {
-        if (pendingFriendRequests.get(receiverDbId) != null) {
-            ArrayList<Player> requests = pendingFriendRequests.get(receiverDbId);
+    private void checkPendingFriendRequests(WebSocketSession receiverSession, Player receiver) {
+        if (pendingFriendRequests.get(receiver.getDbID()) != null) {
+            ArrayList<Player> requests = pendingFriendRequests.get(receiver.getDbID());
             for (Player sender : requests) {
                 try {
                     sendMessage(receiverSession, JSON_commands.sendFriendRequest(sender,
-                        new Player(receiverDbId, receiverNick, 9)));
+                        receiver));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
-            pendingFriendRequests.remove(receiverDbId);
+            pendingFriendRequests.remove(receiver.getDbID());
         }
     }
 
@@ -459,7 +399,6 @@ public class SocketHandler extends TextWebSocketHandler {
             if (key.equalsIgnoreCase(sessionId)) {
                 return player;
             }
-
         }
         return null;
     }
@@ -488,7 +427,6 @@ public class SocketHandler extends TextWebSocketHandler {
             if (player.getNick().equalsIgnoreCase(nick)) {
                 return getSessionBySessionId(key);
             }
-
         }
         return null;
     }
@@ -658,7 +596,7 @@ public class SocketHandler extends TextWebSocketHandler {
         this.sessions = sessions;
     }
 
-    public ArrayList<Player> getPartyOfLeader(Player leader){
+    public ArrayList<Player> getPartyOfLeader(Player leader) {
         for (int i = 0; i < partyPeople.size(); i++) {
             ArrayList<Player> currentParty = partyPeople.get(i);
             for (int j = 0; j < currentParty.size(); j++) {
@@ -667,29 +605,29 @@ public class SocketHandler extends TextWebSocketHandler {
                 }
             }
         }
-            return null;
+        return null;
     }
 
-    public void informOthersAboutInvitation(ArrayList<Player>partyOfLeader, Player leader, Player other ) throws JSONException, IOException {
-        for (Player player: partyOfLeader){
-            if (!player.getNick().equalsIgnoreCase(leader.getNick())&&!player.getNick().equalsIgnoreCase(other.getNick())){
+    public void informOthersAboutInvitation(ArrayList<Player> partyOfLeader, Player leader, Player other) throws JSONException, IOException {
+        for (Player player : partyOfLeader) {
+            if (!player.getNick().equalsIgnoreCase(leader.getNick()) && !player.getNick().equalsIgnoreCase(other.getNick())) {
                 sendMessage(getSessionByPlayerNick(player.getNick()), JSON_commands.informOthersAboutInvitation(other));
             }
         }
     }
 
-    public void informAboutAlreadyAddedPlayer(ArrayList<Player>partyOfLeader, Player leader, Player newPlayer, WebSocketSession session)throws JSONException, IOException{
-        for (Player player: partyOfLeader){
-            if (!player.getNick().equalsIgnoreCase(leader.getNick())&&!player.getNick().equalsIgnoreCase(newPlayer.getNick())){
+    public void informAboutAlreadyAddedPlayer(ArrayList<Player> partyOfLeader, Player leader, Player newPlayer, WebSocketSession session) throws JSONException, IOException {
+        for (Player player : partyOfLeader) {
+            if (!player.getNick().equalsIgnoreCase(leader.getNick()) && !player.getNick().equalsIgnoreCase(newPlayer.getNick())) {
                 sendMessage(session, JSON_commands.informOthersAboutInvitation(player));
             }
         }
     }
 
-    public void  checkIfAnyPartyIsEmpty(){
+    public void checkIfAnyPartyIsEmpty() {
         for (int i = 0; i < partyPeople.size(); i++) {
             ArrayList<Player> currentParty = partyPeople.get(i);
-            if (currentParty.size()<=1){
+            if (currentParty.size() <= 1) {
                 partyPeople.remove(i);
             }
         }

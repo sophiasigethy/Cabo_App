@@ -82,7 +82,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 } else {
                     if (DatabaseOperation.getDao().isNickFree(sharedPref, nick.getText().toString())) {
                         player = new Player("", name.getText().toString(),
-                                mail.getText().toString(), nick.getText().toString(), avatarId);
+                                mail.getText().toString(), nick.getText().toString(), avatarId, 0);
                         register(password.getText().toString());
                     }
                 }
@@ -113,6 +113,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                                 editor.putString(String.valueOf(R.string.preference_usermail), player.getMail());
                                 editor.putString(String.valueOf(R.string.preference_usernick), player.getNick());
                                 editor.putString(String.valueOf(R.string.preference_useravatar), player.getAvatarID() + "");
+                                editor.putString(String.valueOf(R.string.preference_global_score), player.getGlobalScore() + "");
                                 editor.apply();
                                 moveToMainActivity();
                             } else
@@ -137,6 +138,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         myIntent.putExtra("name", player.getName());
         myIntent.putExtra("nick", player.getNick());
         myIntent.putExtra("avatarid", player.getAvatarID());
+        myIntent.putExtra("globalscore", player.getGlobalScore());
         RegisterActivity.this.startActivity(myIntent);
     }
 

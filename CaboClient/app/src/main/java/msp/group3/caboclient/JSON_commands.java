@@ -61,9 +61,7 @@ public class JSON_commands {
         JSONObject jmsg = new JSONObject();
         JSONObject jsubmsg = new JSONObject();
 
-        jsubmsg.put("senderDbID", gson.toJson(player.getDbID()));
-        jsubmsg.put("senderNick", gson.toJson(player.getNick()));
-        jsubmsg.put("senderAvatarID", gson.toJson(player.getAvatarID()));
+        jsubmsg.put("sender", gson.toJson(player));
         jmsg.put("sendUserLogin", jsubmsg);
 
         return jmsg;
@@ -169,11 +167,8 @@ public class JSON_commands {
         JSONObject jmsg = new JSONObject();
         JSONObject jsubmsg = new JSONObject();
 
-        jsubmsg.put("senderDbID", gson.toJson(sender.getDbID()));
-        jsubmsg.put("senderNick", gson.toJson(sender.getNick()));
-        jsubmsg.put("senderAvatarID", gson.toJson(sender.getAvatarID()));
-        jsubmsg.put("receiverDbID", gson.toJson(receiver.getDbID()));
-        jsubmsg.put("receiverNick", gson.toJson(receiver.getNick()));
+        jsubmsg.put("sender", gson.toJson(sender));
+        jsubmsg.put("receiver", gson.toJson(receiver));
         jmsg.put("sendFriendRequest", jsubmsg);
 
         return jmsg;
@@ -185,33 +180,14 @@ public class JSON_commands {
         JSONObject jmsg = new JSONObject();
         JSONObject jsubmsg = new JSONObject();
 
-        jsubmsg.put("senderDbID", gson.toJson(sender.getDbID()));
-        jsubmsg.put("senderNick", gson.toJson(sender.getNick()));
-        jsubmsg.put("senderAvatarID", gson.toJson(sender.getAvatarID()));
-        jsubmsg.put("receiverDbID", gson.toJson(receiver.getDbID()));
-        jsubmsg.put("receiverNick", gson.toJson(receiver.getNick()));
+        jsubmsg.put("sender", gson.toJson(sender));
+        jsubmsg.put("receiver", gson.toJson(receiver));
         jmsg.put("sendFriendAccepted", jsubmsg);
 
         return jmsg;
     }
 
-    /*public static JSONObject sendPartyRequest(Player sender, Player receiver) throws JSONException {
-        Gson gson= new Gson();
-
-        JSONObject jmsg = new JSONObject();
-        JSONObject jsubmsg = new JSONObject();
-
-        jsubmsg.put("senderDbID", gson.toJson(sender.getDbID()));
-        jsubmsg.put("senderNick", gson.toJson(sender.getNick()));
-        jsubmsg.put("senderAvatarID", gson.toJson(sender.getAvatarID()));
-        jsubmsg.put("receiverDbID", gson.toJson(receiver.getDbID()));
-        jsubmsg.put("receiverNick", gson.toJson(receiver.getNick()));
-        jmsg.put("partyrequest", jsubmsg);
-
-        return jmsg;
-    }*/
-
-    public static JSONObject sendPartyRequest2(Player sender, Player receiver) throws JSONException {
+    public static JSONObject sendPartyRequest(Player sender, Player receiver) throws JSONException {
         Gson gson= new Gson();
 
         JSONObject jmsg = new JSONObject();
@@ -219,27 +195,11 @@ public class JSON_commands {
 
         jsubmsg.put("sender", gson.toJson(sender));
         jsubmsg.put("receiver", gson.toJson(receiver));
-        jmsg.put("partyrequest2", jsubmsg);
+        jmsg.put("partyrequest", jsubmsg);
 
         return jmsg;
 
     }
-
-    /*public static JSONObject sendPartyAccepted(Player sender, Player receiver) throws JSONException {
-        Gson gson= new Gson();
-
-        JSONObject jmsg = new JSONObject();
-        JSONObject jsubmsg = new JSONObject();
-
-        jsubmsg.put("senderDbID", gson.toJson(sender.getDbID()));
-        jsubmsg.put("senderNick", gson.toJson(sender.getNick()));
-        jsubmsg.put("senderAvatarID", gson.toJson(sender.getAvatarID()));
-        jsubmsg.put("receiverDbID", gson.toJson(receiver.getDbID()));
-        jsubmsg.put("receiverNick", gson.toJson(receiver.getNick()));
-        jmsg.put("partyaccepted", jsubmsg);
-
-        return jmsg;
-    }*/
 
     public static JSONObject sendPartyAccepted(Player sender, Player receiver) throws JSONException {
         Gson gson= new Gson();
@@ -260,10 +220,8 @@ public class JSON_commands {
         JSONObject jmsg = new JSONObject();
         JSONObject jsubmsg = new JSONObject();
 
-        jsubmsg.put("senderDbID", gson.toJson(sender.getDbID()));
-        jsubmsg.put("senderNick", gson.toJson(sender.getNick()));
-        jsubmsg.put("receiverDbID", gson.toJson(receiver.getDbID()));
-        jsubmsg.put("receiverNick", gson.toJson(receiver.getNick()));
+        jsubmsg.put("sender", gson.toJson(sender));
+        jsubmsg.put("receiver", gson.toJson(receiver));
         jmsg.put("partyleft", jsubmsg);
 
         return jmsg;
