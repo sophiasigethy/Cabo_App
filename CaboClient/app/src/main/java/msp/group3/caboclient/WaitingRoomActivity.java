@@ -400,7 +400,7 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
         if (jsonObject.has("maxPoints")) {
             int maxPoints = (int) jsonObject.get("sendMAXPlayer");
             //TODO show max Points
-            // vorher: communicator.sendMessage(JSON_commands.sendMaxPoints(100)); aber nur wenn firstRound==true
+            // vorher: communicator.sendMessage(JSON_commands.sendMaxPoints(100));
 
         }
     }

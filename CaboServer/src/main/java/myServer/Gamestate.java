@@ -97,7 +97,7 @@ public class Gamestate {
             countPlayer--;
             Player disconnectedPlayer = getPlayerBySessionId(session.getId());
             players.remove(session.getId());
-
+            MAX_PLAYER--;
 
             try {
                 sendToAll(JSON_commands.removePlayer(disconnectedPlayer));
@@ -105,6 +105,9 @@ public class Gamestate {
                 e.printStackTrace();
             }
         }
+
+
+
         /*if (state.equalsIgnoreCase(TypeDefs.GAMESTART)) {
             for (Player player : players.values()) {
                 for (Player socketPlayer : socketHandler.getConnectedPlayers().values()) {
