@@ -19,8 +19,9 @@ public class Player {
 
 
 
-    private int avatarID ;
+    private int avatarID = NO_AVATAR_CHOSEN;
     private int score=0;
+    private int globalScore=0;
     private ArrayList<Player> friendList = new ArrayList<>();
     private ArrayList<Card> myCards = new ArrayList<>();
     private Boolean isOnline = false;
@@ -52,18 +53,20 @@ public class Player {
         this.dbID = dbID;
     }
 
-    public Player(String dbID, String name, String mail, String nick, int avatarID) {
+    public Player(String dbID, String name, String mail, String nick, int avatarID, int globalScore) {
         this.dbID = dbID;
         this.name = name;
         this.mail = mail;
         this.nick = nick;
         this.avatarID = avatarID;
+        this.globalScore = globalScore;
     }
 
-    public Player(String dbID, String nick, int avatarID) {
+    public Player(String dbID, String nick, int avatarID, int globalScore) {
         this.dbID = dbID;
         this.nick = nick;
         this.avatarID = avatarID;
+        this.globalScore = globalScore;
     }
 
     public Player(GoogleSignInAccount account) {
@@ -147,6 +150,14 @@ public class Player {
 
     public void setScore(int score) {
         this.score = score;
+    }
+
+    public int getGlobalScore() {
+        return globalScore;
+    }
+
+    public void setGlobalScore(int globalScore) {
+        this.globalScore = globalScore;
     }
 
     public ArrayList<Player> getFriendList() {
@@ -253,6 +264,14 @@ public class Player {
     }
     public void setNO_AVATAR_CHOSEN(int NO_AVATAR_CHOSEN) {
         this.NO_AVATAR_CHOSEN = NO_AVATAR_CHOSEN;
+    }
+
+    public void won(SharedPreferences sharedPref)   {
+        globalScore++;
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(String.valueOf(R.string.preference_global_score), globalScore + "");
+        editor.apply();
+        DatabaseOperation.getDao().updateGlobalScore(this);
     }
 
     public Boolean getOnline() {

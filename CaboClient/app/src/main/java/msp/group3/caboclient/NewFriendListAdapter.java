@@ -83,7 +83,7 @@ public class NewFriendListAdapter extends BaseAdapter {
                     Log.e("SendPartyRequest", "click");
                     if (me.getFriendList().size()<4){
                         try {
-                            communicator.sendMessage(JSON_commands.sendPartyRequest2(me, friend));
+                            communicator.sendMessage(JSON_commands.sendPartyRequest(me, friend));
                             Log.e("SendPartyRequest", "Send Party Invitation");
 
                         } catch (JSONException e) {

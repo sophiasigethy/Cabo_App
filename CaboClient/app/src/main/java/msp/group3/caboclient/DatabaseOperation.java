@@ -28,7 +28,6 @@ public class DatabaseOperation {
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
         database = FirebaseDatabase.getInstance();
-
     }
 
     /**
@@ -55,7 +54,8 @@ public class DatabaseOperation {
                     sharedPref.getString(String.valueOf(R.string.preference_username), "None"),
                     sharedPref.getString(String.valueOf(R.string.preference_usermail), "None"),
                     sharedPref.getString(String.valueOf(R.string.preference_usernick), "None"),
-                    Integer.parseInt(sharedPref.getString(String.valueOf(R.string.preference_useravatar), "None")));
+                    Integer.parseInt(sharedPref.getString(String.valueOf(R.string.preference_useravatar), "None")),
+                    Integer.parseInt(sharedPref.getString(String.valueOf(R.string.preference_global_score), "None")));
             String friends = sharedPref.getString(String.valueOf(R.string.preference_friendlist), "None");
             if (!friends.equals("None")) {
                 ArrayList<Player> friendList = new ArrayList<Player>();
@@ -67,7 +67,8 @@ public class DatabaseOperation {
                         String nick = (String) ((LinkedTreeMap) deserializedFriends.get(i)).get("nick").toString().replace("\"", "").replace("\\", "");
                         //TODO Find out why double is read here
                         int avatarId = (int) Double.parseDouble((String) ((LinkedTreeMap) deserializedFriends.get(i)).get("avatarID").toString().replace("\"", "").replace("\\", ""));
-                        friendList.add(new Player(dbID, nick, avatarId));
+                        int globalScore = (int) Double.parseDouble((String) ((LinkedTreeMap) deserializedFriends.get(i)).get("globalScore").toString().replace("\"", "").replace("\\", ""));
+                        friendList.add(new Player(dbID, nick, avatarId, globalScore));
                     }
                     if (friendList != null)
                         player.setFriendList(friendList);
@@ -77,7 +78,7 @@ public class DatabaseOperation {
             }
             return player;
         }
-        return new Player("None", "None", 9);
+        return new Player("None", "None", 9, 0);
     }
 
     /**
@@ -89,6 +90,15 @@ public class DatabaseOperation {
      */
     public void updateLastLoggedIn(String myDbId) {
         getUserRef(myDbId).child("lastLoggedIn").setValue((System.currentTimeMillis()) + "");
+    }
+
+    /**
+     * This function updates the globalScore of a user, if he won a game
+     *
+     * @param player: Me, to access the correct path in Firebase Realtime DB
+     */
+    public void updateGlobalScore(Player player) {
+        getUserRef(player.getDbID()).child("globalScore").setValue(player.getGlobalScore());
     }
 
     /**
@@ -131,15 +141,22 @@ public class DatabaseOperation {
                 for (DataSnapshot friend : snapshot.child("friendList").getChildren()) {
                     friendList.add(new Player(cleanString(friend.child("dbID").getValue().toString()),
                             cleanString(friend.child("nick").getValue().toString()),
-                            Integer.parseInt(cleanString(friend.child("avatarID").getValue().toString()))));
+                            Integer.parseInt(cleanString(friend.child("avatarID").getValue().toString())),
+                            Integer.parseInt(cleanString(friend.child("globalScore").getValue().toString()))
+                    ));
                 }
+
                 String myDbID = cleanString(String.valueOf(snapshot.child("dbID").getValue().toString()));
                 String name = cleanString(String.valueOf(snapshot.child("name").getValue().toString()));
                 String mail = cleanString(String.valueOf(snapshot.child("mail").getValue().toString()));
                 String nick = cleanString(String.valueOf(snapshot.child("nick").getValue().toString()));
                 int avatarId = Integer.parseInt(
                         cleanString(String.valueOf(snapshot.child("avatarID").getValue().toString())));
-                Player player = new Player(myDbID, name, mail, nick, avatarId);
+                int global_score = Integer.parseInt(
+                        cleanString(String.valueOf(snapshot.child("globalScore").getValue().toString())));
+                Player player = new Player(myDbID, name, mail, nick, avatarId, global_score);
+                //TODO If there is enough time, try to deserialize directly like following
+                //Player player = snapshot.getValue(Player.class);
                 player.setFriendList(friendList);
                 isDBLoad = writePlayerToSharedPref(player, sharedPref);
             }
@@ -159,6 +176,7 @@ public class DatabaseOperation {
         editor.putString(String.valueOf(R.string.preference_usermail), player.getMail());
         editor.putString(String.valueOf(R.string.preference_usernick), player.getNick());
         editor.putString(String.valueOf(R.string.preference_useravatar), player.getAvatarID() + "");
+        editor.putString(String.valueOf(R.string.preference_global_score), player.getGlobalScore() + "");
         editor.apply();
         saveObjectToSharedPreference(
                 sharedPref, String.valueOf(R.string.preference_friendlist), player.getFriendList());
@@ -183,7 +201,8 @@ public class DatabaseOperation {
                         if (nick == null || nick.equals(""))
                             continue;
                         int avatarID = Integer.parseInt(user.child("avatarID").getValue().toString());
-                        users.add(new Player(dbId, nick, avatarID));
+                        int globalScore = Integer.parseInt(user.child("globalScore").getValue().toString());
+                        users.add(new Player(dbId, nick, avatarID, globalScore));
                     }
                 }
                 saveObjectToSharedPreference(
@@ -219,9 +238,9 @@ public class DatabaseOperation {
                         String nick = cleanString((String) ((LinkedTreeMap) deserializedUsers.get(i)).get("nick")
                                 .toString());
                         //TODO: Find out why we get double
-                        int avatarId = (int) Double.parseDouble(cleanString((String) ((LinkedTreeMap) deserializedUsers.get(i)).get("avatarID")
-                                .toString()));
-                        allUsers.add(new Player(dbID, nick, avatarId));
+                        int avatarId = (int) Double.parseDouble(cleanString((String) ((LinkedTreeMap) deserializedUsers.get(i)).get("avatarID").toString()));
+                        int globalScore = (int) Double.parseDouble(cleanString((String) ((LinkedTreeMap) deserializedUsers.get(i)).get("globalScore").toString()));
+                        allUsers.add(new Player(dbID, nick, avatarId, globalScore));
                     }
                 }
             }
@@ -251,14 +270,10 @@ public class DatabaseOperation {
         }
         DatabaseReference myRef = database.getReference("cabo/users").
                 child(receiver.getDbID()).child("friendList").child(sender.getDbID());
-        myRef.child("dbID").setValue(sender.getDbID());
-        myRef.child("nick").setValue(sender.getNick());
-        myRef.child("avatarID").setValue(sender.getAvatarID());
+        myRef.setValue(sender);
         myRef = database.getReference("cabo/users").
                 child(sender.getDbID()).child("friendList").child(receiver.getDbID());
-        myRef.child("dbID").setValue(receiver.getDbID());
-        myRef.child("nick").setValue(receiver.getNick());
-        myRef.child("avatarID").setValue(receiver.getAvatarID());
+        myRef.setValue(receiver);
         return true;
     }
 
