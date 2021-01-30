@@ -50,6 +50,7 @@
     <string name="preference_usermail">usermail</string>
     <string name="preference_usernick">usernick</string>
     <string name="preference_useravatar">useravatar</string>
+    <string name="preference_global_score">globalscore</string>
     <string name="preference_friendlist">friendlist</string>
     <string name="preference_all_users">all_users</string>
     <string name="settings">Settings</string>

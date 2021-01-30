@@ -8,7 +8,9 @@ import androidx.fragment.app.FragmentTransaction;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -2464,6 +2466,9 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
 
                 cardSwapBg.setVisibility(View.VISIBLE);
                 if (winner.getId() == me.getId()) {
+                    SharedPreferences sharedPref = getApplicationContext().getSharedPreferences(
+                            R.string.preference_file_key + "", Context.MODE_PRIVATE);
+                    me.won(sharedPref);
                     centerText.setVisibility(View.VISIBLE);
                     centerText.setText("You won!");
                 } else {

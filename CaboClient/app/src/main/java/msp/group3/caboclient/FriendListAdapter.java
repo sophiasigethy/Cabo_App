@@ -93,7 +93,7 @@ public class FriendListAdapter extends ArrayAdapter {
                     //if (me.getFriendList().size()<4){ //todo müsste das nicht party size sein?
                     if(party.size()<4){
                         try {
-                            communicator.sendMessage(JSON_commands.sendPartyRequest2(me, myFriendList.get(i)));
+                            communicator.sendMessage(JSON_commands.sendPartyRequest(me, myFriendList.get(i)));
                             Log.e("SendPartyRequest", "Send Party Invitation");
 
                         } catch (JSONException e) {

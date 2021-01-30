@@ -8,27 +8,28 @@ import java.util.Objects;
 public class Player {
 
     private int id;
+    private String dbID = "";
+    private String name = "";
+    private String mail = "";
     private String nick = "";
 
-    private String name = "";
-    private String dbId = "";
     private int avatarID = 9;
+    private int score = 0;
+    private int globalScore = 0;
 
     @JsonIgnore
-    private boolean isKI= false;
-
-
-
-    @JsonIgnore
-    private boolean noAccount= false;
-
+    private boolean isKI = false;
 
 
     @JsonIgnore
-    private ArrayList<Card> knownCards= new ArrayList<>();
+    private boolean noAccount = false;
 
-     @JsonIgnore
-    private ArrayList<Card> knownCardsOfOther= new ArrayList<>();
+
+    @JsonIgnore
+    private ArrayList<Card> knownCards = new ArrayList<>();
+
+    @JsonIgnore
+    private ArrayList<Card> knownCardsOfOther = new ArrayList<>();
 
     // The cards belong to this player
     private ArrayList<Card> cards = new ArrayList<>();
@@ -40,7 +41,6 @@ public class Player {
     private String status;
 
 
-    private int score = 0;
     @JsonIgnore
     private boolean calledCabo = false;
     private String picture = "";
@@ -58,10 +58,10 @@ public class Player {
         this.smiley = TypeDefs.smiling;
     }
 
-    public Player(String dbId, String nick, int avatarID) {
+    public Player(String dbID, String nick, int avatarID) {
         this.nick = nick;
         this.name = nick;
-        this.dbId = dbId;
+        this.dbID = dbID;
         this.avatarID = avatarID;
     }
 
@@ -88,6 +88,14 @@ public class Player {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getMail() {
+        return mail;
+    }
+
+    public void setMail(String mail) {
+        this.mail = mail;
     }
 
     public String getNick() {
@@ -256,8 +264,8 @@ public class Player {
         for (int i = 0; i < this.cards.size(); i++) {
             points += this.cards.get(i).getValue();
         }
-        score=score+points;
-        if (score>gamestate.getMaxPoints()){
+        score = score + points;
+        if (score > gamestate.getMaxPoints()) {
             gamestate.terminate();
         }
         return points;
@@ -285,6 +293,14 @@ public class Player {
     //
     public int getScore() {
         return this.score;
+    }
+
+    public int getGlobalScore() {
+        return globalScore;
+    }
+
+    public void setGlobalScore(int globalScore) {
+        this.globalScore = globalScore;
     }
 
     public void setMyCards(ArrayList<Card> myCards) {
@@ -332,12 +348,12 @@ public class Player {
         this.smiley = smiley;
     }
 
-    public String getDbId() {
-        return dbId;
+    public String getDbID() {
+        return dbID;
     }
 
-    public void setDbId(String dbId) {
-        this.dbId = dbId;
+    public void setDbID(String dbID) {
+        this.dbID = dbID;
     }
 
 
@@ -346,12 +362,12 @@ public class Player {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Player player = (Player) o;
-        return Objects.equals(nick, player.nick) && Objects.equals(dbId, player.dbId);
+        return Objects.equals(nick, player.nick) && Objects.equals(dbID, player.dbID);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(nick, dbId);
+        return Objects.hash(nick, dbID);
     }
 
 
@@ -378,6 +394,7 @@ public class Player {
     public void setKnownCards(ArrayList<Card> knownCards) {
         this.knownCards = knownCards;
     }
+
     public ArrayList<Card> getKnownCardsOfOther() {
         return knownCardsOfOther;
     }

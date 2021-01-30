@@ -13,9 +13,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
-
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.gson.Gson;
 
 import org.java_websocket.client.WebSocketClient;
 import org.json.JSONException;
@@ -125,39 +125,54 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
         }
 
         if (jsonObject.has("friendrequest")) {
+            Log.d("-----------------FRIEND REQUEST", "FriendRequest sent");
             JSONObject friendrequest = (JSONObject) jsonObject.get("friendrequest");
-            String destinationDbID = friendrequest.get("receiverDbID").toString().replace("\"", "").replace("\\", "");
-            if (destinationDbID.equals(me.getDbID())) {
-                String senderDbID = friendrequest.get("senderDbID").toString().replace("\"", "").replace("\\", "");
-                String senderNick = friendrequest.get("senderNick").toString().replace("\"", "").replace("\\", "");
-                int senderAvatar = Integer.parseInt(friendrequest.get("senderAvatarID").toString().replace("\"", "").replace("\\", ""));
-                Player sender = new Player(senderDbID, senderNick, senderAvatar);
-                //TODO: Find better way to display this Dialog
+            Player sender = null;
+            Player receiver = null;
+            Gson gson = new Gson();
+            if (friendrequest.has("receiver")) {
+                String jsonString = friendrequest.get("receiver").toString();
+                receiver = gson.fromJson(jsonString, Player.class);
+            }
+            if (friendrequest.has("sender")) {
+                String jsonString = friendrequest.get("sender").toString();
+                sender = gson.fromJson(jsonString, Player.class);
+            }
+            Log.d("-----------------FRIEND REQUEST", "sender: " + sender.getName() + " receiver: " + receiver.getName());
+            if (receiver.getDbID().equals(me.getDbID())) {
+                Player finalSender = sender;
                 runOnUiThread(new Runnable() {
                     public void run() {
-                        acceptFriendRequestDialog(sender);
+                        acceptFriendRequestDialog(finalSender);
                     }
                 });
             }
         }
 
         if (jsonObject.has("friendAccepted")) {
-            JSONObject friendrequest = (JSONObject) jsonObject.get("friendAccepted");
-            String destinationDbID = friendrequest.get("receiverDbID").toString().replace("\"", "").replace("\\", "");
-            if (destinationDbID.equals(me.getDbID())) {
-                String senderDbID = friendrequest.get("senderDbID").toString().replace("\"", "").replace("\\", "");
-                String senderNick = friendrequest.get("senderNick").toString().replace("\"", "").replace("\\", "");
-                int senderAvatar = Integer.parseInt(friendrequest.get("senderAvatarID").toString().replace("\"", "").replace("\\", ""));
-                Player sender = new Player(senderDbID, senderNick, senderAvatar);
-                //TODO: Find better way to display this Dialog
+            Log.d("-----------------FRIEND ACCEPTED", "FriendRequest accepted");
+            JSONObject friendAccepted = (JSONObject) jsonObject.get("friendAccepted");
+            Player sender = null;
+            Player receiver = null;
+            Gson gson = new Gson();
+            if (friendAccepted.has("receiver")) {
+                String jsonString = friendAccepted.get("receiver").toString();
+                receiver = gson.fromJson(jsonString, Player.class);
+            }
+            if (friendAccepted.has("sender")) {
+                String jsonString = friendAccepted.get("sender").toString();
+                sender = gson.fromJson(jsonString, Player.class);
+            }
+            Log.d("-----------------FRIEND ACCEPTED", "sender: " + sender.getName() + " receiver: " + receiver.getName());
+            if (receiver != null && receiver.getDbID().equals(me.getDbID())) {
+                Player finalSender = sender;
                 runOnUiThread(new Runnable() {
                     public void run() {
-                        updateFriendList(sender, true);
+                        updateFriendList(finalSender, true);
                     }
                 });
-                communicator.sendMessage(JSON_commands.getOnlinestatusOfNewFriend(senderNick));
+                communicator.sendMessage(JSON_commands.getOnlinestatusOfNewFriend(sender.getNick()));
             }
-
         }
 
         if (jsonObject.has("partyrequest")) {
@@ -191,7 +206,7 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
             }
             Log.d("-----------------PARTY INVITATION", "sender: " + sender.getName() + " receiver: " + receiver.getName());
 
-            showMessageForTesting(sender.getNick()+ " accepted your invitation");
+            showMessageForTesting(sender.getNick() + " accepted your invitation");
 
             Player finalSender = sender;
             runOnUiThread(new Runnable() {
@@ -200,14 +215,6 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
                     party.add(finalSender);
                     playerPartyText.setText("Party: " + party.size());
                     updateFriendList(finalSender, false);
-                    /*View v = friendList.getChildAt(
-                            friendListAdapter.getPlayerIndex(finalSender) - friendList.getFirstVisiblePosition());
-                    if (v != null) {
-                        if (!party.contains(finalSender)) {
-                            party.add(finalSender);
-                            updateFriendList(finalSender, false);
-                        }
-                    }*/
                 }
             });
 
@@ -354,11 +361,13 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
             intent.putExtra("player" + i + "dbid", party.get(i).getDbID());
             intent.putExtra("player" + i + "nick", party.get(i).getNick());
             intent.putExtra("player" + i + "avatar", party.get(i).getAvatarID() + "");
+            intent.putExtra("player" + i + "globalscore", party.get(i).getGlobalScore() + "");
         }
         while (i < 4) {
             intent.putExtra("player" + i + "dbid", "");
             intent.putExtra("player" + i + "nick", "");
             intent.putExtra("player" + i + "avatar", "");
+            intent.putExtra("player" + i + "globalscore", "");
             i++;
         }
         // TODO wait for ServerMessage with GameState-ID
