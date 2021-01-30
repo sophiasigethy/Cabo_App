@@ -45,6 +45,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import static msp.group3.caboclient.TypeDefs.*;
@@ -128,6 +129,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
     private final List<com.airbnb.lottie.LottieAnimationView> playerCaboAnimations = new ArrayList<>();
     private final List<ImageView> otherPlayerEmojis = new ArrayList<>();
     private final List<ImageView> otherPlayersCardGlows = new ArrayList<>();
+    private final List<TextView> playerRanks = new ArrayList<>();
 
 
     private final List<ConstraintLayout> playerOverviews = new ArrayList<>();
@@ -776,6 +778,8 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         Collections.addAll(playerHighlightAnimations, findViewById(R.id.player1_highlight_animationView), findViewById(R.id.player2_highlight_animationView),
                 findViewById(R.id.player3_highlight_animationView), findViewById(R.id.player4_highlight_animationView));
 
+        Collections.addAll(playerRanks, findViewById(R.id.player1_rank), findViewById(R.id.player2_rank), findViewById(R.id.player3_rank), findViewById(R.id.player4_rank));
+
         Collections.addAll(otherPlayerButtonLists, player2CardButtons, player3CardButtons, player4CardButtons);
 
         Collections.addAll(otherPlayerEmojis, findViewById(R.id.player2_emoji), findViewById(R.id.player3_emoji), findViewById(R.id.player4_emoji));
@@ -794,6 +798,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             playerOverviews.get(i).setVisibility(View.INVISIBLE);
             playerHighlightAnimations.get(i).setVisibility(View.INVISIBLE);
             playerCaboAnimations.get(i).setVisibility(View.INVISIBLE);
+            playerRanks.get(i).setVisibility(View.INVISIBLE);
         }
 
         for (ImageView glow : otherPlayersCardGlows) {
@@ -1864,6 +1869,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                             showPlayers();
                         } else {
                             nextRound(players);
+                            showPlayerRanks();
                         }
                     }
                 });
@@ -2235,6 +2241,22 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                     leaveGame();
                 }
             }
+        }
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void showPlayerRanks() {
+        ArrayList<Player> tempPlayers = new ArrayList<>();
+        tempPlayers.add(me);
+        for(Player player : otherPlayers){
+            tempPlayers.add(player);
+        }
+        tempPlayers.sort(Comparator.comparing(Player::getScore));
+        playerRanks.get(0).setVisibility(View.VISIBLE);
+        playerRanks.get(0).setText("#"+(tempPlayers.indexOf(me)+1));
+        for(int i=0; i<otherPlayers.size(); i++){
+            playerRanks.get(i+1).setVisibility(View.VISIBLE);
+            playerRanks.get(i+1).setText("#"+(tempPlayers.indexOf(otherPlayers.get(i))+1));
         }
     }
 

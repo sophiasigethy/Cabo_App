@@ -667,6 +667,26 @@
             app:layout_constraintRight_toLeftOf="@id/player1_info_game"
             app:layout_constraintBottom_toTopOf="@id/player1_info_game"/>
 
+        <TextView
+            android:id="@+id/player1_rank"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="#1"
+            android:padding="3dp"
+            android:gravity="center"
+            android:elevation="10dp"
+            android:background="@drawable/round_dark_turquoise_bg"
+            android:textColor="@color/white"
+            android:translationX="-35dp"
+            android:translationY="10dp"
+            android:translationZ="30dp"
+            android:textSize="10sp"
+            android:fontFamily="sans-serif-black"
+            app:layout_constraintStart_toStartOf="@id/player1_image_game"
+            app:layout_constraintTop_toTopOf="@id/player1_image_game"
+            app:layout_constraintLeft_toLeftOf="@id/player1_image_game"/>
+
+
         <ImageButton
             android:id="@+id/player1_emoji"
             android:layout_width="24dp"
@@ -841,6 +861,25 @@
             app:layout_constraintRight_toLeftOf="@id/player2_info_game"
             app:layout_constraintBottom_toTopOf="@id/player2_info_game"/>
 
+        <TextView
+            android:id="@+id/player2_rank"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="#1"
+            android:padding="3dp"
+            android:gravity="center"
+            android:elevation="10dp"
+            android:background="@drawable/round_dark_turquoise_bg"
+            android:textColor="@color/white"
+            android:translationX="-35dp"
+            android:translationY="10dp"
+            android:translationZ="30dp"
+            android:textSize="10sp"
+            android:fontFamily="sans-serif-black"
+            app:layout_constraintStart_toStartOf="@id/player2_image_game"
+            app:layout_constraintTop_toTopOf="@id/player2_image_game"
+            app:layout_constraintLeft_toLeftOf="@id/player2_image_game"/>
+
         <ImageButton
             android:id="@+id/player2_emoji"
             android:layout_width="24dp"
@@ -930,6 +969,25 @@
             app:layout_constraintStart_toStartOf="@id/player3_info_game"
             app:layout_constraintRight_toLeftOf="@id/player3_info_game"
             app:layout_constraintBottom_toTopOf="@id/player3_info_game"/>
+
+        <TextView
+            android:id="@+id/player3_rank"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="#1"
+            android:padding="3dp"
+            android:gravity="center"
+            android:elevation="10dp"
+            android:background="@drawable/round_dark_turquoise_bg"
+            android:textColor="@color/white"
+            android:translationX="-25dp"
+            android:translationY="10dp"
+            android:translationZ="30dp"
+            android:textSize="10sp"
+            android:fontFamily="sans-serif-black"
+            app:layout_constraintStart_toStartOf="@id/player3_image_game"
+            app:layout_constraintTop_toTopOf="@id/player3_image_game"
+            app:layout_constraintLeft_toLeftOf="@id/player3_image_game"/>
 
         <ImageButton
             android:id="@+id/player3_emoji"
@@ -1021,6 +1079,25 @@
             app:layout_constraintStart_toStartOf="@id/player4_info_game"
             app:layout_constraintRight_toLeftOf="@id/player4_info_game"
             app:layout_constraintBottom_toTopOf="@id/player4_info_game"/>
+
+        <TextView
+            android:id="@+id/player4_rank"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="#1"
+            android:padding="3dp"
+            android:gravity="center"
+            android:elevation="10dp"
+            android:background="@drawable/round_dark_turquoise_bg"
+            android:textColor="@color/white"
+            android:translationX="-25dp"
+            android:translationY="10dp"
+            android:translationZ="30dp"
+            android:textSize="10sp"
+            android:fontFamily="sans-serif-black"
+            app:layout_constraintStart_toStartOf="@id/player4_image_game"
+            app:layout_constraintTop_toTopOf="@id/player4_image_game"
+            app:layout_constraintLeft_toLeftOf="@id/player4_image_game"/>
 
         <ImageButton
             android:id="@+id/player4_emoji"

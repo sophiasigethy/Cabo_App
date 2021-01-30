@@ -27,6 +27,7 @@
         android:layout_marginLeft="12dp"
         android:layout_marginRight="12dp"
         android:textSize="12dp"
+        android:inputType="text"
         android:backgroundTint="@color/beige"
         android:theme="@style/MyEditTextTheme"
         android:imeOptions="flagNoFullscreen"
