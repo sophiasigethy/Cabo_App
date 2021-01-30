@@ -85,6 +85,10 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
                 searchFriendDialog();
             }
         });
+        addFriendBtn.setEnabled(false);
+        addFriendBtn.setAlpha(0.5f);
+        startGameBtn.setEnabled(false);
+        startGameBtn.setAlpha(0.5f);
         allUsers = DatabaseOperation.getDao().getAllUsersList(sharedPref);
     }
 
@@ -137,7 +141,6 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
                 String senderNick = friendrequest.get("senderNick").toString().replace("\"", "").replace("\\", "");
                 int senderAvatar = Integer.parseInt(friendrequest.get("senderAvatarID").toString().replace("\"", "").replace("\\", ""));
                 Player sender = new Player(senderDbID, senderNick, senderAvatar);
-                //TODO: Find better way to display this Dialog
                 runOnUiThread(new Runnable() {
                     public void run() {
                         acceptFriendRequestDialog(sender);
@@ -154,7 +157,6 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
                 String senderNick = friendrequest.get("senderNick").toString().replace("\"", "").replace("\\", "");
                 int senderAvatar = Integer.parseInt(friendrequest.get("senderAvatarID").toString().replace("\"", "").replace("\\", ""));
                 Player sender = new Player(senderDbID, senderNick, senderAvatar);
-                //TODO: Find better way to display this Dialog
                 runOnUiThread(new Runnable() {
                     public void run() {
                         updateFriendList(sender, true);
@@ -204,14 +206,6 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
                     party.add(finalSender);
                     playerPartyText.setText("Party: " + party.size());
                     updateFriendList(finalSender, false);
-                    /*View v = friendList.getChildAt(
-                            friendListAdapter.getPlayerIndex(finalSender) - friendList.getFirstVisiblePosition());
-                    if (v != null) {
-                        if (!party.contains(finalSender)) {
-                            party.add(finalSender);
-                            updateFriendList(finalSender, false);
-                        }
-                    }*/
                 }
             });
 
@@ -219,7 +213,7 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
         if (jsonObject.has("onlinestatus")) {
             JSONObject js = jsonObject.getJSONObject("onlinestatus");
             Player player = null;
-            //TODO DBID is empty
+            //TODO DBID is empty -> noch aktuell?
             boolean isOnline = false;
             if (js.has("isOnline")) {
                 isOnline = (boolean) js.get("isOnline");
@@ -344,7 +338,6 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
         } else {
             me.addNewFriend(sender, sharedPref);
         }
-        //TODO Check if Adapter also has to get new list
         me.setFriendList(friends);
         friendListAdapter.notifyDataSetChanged();
     }
@@ -365,7 +358,7 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
             intent.putExtra("player" + i + "avatar", "");
             i++;
         }
-        // TODO wait for ServerMessage with GameState-ID
+        // TODO wait for ServerMessage with GameState-ID -> noch aktuell?
 
         startActivity(intent);
     }
@@ -438,6 +431,8 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
     public void enableButtons() {
         addFriendBtn.setEnabled(true);
         startGameBtn.setEnabled(true);
+        addFriendBtn.setAlpha(1f);
+        startGameBtn.setAlpha(1f);
     }
 
     /**
