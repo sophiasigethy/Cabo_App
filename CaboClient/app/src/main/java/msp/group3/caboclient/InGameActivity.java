@@ -253,28 +253,6 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         }
     }
 
-    private void switchToSettingsFragment() {
-        SettingsFragment fragA = (SettingsFragment) getSupportFragmentManager().findFragmentByTag(TAG_SETTINGS);
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.detach(getSupportFragmentManager().findFragmentByTag(TAG_CHAT));
-        fragmentTransaction.attach(fragA);
-        fragmentTransaction.addToBackStack(null);
-
-        fragmentTransaction.commitAllowingStateLoss();
-        getSupportFragmentManager().executePendingTransactions();
-    }
-
-    private void switchToChatFragment() {
-        InGameChatFragment fragA = (InGameChatFragment) getSupportFragmentManager().findFragmentByTag(TAG_CHAT);
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.detach(getSupportFragmentManager().findFragmentByTag(TAG_CHAT));
-        fragmentTransaction.attach(fragA);
-        fragmentTransaction.addToBackStack(null);
-
-        fragmentTransaction.commitAllowingStateLoss();
-        getSupportFragmentManager().executePendingTransactions();
-    }
-
     private void setUpOnClickListeners() {
 
         chatButton.setOnClickListener(new View.OnClickListener() {
@@ -870,14 +848,18 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
 
     private void visualizeOtherPlayerCardGlows() {
         for (int i = 0; i < otherPlayers.size(); i++) {
-            otherPlayersCardGlows.get(i).setVisibility(View.VISIBLE);
-            growCardGlowAnimation(otherPlayersCardGlows.get(i));
+            if(playerOverviews.get(i+1).getVisibility()==View.VISIBLE){
+                otherPlayersCardGlows.get(i).setVisibility(View.VISIBLE);
+                growCardGlowAnimation(otherPlayersCardGlows.get(i));
+            }
         }
     }
 
     private void hideOtherPlayerCardGlows() {
         for (int i = 0; i < otherPlayers.size(); i++) {
-            growCardGlowAnimationOut(otherPlayersCardGlows.get(i));
+            if(playerOverviews.get(i+1).getVisibility()==View.VISIBLE) {
+                growCardGlowAnimationOut(otherPlayersCardGlows.get(i));
+            }
         }
     }
 
@@ -1412,6 +1394,23 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 }
             }
         }
+    }
+
+    private void removePlayerWhoLeft(Player player){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(getApplicationContext(), player.getNick()+" left the game", Toast.LENGTH_SHORT).show();
+                for (int i = 0; i < otherPlayers.size(); i++) {
+                    if(otherPlayers.get(i).getId() == player.getId()){
+                        for (ImageButton card : otherPlayerButtonLists.get(i)) {
+                            card.setVisibility(View.GONE);
+                        }
+                        playerOverviews.get(i+1).setVisibility(View.GONE);
+                    }
+                }
+            }
+        });
     }
 
     private void initiatePeekAction() {
@@ -2226,7 +2225,13 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 Player player = gson.fromJson(jsonString, Player.class);
                 //TODO show that player has removed
                 //handle this: at the moment game ends
-                leaveGame();
+                //leaveGame();
+                if(otherPlayers.size()>1){
+                    removePlayerWhoLeft(player);
+                }
+                else{
+                    leaveGame();
+                }
             }
         }
     }
