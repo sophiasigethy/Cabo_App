@@ -82,7 +82,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                         || avatarId == NO_AVATAR_CHOSEN) {
                     Toast.makeText(RegisterActivity.this,
                             "All fields are mandatory", Toast.LENGTH_LONG);
-                    //TODO Display the text
                     errorTv.setText("All fields are mandatory and you must choose an avatar");
                     errorTv.setTextColor(Color.RED);
                 } else {

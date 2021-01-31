@@ -30,7 +30,7 @@ public class LicenseActivity extends Activity {
 				"distributed under the License is distributed on an \"AS IS\" BASIS,\n" +
 				"WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n" +
 				"See the License for the specific language governing permissions and\n" +
-				"limitations under the License.");
+				"limitations under the License.\n\n");
 
 		//Copyright 2019 Square, Inc. - OkHttp
 		TextView okHttpTv = new TextView(getApplicationContext());
@@ -47,7 +47,7 @@ public class LicenseActivity extends Activity {
 				"distributed under the License is distributed on an \"AS IS\" BASIS,\n" +
 				"WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n" +
 				"See the License for the specific language governing permissions and\n" +
-				"limitations under the License.");
+				"limitations under the License.\n\n");
 
 		//Copyright (C) 2015-2020 AppIntro Developers - AppIntro
 		TextView appIntroTV = new TextView(getApplicationContext());
@@ -64,12 +64,12 @@ public class LicenseActivity extends Activity {
 				"    distributed under the License is distributed on an \"AS IS\" BASIS,\n" +
 				"    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n" +
 				"    See the License for the specific language governing permissions and\n" +
-				"    limitations under the License.");
+				"    limitations under the License.\n\n");
 
 		//Copyright 2019 Square, Inc. - Groovy
 		TextView groovyTv = new TextView(getApplicationContext());
 		groovyTv.setTextColor(Color.BLACK);
-		groovyTv.setText("Groovy\n\nGroovy is licensed under the terms of the Apache License, Version 2.0");
+		groovyTv.setText("Groovy\n\nGroovy is licensed under the terms of the Apache License, Version 2.0\n\n");
 
 		//TODO: ZoomLayout, Airbnb/Lottie,
 
