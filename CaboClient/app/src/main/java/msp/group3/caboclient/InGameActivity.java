@@ -1481,6 +1481,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         updateText.setText("Select 2 of your cards to look at");
         peekButton.setEnabled(false);
         peekButton.setAlpha(0.3f);
+        tapPickCardAnimation.setVisibility(View.INVISIBLE);
         Log.d("-----------Card lookup", "initiating");
         nrCardsSelected = 0;
         deactivatePlayer1OnClickListeners();
@@ -2206,6 +2207,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 Player player = gson.fromJson(jsonString, Player.class);
                 caboplayer = player;
                 fadeCaboPlayerCardsAndShowAnimation(0.3f);
+                tapPickCardAnimation.setVisibility(View.INVISIBLE);
             }
         }
         if (jsonObject.has("endGame")) {
