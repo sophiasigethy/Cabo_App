@@ -71,7 +71,7 @@ public class FriendListAdapter extends ArrayAdapter {
         CircleImageView playerIcon = (CircleImageView) vi.findViewById(R.id.friendlist_image);
         playerIcon.setImageResource(myFriendList.get(i).getAvatarIcon());
         TextView player_nick = (TextView) vi.findViewById(R.id.friendlist_name);
-        player_nick.setText(myFriendList.get(i).getNick());
+        player_nick.setText(myFriendList.get(i).getNick()+" | Score: "+myFriendList.get(i).getGlobalScore());
         ImageView status = (ImageView) vi.findViewById(R.id.friendlist_status);
         if (myFriendList.get(i).getOnline()){
             status.setImageResource(R.drawable.online);
@@ -88,8 +88,8 @@ public class FriendListAdapter extends ArrayAdapter {
         } else {
             invite_btn.setImageResource(R.drawable.send);
             invite_btn.setBackgroundResource(R.drawable.zoom_button_bg);
-            invite_btn.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
             invite_btn.setPadding(8, 8, 8,8);
+            invite_btn.setScaleType(ImageButton.ScaleType.CENTER_INSIDE);
             invite_btn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

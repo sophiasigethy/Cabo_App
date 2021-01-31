@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
         me = DatabaseOperation.getDao().readPlayerFromSharedPrefs(sharedPref);
         //userNameTxt.setText("Welcome " + me.getNick());
 
-        playerName.setText(me.getNick());
+        playerName.setText(me.getNick()+" | "+me.getGlobalScore());
         playerImage.setImageResource(me.getAvatarIcon());
         startGameBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -486,6 +486,9 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
         if(party.size()>1){
             partySymbol.setVisibility(View.VISIBLE);
         }
+        for(TextView partymember : partyMemberTextviews){
+            partymember.setVisibility(View.INVISIBLE);
+        }
         if(party.size()<=1){
             partySymbol.setVisibility(View.INVISIBLE);
         }
@@ -493,9 +496,6 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
             partyMemberTextviews.get(i).setVisibility(View.VISIBLE);
             partyMemberTextviews.get(i).setText(party.get(i+1).getNick());
         }
-        /*for(int i= party.size()-1; i<3; i++){
-            partyMemberTextviews.get(i).setVisibility(View.INVISIBLE);
-        }*/
     }
 
     /**

@@ -150,8 +150,8 @@
                 android:layout_height="wrap_content">
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/player1_image_main"
-                android:layout_width="86dp"
-                android:layout_height="86dp"
+                android:layout_width="96dp"
+                android:layout_height="76dp"
                 android:padding="8dp"
                 android:src="@drawable/bobsled"
                 android:layout_gravity="center_horizontal"
@@ -176,7 +176,7 @@
                 android:textAlignment="center"
                 android:textSize="12sp"
                 android:textColor="@color/beige"
-                android:shadowColor="#2C613E"
+                android:shadowColor="@color/dark_purple"
                 android:shadowDx="2"
                 android:shadowDy="2"
                 android:shadowRadius="2"
