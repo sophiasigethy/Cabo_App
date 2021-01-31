@@ -340,9 +340,9 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
                 party.add(player);
                 updateFriendList(player, false);
                 String mes = player.getNick() + " was added to the party.";
-                showMessageForTesting(mes);
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
+                        showMessageForTesting(mes);
                         friendListAdapter.notifyDataSetChanged();
                         showPartyMembers();
                     }
