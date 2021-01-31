@@ -15,9 +15,18 @@
     </style>
 
     <style name="Theme.CaboClient.Launcher">
-    <item name="android:windowBackground">@drawable/game_bg</item>
-    <!-- Optional, on Android 5+ you can modify the colorPrimaryDark color to match the windowBackground color for further branding-->
-    <!-- <item name="colorPrimaryDark">@android:color/white</item> -->
+        <item name="android:windowBackground">@drawable/game_bg</item>
+        <!-- Optional, on Android 5+ you can modify the colorPrimaryDark color to match the windowBackground color for further branding-->
+        <!-- <item name="colorPrimaryDark">@android:color/white</item> -->
     </style>
+
+    <style name="Theme.CaboClient.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="Theme.CaboClient.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="Theme.CaboClient.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
 </resources>
