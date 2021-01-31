@@ -125,7 +125,6 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
                     Log.d("---------------PARTY", "me added to party");
                     friendListAdapter = new FriendListAdapter(activity, me, party, communicator);
                     friendList.setAdapter(friendListAdapter);
-                    //updateFriendList();
                 }
             });
             try {
@@ -297,6 +296,12 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
             removePlayerFromParty(player);
             String mes = player.getNick() + " joins no longer the party!.";
             showMessageForTesting(mes);
+            activity.runOnUiThread(new Runnable() {
+                public void run() {
+                    friendListAdapter.notifyDataSetChanged();
+                    showPartyMembers();
+                }
+            });
             //TODO reset party icon for this player
         }
         if (jsonObject.has("leaderRemovedFromParty")) {
@@ -311,9 +316,14 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
             party.clear();
             party.add(me);
             updateFriendList(player, false);
-            showPartyMembers();
             String mes = "Party leader " + player.getNick() + " left the party, so you can start a new party now!";
             showMessageForTesting(mes);
+            activity.runOnUiThread(new Runnable() {
+                public void run() {
+                    friendListAdapter.notifyDataSetChanged();
+                    showPartyMembers();
+                }
+            });
             //TODO reset party icon for this player
         }
 
@@ -329,9 +339,14 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
             if (!alreadyInParty(player)) {
                 party.add(player);
                 updateFriendList(player, false);
-                showPartyMembers();
                 String mes = player.getNick() + " was added to the party.";
                 showMessageForTesting(mes);
+                activity.runOnUiThread(new Runnable() {
+                    public void run() {
+                        friendListAdapter.notifyDataSetChanged();
+                        showPartyMembers();
+                    }
+                });
             }
             //TODO show  that player Leader has disconnected and party is empty
         }

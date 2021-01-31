@@ -86,6 +86,10 @@ public class FriendListAdapter extends ArrayAdapter {
             invite_btn.setImageResource(R.drawable.partyhat);
             invite_btn.setPadding(0, 0, 0,0);
         } else {
+            invite_btn.setImageResource(R.drawable.send);
+            invite_btn.setBackgroundResource(R.drawable.zoom_button_bg);
+            invite_btn.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+            invite_btn.setPadding(8, 8, 8,8);
             invite_btn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -95,11 +99,15 @@ public class FriendListAdapter extends ArrayAdapter {
                         try {
                             communicator.sendMessage(JSON_commands.sendPartyRequest(me, myFriendList.get(i)));
                             Log.e("SendPartyRequest", "Send Party Invitation");
+                            Toast.makeText(context, "Invitation sent to "+myFriendList.get(i).getNick(),
+                                    Toast.LENGTH_LONG).show();
                         } catch (JSONException e) {
                             Log.e("SendPartyRequest", "Could not send Party Invitation");
                         }
                     }else{
                         //TODO: Toast that already 4 people in the party
+                        Toast.makeText(context, "Your party is full",
+                                Toast.LENGTH_LONG).show();
                     }
                 }
             });
