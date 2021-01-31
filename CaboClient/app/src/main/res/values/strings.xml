@@ -55,5 +55,7 @@
     <string name="preference_all_users">all_users</string>
     <string name="settings">Settings</string>
     <string name="adjust_max_score">Adjust max Score:</string>
+    <string name="licenses">Licenses</string>
+    <string name="logout">Logout</string>
 
 </resources>

@@ -88,7 +88,9 @@ public class FriendListAdapter extends ArrayAdapter {
         } else {
             invite_btn.setImageResource(R.drawable.send);
             invite_btn.setBackgroundResource(R.drawable.zoom_button_bg);
-            invite_btn.setPadding(8, 8, 8,8);
+            float scale = context.getResources().getDisplayMetrics().density;
+            int dpAsPixels = (int) (8*scale + 0.5f);
+            invite_btn.setPadding(dpAsPixels, dpAsPixels, dpAsPixels,dpAsPixels);
             invite_btn.setScaleType(ImageButton.ScaleType.CENTER_INSIDE);
             invite_btn.setOnClickListener(new View.OnClickListener() {
                 @Override
