@@ -315,7 +315,6 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
             }
             party.clear();
             party.add(me);
-            updateFriendList(player, false);
             String mes = "Party leader " + player.getNick() + " left the party, so you can start a new party now!";
             showMessageForTesting(mes);
             activity.runOnUiThread(new Runnable() {
@@ -374,15 +373,19 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
 
 
     public void updateFriendList(Player sender, boolean isNewFriend) {
-        ArrayList<Player> friends = me.getFriendList();
-        if (!isNewFriend) {
-            //friends.remove(sender);
-            //friends.add(0, sender);
-        } else {
-            me.addNewFriend(sender, sharedPref);
-        }
-        me.setFriendList(friends);
-        friendListAdapter.notifyDataSetChanged();
+        activity.runOnUiThread(new Runnable() {
+            public void run() {
+                ArrayList<Player> friends = me.getFriendList();
+                if (!isNewFriend) {
+                    //friends.remove(sender);
+                    //friends.add(0, sender);
+                } else {
+                    me.addNewFriend(sender, sharedPref);
+                }
+                me.setFriendList(friends);
+                friendListAdapter.notifyDataSetChanged();
+            }
+        });
     }
 
     public void startMatching() {
