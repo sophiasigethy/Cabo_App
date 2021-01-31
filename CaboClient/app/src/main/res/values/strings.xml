@@ -12,7 +12,7 @@
     <string name="loading">Loading...</string>
 
     <!-- Login/Register Activity Strings -->
-    <string name="title_activity_login">Login</string>
+    <string name="title_activity_login">Cabo</string>
     <string name="title_activity_register">Register</string>
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
