@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -38,6 +39,7 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
     private TextView userNameTxt;
     private ImageButton startGameBtn;
     private ImageButton addFriendBtn;
+    private Button licenseBtn;
     private SharedPreferences sharedPref;
     private Activity activity;
     private FriendListAdapter friendListAdapter;
@@ -62,6 +64,7 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
         //playerScoreTextView = (TextView) findViewById(R.id.player1_score_textview_main);
         player1Status = (ImageView) findViewById(R.id.player1_status);
         partySymbol = (ImageView) findViewById(R.id.player1_party_side);
+        licenseBtn = (Button) findViewById(R.id.license_button);
         partySymbol.setVisibility(View.INVISIBLE);
         Collections.addAll(partyMemberTextviews, findViewById(R.id.player1_party_member1), findViewById(R.id.player1_party_member2), findViewById(R.id.player1_party_member3));
 
@@ -91,6 +94,13 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
             @Override
             public void onClick(View view) {
                 searchFriendDialog();
+            }
+        });
+        licenseBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(activity, LicenseActivity.class);
+                startActivity(intent);
             }
         });
         addFriendBtn.setEnabled(false);
