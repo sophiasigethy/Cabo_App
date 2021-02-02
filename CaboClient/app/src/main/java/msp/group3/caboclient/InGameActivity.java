@@ -1,10 +1,5 @@
 package msp.group3.caboclient;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.fragment.app.FragmentTransaction;
-
-
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
@@ -35,6 +30,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+
 import com.airbnb.lottie.LottieAnimationView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -48,7 +46,13 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import static msp.group3.caboclient.TypeDefs.*;
+import static msp.group3.caboclient.TypeDefs.angry;
+import static msp.group3.caboclient.TypeDefs.laughing;
+import static msp.group3.caboclient.TypeDefs.playing;
+import static msp.group3.caboclient.TypeDefs.shocked;
+import static msp.group3.caboclient.TypeDefs.smiling;
+import static msp.group3.caboclient.TypeDefs.tongueOut;
+import static msp.group3.caboclient.TypeDefs.waiting;
 
 /**
  * this is an example for a zoomable and scrollable layout
@@ -855,7 +859,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
 
     private void visualizeOtherPlayerCardGlows() {
         for (int i = 0; i < otherPlayers.size(); i++) {
-            if(playerOverviews.get(i+1).getVisibility()==View.VISIBLE){
+            if (playerOverviews.get(i + 1).getVisibility() == View.VISIBLE) {
                 otherPlayersCardGlows.get(i).setVisibility(View.VISIBLE);
                 growCardGlowAnimation(otherPlayersCardGlows.get(i));
             }
@@ -864,7 +868,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
 
     private void hideOtherPlayerCardGlows() {
         for (int i = 0; i < otherPlayers.size(); i++) {
-            if(playerOverviews.get(i+1).getVisibility()==View.VISIBLE) {
+            if (playerOverviews.get(i + 1).getVisibility() == View.VISIBLE) {
                 growCardGlowAnimationOut(otherPlayersCardGlows.get(i));
             }
         }
@@ -1403,17 +1407,17 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         }
     }
 
-    private void removePlayerWhoLeft(Player player){
+    private void removePlayerWhoLeft(Player player) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(getApplicationContext(), player.getNick()+" left the game", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), player.getNick() + " left the game", Toast.LENGTH_SHORT).show();
                 for (int i = 0; i < otherPlayers.size(); i++) {
-                    if(otherPlayers.get(i).getId() == player.getId()){
+                    if (otherPlayers.get(i).getId() == player.getId()) {
                         for (ImageButton card : otherPlayerButtonLists.get(i)) {
                             card.setVisibility(View.GONE);
                         }
-                        playerOverviews.get(i+1).setVisibility(View.GONE);
+                        playerOverviews.get(i + 1).setVisibility(View.GONE);
                     }
                 }
             }
@@ -2236,10 +2240,9 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 //TODO show that player has removed
                 //handle this: at the moment game ends
                 //leaveGame();
-                if(otherPlayers.size()>1){
+                if (otherPlayers.size() > 1) {
                     removePlayerWhoLeft(player);
-                }
-                else{
+                } else {
                     leaveGame();
                 }
             }
@@ -2250,15 +2253,15 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
     private void showPlayerRanks() {
         ArrayList<Player> tempPlayers = new ArrayList<>();
         tempPlayers.add(me);
-        for(Player player : otherPlayers){
+        for (Player player : otherPlayers) {
             tempPlayers.add(player);
         }
         tempPlayers.sort(Comparator.comparing(Player::getScore));
         playerRanks.get(0).setVisibility(View.VISIBLE);
-        playerRanks.get(0).setText("#"+(tempPlayers.indexOf(me)+1));
-        for(int i=0; i<otherPlayers.size(); i++){
-            playerRanks.get(i+1).setVisibility(View.VISIBLE);
-            playerRanks.get(i+1).setText("#"+(tempPlayers.indexOf(otherPlayers.get(i))+1));
+        playerRanks.get(0).setText("#" + (tempPlayers.indexOf(me) + 1));
+        for (int i = 0; i < otherPlayers.size(); i++) {
+            playerRanks.get(i + 1).setVisibility(View.VISIBLE);
+            playerRanks.get(i + 1).setText("#" + (tempPlayers.indexOf(otherPlayers.get(i)) + 1));
         }
     }
 
@@ -2522,10 +2525,11 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 if (winner.getId() == me.getId()) {
                     SharedPreferences sharedPref = getApplicationContext().getSharedPreferences(
                             R.string.preference_file_key + "", Context.MODE_PRIVATE);
-                    // TODO Make sure, that this is never a guest Account
-                    me.won(sharedPref);
-                    centerText.setVisibility(View.VISIBLE);
-                    centerText.setText("You won!");
+                    if (noAccount == null) {
+                        me.won(sharedPref);
+                        centerText.setVisibility(View.VISIBLE);
+                        centerText.setText("You won!");
+                    }
                 } else {
                     centerText.setVisibility(View.VISIBLE);
                     centerText.setText(winner.getName() + " won!");
@@ -2565,7 +2569,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
     }
 
     @Override
-    protected void onDestroy () {
+    protected void onDestroy() {
 
         super.onDestroy();
 
