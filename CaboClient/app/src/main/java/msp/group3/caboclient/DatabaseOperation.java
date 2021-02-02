@@ -122,6 +122,23 @@ public class DatabaseOperation {
     }
 
     /**
+     * This function updates the DB entries of a user
+     *
+     * @param player:     The Player to add to the Firebase Realtime DB
+     * @return: True, if everything is fine
+     * False, if nickname already in use
+     */
+    public void updatePlayer(Player player) {
+        ArrayList<Player> friendList = player.getFriendList();
+        player.setFriendList(new ArrayList<>());
+        getUserRef(player.getDbID()).setValue(player);
+        player.setFriendList(friendList);
+        for (Player friend : friendList)    {
+            getUserRef(player.getDbID()).child("friendList").child(friend.getDbID()).setValue(friend);
+        }
+    }
+
+    /**
      * To read from Firebase Realtime database, you have to add a ValueEventListener to a DB-Reference
      * Each time values at the reference change, the Listener is called. But since we only need to read it once
      * we add a ListenerForSingleValueEvent.

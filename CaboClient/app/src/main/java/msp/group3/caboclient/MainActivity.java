@@ -257,6 +257,7 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
                 String jsonString = js.get("player").toString();
                 Gson gson = new Gson();
                 player = gson.fromJson(jsonString, Player.class);
+                player.setOnline(isOnline);
             }
 
             Log.d("-----------------ONLINE STATUS", player.getName() + " sendStatus: " + isOnline);
@@ -274,12 +275,14 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
                     public void run() {
 
                         int index = indexInFriendList(finalPlayer);
-                        Player changedPlayer = me.getFriendList().get(index);
-                        me.getFriendList().get(index).setOnline(finalIsOnline);
-                        Log.d("-----------------ONLINE STATUS", "friendlist size: " + me.getFriendList().size());
-                        Log.d("-----------------ONLINE STATUS", "friend set online: " + me.getFriendList().get(indexInFriendList(finalPlayer)).getName());
-
-                        friendListAdapter.notifyDataSetChanged();
+                        if (index != 1000) {
+                            me.getFriendList().set(index, finalPlayer);
+                            Log.d("-----------------ONLINE STATUS", "friendlist size: " + me.getFriendList().size());
+                            Log.d("-----------------ONLINE STATUS", "friend set online: " + me.getFriendList().get(indexInFriendList(finalPlayer)).getName());
+                            friendListAdapter.notifyDataSetChanged();
+                            DatabaseOperation.getDao().updatePlayer(me);
+                            DatabaseOperation.getDao().writePlayerToSharedPref(me, sharedPref);
+                        }
                     }
                 });
             }
