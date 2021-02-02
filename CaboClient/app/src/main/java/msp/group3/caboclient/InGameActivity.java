@@ -2522,6 +2522,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 if (winner.getId() == me.getId()) {
                     SharedPreferences sharedPref = getApplicationContext().getSharedPreferences(
                             R.string.preference_file_key + "", Context.MODE_PRIVATE);
+                    // TODO Make sure, that this is never a guest Account
                     me.won(sharedPref);
                     centerText.setVisibility(View.VISIBLE);
                     centerText.setText("You won!");
