@@ -47,7 +47,7 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
     private boolean isParty = false;
     private androidx.fragment.app.FragmentContainerView settingsFragmentContainer;
     private ImageButton settingsButton;
-
+    private Intent musicService;
 
 
     private String mMessage = "";
@@ -71,6 +71,7 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
         setContentView(R.layout.activity_waiting_room);
         sharedPref = getApplicationContext().getSharedPreferences(
                 R.string.preference_file_key + "", Context.MODE_PRIVATE);
+        musicService = new Intent(this, BackgroundSoundService.class);
 
         editText = (EditText) findViewById(R.id.editText);
         sendButton = (ImageButton) findViewById(R.id.send_button);
@@ -136,11 +137,10 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
         settingsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(!settingsButton.isSelected()){
+                if (!settingsButton.isSelected()) {
                     settingsFragmentContainer.setVisibility(View.VISIBLE);
                     settingsButton.setSelected(true);
-                }
-                else{
+                } else {
                     settingsFragmentContainer.setVisibility(View.INVISIBLE);
                     settingsButton.setSelected(false);
                 }
@@ -616,7 +616,6 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
             communicator.sendMessage(JSON_commands.startGameForAll("start"));
         } else {
             communicator.sendMessage(JSON_commands.askForStart());
-
         }
     }
 
@@ -728,5 +727,4 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
         }
         return nicks;
     }
-
 }

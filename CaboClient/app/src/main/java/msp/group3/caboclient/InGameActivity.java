@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Point;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -32,6 +33,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.google.gson.Gson;
@@ -62,6 +64,8 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
     private static final String TAG_SETTINGS = "settings_fragment";
     protected WebSocketClient webSocketClient;
     private Communicator communicator;
+    private Intent musicService;
+    private SharedPreferences sharedPref;
 
     private com.otaliastudios.zoom.ZoomLayout zoomLayout;
 
@@ -145,6 +149,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
 
     private boolean initialRound = true;
     private Player caboplayer = null;
+    private MediaPlayer soundPlayer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -152,6 +157,22 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.ingame_activity);
+
+        sharedPref = getApplicationContext().getSharedPreferences(
+                R.string.preference_file_key + "", Context.MODE_PRIVATE);
+        musicService = new Intent(this, BackgroundSoundService.class);
+        musicService.putExtra("song", 2);
+        if (DatabaseOperation.getDao().getMusicPlaying(sharedPref).equals("Play"))  {
+            //musicBtn.setBackground(ContextCompat.getDrawable(activity, R.drawable.music_on));
+            startService(musicService);
+        } else {
+            //musicBtn.setBackground(ContextCompat.getDrawable(activity, R.drawable.music_off));
+        }
+        if (DatabaseOperation.getDao().getSoundsPlaying(sharedPref).equals("Play"))  {
+            //musicBtn.setBackground(ContextCompat.getDrawable(activity, R.drawable.music_on));
+        } else {
+            //musicBtn.setBackground(ContextCompat.getDrawable(activity, R.drawable.music_off));
+        }
 
         //link layout
         zoomLayout = (com.otaliastudios.zoom.ZoomLayout) findViewById(R.id.zoomlayout);
@@ -249,7 +270,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
+        playSound(R.raw.shuffle);
     }
 
     @Override
@@ -303,6 +324,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         caboButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                playSound(R.raw.cabo);
                 try {
                     webSocketClient.send(String.valueOf(JSON_commands.sendCabo("cabo")));
                     webSocketClient.send(String.valueOf(JSON_commands.sendFinishMove("finish")));
@@ -749,6 +771,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
 
         if (overlay != null) {
             overlay.setVisibility(View.VISIBLE);
+            playSound(R.raw.action_card);
         }
 
         new CountDownTimer(2000, 1000) {
@@ -939,6 +962,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                playSound(R.raw.draw_card);
                 pickedCardBigImageview.setImageResource(R.drawable.card_back);
                 pickedCardButtonContainer.setVisibility(View.VISIBLE);
                 final ObjectAnimator oa1 = ObjectAnimator.ofFloat(pickedCardBigImageview, "scaleX", 1f, 0f);
@@ -1018,6 +1042,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        playSound(R.raw.card_played);
                         hideHint();
                         pickCardsStackButton.setEnabled(false);
                         growCardGlowAnimationOut(player1CardsGlow);
@@ -1396,6 +1421,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
 
     private void deactivateCaboPlayer() {
         if (caboplayer != null) {
+            playSound(R.raw.cabo);
             for (int i = 0; i < otherPlayers.size(); i++) {
                 if (otherPlayers.get(i).getId() == caboplayer.getId()) {
                     for (ImageButton card : otherPlayerButtonLists.get(i)) {
@@ -1553,6 +1579,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         if (spiedOnPlayer.getId() == me.getId()) {
             ImageButton cardButton = player1CardButtons.get(getCardIndex(me, card));
             updateText.setText("You are being spied on");
+            playSound(R.raw.spy_action);
             cardButton.setImageResource(R.drawable.card_spied);
             new CountDownTimer(10000, 1000) {
 
@@ -1571,6 +1598,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             ImageButton cardButton = otherPlayerButtonLists.get(playerIndex).get(cardIndex);
             cardButton.setImageResource(R.drawable.card_spied);
             updateText.setText(spiedOnPlayer.getName() + " is being spied on");
+            playSound(R.raw.spy_action);
             new CountDownTimer(10000, 1000) {
 
                 public void onTick(long millisUntilFinished) {
@@ -1798,6 +1826,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                     fragment_obj.scrollMyListViewToBottom();
                     if (chatFragmentContainer.getVisibility() == View.INVISIBLE) {
                         chatNotificationBubble.setVisibility(View.VISIBLE);
+                        playSound(R.raw.notification);
                     }
                 }
             });
@@ -1908,6 +1937,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                         updateText.setText("Pick a card");
                         tapPickCardAnimation.setVisibility(View.VISIBLE);
                         pickCardsStackButton.setEnabled(true);
+                        playSound(R.raw.your_turn);
                     }
                 });
             } else {
@@ -2523,12 +2553,11 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
 
                 cardSwapBg.setVisibility(View.VISIBLE);
                 if (winner.getId() == me.getId()) {
-                    SharedPreferences sharedPref = getApplicationContext().getSharedPreferences(
-                            R.string.preference_file_key + "", Context.MODE_PRIVATE);
                     if (noAccount == null) {
                         me.won(sharedPref);
                         centerText.setVisibility(View.VISIBLE);
                         centerText.setText("You won!");
+                        playSound(R.raw.champion);
                     }
                 } else {
                     centerText.setVisibility(View.VISIBLE);
@@ -2568,10 +2597,55 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         noAccount = NO_LOGIN;
     }
 
+    public void playSound(int sound) {
+        if (DatabaseOperation.getDao().getSoundsPlaying(sharedPref).equals("Play")) {
+            if (soundPlayer != null) {
+                soundPlayer.stop();
+                soundPlayer.release();
+            }
+            if (sound == R.raw.spy_action) {
+
+            }
+            soundPlayer = MediaPlayer.create(this, sound);
+            soundPlayer.setOnSeekCompleteListener(new MediaPlayer.OnSeekCompleteListener() {
+                @Override
+                public void onSeekComplete(MediaPlayer mediaPlayer) {
+                    soundPlayer.stop();
+                    soundPlayer.release();
+                }
+            });
+            soundPlayer.setVolume(90, 90);
+            soundPlayer.start();
+        }
+    }
+
     @Override
     protected void onDestroy() {
-
         super.onDestroy();
+    }
+
+    /**
+     * Dispatch onPause() to fragments.
+     */
+    @Override
+    protected void onPause() {
+        super.onPause();
+        stopService(musicService);
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        musicService = new Intent(this, BackgroundSoundService.class);
+        musicService.putExtra("song", 2);
+        if (DatabaseOperation.getDao().getMusicPlaying(sharedPref).equals("Play"))  {
+            //musicBtn.setBackground(ContextCompat.getDrawable(activity, R.drawable.music_on));
+            startService(musicService);
+        } else {
+            //musicBtn.setBackground(ContextCompat.getDrawable(activity, R.drawable.music_off));
+        }
 
     }
+
+
 }
