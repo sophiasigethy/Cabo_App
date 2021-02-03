@@ -2598,6 +2598,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 } else {
                     centerText.setVisibility(View.VISIBLE);
                     centerText.setText(winner.getName() + " won!");
+                    playSound(R.raw.loser);
                 }
 
                 endGameReturnButton.setOnClickListener(new View.OnClickListener() {
