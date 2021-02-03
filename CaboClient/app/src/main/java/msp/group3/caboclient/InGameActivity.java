@@ -67,6 +67,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
     private Intent musicService;
     private SharedPreferences sharedPref;
     private Activity activity;
+    private boolean caboCalled=false;
 
     private com.otaliastudios.zoom.ZoomLayout zoomLayout;
 
@@ -1458,7 +1459,6 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
 
     private void deactivateCaboPlayer() {
         if (caboplayer != null) {
-            playSound(R.raw.cabo);
             for (int i = 0; i < otherPlayers.size(); i++) {
                 if (otherPlayers.get(i).getId() == caboplayer.getId()) {
                     for (ImageButton card : otherPlayerButtonLists.get(i)) {
@@ -2151,7 +2151,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-
+                        playSound(R.raw.spy_action);
                         Handler handler = new Handler();
                         handler.postDelayed(new Runnable() {
                             public void run() {
@@ -2166,7 +2166,6 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                     }
                 });
             }
-
         }
         if (jsonObject.has("useFunctionalitySwap")) {
 
@@ -2278,6 +2277,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 caboplayer = player;
                 fadeCaboPlayerCardsAndShowAnimation(0.3f);
                 tapPickCardAnimation.setVisibility(View.INVISIBLE);
+                playSound(R.raw.cabo);
             }
         }
         if (jsonObject.has("endGame")) {
@@ -2637,11 +2637,18 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
     public void playSound(int sound) {
         if (DatabaseOperation.getDao().getSoundsPlaying(sharedPref).equals("Play")) {
             if (soundPlayer != null) {
-                soundPlayer.stop();
-                soundPlayer.release();
+                if (!caboCalled) {
+                    soundPlayer.stop();
+                    soundPlayer.release();
+                }
             }
             if (sound == R.raw.spy_action) {
 
+            }
+            if (sound == R.raw.cabo) {
+                caboCalled = true;
+            } else {
+                caboCalled = false;
             }
             soundPlayer = MediaPlayer.create(this, sound);
             soundPlayer.setOnSeekCompleteListener(new MediaPlayer.OnSeekCompleteListener() {

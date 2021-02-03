@@ -538,6 +538,7 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
                                 communicator.sendMessage(
                                         JSON_commands.sendPartyAccepted(me, sender));
                                 requestDialog.getDialog().dismiss();
+                                playSound(R.raw.party_joined);
                             } catch (JSONException e) {
                                 e.printStackTrace();
                                 player1Status.setImageResource(R.drawable.offline);
