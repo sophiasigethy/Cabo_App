@@ -91,7 +91,7 @@
                 android:id="@+id/tap_pick_animationView"
                 android:layout_width="180dp"
                 android:layout_height="180dp"
-                app:lottie_rawRes="@raw/select"
+                app:lottie_rawRes="@raw/select_sound"
                 app:lottie_autoPlay="true"
                 app:lottie_loop="true"
                 app:layout_constraintTop_toTopOf="@id/pick_card_imageButton"

@@ -124,21 +124,21 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
         startGameBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                playSound(R.raw.select);
+                playSound(R.raw.select_sound);
                 startMatching();
             }
         });
         addFriendBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                playSound(R.raw.select);
+                playSound(R.raw.select_sound);
                 searchFriendDialog();
             }
         });
         musicBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                playSound(R.raw.select);
+                playSound(R.raw.select_sound);
                 String musicState=DatabaseOperation.getDao().getMusicPlaying(sharedPref);
                 if (musicState.equals("Play"))  {
                     stopService(musicService);
@@ -154,7 +154,7 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
         soundBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                playSound(R.raw.select);
+                playSound(R.raw.select_sound);
                 String soundState=DatabaseOperation.getDao().getSoundsPlaying(sharedPref);
                 if (soundState.equals("Play"))  {
                     DatabaseOperation.getDao().setSoundPlaying("Stop", sharedPref);
@@ -168,7 +168,7 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
         settingsBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                playSound(R.raw.select);
+                playSound(R.raw.select_sound);
                 Intent intent = new Intent(activity, LicenseActivity.class);
                 startActivity(intent);
             }
