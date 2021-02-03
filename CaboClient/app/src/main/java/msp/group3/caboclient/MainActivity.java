@@ -84,17 +84,6 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
         }
         sharedPref = getApplicationContext().getSharedPreferences(
                 R.string.preference_file_key + "", Context.MODE_PRIVATE);
-        ServiceConnection mServerConn = new ServiceConnection() {
-            @Override
-            public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-                Log.d("MUSIC-SERVICE", "Service Connected");
-            }
-
-            @Override
-            public void onServiceDisconnected(ComponentName componentName) {
-                Log.d("MUSIC-SERVICE", "Service Disconnected");
-            }
-        };
         musicService = new Intent(this, BackgroundSoundService.class);
         musicService.putExtra("song", 1);
         if (DatabaseOperation.getDao().getMusicPlaying(sharedPref).equals("Play"))  {
@@ -306,7 +295,6 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
             Player finalSender = sender;
             runOnUiThread(new Runnable() {
                 public void run() {
-
                     party.add(finalSender);
                     updateFriendList(finalSender, false);
                     showPartyMembers();

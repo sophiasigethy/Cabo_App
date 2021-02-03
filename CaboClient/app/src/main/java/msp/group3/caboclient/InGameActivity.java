@@ -33,6 +33,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.google.gson.Gson;
@@ -65,12 +66,15 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
     private Communicator communicator;
     private Intent musicService;
     private SharedPreferences sharedPref;
+    private Activity activity;
 
     private com.otaliastudios.zoom.ZoomLayout zoomLayout;
 
     private ImageButton chatButton;
     private ImageView chatNotificationBubble;
     private ImageButton leaveGameButton;
+    private ImageButton musicBtn;
+    private ImageButton soundBtn;
     private Button caboButton;
     private ImageButton zoomButton;
     private Button peekButton;
@@ -156,22 +160,56 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.ingame_activity);
+        activity = this;
 
+        //Setup Sounds & Music
         sharedPref = getApplicationContext().getSharedPreferences(
                 R.string.preference_file_key + "", Context.MODE_PRIVATE);
         musicService = new Intent(this, BackgroundSoundService.class);
         musicService.putExtra("song", 2);
+        musicBtn = (ImageButton) findViewById(R.id.music_button);
+        soundBtn = (ImageButton) findViewById(R.id.sound_button);
         if (DatabaseOperation.getDao().getMusicPlaying(sharedPref).equals("Play")) {
-            //musicBtn.setBackground(ContextCompat.getDrawable(activity, R.drawable.music_on));
+            musicBtn.setBackground(ContextCompat.getDrawable(this, R.drawable.music_on));
             startService(musicService);
         } else {
-            //musicBtn.setBackground(ContextCompat.getDrawable(activity, R.drawable.music_off));
+            musicBtn.setBackground(ContextCompat.getDrawable(this, R.drawable.music_off));
         }
         if (DatabaseOperation.getDao().getSoundsPlaying(sharedPref).equals("Play")) {
-            //musicBtn.setBackground(ContextCompat.getDrawable(activity, R.drawable.music_on));
+            soundBtn.setBackground(ContextCompat.getDrawable(this, R.drawable.sound_on));
         } else {
-            //musicBtn.setBackground(ContextCompat.getDrawable(activity, R.drawable.music_off));
+            soundBtn.setBackground(ContextCompat.getDrawable(this, R.drawable.sound_off));
         }
+        musicBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                playSound(R.raw.select_sound);
+                String musicState=DatabaseOperation.getDao().getMusicPlaying(sharedPref);
+                if (musicState.equals("Play"))  {
+                    stopService(musicService);
+                    DatabaseOperation.getDao().setMusicPlaying("Stop", sharedPref);
+                    musicBtn.setBackground(ContextCompat.getDrawable(activity, R.drawable.music_off));
+                } else {
+                    startService(musicService);
+                    DatabaseOperation.getDao().setMusicPlaying("Play", sharedPref);
+                    musicBtn.setBackground(ContextCompat.getDrawable(activity, R.drawable.music_on));
+                }
+            }
+        });
+        soundBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                playSound(R.raw.select_sound);
+                String soundState=DatabaseOperation.getDao().getSoundsPlaying(sharedPref);
+                if (soundState.equals("Play"))  {
+                    DatabaseOperation.getDao().setSoundPlaying("Stop", sharedPref);
+                    soundBtn.setBackground(ContextCompat.getDrawable(activity, R.drawable.sound_off));
+                } else {
+                    DatabaseOperation.getDao().setSoundPlaying("Play", sharedPref);
+                    soundBtn.setBackground(ContextCompat.getDrawable(activity, R.drawable.sound_on));
+                }
+            }
+        });
 
         //link layout
         zoomLayout = (com.otaliastudios.zoom.ZoomLayout) findViewById(R.id.zoomlayout);
