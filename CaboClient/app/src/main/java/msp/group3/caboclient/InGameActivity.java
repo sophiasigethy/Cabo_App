@@ -33,7 +33,6 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.content.ContextCompat;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.google.gson.Gson;
@@ -162,13 +161,13 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 R.string.preference_file_key + "", Context.MODE_PRIVATE);
         musicService = new Intent(this, BackgroundSoundService.class);
         musicService.putExtra("song", 2);
-        if (DatabaseOperation.getDao().getMusicPlaying(sharedPref).equals("Play"))  {
+        if (DatabaseOperation.getDao().getMusicPlaying(sharedPref).equals("Play")) {
             //musicBtn.setBackground(ContextCompat.getDrawable(activity, R.drawable.music_on));
             startService(musicService);
         } else {
             //musicBtn.setBackground(ContextCompat.getDrawable(activity, R.drawable.music_off));
         }
-        if (DatabaseOperation.getDao().getSoundsPlaying(sharedPref).equals("Play"))  {
+        if (DatabaseOperation.getDao().getSoundsPlaying(sharedPref).equals("Play")) {
             //musicBtn.setBackground(ContextCompat.getDrawable(activity, R.drawable.music_on));
         } else {
             //musicBtn.setBackground(ContextCompat.getDrawable(activity, R.drawable.music_off));
@@ -1885,7 +1884,6 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                     }
                 });
             }
-
         }
 
         if (jsonObject.has("initialOtherPlayer")) {
@@ -2634,11 +2632,11 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
     }
 
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
         musicService = new Intent(this, BackgroundSoundService.class);
         musicService.putExtra("song", 2);
-        if (DatabaseOperation.getDao().getMusicPlaying(sharedPref).equals("Play"))  {
+        if (DatabaseOperation.getDao().getMusicPlaying(sharedPref).equals("Play")) {
             //musicBtn.setBackground(ContextCompat.getDrawable(activity, R.drawable.music_on));
             startService(musicService);
         } else {

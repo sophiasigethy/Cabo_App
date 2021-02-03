@@ -91,7 +91,7 @@
                 android:id="@+id/tap_pick_animationView"
                 android:layout_width="180dp"
                 android:layout_height="180dp"
-                app:lottie_rawRes="@raw/select_sound"
+                app:lottie_rawRes="@raw/select"
                 app:lottie_autoPlay="true"
                 app:lottie_loop="true"
                 app:layout_constraintTop_toTopOf="@id/pick_card_imageButton"
@@ -1357,7 +1357,6 @@
         android:layout_margin="12dp"
         android:background="@drawable/music_on"
         android:padding="8dp"
-        app:srcCompat="@drawable/exit"
         android:scaleType="centerInside"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/chat_button" />
@@ -1369,7 +1368,6 @@
         android:layout_margin="12dp"
         android:background="@drawable/sound_on"
         android:padding="8dp"
-        app:srcCompat="@drawable/exit"
         android:scaleType="centerInside"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/music_button" />
