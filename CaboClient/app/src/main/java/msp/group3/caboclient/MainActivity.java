@@ -592,13 +592,11 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
     @Override
     protected void onPause() {
         super.onPause();
-        /*
         try {
             communicator.sendMessage(JSON_commands.sendLogout());
         } catch (JSONException e) {
             Log.e("LOGOUT", "Could not send logout to server");
         }
-        */
         stopService(musicService);
     }
 
