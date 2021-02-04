@@ -125,7 +125,7 @@
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/player2_cards"
-                app:srcCompat="@drawable/outlined_button" />
+                app:srcCompat="@drawable/rounded_button" />
 
             <com.airbnb.lottie.LottieAnimationView
                 android:id="@+id/hint_arrow_card_stack"
@@ -893,9 +893,9 @@
         android:id="@+id/player3_stats_game"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        android:translationY="30dp"
-        android:translationX="-10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:translationY="-140dp"
+        android:translationX="-40dp"
         android:layout_margin="16dp"
         app:layout_constraintLeft_toLeftOf="parent">
 
@@ -909,7 +909,6 @@
             app:layout_constraintLeft_toLeftOf="parent"
             android:text="Score: 43"
             android:textSize="10sp"
-            android:translationY="10dp"
             android:textColor="@color/beige"
             android:textAlignment="center"
             android:layout_marginBottom="12dp"
@@ -1002,10 +1001,10 @@
         android:id="@+id/player4_stats_game"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        android:translationY="30dp"
-        android:translationX="60dp"
+        android:translationY="-140dp"
+        android:translationX="70dp"
         android:layout_margin="16dp">
 
 
@@ -1018,7 +1017,6 @@
             app:layout_constraintLeft_toLeftOf="parent"
             android:text="Score: 43"
             android:textSize="10sp"
-            android:translationY="10dp"
             android:textColor="@color/beige"
             android:textAlignment="center"
             android:layout_marginBottom="12dp"
