@@ -124,7 +124,7 @@ public class DatabaseOperation {
     /**
      * This function updates the DB entries of a user
      *
-     * @param player:     The Player to add to the Firebase Realtime DB
+     * @param player: The Player to add to the Firebase Realtime DB
      * @return: True, if everything is fine
      * False, if nickname already in use
      */
@@ -133,7 +133,7 @@ public class DatabaseOperation {
         player.setFriendList(new ArrayList<>());
         getUserRef(player.getDbID()).setValue(player);
         player.setFriendList(friendList);
-        for (Player friend : friendList)    {
+        for (Player friend : friendList) {
             getUserRef(player.getDbID()).child("friendList").child(friend.getDbID()).setValue(friend);
         }
     }
@@ -326,6 +326,40 @@ public class DatabaseOperation {
             return gson.fromJson(sharedPref.getString(preferenceKey, ""), classType);
         }
         return null;
+    }
+
+    public String getMusicPlaying(SharedPreferences sharedPref) {
+        String preferenceKey = String.valueOf(R.string.preference_music);
+        if (sharedPref.contains(preferenceKey)) {
+            return sharedPref.getString(preferenceKey, "NONE");
+        }
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(String.valueOf(R.string.preference_music), "Play");
+        editor.apply();
+        return "Play";
+    }
+
+    public void setMusicPlaying(String playStop, SharedPreferences sharedPref) {
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(String.valueOf(R.string.preference_music), playStop);
+        editor.apply();
+    }
+
+    public String getSoundsPlaying(SharedPreferences sharedPref) {
+        String preferenceKey = String.valueOf(R.string.preference_sound);
+        if (sharedPref.contains(preferenceKey)) {
+            return sharedPref.getString(preferenceKey, "NONE");
+        }
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(String.valueOf(R.string.preference_sound), "Play");
+        editor.apply();
+        return "Play";
+    }
+
+    public void setSoundPlaying(String playStop, SharedPreferences sharedPref) {
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(String.valueOf(R.string.preference_sound), playStop);
+        editor.apply();
     }
 
     public DatabaseReference getUserRef(String dbID) {

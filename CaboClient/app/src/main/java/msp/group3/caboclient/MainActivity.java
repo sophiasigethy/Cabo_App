@@ -2,10 +2,14 @@ package msp.group3.caboclient;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -16,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import com.google.gson.Gson;
 
@@ -39,7 +44,9 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
     private TextView userNameTxt;
     private ImageButton startGameBtn;
     private ImageButton addFriendBtn;
-    private Button licenseBtn;
+    private ImageButton musicBtn;
+    private ImageButton soundBtn;
+    private ImageButton settingsBtn;
     private SharedPreferences sharedPref;
     private Activity activity;
     private FriendListAdapter friendListAdapter;
@@ -49,6 +56,8 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
     ImageView partySymbol;
     ArrayList<TextView> partyMemberTextviews = new ArrayList<>();
     ImageView player1Status;
+    Intent musicService;
+    private MediaPlayer soundPlayer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +73,9 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
         //playerScoreTextView = (TextView) findViewById(R.id.player1_score_textview_main);
         player1Status = (ImageView) findViewById(R.id.player1_status);
         partySymbol = (ImageView) findViewById(R.id.player1_party_side);
-        licenseBtn = (Button) findViewById(R.id.license_button);
+        musicBtn = (ImageButton) findViewById(R.id.music_button);
+        soundBtn = (ImageButton) findViewById(R.id.sound_button);
+        settingsBtn = (ImageButton) findViewById(R.id.settings_button);
         partySymbol.setVisibility(View.INVISIBLE);
         Collections.addAll(partyMemberTextviews, findViewById(R.id.player1_party_member1), findViewById(R.id.player1_party_member2), findViewById(R.id.player1_party_member3));
 
@@ -73,6 +84,21 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
         }
         sharedPref = getApplicationContext().getSharedPreferences(
                 R.string.preference_file_key + "", Context.MODE_PRIVATE);
+        musicService = new Intent(this, BackgroundSoundService.class);
+        musicService.putExtra("song", 1);
+        if (DatabaseOperation.getDao().getMusicPlaying(sharedPref).equals("Play"))  {
+            musicBtn.setImageResource(R.drawable.music_on);
+            startService(musicService);
+            //bindService(musicService, mServerConn, Context.BIND_AUTO_CREATE);
+        } else {
+            musicBtn.setBackground(ContextCompat.getDrawable(activity, R.drawable.music_off));
+        }
+        if (DatabaseOperation.getDao().getSoundsPlaying(sharedPref).equals("Play"))  {
+            soundBtn.setImageResource(R.drawable.sound_on);
+            //startService(musicService);
+        } else {
+            soundBtn.setImageResource(R.drawable.sound_off);
+        }
 
         //connects to server
         communicator = Communicator.getInstance(this);
@@ -87,18 +113,51 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
         startGameBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                playSound(R.raw.select_sound);
                 startMatching();
             }
         });
         addFriendBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                playSound(R.raw.select_sound);
                 searchFriendDialog();
             }
         });
-        licenseBtn.setOnClickListener(new View.OnClickListener() {
+        musicBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                playSound(R.raw.select_sound);
+                String musicState=DatabaseOperation.getDao().getMusicPlaying(sharedPref);
+                if (musicState.equals("Play"))  {
+                    stopService(musicService);
+                    DatabaseOperation.getDao().setMusicPlaying("Stop", sharedPref);
+                    musicBtn.setImageResource(R.drawable.music_off);
+                } else {
+                    startService(musicService);
+                    DatabaseOperation.getDao().setMusicPlaying("Play", sharedPref);
+                    musicBtn.setImageResource(R.drawable.music_on);
+                }
+            }
+        });
+        soundBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                playSound(R.raw.select_sound);
+                String soundState=DatabaseOperation.getDao().getSoundsPlaying(sharedPref);
+                if (soundState.equals("Play"))  {
+                    DatabaseOperation.getDao().setSoundPlaying("Stop", sharedPref);
+                    soundBtn.setImageResource(R.drawable.sound_off);
+                } else {
+                    DatabaseOperation.getDao().setSoundPlaying("Play", sharedPref);
+                    soundBtn.setImageResource(R.drawable.sound_on);
+                }
+            }
+        });
+        settingsBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                playSound(R.raw.select_sound);
                 Intent intent = new Intent(activity, LicenseActivity.class);
                 startActivity(intent);
             }
@@ -236,10 +295,10 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
             Player finalSender = sender;
             runOnUiThread(new Runnable() {
                 public void run() {
-
                     party.add(finalSender);
                     updateFriendList(finalSender, false);
                     showPartyMembers();
+                    playSound(R.raw.party_joined);
                 }
             });
 
@@ -479,6 +538,7 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
                                 communicator.sendMessage(
                                         JSON_commands.sendPartyAccepted(me, sender));
                                 requestDialog.getDialog().dismiss();
+                                playSound(R.raw.party_joined);
                             } catch (JSONException e) {
                                 e.printStackTrace();
                                 player1Status.setImageResource(R.drawable.offline);
@@ -538,13 +598,21 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
         } catch (JSONException e) {
             Log.e("LOGOUT", "Could not send logout to server");
         }
-        //TODO: Remove Connection
+        stopService(musicService);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        //TODO: Establish Connection
+        musicService = new Intent(this, BackgroundSoundService.class);
+        musicService.putExtra("song", 1);
+        if (DatabaseOperation.getDao().getMusicPlaying(sharedPref).equals("Play"))  {
+            //musicBtn.setBackground(ContextCompat.getDrawable(activity, R.drawable.music_on));
+            startService(musicService);
+        } else {
+            //musicBtn.setBackground(ContextCompat.getDrawable(activity, R.drawable.music_off));
+        }
+
     }
 
     public boolean isPlayerInFriendList(Player player) {
@@ -591,5 +659,24 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
             }
         }
         return false;
+    }
+
+    public void playSound(int sound) {
+        if (DatabaseOperation.getDao().getSoundsPlaying(sharedPref).equals("Play")) {
+            if (soundPlayer != null) {
+                soundPlayer.stop();
+                soundPlayer.release();
+            }
+            soundPlayer = MediaPlayer.create(this, sound);
+            soundPlayer.setOnSeekCompleteListener(new MediaPlayer.OnSeekCompleteListener() {
+                @Override
+                public void onSeekComplete(MediaPlayer mediaPlayer) {
+                    soundPlayer.stop();
+                    soundPlayer.release();
+                }
+            });
+            soundPlayer.setVolume(90, 90);
+            soundPlayer.start();
+        }
     }
 }

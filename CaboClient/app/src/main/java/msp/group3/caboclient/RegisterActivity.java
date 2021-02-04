@@ -123,6 +123,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                                 editor.putString(String.valueOf(R.string.preference_usernick), player.getNick());
                                 editor.putString(String.valueOf(R.string.preference_useravatar), player.getAvatarID() + "");
                                 editor.putString(String.valueOf(R.string.preference_global_score), player.getGlobalScore() + "");
+                                editor.putString(String.valueOf(R.string.preference_music),  "Play");
+                                editor.putString(String.valueOf(R.string.preference_sound),  "Play");
                                 editor.apply();
                                 moveToMainActivity();
                             } else {

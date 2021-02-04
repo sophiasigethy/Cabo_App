@@ -1350,6 +1350,30 @@
         app:srcCompat="@drawable/notification_circle"
         app:layout_constraintTop_toTopOf="@id/chat_button"/>
 
+    <ImageButton
+        android:id="@+id/music_button"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_margin="12dp"
+        app:srcCompat="@drawable/music_on"
+        android:background="@drawable/zoom_button_bg"
+        android:padding="8dp"
+        android:scaleType="centerInside"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent" />
+
+    <ImageButton
+        android:id="@+id/sound_button"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_margin="12dp"
+        app:srcCompat="@drawable/sound_on"
+        android:background="@drawable/zoom_button_bg"
+        android:padding="8dp"
+        android:scaleType="centerInside"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/music_button" />
+
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragment_chat"
         android:layout_width="500dp"
