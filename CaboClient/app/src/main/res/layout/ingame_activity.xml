@@ -1355,22 +1355,24 @@
         android:layout_width="36dp"
         android:layout_height="36dp"
         android:layout_margin="12dp"
-        android:background="@drawable/music_on"
+        app:srcCompat="@drawable/music_on"
+        android:background="@drawable/zoom_button_bg"
         android:padding="8dp"
         android:scaleType="centerInside"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/chat_button" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent" />
 
     <ImageButton
         android:id="@+id/sound_button"
         android:layout_width="36dp"
         android:layout_height="36dp"
         android:layout_margin="12dp"
-        android:background="@drawable/sound_on"
+        app:srcCompat="@drawable/sound_on"
+        android:background="@drawable/zoom_button_bg"
         android:padding="8dp"
         android:scaleType="centerInside"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/music_button" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/music_button" />
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragment_chat"

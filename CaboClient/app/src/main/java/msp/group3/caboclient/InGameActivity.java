@@ -171,15 +171,15 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         musicBtn = (ImageButton) findViewById(R.id.music_button);
         soundBtn = (ImageButton) findViewById(R.id.sound_button);
         if (DatabaseOperation.getDao().getMusicPlaying(sharedPref).equals("Play")) {
-            musicBtn.setBackground(ContextCompat.getDrawable(this, R.drawable.music_on));
+            musicBtn.setImageResource(R.drawable.music_on);
             startService(musicService);
         } else {
-            musicBtn.setBackground(ContextCompat.getDrawable(this, R.drawable.music_off));
+            musicBtn.setImageResource(R.drawable.music_off);
         }
         if (DatabaseOperation.getDao().getSoundsPlaying(sharedPref).equals("Play")) {
-            soundBtn.setBackground(ContextCompat.getDrawable(this, R.drawable.sound_on));
+            soundBtn.setImageResource(R.drawable.sound_on);
         } else {
-            soundBtn.setBackground(ContextCompat.getDrawable(this, R.drawable.sound_off));
+            soundBtn.setImageResource(R.drawable.sound_off);
         }
         musicBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -189,11 +189,11 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 if (musicState.equals("Play"))  {
                     stopService(musicService);
                     DatabaseOperation.getDao().setMusicPlaying("Stop", sharedPref);
-                    musicBtn.setBackground(ContextCompat.getDrawable(activity, R.drawable.music_off));
+                    musicBtn.setImageResource(R.drawable.music_off);
                 } else {
                     startService(musicService);
                     DatabaseOperation.getDao().setMusicPlaying("Play", sharedPref);
-                    musicBtn.setBackground(ContextCompat.getDrawable(activity, R.drawable.music_on));
+                    musicBtn.setImageResource(R.drawable.music_on);
                 }
             }
         });
@@ -204,10 +204,10 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 String soundState=DatabaseOperation.getDao().getSoundsPlaying(sharedPref);
                 if (soundState.equals("Play"))  {
                     DatabaseOperation.getDao().setSoundPlaying("Stop", sharedPref);
-                    soundBtn.setBackground(ContextCompat.getDrawable(activity, R.drawable.sound_off));
+                    soundBtn.setImageResource(R.drawable.sound_off);
                 } else {
                     DatabaseOperation.getDao().setSoundPlaying("Play", sharedPref);
-                    soundBtn.setBackground(ContextCompat.getDrawable(activity, R.drawable.sound_on));
+                    soundBtn.setImageResource(R.drawable.sound_on);
                 }
             }
         });

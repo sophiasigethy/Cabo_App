@@ -44,9 +44,9 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
     private TextView userNameTxt;
     private ImageButton startGameBtn;
     private ImageButton addFriendBtn;
-    private Button musicBtn;
-    private Button soundBtn;
-    private Button settingsBtn;
+    private ImageButton musicBtn;
+    private ImageButton soundBtn;
+    private ImageButton settingsBtn;
     private SharedPreferences sharedPref;
     private Activity activity;
     private FriendListAdapter friendListAdapter;
@@ -73,9 +73,9 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
         //playerScoreTextView = (TextView) findViewById(R.id.player1_score_textview_main);
         player1Status = (ImageView) findViewById(R.id.player1_status);
         partySymbol = (ImageView) findViewById(R.id.player1_party_side);
-        musicBtn = (Button) findViewById(R.id.music_button);
-        soundBtn = (Button) findViewById(R.id.sound_button);
-        settingsBtn = (Button) findViewById(R.id.settings_button);
+        musicBtn = (ImageButton) findViewById(R.id.music_button);
+        soundBtn = (ImageButton) findViewById(R.id.sound_button);
+        settingsBtn = (ImageButton) findViewById(R.id.settings_button);
         partySymbol.setVisibility(View.INVISIBLE);
         Collections.addAll(partyMemberTextviews, findViewById(R.id.player1_party_member1), findViewById(R.id.player1_party_member2), findViewById(R.id.player1_party_member3));
 
@@ -87,17 +87,17 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
         musicService = new Intent(this, BackgroundSoundService.class);
         musicService.putExtra("song", 1);
         if (DatabaseOperation.getDao().getMusicPlaying(sharedPref).equals("Play"))  {
-            musicBtn.setBackground(ContextCompat.getDrawable(activity, R.drawable.music_on));
+            musicBtn.setImageResource(R.drawable.music_on);
             startService(musicService);
             //bindService(musicService, mServerConn, Context.BIND_AUTO_CREATE);
         } else {
             musicBtn.setBackground(ContextCompat.getDrawable(activity, R.drawable.music_off));
         }
         if (DatabaseOperation.getDao().getSoundsPlaying(sharedPref).equals("Play"))  {
-            soundBtn.setBackground(ContextCompat.getDrawable(activity, R.drawable.sound_on));
+            soundBtn.setImageResource(R.drawable.sound_on);
             //startService(musicService);
         } else {
-            soundBtn.setBackground(ContextCompat.getDrawable(activity, R.drawable.sound_off));
+            soundBtn.setImageResource(R.drawable.sound_off);
         }
 
         //connects to server
@@ -132,11 +132,11 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
                 if (musicState.equals("Play"))  {
                     stopService(musicService);
                     DatabaseOperation.getDao().setMusicPlaying("Stop", sharedPref);
-                    musicBtn.setBackground(ContextCompat.getDrawable(activity, R.drawable.music_off));
+                    musicBtn.setImageResource(R.drawable.music_off);
                 } else {
                     startService(musicService);
                     DatabaseOperation.getDao().setMusicPlaying("Play", sharedPref);
-                    musicBtn.setBackground(ContextCompat.getDrawable(activity, R.drawable.music_on));
+                    musicBtn.setImageResource(R.drawable.music_on);
                 }
             }
         });
@@ -147,10 +147,10 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
                 String soundState=DatabaseOperation.getDao().getSoundsPlaying(sharedPref);
                 if (soundState.equals("Play"))  {
                     DatabaseOperation.getDao().setSoundPlaying("Stop", sharedPref);
-                    soundBtn.setBackground(ContextCompat.getDrawable(activity, R.drawable.sound_off));
+                    soundBtn.setImageResource(R.drawable.sound_off);
                 } else {
                     DatabaseOperation.getDao().setSoundPlaying("Play", sharedPref);
-                    soundBtn.setBackground(ContextCompat.getDrawable(activity, R.drawable.sound_on));
+                    soundBtn.setImageResource(R.drawable.sound_on);
                 }
             }
         });
