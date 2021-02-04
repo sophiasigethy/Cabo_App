@@ -10,13 +10,13 @@ import androidx.fragment.app.Fragment;
 public class SettingsFragment extends Fragment {
 
     public SettingsFragment() {
-        super(R.layout.ingamechat_fragment);
+        super(R.layout.settings_fragment);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
         // Defines the xml file for the fragment
-        return inflater.inflate(R.layout.ingamechat_fragment, parent, false);
+        return inflater.inflate(R.layout.settings_fragment, parent, false);
     }
 
     // This event is triggered soon after onCreateView().

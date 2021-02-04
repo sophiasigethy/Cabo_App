@@ -667,6 +667,26 @@
             app:layout_constraintRight_toLeftOf="@id/player1_info_game"
             app:layout_constraintBottom_toTopOf="@id/player1_info_game"/>
 
+        <TextView
+            android:id="@+id/player1_rank"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="#1"
+            android:padding="3dp"
+            android:gravity="center"
+            android:elevation="10dp"
+            android:background="@drawable/round_dark_turquoise_bg"
+            android:textColor="@color/white"
+            android:translationX="-35dp"
+            android:translationY="10dp"
+            android:translationZ="30dp"
+            android:textSize="10sp"
+            android:fontFamily="sans-serif-black"
+            app:layout_constraintStart_toStartOf="@id/player1_image_game"
+            app:layout_constraintTop_toTopOf="@id/player1_image_game"
+            app:layout_constraintLeft_toLeftOf="@id/player1_image_game"/>
+
+
         <ImageButton
             android:id="@+id/player1_emoji"
             android:layout_width="24dp"
@@ -841,6 +861,25 @@
             app:layout_constraintRight_toLeftOf="@id/player2_info_game"
             app:layout_constraintBottom_toTopOf="@id/player2_info_game"/>
 
+        <TextView
+            android:id="@+id/player2_rank"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="#1"
+            android:padding="3dp"
+            android:gravity="center"
+            android:elevation="10dp"
+            android:background="@drawable/round_dark_turquoise_bg"
+            android:textColor="@color/white"
+            android:translationX="-35dp"
+            android:translationY="10dp"
+            android:translationZ="30dp"
+            android:textSize="10sp"
+            android:fontFamily="sans-serif-black"
+            app:layout_constraintStart_toStartOf="@id/player2_image_game"
+            app:layout_constraintTop_toTopOf="@id/player2_image_game"
+            app:layout_constraintLeft_toLeftOf="@id/player2_image_game"/>
+
         <ImageButton
             android:id="@+id/player2_emoji"
             android:layout_width="24dp"
@@ -930,6 +969,25 @@
             app:layout_constraintStart_toStartOf="@id/player3_info_game"
             app:layout_constraintRight_toLeftOf="@id/player3_info_game"
             app:layout_constraintBottom_toTopOf="@id/player3_info_game"/>
+
+        <TextView
+            android:id="@+id/player3_rank"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="#1"
+            android:padding="3dp"
+            android:gravity="center"
+            android:elevation="10dp"
+            android:background="@drawable/round_dark_turquoise_bg"
+            android:textColor="@color/white"
+            android:translationX="-25dp"
+            android:translationY="10dp"
+            android:translationZ="30dp"
+            android:textSize="10sp"
+            android:fontFamily="sans-serif-black"
+            app:layout_constraintStart_toStartOf="@id/player3_image_game"
+            app:layout_constraintTop_toTopOf="@id/player3_image_game"
+            app:layout_constraintLeft_toLeftOf="@id/player3_image_game"/>
 
         <ImageButton
             android:id="@+id/player3_emoji"
@@ -1021,6 +1079,25 @@
             app:layout_constraintStart_toStartOf="@id/player4_info_game"
             app:layout_constraintRight_toLeftOf="@id/player4_info_game"
             app:layout_constraintBottom_toTopOf="@id/player4_info_game"/>
+
+        <TextView
+            android:id="@+id/player4_rank"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="#1"
+            android:padding="3dp"
+            android:gravity="center"
+            android:elevation="10dp"
+            android:background="@drawable/round_dark_turquoise_bg"
+            android:textColor="@color/white"
+            android:translationX="-25dp"
+            android:translationY="10dp"
+            android:translationZ="30dp"
+            android:textSize="10sp"
+            android:fontFamily="sans-serif-black"
+            app:layout_constraintStart_toStartOf="@id/player4_image_game"
+            app:layout_constraintTop_toTopOf="@id/player4_image_game"
+            app:layout_constraintLeft_toLeftOf="@id/player4_image_game"/>
 
         <ImageButton
             android:id="@+id/player4_emoji"
@@ -1118,6 +1195,18 @@
         android:scaleType="centerInside"
         android:background="@drawable/zoom_button_bg"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <ImageButton
+        android:id="@+id/question_button"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_margin="12dp"
+        android:padding="8dp"
+        app:srcCompat="@drawable/question"
+        android:scaleType="centerInside"
+        android:background="@drawable/zoom_button_bg"
+        app:layout_constraintEnd_toStartOf="@id/zoom_button"
         app:layout_constraintBottom_toBottomOf="parent" />
 
     <Button
@@ -1242,13 +1331,13 @@
     </LinearLayout>
 
     <ImageButton
-        android:id="@+id/settings_button"
+        android:id="@+id/leave_button"
         android:layout_width="36dp"
         android:layout_height="36dp"
         android:layout_margin="12dp"
         android:background="@drawable/zoom_button_bg"
-        android:padding="6dp"
-        app:srcCompat="@drawable/settings"
+        android:padding="8dp"
+        app:srcCompat="@drawable/exit"
         android:scaleType="centerInside"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -1263,7 +1352,7 @@
         app:srcCompat="@drawable/chat_bubbles"
         android:scaleType="centerInside"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/settings_button"/>
+        app:layout_constraintTop_toBottomOf="@id/leave_button"/>
 
     <ImageView
         android:id="@+id/chat_notification_bubble"
@@ -1273,17 +1362,32 @@
         app:srcCompat="@drawable/notification_circle"
         app:layout_constraintTop_toTopOf="@id/chat_button"/>
 
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/fragment_chat"
-        android:layout_width="500dp"
-        android:layout_height="250dp"
+    <ImageButton
+        android:id="@+id/music_button"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
         android:layout_margin="12dp"
-        android:translationZ="12dp"
-        app:layout_constraintRight_toLeftOf="@id/chat_button"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:srcCompat="@drawable/music_on"
+        android:background="@drawable/zoom_button_bg"
+        android:padding="8dp"
+        android:scaleType="centerInside"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent" />
+
+    <ImageButton
+        android:id="@+id/sound_button"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_margin="12dp"
+        app:srcCompat="@drawable/sound_on"
+        android:background="@drawable/zoom_button_bg"
+        android:padding="8dp"
+        android:scaleType="centerInside"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/music_button" />
 
     <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/fragment_settings"
+        android:id="@+id/fragment_chat"
         android:layout_width="500dp"
         android:layout_height="250dp"
         android:layout_margin="12dp"
@@ -1299,7 +1403,7 @@
         android:background="@drawable/outlined_button"
         android:text="Cabo"
         android:textColor="@drawable/outlined_button_text"
-        app:layout_constraintEnd_toStartOf="@id/settings_button"
+        app:layout_constraintEnd_toStartOf="@id/leave_button"
         app:layout_constraintTop_toTopOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -45,6 +45,9 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
     private ArrayList<TextView> otherPlayerNamesTextViews = new ArrayList<>();
     private String noAccount = "";
     private boolean isParty = false;
+    private androidx.fragment.app.FragmentContainerView settingsFragmentContainer;
+    private ImageButton settingsButton;
+    private Intent musicService;
 
 
     private String mMessage = "";
@@ -68,6 +71,7 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
         setContentView(R.layout.activity_waiting_room);
         sharedPref = getApplicationContext().getSharedPreferences(
                 R.string.preference_file_key + "", Context.MODE_PRIVATE);
+        musicService = new Intent(this, BackgroundSoundService.class);
 
         editText = (EditText) findViewById(R.id.editText);
         sendButton = (ImageButton) findViewById(R.id.send_button);
@@ -81,6 +85,7 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
         player4_name = (TextView) findViewById(R.id.player4_name_textview_waiting_room);
         player4_image = (CircleImageView) findViewById(R.id.player4_image);
         cancelButton = (Button) findViewById(R.id.cancel_button);
+        settingsButton = (ImageButton) findViewById(R.id.settings_button);
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -112,6 +117,36 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
         communicator = Communicator.getInstance(this);
         webSocketClient = communicator.getmWebSocketClient();
         communicator.setActivity(this);
+
+
+        if (savedInstanceState == null) {
+            Bundle bundle = new Bundle();
+            bundle.putInt("some_int", 0);
+            getSupportFragmentManager().beginTransaction()
+                    .setReorderingAllowed(true)
+                    .add(R.id.fragment_settings, SettingsFragment.class, bundle)
+                    //.add(R.id.fragment_settings, SettingsFragment.class, bundle)
+                    //.add(R.id.fragment_chat, new InGameChatFragment(), TAG_CHAT)
+                    //.add(R.id.fragment_settings, new SettingsFragment(), TAG_SETTINGS)
+                    .commit();
+        }
+
+        settingsFragmentContainer = findViewById(R.id.fragment_settings);
+        settingsFragmentContainer.setVisibility(View.INVISIBLE);
+
+        settingsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!settingsButton.isSelected()) {
+                    settingsFragmentContainer.setVisibility(View.VISIBLE);
+                    settingsButton.setSelected(true);
+                } else {
+                    settingsFragmentContainer.setVisibility(View.INVISIBLE);
+                    settingsButton.setSelected(false);
+                }
+            }
+        });
+
         try {
 
           /* ArrayList<String> test= new ArrayList<>();
@@ -209,7 +244,6 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
                 Player player = gson.fromJson(jsonString, Player.class);
                 String mes = "Hello " + player.getName() + " with id: " + player.getId();
                 // String mes = "Hello " + player.getNick() + " with id: " + player.getNick();
-                //me = new Player(player.getId(), player.getName(), player.getNick());
                 me = player;
                 runOnUiThread(new Runnable() {
                     public void run() {
@@ -582,7 +616,6 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
             communicator.sendMessage(JSON_commands.startGameForAll("start"));
         } else {
             communicator.sendMessage(JSON_commands.askForStart());
-
         }
     }
 
@@ -694,5 +727,4 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
         }
         return nicks;
     }
-
 }

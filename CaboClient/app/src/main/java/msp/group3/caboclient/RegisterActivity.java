@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -36,6 +37,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     private LinearLayout avatar3Border;
     private LinearLayout avatar4Border;
     private LinearLayout avatar5Border;
+    private TextView errorTv;
 
 
     @Override
@@ -67,6 +69,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         avatar5Border = (LinearLayout) this.findViewById(R.id.borderAvatar5);
         ImageView avatar5Button = findViewById(R.id.avatar5);
         avatar5Button.setOnClickListener(this);
+        errorTv = (TextView) this.findViewById(R.id.register_error_txt);
 
         final Button registerButton = findViewById(R.id.register_btn);
         registerButton.setOnClickListener(new View.OnClickListener() {
@@ -79,11 +82,17 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                         || avatarId == NO_AVATAR_CHOSEN) {
                     Toast.makeText(RegisterActivity.this,
                             "All fields are mandatory", Toast.LENGTH_LONG);
+                    errorTv.setText("All fields are mandatory and you must choose an avatar");
+                    errorTv.setTextColor(Color.RED);
                 } else {
                     if (DatabaseOperation.getDao().isNickFree(sharedPref, nick.getText().toString())) {
                         player = new Player("", name.getText().toString(),
                                 mail.getText().toString(), nick.getText().toString(), avatarId, 0);
                         register(password.getText().toString());
+                    } else {
+                        Toast.makeText(RegisterActivity.this, R.string.duplicate_user, Toast.LENGTH_LONG);
+                        errorTv.setText(R.string.duplicate_user);
+                        errorTv.setTextColor(Color.RED);
                     }
                 }
             }
@@ -114,10 +123,18 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                                 editor.putString(String.valueOf(R.string.preference_usernick), player.getNick());
                                 editor.putString(String.valueOf(R.string.preference_useravatar), player.getAvatarID() + "");
                                 editor.putString(String.valueOf(R.string.preference_global_score), player.getGlobalScore() + "");
+                                editor.putString(String.valueOf(R.string.preference_music),  "Play");
+                                editor.putString(String.valueOf(R.string.preference_sound),  "Play");
                                 editor.apply();
                                 moveToMainActivity();
-                            } else
+                            } else {
+                                // This can only fail, if during registering, another user registered with the same name
+                                // So the created db user has to be deleted
                                 Toast.makeText(RegisterActivity.this, R.string.duplicate_user, Toast.LENGTH_LONG);
+                                errorTv.setText(R.string.duplicate_user);
+                                errorTv.setTextColor(Color.RED);
+                                user.delete();
+                            }
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "createUserWithEmail:failure", task.getException());
@@ -125,6 +142,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                                     "Registration Failed: "
                                             + task.getException().getMessage(),
                                     Toast.LENGTH_LONG).show();
+                            errorTv.setText("Registration Failed: " + task.getException().getMessage());
+                            errorTv.setTextColor(Color.RED);
                         }
                     }
                 });

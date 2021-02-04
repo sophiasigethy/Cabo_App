@@ -1,5 +1,6 @@
 package msp.group3.caboclient;
 
+import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -9,6 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONException;
 
@@ -69,9 +71,8 @@ public class FriendListAdapter extends ArrayAdapter {
         CircleImageView playerIcon = (CircleImageView) vi.findViewById(R.id.friendlist_image);
         playerIcon.setImageResource(myFriendList.get(i).getAvatarIcon());
         TextView player_nick = (TextView) vi.findViewById(R.id.friendlist_name);
-        player_nick.setText(myFriendList.get(i).getNick());
+        player_nick.setText(myFriendList.get(i).getNick()+" | Score: "+myFriendList.get(i).getGlobalScore());
         ImageView status = (ImageView) vi.findViewById(R.id.friendlist_status);
-        //TODO Check why online status does not work -> in in view stimmen vielleicht nicht mit i in freindlist überein?
         if (myFriendList.get(i).getOnline()){
             status.setImageResource(R.drawable.online);
         }
@@ -81,11 +82,16 @@ public class FriendListAdapter extends ArrayAdapter {
 
         ImageButton invite_btn = (ImageButton) vi.findViewById(R.id.friendlist_invite);
         if (isInParty(myFriendList.get(i))) {
-            //TODO Check why Icon is not changed
             invite_btn.setOnClickListener(null);
             invite_btn.setImageResource(R.drawable.partyhat);
             invite_btn.setPadding(0, 0, 0,0);
         } else {
+            invite_btn.setImageResource(R.drawable.send);
+            invite_btn.setBackgroundResource(R.drawable.zoom_button_bg);
+            float scale = context.getResources().getDisplayMetrics().density;
+            int dpAsPixels = (int) (8*scale + 0.5f);
+            invite_btn.setPadding(dpAsPixels, dpAsPixels, dpAsPixels,dpAsPixels);
+            invite_btn.setScaleType(ImageButton.ScaleType.CENTER_INSIDE);
             invite_btn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -95,12 +101,15 @@ public class FriendListAdapter extends ArrayAdapter {
                         try {
                             communicator.sendMessage(JSON_commands.sendPartyRequest(me, myFriendList.get(i)));
                             Log.e("SendPartyRequest", "Send Party Invitation");
-
+                            Toast.makeText(context, "Invitation sent to "+myFriendList.get(i).getNick(),
+                                    Toast.LENGTH_LONG).show();
                         } catch (JSONException e) {
                             Log.e("SendPartyRequest", "Could not send Party Invitation");
                         }
                     }else{
                         //TODO: Toast that already 4 people in the party
+                        Toast.makeText(context, "Your party is full",
+                                Toast.LENGTH_LONG).show();
                     }
                 }
             });

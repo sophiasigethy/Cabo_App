@@ -240,11 +240,21 @@ public class SocketHandler extends TextWebSocketHandler {
         }
     }
 
-    public boolean isAlreadyConnected(WebSocketSession session, Player newPlayer) {
+    /*public boolean isAlreadyConnected(WebSocketSession session, Player newPlayer) {
         for (Map.Entry<String, Player> entry : connectedPlayers.entrySet()) {
             String key = entry.getKey();
             Player player = entry.getValue();
             if (player.getNick().equalsIgnoreCase(newPlayer.getNick())) {
+                return true;
+            }
+        }
+        return false;
+    }*/
+    public boolean isAlreadyConnected(WebSocketSession session, Player newPlayer) {
+        for (Map.Entry<String, Player> entry : connectedPlayers.entrySet()) {
+            String key = entry.getKey();
+            Player player = entry.getValue();
+            if (key.equalsIgnoreCase(session.getId())) {
                 return true;
             }
         }

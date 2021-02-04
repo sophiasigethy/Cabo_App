@@ -59,7 +59,6 @@ public class InGameChatFragment extends Fragment {
                 //String text = currentText;
                 textInput.setText("");
                 try {
-
                     ((InGameActivity) getActivity()).webSocketClient.send(String.valueOf(JSON_commands.chatMessage(currentText, sender)));
                 } catch (JSONException e) {
                     e.printStackTrace();

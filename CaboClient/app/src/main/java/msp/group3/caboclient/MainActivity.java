@@ -2,18 +2,25 @@ package msp.group3.caboclient;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import com.google.gson.Gson;
 
@@ -22,6 +29,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -36,13 +44,20 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
     private TextView userNameTxt;
     private ImageButton startGameBtn;
     private ImageButton addFriendBtn;
+    private ImageButton musicBtn;
+    private ImageButton soundBtn;
+    private ImageButton settingsBtn;
     private SharedPreferences sharedPref;
     private Activity activity;
     private FriendListAdapter friendListAdapter;
     private CircleImageView playerImage;
     private TextView playerName;
-    private TextView playerScoreTextView;
-    private TextView playerPartyText;
+    //private TextView playerScoreTextView;
+    ImageView partySymbol;
+    ArrayList<TextView> partyMemberTextviews = new ArrayList<>();
+    ImageView player1Status;
+    Intent musicService;
+    private MediaPlayer soundPlayer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,10 +70,35 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
         addFriendBtn = (ImageButton) findViewById(R.id.add_friend_btn);
         playerImage = (CircleImageView) findViewById(R.id.player1_image_main);
         playerName = (TextView) findViewById(R.id.player1_name_textview_main);
-        playerScoreTextView = (TextView) findViewById(R.id.player1_score_textview_main);
-        playerPartyText = (TextView) findViewById(R.id.player1_party_textview_main);
+        //playerScoreTextView = (TextView) findViewById(R.id.player1_score_textview_main);
+        player1Status = (ImageView) findViewById(R.id.player1_status);
+        partySymbol = (ImageView) findViewById(R.id.player1_party_side);
+        musicBtn = (ImageButton) findViewById(R.id.music_button);
+        soundBtn = (ImageButton) findViewById(R.id.sound_button);
+        settingsBtn = (ImageButton) findViewById(R.id.settings_button);
+        partySymbol.setVisibility(View.INVISIBLE);
+        Collections.addAll(partyMemberTextviews, findViewById(R.id.player1_party_member1), findViewById(R.id.player1_party_member2), findViewById(R.id.player1_party_member3));
+
+        for(TextView partymembertext: partyMemberTextviews){
+            partymembertext.setVisibility(View.INVISIBLE);
+        }
         sharedPref = getApplicationContext().getSharedPreferences(
                 R.string.preference_file_key + "", Context.MODE_PRIVATE);
+        musicService = new Intent(this, BackgroundSoundService.class);
+        musicService.putExtra("song", 1);
+        if (DatabaseOperation.getDao().getMusicPlaying(sharedPref).equals("Play"))  {
+            musicBtn.setImageResource(R.drawable.music_on);
+            startService(musicService);
+            //bindService(musicService, mServerConn, Context.BIND_AUTO_CREATE);
+        } else {
+            musicBtn.setImageResource(R.drawable.music_off);
+        }
+        if (DatabaseOperation.getDao().getSoundsPlaying(sharedPref).equals("Play"))  {
+            soundBtn.setImageResource(R.drawable.sound_on);
+            //startService(musicService);
+        } else {
+            soundBtn.setImageResource(R.drawable.sound_off);
+        }
 
         //connects to server
         communicator = Communicator.getInstance(this);
@@ -68,21 +108,66 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
         me = DatabaseOperation.getDao().readPlayerFromSharedPrefs(sharedPref);
         //userNameTxt.setText("Welcome " + me.getNick());
 
-        playerName.setText(me.getNick());
+        playerName.setText(me.getNick()+" | "+me.getGlobalScore());
         playerImage.setImageResource(me.getAvatarIcon());
         startGameBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                playSound(R.raw.select_sound);
                 startMatching();
             }
         });
         addFriendBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                playSound(R.raw.select_sound);
                 searchFriendDialog();
             }
         });
+        musicBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                playSound(R.raw.select_sound);
+                String musicState=DatabaseOperation.getDao().getMusicPlaying(sharedPref);
+                if (musicState.equals("Play"))  {
+                    stopService(musicService);
+                    DatabaseOperation.getDao().setMusicPlaying("Stop", sharedPref);
+                    musicBtn.setImageResource(R.drawable.music_off);
+                } else {
+                    startService(musicService);
+                    DatabaseOperation.getDao().setMusicPlaying("Play", sharedPref);
+                    musicBtn.setImageResource(R.drawable.music_on);
+                }
+            }
+        });
+        soundBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                playSound(R.raw.select_sound);
+                String soundState=DatabaseOperation.getDao().getSoundsPlaying(sharedPref);
+                if (soundState.equals("Play"))  {
+                    DatabaseOperation.getDao().setSoundPlaying("Stop", sharedPref);
+                    soundBtn.setImageResource(R.drawable.sound_off);
+                } else {
+                    DatabaseOperation.getDao().setSoundPlaying("Play", sharedPref);
+                    soundBtn.setImageResource(R.drawable.sound_on);
+                }
+            }
+        });
+        settingsBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                playSound(R.raw.select_sound);
+                Intent intent = new Intent(activity, LicenseActivity.class);
+                startActivity(intent);
+            }
+        });
+        addFriendBtn.setEnabled(false);
+        addFriendBtn.setAlpha(0.5f);
+        startGameBtn.setEnabled(false);
+        startGameBtn.setAlpha(0.5f);
         allUsers = DatabaseOperation.getDao().getAllUsersList(sharedPref);
+        showPartyMembers();
     }
 
 
@@ -101,15 +186,14 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
         if (jsonObject.has("connectionAccepted")) {
             activity.runOnUiThread(new Runnable() {
                 public void run() {
+                    player1Status.setImageResource(R.drawable.online);
                     Toast.makeText(activity, R.string.welcome + " " + me.getNick(), Toast.LENGTH_LONG);
                     enableButtons();
                     if (!party.contains(me))
                         party.add(me);
-                    playerPartyText.setText("Party: " + party.size());
                     Log.d("---------------PARTY", "me added to party");
                     friendListAdapter = new FriendListAdapter(activity, me, party, communicator);
                     friendList.setAdapter(friendListAdapter);
-                    //updateFriendList();
                 }
             });
             try {
@@ -122,6 +206,7 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
 
         if (jsonObject.has("connectionNotAccepted")) {
             String mes = TypeDefs.server + jsonObject.get("connectionNotAccepted").toString();
+            player1Status.setImageResource(R.drawable.offline);
         }
 
         if (jsonObject.has("friendrequest")) {
@@ -185,7 +270,6 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
                 sender = gson.fromJson(jsonString, Player.class);
             }
 
-
             acceptPartyInvitationDialog(sender);
         }
 
@@ -211,10 +295,10 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
             Player finalSender = sender;
             runOnUiThread(new Runnable() {
                 public void run() {
-
                     party.add(finalSender);
-                    playerPartyText.setText("Party: " + party.size());
                     updateFriendList(finalSender, false);
+                    showPartyMembers();
+                    playSound(R.raw.party_joined);
                 }
             });
 
@@ -222,7 +306,7 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
         if (jsonObject.has("onlinestatus")) {
             JSONObject js = jsonObject.getJSONObject("onlinestatus");
             Player player = null;
-            //TODO DBID is empty
+            //TODO DBID is empty -> noch aktuell?
             boolean isOnline = false;
             if (js.has("isOnline")) {
                 isOnline = (boolean) js.get("isOnline");
@@ -232,6 +316,7 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
                 String jsonString = js.get("player").toString();
                 Gson gson = new Gson();
                 player = gson.fromJson(jsonString, Player.class);
+                player.setOnline(isOnline);
             }
 
             Log.d("-----------------ONLINE STATUS", player.getName() + " sendStatus: " + isOnline);
@@ -249,12 +334,14 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
                     public void run() {
 
                         int index = indexInFriendList(finalPlayer);
-                        Player changedPlayer = me.getFriendList().get(index);
-                        me.getFriendList().get(index).setOnline(finalIsOnline);
-                        Log.d("-----------------ONLINE STATUS", "friendlist size: " + me.getFriendList().size());
-                        Log.d("-----------------ONLINE STATUS", "friend set online: " + me.getFriendList().get(indexInFriendList(finalPlayer)).getName());
-
-                        friendListAdapter.notifyDataSetChanged();
+                        if (index != 1000) {
+                            me.getFriendList().set(index, finalPlayer);
+                            Log.d("-----------------ONLINE STATUS", "friendlist size: " + me.getFriendList().size());
+                            Log.d("-----------------ONLINE STATUS", "friend set online: " + me.getFriendList().get(indexInFriendList(finalPlayer)).getName());
+                            friendListAdapter.notifyDataSetChanged();
+                            DatabaseOperation.getDao().updatePlayer(me);
+                            DatabaseOperation.getDao().writePlayerToSharedPref(me, sharedPref);
+                        }
                     }
                 });
             }
@@ -281,6 +368,12 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
             removePlayerFromParty(player);
             String mes = player.getNick() + " joins no longer the party!.";
             showMessageForTesting(mes);
+            activity.runOnUiThread(new Runnable() {
+                public void run() {
+                    friendListAdapter.notifyDataSetChanged();
+                    showPartyMembers();
+                }
+            });
             //TODO reset party icon for this player
         }
         if (jsonObject.has("leaderRemovedFromParty")) {
@@ -296,13 +389,18 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
             party.add(me);
             String mes = "Party leader " + player.getNick() + " left the party, so you can start a new party now!";
             showMessageForTesting(mes);
+            activity.runOnUiThread(new Runnable() {
+                public void run() {
+                    friendListAdapter.notifyDataSetChanged();
+                    showPartyMembers();
+                }
+            });
             //TODO reset party icon for this player
         }
 
         if (jsonObject.has("informOthersAboutInvitation")) {
             JSONObject js = jsonObject.getJSONObject("informOthersAboutInvitation");
             Player player = null;
-
 
             if (js.has("player")) {
                 String jsonString = js.get("player").toString();
@@ -311,8 +409,15 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
             }
             if (!alreadyInParty(player)) {
                 party.add(player);
+                updateFriendList(player, false);
                 String mes = player.getNick() + " was added to the party.";
-                showMessageForTesting(mes);
+                activity.runOnUiThread(new Runnable() {
+                    public void run() {
+                        showMessageForTesting(mes);
+                        friendListAdapter.notifyDataSetChanged();
+                        showPartyMembers();
+                    }
+                });
             }
             //TODO show  that player Leader has disconnected and party is empty
         }
@@ -340,16 +445,19 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
 
 
     public void updateFriendList(Player sender, boolean isNewFriend) {
-        ArrayList<Player> friends = me.getFriendList();
-        if (!isNewFriend) {
-            //friends.remove(sender);
-            //friends.add(0, sender);
-        } else {
-            me.addNewFriend(sender, sharedPref);
-        }
-        //TODO Check if Adapter also has to get new list
-        me.setFriendList(friends);
-        friendListAdapter.notifyDataSetChanged();
+        activity.runOnUiThread(new Runnable() {
+            public void run() {
+                ArrayList<Player> friends = me.getFriendList();
+                if (!isNewFriend) {
+                    //friends.remove(sender);
+                    //friends.add(0, sender);
+                } else {
+                    me.addNewFriend(sender, sharedPref);
+                }
+                me.setFriendList(friends);
+                friendListAdapter.notifyDataSetChanged();
+            }
+        });
     }
 
     public void startMatching() {
@@ -370,7 +478,7 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
             intent.putExtra("player" + i + "globalscore", "");
             i++;
         }
-        // TODO wait for ServerMessage with GameState-ID
+        // TODO wait for ServerMessage with GameState-ID -> noch aktuell?
 
         startActivity(intent);
     }
@@ -395,6 +503,7 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
                             communicator.sendMessage(JSON_commands.getOnlinestatusOfNewFriend(sender.getNick()));
                         } catch (JSONException e) {
                             e.printStackTrace();
+                            player1Status.setImageResource(R.drawable.offline);
                         }
                         requestDialog.getDialog().dismiss();
                     } else {
@@ -424,12 +533,15 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
                             // Since you accepted the request, add player to party and send confirmation
                             party.add(sender);
                             updateFriendList(sender, false);
+                            showPartyMembers();
                             try {
                                 communicator.sendMessage(
                                         JSON_commands.sendPartyAccepted(me, sender));
                                 requestDialog.getDialog().dismiss();
+                                playSound(R.raw.party_joined);
                             } catch (JSONException e) {
                                 e.printStackTrace();
+                                player1Status.setImageResource(R.drawable.offline);
                             }
                         }
                     }
@@ -441,6 +553,25 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
     public void enableButtons() {
         addFriendBtn.setEnabled(true);
         startGameBtn.setEnabled(true);
+        addFriendBtn.setAlpha(1f);
+        startGameBtn.setAlpha(1f);
+    }
+
+    public void showPartyMembers(){
+        Log.d("-----------------------SHOW PARTY", "partymembers: "+party.size());
+        if(party.size()>1){
+            partySymbol.setVisibility(View.VISIBLE);
+        }
+        for(TextView partymember : partyMemberTextviews){
+            partymember.setVisibility(View.INVISIBLE);
+        }
+        if(party.size()<=1){
+            partySymbol.setVisibility(View.INVISIBLE);
+        }
+        for(int i=0; i<party.size()-1; i++){
+            partyMemberTextviews.get(i).setVisibility(View.VISIBLE);
+            partyMemberTextviews.get(i).setText(party.get(i+1).getNick());
+        }
     }
 
     /**
@@ -467,13 +598,21 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
         } catch (JSONException e) {
             Log.e("LOGOUT", "Could not send logout to server");
         }
-        //TODO: Remove Connection
+        stopService(musicService);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        //TODO: Establish Connection
+        musicService = new Intent(this, BackgroundSoundService.class);
+        musicService.putExtra("song", 1);
+        if (DatabaseOperation.getDao().getMusicPlaying(sharedPref).equals("Play"))  {
+            //musicBtn.setBackground(ContextCompat.getDrawable(activity, R.drawable.music_on));
+            startService(musicService);
+        } else {
+            //musicBtn.setBackground(ContextCompat.getDrawable(activity, R.drawable.music_off));
+        }
+
     }
 
     public boolean isPlayerInFriendList(Player player) {
@@ -520,5 +659,24 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
             }
         }
         return false;
+    }
+
+    public void playSound(int sound) {
+        if (DatabaseOperation.getDao().getSoundsPlaying(sharedPref).equals("Play")) {
+            if (soundPlayer != null) {
+                soundPlayer.stop();
+                soundPlayer.release();
+            }
+            soundPlayer = MediaPlayer.create(this, sound);
+            soundPlayer.setOnSeekCompleteListener(new MediaPlayer.OnSeekCompleteListener() {
+                @Override
+                public void onSeekComplete(MediaPlayer mediaPlayer) {
+                    soundPlayer.stop();
+                    soundPlayer.release();
+                }
+            });
+            soundPlayer.setVolume(90, 90);
+            soundPlayer.start();
+        }
     }
 }
