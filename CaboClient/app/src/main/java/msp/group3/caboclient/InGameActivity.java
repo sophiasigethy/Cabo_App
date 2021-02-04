@@ -1902,8 +1902,6 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 Player myself = gson.fromJson(jsonString, Player.class);
                 if (me == null) {
                     me = myself;
-                } else {
-                    me.replacePlayerForNextRound(myself);
                 }
                 // hier wurde me gesetzt
                 Log.d("----------------------ME", "my name: " + me.getName());
@@ -1917,14 +1915,18 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                             initiateInitialCardLookUp();
                         } else {
                             round++;
-                            showNewRound();
-                            new CountDownTimer(3000, 1000) {
+                            nextRoundAnimation();
+                            new CountDownTimer(9000, 1000) {
 
                                 public void onTick(long millisUntilFinished) {
                                 }
 
                                 public void onFinish() {
-                                    hideNewRound();
+                                    if (me == null) {
+                                        me = myself;
+                                    } else {
+                                        me.replacePlayerForNextRound(myself);
+                                    }
                                     initiateInitialCardLookUp();
                                 }
 
@@ -1949,7 +1951,17 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                             otherPlayers.addAll(players);
                             showPlayers();
                         } else {
-                            nextRound(players);
+                            new CountDownTimer(5000, 1000) {
+                                public void onTick(long millisUntilFinished) {
+                                }
+
+                                public void onFinish() {
+                                    nextRound(players);
+                                }
+
+                            }.start();
+                            //nextRoundAnimation(players);
+                            //nextRound(players); -> called by nextRoundAnimation
                             showPlayerRanks();
                         }
                     }
@@ -2326,6 +2338,39 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         }
     }
 
+    private void nextRoundAnimation() {
+        updateText.setText("Revealing cards");
+        for(LottieAnimationView caboAnimation : playerCaboAnimations){
+            caboAnimation.setVisibility(View.INVISIBLE);
+        }
+        for(ImageButton card : player1CardButtons){
+            card.setAlpha(1f);
+            animateCardTurn(card);
+        }
+        for(int i=0; i<otherPlayers.size(); i++){
+            for(ImageButton card : otherPlayerButtonLists.get(i)){
+                card.setAlpha(1f);
+                animateCardTurn(card);
+            }
+        }
+        new CountDownTimer(4000, 1000) {
+            public void onTick(long millisUntilFinished) {
+            }
+
+            public void onFinish() {
+                for(ImageButton card : player1CardButtons){
+                    animateCardTurnBack(card);
+                }
+                for(List<ImageButton> playerCards : otherPlayerButtonLists){
+                    for(ImageButton card : playerCards){
+                        animateCardTurnBack(card);
+                    }
+                }
+            }
+
+        }.start();
+    }
+
     @SuppressLint("SetTextI18n")
     private void showPlayerRanks() {
         ArrayList<Player> tempPlayers = new ArrayList<>();
@@ -2387,17 +2432,28 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
     public void nextRound(List<Player> players) {
         caboplayer = null;
         fadePlayerCardsRestore(1f);
-        for (Player oldPlayer : otherPlayers) {
-            for (Player newPlayer : players) {
-                if (oldPlayer.getId() == newPlayer.getId()) {
-                    oldPlayer.replacePlayerForNextRound(newPlayer);
-                }
+        showNewRound();
+        new CountDownTimer(3000, 1000) {
+
+            public void onTick(long millisUntilFinished) {
             }
-        }
-        for (LottieAnimationView playerHighlight : playerHighlightAnimations) {
-            playerHighlight.setVisibility(View.INVISIBLE);
-        }
-        playedCardsStackButton.setImageResource(R.drawable.card_stack);
+
+            public void onFinish() {
+                hideNewRound();
+                for (Player oldPlayer : otherPlayers) {
+                    for (Player newPlayer : players) {
+                        if (oldPlayer.getId() == newPlayer.getId()) {
+                            oldPlayer.replacePlayerForNextRound(newPlayer);
+                        }
+                    }
+                }
+                for (LottieAnimationView playerHighlight : playerHighlightAnimations) {
+                    playerHighlight.setVisibility(View.INVISIBLE);
+                }
+                playedCardsStackButton.setImageResource(R.drawable.card_stack);
+            }
+
+        }.start();
     }
 
     private void showPlayers() {
