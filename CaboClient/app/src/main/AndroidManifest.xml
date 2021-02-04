@@ -19,7 +19,8 @@
         <activity
             android:name=".IntroActivity"
             android:label="Cabo"
-            android:theme="@style/Theme.CaboClient.NoActionBar">
+            android:theme="@style/Theme.CaboClient.NoActionBar"
+            android:screenOrientation="sensorLandscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
