@@ -2397,7 +2397,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         for (LottieAnimationView playerHighlight : playerHighlightAnimations) {
             playerHighlight.setVisibility(View.INVISIBLE);
         }
-        playedCardsStackButton.setImageResource(R.drawable.card_stack);
+        playedCardsStackButton.setImageResource(R.drawable.outlined_button);
     }
 
     private void showPlayers() {
