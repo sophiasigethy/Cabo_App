@@ -76,6 +76,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
     private ImageButton leaveGameButton;
     private ImageButton musicBtn;
     private ImageButton soundBtn;
+    private ImageButton questionBtn;
     private Button caboButton;
     private ImageButton zoomButton;
     private Button peekButton;
@@ -181,36 +182,6 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         } else {
             soundBtn.setImageResource(R.drawable.sound_off);
         }
-        musicBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                playSound(R.raw.select_sound);
-                String musicState=DatabaseOperation.getDao().getMusicPlaying(sharedPref);
-                if (musicState.equals("Play"))  {
-                    stopService(musicService);
-                    DatabaseOperation.getDao().setMusicPlaying("Stop", sharedPref);
-                    musicBtn.setImageResource(R.drawable.music_off);
-                } else {
-                    startService(musicService);
-                    DatabaseOperation.getDao().setMusicPlaying("Play", sharedPref);
-                    musicBtn.setImageResource(R.drawable.music_on);
-                }
-            }
-        });
-        soundBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                playSound(R.raw.select_sound);
-                String soundState=DatabaseOperation.getDao().getSoundsPlaying(sharedPref);
-                if (soundState.equals("Play"))  {
-                    DatabaseOperation.getDao().setSoundPlaying("Stop", sharedPref);
-                    soundBtn.setImageResource(R.drawable.sound_off);
-                } else {
-                    DatabaseOperation.getDao().setSoundPlaying("Play", sharedPref);
-                    soundBtn.setImageResource(R.drawable.sound_on);
-                }
-            }
-        });
 
         //link layout
         zoomLayout = (com.otaliastudios.zoom.ZoomLayout) findViewById(R.id.zoomlayout);
@@ -268,6 +239,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         endGameStars.setVisibility(View.INVISIBLE);
         endGameReturnButton = findViewById(R.id.end_game_return_button);
         endGameReturnButton.setVisibility(View.INVISIBLE);
+        questionBtn = (ImageButton) findViewById(R.id.question_button);
 
         playedCardsStackButton = (ImageButton) findViewById(R.id.played_cards_imageButton);
         playedCardsStackGlow = findViewById(R.id.card_glow_imageview);
@@ -321,6 +293,45 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
     }
 
     private void setUpOnClickListeners() {
+
+        questionBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                playSound(R.raw.select_sound);
+                //TODO show game rules
+            }
+        });
+
+        musicBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                playSound(R.raw.select_sound);
+                String musicState=DatabaseOperation.getDao().getMusicPlaying(sharedPref);
+                if (musicState.equals("Play"))  {
+                    stopService(musicService);
+                    DatabaseOperation.getDao().setMusicPlaying("Stop", sharedPref);
+                    musicBtn.setImageResource(R.drawable.music_off);
+                } else {
+                    startService(musicService);
+                    DatabaseOperation.getDao().setMusicPlaying("Play", sharedPref);
+                    musicBtn.setImageResource(R.drawable.music_on);
+                }
+            }
+        });
+        soundBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                playSound(R.raw.select_sound);
+                String soundState=DatabaseOperation.getDao().getSoundsPlaying(sharedPref);
+                if (soundState.equals("Play"))  {
+                    DatabaseOperation.getDao().setSoundPlaying("Stop", sharedPref);
+                    soundBtn.setImageResource(R.drawable.sound_off);
+                } else {
+                    DatabaseOperation.getDao().setSoundPlaying("Play", sharedPref);
+                    soundBtn.setImageResource(R.drawable.sound_on);
+                }
+            }
+        });
 
         chatButton.setOnClickListener(new View.OnClickListener() {
             @Override

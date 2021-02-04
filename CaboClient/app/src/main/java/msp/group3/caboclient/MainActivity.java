@@ -91,7 +91,7 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
             startService(musicService);
             //bindService(musicService, mServerConn, Context.BIND_AUTO_CREATE);
         } else {
-            musicBtn.setBackground(ContextCompat.getDrawable(activity, R.drawable.music_off));
+            musicBtn.setImageResource(R.drawable.music_off);
         }
         if (DatabaseOperation.getDao().getSoundsPlaying(sharedPref).equals("Play"))  {
             soundBtn.setImageResource(R.drawable.sound_on);
