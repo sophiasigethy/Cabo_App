@@ -663,6 +663,10 @@ public class MainActivity extends AppCompatActivity implements Communicator.Comm
         return false;
     }
 
+    /**
+     * This function is responsible for playing sounds in this Activity
+     * @param sound: The R.raw.*ID* of the sound you want to play
+     * */
     public void playSound(int sound) {
         if (DatabaseOperation.getDao().getSoundsPlaying(sharedPref).equals("Play")) {
             if (soundPlayer != null) {

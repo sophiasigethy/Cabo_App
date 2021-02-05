@@ -3,6 +3,7 @@ package msp.group3.caboclient.CaboView;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -55,6 +56,7 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
     private androidx.fragment.app.FragmentContainerView settingsFragmentContainer;
     private ImageButton settingsButton;
     private Intent musicService;
+    private MediaPlayer soundPlayer;
 
 
     private String mMessage = "";
@@ -200,6 +202,7 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
         }
         webSocketClient.send(jsonObject.toString());
         editText.setText("");
+        playSound(R.raw.send_message);
     }
 
     @Override
@@ -282,6 +285,7 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
                         showText(mes, true, null);
                         setPictureOfOtherPlayer(newPlayer);
                         showPresentPlayers();
+                        playSound(R.raw.your_turn);
                     }
                 });
             }
@@ -348,6 +352,7 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
             if (sender != null) {
                 showText(mes, false, sender);
             }
+            playSound(R.raw.notification);
         }
 
         if (jsonObject.has("initialCards")) {
@@ -451,6 +456,7 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
      * If it is called, other players in room are notified and user moves to MainActivity
      */
     public void cancelAction() throws JSONException {
+        playSound(R.raw.select_sound);
         communicator.sendMessage(JSON_commands.leaveWaitingRoom());
         leaveWaitingRoom();
     }
@@ -618,7 +624,7 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
      * this method sends a request for starting the game to the server
      */
     public void changeActivity(View view) throws JSONException {
-
+        playSound(R.raw.select_sound);
         if (state.equalsIgnoreCase(TypeDefs.GAMESTART)) {
             communicator.sendMessage(JSON_commands.startGameForAll("start"));
         } else {
@@ -733,5 +739,28 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
             }
         }
         return nicks;
+    }
+
+    /**
+     * This function is responsible for playing sounds in this Activity
+     * @param sound: The R.raw.*ID* of the sound you want to play
+     * */
+    public void playSound(int sound) {
+        if (DatabaseOperation.getDao().getSoundsPlaying(sharedPref).equals("Play")) {
+            if (soundPlayer != null) {
+                soundPlayer.stop();
+                soundPlayer.release();
+            }
+            soundPlayer = MediaPlayer.create(this, sound);
+            soundPlayer.setOnSeekCompleteListener(new MediaPlayer.OnSeekCompleteListener() {
+                @Override
+                public void onSeekComplete(MediaPlayer mediaPlayer) {
+                    soundPlayer.stop();
+                    soundPlayer.release();
+                }
+            });
+            soundPlayer.setVolume(90, 90);
+            soundPlayer.start();
+        }
     }
 }

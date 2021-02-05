@@ -520,7 +520,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             cardButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-
+                    playSound(R.raw.select_sound);
                     hideHint();
                     playedCardsStackButton.setEnabled(false);
 
@@ -586,7 +586,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 public void onClick(View view) {
                    /* Toast.makeText(getApplicationContext(),
                             "Card clicked: "+getResources().getResourceEntryName(cardButton.getId()), Toast.LENGTH_SHORT).show();*/
-
+                    playSound(R.raw.select_sound);
                     zoomInOnSelectedCard(cardButton);
 
                     if (cardButton.isSelected()) {
@@ -641,6 +641,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             cardButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    playSound(R.raw.select_sound);
                    /* Toast.makeText(getApplicationContext(),
                             "Card clicked: "+getResources().getResourceEntryName(cardButton.getId()), Toast.LENGTH_SHORT).show();*/
 
@@ -698,6 +699,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             cardButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    playSound(R.raw.select_sound);
                    /* Toast.makeText(getApplicationContext(),
                             "Card clicked: "+getResources().getResourceEntryName(cardButton.getId()), Toast.LENGTH_SHORT).show();*/
 
@@ -1362,6 +1364,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
 
 
     private void playSwapAnimationOther() {
+        playSound(R.raw.card_flip);
         cardSwapAnimation.setVisibility(View.VISIBLE);
         cardSwapBg.setVisibility(View.VISIBLE);
         cardSwapAnimation.playAnimation();
@@ -1379,6 +1382,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
     }
 
     private void playSwapAnimation() {
+        playSound(R.raw.card_flip);
         cardSwapAnimation.setVisibility(View.VISIBLE);
         cardSwapBg.setVisibility(View.VISIBLE);
         cardSwapAnimation.playAnimation();
@@ -1505,6 +1509,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
     }
 
     private void initiatePeekAction() {
+        playSound(R.raw.select_sound);
         peekButton.setVisibility(View.VISIBLE);
         updateText.setVisibility(View.VISIBLE);
         updateText.setText("Please choose 1 of your cards");
@@ -1522,13 +1527,13 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
 
                 for (ImageButton cardButton : player1CardButtons) {
                     if (cardButton.isSelected()) {
+                        playSound(R.raw.peek_action);
                         animateCardTurn(cardButton);
                         setCountdownTimer(cardButton);
                         peekButton.setVisibility(View.INVISIBLE);
                         growCardGlowAnimationOut(player1CardsGlow);
                     }
                 }
-
                 try {
                     webSocketClient.send(String.valueOf(JSON_commands.useFunctionalityPeek(getSelectedCard(player1CardButtons, me))));
                 } catch (JSONException e) {
@@ -1541,7 +1546,6 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                         updateText.setVisibility(View.INVISIBLE);
                         deactivateAllOnCardClickListeners();
                         nrCardsSelected = 0;
-
                     }
                 });
             }
@@ -1577,6 +1581,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         peekButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                playSound(R.raw.card_flip);
                 growCardGlowAnimationOut(player1CardsGlow);
                 for (ImageButton cardButton : player1CardButtons) {
                     if (cardButton.isSelected()) {
@@ -1585,6 +1590,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                     for (ImageButton card : selectedCards) {
                         animateCardTurn(card);
                         setCountdownTimer(card);
+                        playSound(R.raw.peek_action);
                     }
                     peekButton.setVisibility(View.INVISIBLE);
                     new CountDownTimer(10000, 1000) {
@@ -1672,6 +1678,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             int cardIndex = me.getMyCards().indexOf(card);
             ImageButton cardButton = player1CardButtons.get(cardIndex);
             cardButton.setImageResource(R.drawable.card_swapped);
+            playSound(R.raw.card_flip);
 
             new CountDownTimer(5000, 1000) {
 
@@ -1689,6 +1696,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             int cardIndex = swappingPlayer.getMyCards().indexOf(card);
             ImageButton cardButton = otherPlayerButtonLists.get(playerIndex).get(cardIndex);
             cardButton.setImageResource(R.drawable.card_swapped);
+            playSound(R.raw.card_flip);
             playSwapAnimationOther();
 
             new CountDownTimer(5000, 1000) {
@@ -1753,6 +1761,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         ImageButton cardButton = otherPlayerButtonLists.get(playerIndex).get(cardIndex);
         cardButton.setImageResource(R.drawable.card_spied);
         updateText.setText(peekingPlayer.getName() + " is peeking");
+        playSound(R.raw.peek_action);
 
         new CountDownTimer(10000, 1000) {
 
@@ -2205,6 +2214,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                     @Override
                     public void run() {
                         playSwapAnimation();
+                        playSound(R.raw.card_flip);
                     }
                 });
             }
@@ -2651,16 +2661,20 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         noAccount = NO_LOGIN;
     }
 
+    /**
+     * This function is responsible for playing sounds in this Activity
+     * In case cabo was called, there is a flag that prevents the cabo sound from being interrupted
+     * by the next players turn sound
+     * @param sound: The R.raw.*ID* of the sound you want to play
+     * */
     public void playSound(int sound) {
         if (DatabaseOperation.getDao().getSoundsPlaying(sharedPref).equals("Play")) {
             if (soundPlayer != null) {
                 if (!caboCalled) {
+                    // Make sure to release all music players, to prevent memory leakage
                     soundPlayer.stop();
                     soundPlayer.release();
                 }
-            }
-            if (sound == R.raw.spy_action) {
-
             }
             if (sound == R.raw.cabo) {
                 caboCalled = true;
@@ -2671,6 +2685,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             soundPlayer.setOnSeekCompleteListener(new MediaPlayer.OnSeekCompleteListener() {
                 @Override
                 public void onSeekComplete(MediaPlayer mediaPlayer) {
+                    // Make sure to release all music players, to prevent memory leakage
                     soundPlayer.stop();
                     soundPlayer.release();
                 }
