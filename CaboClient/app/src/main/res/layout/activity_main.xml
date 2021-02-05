@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/cabo_bg"
     android:orientation="horizontal"
-    tools:context=".MainActivity">
+    tools:context=".CaboView.MainActivity">
 
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/particle_animationView_main"

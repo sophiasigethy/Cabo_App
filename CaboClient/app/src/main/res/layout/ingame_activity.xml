@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:orientation="horizontal"
     android:background="#009688"
-    tools:context="msp.group3.caboclient.InGameActivity">
+    tools:context="msp.group3.caboclient.CaboView.InGameActivity">
 
     <com.otaliastudios.zoom.ZoomLayout
         android:id="@+id/zoomlayout"
