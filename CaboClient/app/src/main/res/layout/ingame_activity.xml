@@ -7,13 +7,13 @@
     android:layout_height="match_parent"
     android:orientation="horizontal"
     android:background="#009688"
-    tools:context="msp.group3.caboclient.InGameActivity">
+    tools:context="msp.group3.caboclient.CaboView.InGameActivity">
 
     <com.otaliastudios.zoom.ZoomLayout
         android:id="@+id/zoomlayout"
         android:orientation="horizontal"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:scrollbars="vertical|horizontal"
         app:transformation="centerInside"
         app:transformationGravity="auto"
@@ -44,8 +44,8 @@
         android:background="@drawable/cabo_bg">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_gravity="center"
             android:layout_marginTop="24dp">
 
@@ -120,12 +120,12 @@
                 android:elevation="16dp"
                 android:padding="4dp"
                 android:rotation="-90"
-                android:scaleType="fitCenter"
+                android:scaleType="centerInside"
                 app:layout_constraintBottom_toTopOf="@id/player1_cards"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/player2_cards"
-                app:srcCompat="@drawable/card_stack" />
+                app:srcCompat="@drawable/rounded_button" />
 
             <com.airbnb.lottie.LottieAnimationView
                 android:id="@+id/hint_arrow_card_stack"
@@ -165,7 +165,6 @@
                 android:id="@+id/player1_cards"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent">
@@ -294,7 +293,6 @@
                 android:id="@+id/player2_cards"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
@@ -594,13 +592,12 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/player1_stats_game"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        android:translationX="120dp"
-        android:translationY="-10dp"
-        app:layout_constraintLeft_toLeftOf="parent">
+        android:translationX="-100dp"
+        android:translationY="-10dp">
 
         <TextView
         android:id="@+id/player1_info_game"
@@ -787,13 +784,12 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/player2_stats_game"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        android:translationX="120dp"
-        android:translationY="-50dp"
-        app:layout_constraintLeft_toLeftOf="parent">
+        android:translationX="-100dp"
+        android:translationY="-50dp">
 
 
         <TextView
@@ -895,13 +891,13 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/player3_stats_game"
-        android:layout_width="140dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        android:translationY="-25dp"
-        android:layout_margin="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        android:translationY="-140dp"
+        android:translationX="-40dp"
+        android:layout_margin="16dp"
+        app:layout_constraintLeft_toLeftOf="parent">
 
 
         <TextView
@@ -913,7 +909,6 @@
             app:layout_constraintLeft_toLeftOf="parent"
             android:text="Score: 43"
             android:textSize="10sp"
-            android:translationY="10dp"
             android:textColor="@color/beige"
             android:textAlignment="center"
             android:layout_marginBottom="12dp"
@@ -1004,14 +999,13 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/player4_stats_game"
-        android:layout_width="140dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        android:translationY="-25dp"
-        android:translationX="50dp"
-        android:layout_margin="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintRight_toRightOf="parent"
+        android:translationY="-140dp"
+        android:translationX="70dp"
+        android:layout_margin="16dp">
 
 
         <TextView
@@ -1023,7 +1017,6 @@
             app:layout_constraintLeft_toLeftOf="parent"
             android:text="Score: 43"
             android:textSize="10sp"
-            android:translationY="10dp"
             android:textColor="@color/beige"
             android:textAlignment="center"
             android:layout_marginBottom="12dp"
@@ -1264,7 +1257,7 @@
 
     <TextView
         android:id="@+id/update_text"
-        android:layout_width="wrap_content"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"

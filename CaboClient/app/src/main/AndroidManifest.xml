@@ -17,17 +17,18 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.CaboClient">
         <activity
-            android:name=".IntroActivity"
+            android:name=".CaboView.IntroActivity"
             android:label="Cabo"
             android:theme="@style/Theme.CaboClient.NoActionBar"
-            android:screenOrientation="sensorLandscape">
+            android:screenOrientation="sensorLandscape"
+            tools:ignore="Instantiatable">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".LoginActivity"
+            android:name=".CaboView.LoginActivity"
             android:configChanges="orientation"
             android:label="@string/title_activity_login"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"
@@ -35,7 +36,7 @@
         </activity>
 
         <activity
-            android:name=".RegisterActivity"
+            android:name=".CaboView.RegisterActivity"
             android:configChanges="orientation"
             android:label="@string/title_activity_register"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"
@@ -43,32 +44,32 @@
         </activity>
 
         <activity
-            android:name=".WaitingRoomActivity"
+            android:name=".CaboView.WaitingRoomActivity"
             android:screenOrientation="sensorLandscape"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen" />
 
 
         <activity
-            android:name=".MainActivity"
+            android:name=".CaboView.MainActivity"
             android:screenOrientation="sensorLandscape"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen">
         </activity>
 
-        <service android:enabled="true" android:name=".BackgroundSoundService" />
+        <service android:enabled="true" android:name=".CaboController.BackgroundSoundService" />
 
         <activity
-            android:name=".LicenseActivity"
+            android:name=".CaboView.LicenseActivity"
             android:screenOrientation="sensorLandscape"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen">
         </activity>
 
         <activity
-            android:name=".InGameActivity"
+            android:name=".CaboView.InGameActivity"
             android:screenOrientation="sensorLandscape"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen">
         </activity>
         <activity
-            android:name=".ConnectionActivity"
+            android:name=".CaboView.ConnectionActivity"
             android:screenOrientation="sensorLandscape"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen">
         </activity>

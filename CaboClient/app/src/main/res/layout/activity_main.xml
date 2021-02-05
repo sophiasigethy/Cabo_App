@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/cabo_bg"
     android:orientation="horizontal"
-    tools:context=".MainActivity">
+    tools:context=".CaboView.MainActivity">
 
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/particle_animationView_main"
@@ -29,18 +29,6 @@
         app:lottie_autoPlay="true"
         app:lottie_loop="true"
         app:lottie_rawRes="@raw/particles" />
-
-    <Button
-        android:id="@+id/logout_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        android:text="@string/logout"
-        android:textColor="@drawable/outlined_button_text"
-        android:textSize="8sp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        tools:ignore="SmallSp" />
 
     <ImageButton
         android:id="@+id/music_button"
@@ -190,7 +178,8 @@
 
                 <FrameLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal">
 
                     <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/player1_image_main"
