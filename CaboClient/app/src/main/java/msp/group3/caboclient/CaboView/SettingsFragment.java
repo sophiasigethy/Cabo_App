@@ -62,14 +62,19 @@ public class SettingsFragment extends Fragment {
         updateScoreButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                updateScoreButton.setSaveEnabled(false);
-                updateScoreButton.setAlpha(0.3f);
                 try {
                     ((WaitingRoomActivity) getActivity()).communicator.sendMessage(JSON_commands.sendMaxPoints((int) currentMaxScoreOnSlider));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
 
+                ((WaitingRoomActivity) getActivity()).runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        updateScoreButton.setSaveEnabled(false);
+                        updateScoreButton.setAlpha(0.3f);
+                    }
+                });
             }
         });
 

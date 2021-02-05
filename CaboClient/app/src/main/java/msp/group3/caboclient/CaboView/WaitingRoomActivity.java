@@ -445,15 +445,17 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
             showText(text, true, null);
         }
         if (jsonObject.has("maxPoints")) {
-            int maxPoints = (int) jsonObject.get("sendMAXPlayer");
-            Toast.makeText(getApplicationContext(), "Max score was adjusted to "+maxPoints,
-                    Toast.LENGTH_LONG).show();
+            int maxPoints = (int) jsonObject.get("maxPoints");
+
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    Toast.makeText(getApplicationContext(), "Max score was adjusted to "+maxPoints,
+                            Toast.LENGTH_LONG).show();
                     SettingsFragment fragment_obj = (SettingsFragment) getSupportFragmentManager().
                             findFragmentById(R.id.fragment_settings);
                     fragment_obj.sliderValueText.setText(""+maxPoints);
+                    fragment_obj.slider.setValue((float)maxPoints);
                 }
             });
             //TODO show max Points
