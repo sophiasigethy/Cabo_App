@@ -1,5 +1,9 @@
 package msp.group3.caboclient.CaboView;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +13,8 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import androidx.fragment.app.Fragment;
+
+import msp.group3.caboclient.CaboController.DatabaseOperation;
 import msp.group3.caboclient.CaboController.JSON_commands;
 import msp.group3.caboclient.CaboModel.Player;
 import msp.group3.caboclient.R;
@@ -23,6 +29,8 @@ public class InGameChatFragment extends Fragment {
     protected ListView chatMessageListView;
     protected ArrayList<ChatMessage> chatMessagesList= new ArrayList();
     protected ChatAdapter adapter;
+    protected SharedPreferences sharedPref;
+    protected Activity ingameActivity;
 
     public InGameChatFragment() {
         super(R.layout.ingamechat_fragment);
@@ -53,6 +61,9 @@ public class InGameChatFragment extends Fragment {
 
         adapter = new ChatAdapter(view.getContext(), chatMessagesList);
         chatMessageListView.setAdapter(adapter);
+        ingameActivity = getActivity();
+        sharedPref = ingameActivity.getSharedPreferences(
+                R.string.preference_file_key + "", Context.MODE_PRIVATE);
 
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -62,6 +73,7 @@ public class InGameChatFragment extends Fragment {
                 String text = "(" + ((InGameActivity) getActivity()).me.getName() + "): " + currentText;
                 //String text = currentText;
                 textInput.setText("");
+                playSound(R.raw.send_message);
                 try {
                     ((InGameActivity) getActivity()).webSocketClient.send(String.valueOf(JSON_commands.chatMessage(currentText, sender)));
                 } catch (JSONException e) {
@@ -82,5 +94,22 @@ public class InGameChatFragment extends Fragment {
         });
     }
 
-
+    /**
+     * This function is responsible for playing sounds in this Activity
+     * @param sound: The R.raw.*ID* of the sound you want to play
+     * */
+    public void playSound(int sound) {
+        if (DatabaseOperation.getDao().getSoundsPlaying(sharedPref).equals("Play")) {
+            MediaPlayer soundPlayer = MediaPlayer.create(ingameActivity, sound);
+            soundPlayer.setOnSeekCompleteListener(new MediaPlayer.OnSeekCompleteListener() {
+                @Override
+                public void onSeekComplete(MediaPlayer mediaPlayer) {
+                    soundPlayer.stop();
+                    soundPlayer.release();
+                }
+            });
+            soundPlayer.setVolume(90, 90);
+            soundPlayer.start();
+        }
+    }
 }
