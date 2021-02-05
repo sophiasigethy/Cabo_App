@@ -54,7 +54,7 @@ public class SettingsFragment extends Fragment {
             public void onValueChange(@NonNull Slider slider, float value, boolean fromUser) {
                 sliderValueText.setText(""+value);
                 currentMaxScoreOnSlider=value;
-                updateScoreButton.setSaveEnabled(true);
+                updateScoreButton.setEnabled(true);
                 updateScoreButton.setAlpha(1f);
             }
         });

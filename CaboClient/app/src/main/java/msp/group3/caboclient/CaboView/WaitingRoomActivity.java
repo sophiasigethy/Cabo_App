@@ -454,8 +454,10 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
                             Toast.LENGTH_LONG).show();
                     SettingsFragment fragment_obj = (SettingsFragment) getSupportFragmentManager().
                             findFragmentById(R.id.fragment_settings);
-                    fragment_obj.sliderValueText.setText(""+maxPoints);
+                    fragment_obj.sliderValueText.setText(""+(int)maxPoints);
                     fragment_obj.slider.setValue((float)maxPoints);
+                    fragment_obj.updateScoreButton.setAlpha(0.3f);
+                    fragment_obj.updateScoreButton.setEnabled(false);
                 }
             });
             //TODO show max Points
