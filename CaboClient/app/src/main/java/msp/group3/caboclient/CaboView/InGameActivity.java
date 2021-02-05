@@ -1077,6 +1077,8 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
     }
 
     private void enablePlayedCardStackButton(Card pickedCard) {
+        playedCardsStackButton.setEnabled(true);
+        playedCardsStackButton.setAlpha(1f);
         playedCardsStackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -1114,9 +1116,6 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 });
             }
         });
-        playedCardsStackButton.setEnabled(true);
-        playedCardsStackButton.setAlpha(1f);
-
     }
 
     private void makePickedCardContainerDisappear() {
@@ -2068,13 +2067,13 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 String jsonString = js.get("card").toString();
                 Gson gson = new Gson();
                 Card card = gson.fromJson(jsonString, Card.class);
-                displayDiscardedCard(card);
                 Log.d("----------------------MY STATUS", me.getStatus());
 
                 if (me.getStatus().equals(playing)) {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            displayDiscardedCard(card);
                             Log.d("----------------------ACTION", "trying to play action");
 
                             try {
@@ -2088,6 +2087,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            displayDiscardedCard(card);
                             updateText.setText("A card is being played");
                         }
                     });
