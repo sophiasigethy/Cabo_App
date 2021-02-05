@@ -1581,7 +1581,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         peekButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                playSound(R.raw.card_flip);
+                playSound(R.raw.peek_action);
                 growCardGlowAnimationOut(player1CardsGlow);
                 for (ImageButton cardButton : player1CardButtons) {
                     if (cardButton.isSelected()) {
@@ -1590,9 +1590,9 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                     for (ImageButton card : selectedCards) {
                         animateCardTurn(card);
                         setCountdownTimer(card);
-                        playSound(R.raw.peek_action);
                     }
                     peekButton.setVisibility(View.INVISIBLE);
+                    //playSound(R.raw.peek_action);
                     new CountDownTimer(10000, 1000) {
                         public void onTick(long millisUntilFinished) {
                         }
@@ -1616,7 +1616,6 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
     private void setCountdownTimer(ImageButton cardButton) {
         timerAnimation.setVisibility(View.VISIBLE);
         timerAnimation.playAnimation();
-
         new CountDownTimer(10000, 1000) {
 
             public void onTick(long millisUntilFinished) {
