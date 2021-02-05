@@ -1853,13 +1853,11 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         String chatText = "";
 
         if (jsonObject.has("chatMessage")) {
-            // String chatText = jsonObject.get("chatMessage").toString();
             JSONObject js = jsonObject.getJSONObject("chatMessage");
             Player sender = null;
             if (me != null) {
                 if (js.has("message")) {
                     chatText = js.get("message").toString();
-                    //showText(mes);
                 }
             }
             if (js.has("sender")) {
@@ -1897,8 +1895,6 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             int maxPlayer = (int) jsonObject.get("sendMAXPlayer");
             MAX_PLAYERS = maxPlayer;
             Log.d("----------------------MAXPLAYERS", "playerNr: " + maxPlayer);
-            //visualizePlayerStats(maxPlayer);
-            //deactivateAllButtons();
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -1973,8 +1969,6 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                                 }
 
                             }.start();
-                            //nextRoundAnimation(players);
-                            //nextRound(players); -> called by nextRoundAnimation
                             showPlayerRanks();
                         }
                     }
@@ -1988,13 +1982,11 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             playingPlayerId = nextPlayerId;
             Log.d("----------------------NEXT PLAYER", "id: " + nextPlayerId);
             Log.d("----------------------MY ID", "id: " + me.getId());
-            deactivateAllButtons();
-            //updateText.setText("Its your turn: "+getPlayerById(nextPlayerId).getName());
             if (me.getId() == nextPlayerId) {
-                //indicatePlayerTurn(me);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        deactivateAllButtons();
                         indicatePlayerTurn(me);
                         if (caboplayer == null) {
                             caboButton.setEnabled(true);
@@ -2313,9 +2305,15 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 Gson gson = new Gson();
                 Player player = gson.fromJson(jsonString, Player.class);
                 caboplayer = player;
-                fadeCaboPlayerCardsAndShowAnimation(0.3f);
-                tapPickCardAnimation.setVisibility(View.INVISIBLE);
-                playSound(R.raw.cabo);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        fadeCaboPlayerCardsAndShowAnimation(0.3f);
+                        tapPickCardAnimation.setVisibility(View.INVISIBLE);
+                        playSound(R.raw.cabo);
+                    }
+                });
+
             }
         }
         if (jsonObject.has("endGame")) {
@@ -2324,7 +2322,14 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 String jsonString = js.get("player").toString();
                 Gson gson = new Gson();
                 Player winnerOfGame = gson.fromJson(jsonString, Player.class);
-                showEndOfGame(winnerOfGame);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        showEndOfGame(winnerOfGame);
+                    }
+                });
+
+
                 //TODO update global score in shared preferences?
 
             }
@@ -2548,13 +2553,13 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
 
 
     public void updateCards(Player updatedPlayer) {
-        if (updatedPlayer.getId() == me.getId()) {
-            ArrayList<Card> oldcards = me.getMyCards();
-            me.updateCards(updatedPlayer);
-            if (!me.getStatus().equals(playing)) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (updatedPlayer.getId() == me.getId()) {
+                    ArrayList<Card> oldcards = me.getMyCards();
+                    me.updateCards(updatedPlayer);
+                    if (!me.getStatus().equals(playing)) {
                         for (int i = 0; i < me.getMyCards().size(); i++) {
                             if (!oldcards.get(i).equalsCard(me.getMyCards().get(i))) {
                                 Log.d("----------------------SWAPPED CARD", "index: " + i);
@@ -2562,19 +2567,14 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                             }
                         }
                     }
-                });
-            }
-        } else {
-            for (Player player : otherPlayers) {
-                if (player.getId() == updatedPlayer.getId()) {
-                    ArrayList<Card> oldcards = player.getMyCards();
-                    Log.d("-----------OLD CARDS", "cards: " + oldcards.get(0).getValue() + " " + oldcards.get(1).getValue() + " " + oldcards.get(2).getValue() + " " + oldcards.get(3).getValue() + " ");
-                    player.updateCards(updatedPlayer);
-                    Log.d("-----------NEW CARDS", "cards: " + updatedPlayer.getMyCards().get(0).getValue() + " " + updatedPlayer.getMyCards().get(1).getValue() + " " + updatedPlayer.getMyCards().get(2).getValue() + " " + updatedPlayer.getMyCards().get(3).getValue() + " ");
-                    if (!me.getStatus().equals(playing)) {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
+                } else {
+                    for (Player player : otherPlayers) {
+                        if (player.getId() == updatedPlayer.getId()) {
+                            ArrayList<Card> oldcards = player.getMyCards();
+                            Log.d("-----------OLD CARDS", "cards: " + oldcards.get(0).getValue() + " " + oldcards.get(1).getValue() + " " + oldcards.get(2).getValue() + " " + oldcards.get(3).getValue() + " ");
+                            player.updateCards(updatedPlayer);
+                            Log.d("-----------NEW CARDS", "cards: " + updatedPlayer.getMyCards().get(0).getValue() + " " + updatedPlayer.getMyCards().get(1).getValue() + " " + updatedPlayer.getMyCards().get(2).getValue() + " " + updatedPlayer.getMyCards().get(3).getValue() + " ");
+                            if (!me.getStatus().equals(playing)) {
                                 for (int i = 0; i < player.getMyCards().size(); i++) {
                                     if (!oldcards.get(i).equalsCard(player.getMyCards().get(i))) {
                                         Log.d("----------------------SWAPPED CARD", "index: " + i);
@@ -2582,12 +2582,13 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                                     }
                                 }
                             }
-                        });
+                        }
                     }
                 }
             }
-        }
+        });
     }
+
 
     public boolean containsPlayer(Player player) {
         for (Player otherPlayer : otherPlayers) {
