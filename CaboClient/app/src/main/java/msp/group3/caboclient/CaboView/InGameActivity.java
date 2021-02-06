@@ -33,13 +33,6 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import msp.group3.caboclient.CaboController.BackgroundSoundService;
-import msp.group3.caboclient.CaboController.Communicator;
-import msp.group3.caboclient.CaboController.DatabaseOperation;
-import msp.group3.caboclient.CaboModel.Card;
-import msp.group3.caboclient.CaboController.JSON_commands;
-import msp.group3.caboclient.CaboModel.Player;
-import msp.group3.caboclient.R;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.google.gson.Gson;
@@ -53,6 +46,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+
+import msp.group3.caboclient.CaboController.BackgroundSoundService;
+import msp.group3.caboclient.CaboController.Communicator;
+import msp.group3.caboclient.CaboController.DatabaseOperation;
+import msp.group3.caboclient.CaboController.JSON_commands;
+import msp.group3.caboclient.CaboModel.Card;
+import msp.group3.caboclient.CaboModel.Player;
+import msp.group3.caboclient.R;
 
 import static msp.group3.caboclient.CaboController.TypeDefs.angry;
 import static msp.group3.caboclient.CaboController.TypeDefs.laughing;
@@ -266,9 +267,6 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             getSupportFragmentManager().beginTransaction()
                     .setReorderingAllowed(true)
                     .add(R.id.fragment_chat, InGameChatFragment.class, bundle)
-                    //.add(R.id.fragment_settings, SettingsFragment.class, bundle)
-                    //.add(R.id.fragment_chat, new InGameChatFragment(), TAG_CHAT)
-                    //.add(R.id.fragment_settings, new SettingsFragment(), TAG_SETTINGS)
                     .commit();
         }
 
@@ -1144,35 +1142,35 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
     private int getCardResource(Card card) {
         switch (card.getValue()) {
             case -1:
-                return R.drawable.card_joker_1;
+                return R.drawable.card_minus1;
             case 0:
-                return R.drawable.card_hearts_k;
+                return R.drawable.card_0;
             case 1:
-                return R.drawable.card_hearts_a;
+                return R.drawable.card_1;
             case 2:
-                return R.drawable.card_clubs_2;
+                return R.drawable.card_2;
             case 3:
-                return R.drawable.card_clubs_3;
+                return R.drawable.card_3;
             case 4:
-                return R.drawable.card_clubs_4;
+                return R.drawable.card_4;
             case 5:
-                return R.drawable.card_clubs_5;
+                return R.drawable.card_5;
             case 6:
-                return R.drawable.card_clubs_6;
+                return R.drawable.card_6;
             case 7:
-                return R.drawable.card_clubs_7;
+                return R.drawable.card_7;
             case 8:
-                return R.drawable.card_clubs_8;
+                return R.drawable.card_8;
             case 9:
-                return R.drawable.card_clubs_9;
+                return R.drawable.card_9;
             case 10:
-                return R.drawable.card_clubs_10;
+                return R.drawable.card_10;
             case 11:
-                return R.drawable.card_clubs_j;
+                return R.drawable.card_11;
             case 12:
-                return R.drawable.card_clubs_q;
+                return R.drawable.card_12;
             case 13:
-                return R.drawable.card_clubs_k;
+                return R.drawable.card_13;
         }
         return 0;
     }
@@ -1591,7 +1589,6 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                         setCountdownTimer(card);
                     }
                     peekButton.setVisibility(View.INVISIBLE);
-                    //playSound(R.raw.peek_action);
                     new CountDownTimer(10000, 1000) {
                         public void onTick(long millisUntilFinished) {
                         }
