@@ -2,14 +2,17 @@ package msp.group3.caboclient.CaboView;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
+
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import msp.group3.caboclient.R;
 
-import android.util.Log;
 import com.github.appintro.AppIntro;
 import com.github.appintro.AppIntroFragment;
+
+import msp.group3.caboclient.R;
 
 public class IntroActivity extends AppIntro {
     final static String TAG = "IntroActivity";
@@ -29,39 +32,50 @@ public class IntroActivity extends AppIntro {
             IntroActivity.this.startActivity(myIntent);
             finish();
         }
+
     }
 
     private void addSlides() {
-        addSlide(AppIntroFragment.newInstance("Cabo", "Cabo is a round-based Online-Multiplayer Cardgame for up to 4 Players",
-                R.drawable.cabo_logo, ContextCompat.getColor(getApplicationContext(), R.color.black)));
-        addSlide(AppIntroFragment.newInstance("The Game", "Every Player has 4 cards, of which 2 are unknown at the beginning" +
-                        "The goal of the game is to collect as few points as possible\n" +
-                        "This can be achieved by swapping drawn cards with your own, or by using action-cards, to swap cards with the other players\n",
-                R.drawable.card_clubs_3, ContextCompat.getColor(getApplicationContext(), R.color.black)));
-        addSlide(AppIntroFragment.newInstance("Rules", "At the beginning of the game, every player can look at 2 of the 4 cards\n" +
-                        "Make sure, you remember those\n" +
-                        "At the beginning of your turns, you can draw a card\n" +
-                        "There are normal cards and action cards",
-                R.drawable.introduction_rules, ContextCompat.getColor(getApplicationContext(), R.color.black)));
-        addSlide(AppIntroFragment.newInstance("Card Types", "Cards 2 - 6 are normal cards. You can use these only to swap them with your cards\n" +
-                        "Cards 7 - Queens are action cards:\n" +
-                        "7+8 Allow you to take a look at one of your cards\n" +
-                        "9+10 Allow you to take a look at any card on the field\n" +
-                        "J+Q Allow you to swap one of your cards with any card on the field",
-                R.drawable.introduction_card_types, ContextCompat.getColor(getApplicationContext(), R.color.black)));
-        addSlide(AppIntroFragment.newInstance("Goal", "The goal of the game is to collect as few points as possible\n" +
-                        "Every Card with a number is worth equal to it´s number\n" +
+        addSlide(AppIntroFragment.newInstance("Cabo", "Cabo is a round-based Online-Multiplayer Cardgame for up to 4 Players.",
+                R.drawable.cabo_logo, ContextCompat.getColor(getApplicationContext(), R.color.dark_purple),
+                ContextCompat.getColor(getApplicationContext(), R.color.beige), ContextCompat.getColor(getApplicationContext(), R.color.beige)));
+        addSlide(AppIntroFragment.newInstance("The Game", "Every player has 4 cards." +
+                        "The goal is to collect as few points as possible by swapping drawn cards with your own, or by using action-cards, to swap cards with the other players.\n",
+                R.drawable.card_clubs_3, ContextCompat.getColor(getApplicationContext(), R.color.dark_purple),
+                ContextCompat.getColor(getApplicationContext(), R.color.beige), ContextCompat.getColor(getApplicationContext(), R.color.beige)));
+        addSlide(AppIntroFragment.newInstance("Rules", "At the beginning of a round, every player can look at and memorize 2 cards.\n" +
+                        "When it's your turn, you can draw a card.\n" +
+                        "There are normal cards and action cards.",
+                R.drawable.introduction_rules, ContextCompat.getColor(getApplicationContext(), R.color.dark_purple),
+                ContextCompat.getColor(getApplicationContext(), R.color.beige), ContextCompat.getColor(getApplicationContext(), R.color.beige)));
+        addSlide(AppIntroFragment.newInstance("Normal Cards", "Cards of the values 2 - 6 are normal cards. You can use these only to swap with your cards or simply discard them.\n",
+                R.drawable.card_clubs_4, ContextCompat.getColor(getApplicationContext(), R.color.dark_purple),
+                ContextCompat.getColor(getApplicationContext(), R.color.beige), ContextCompat.getColor(getApplicationContext(), R.color.beige)));
+        addSlide(AppIntroFragment.newInstance("Action Cards",
+                        "Peek: 7+8 Allow you to take a look at one of your cards\n" +
+                        "Spy: 9+10 Allow you to take a look at any enemy card\n" +
+                        "Swap: J+Q Allow you to swap any 2 cards on the field",
+                R.drawable.introduction_card_types, ContextCompat.getColor(getApplicationContext(), R.color.dark_purple),
+                ContextCompat.getColor(getApplicationContext(), R.color.beige), ContextCompat.getColor(getApplicationContext(), R.color.beige)));
+        addSlide(AppIntroFragment.newInstance("Card Values",
+                        "Every Card with a number is worth its indicated number.\n" +
                         "Jack is worth 11 Points, Queen is worth 12 Points and the King is worth 13 Points\n" +
-                        "Ace is worth 0 Points and the Joker is worth -1 Point\n" +
-                        "You have to try to get rid of cards with high points to win the game",
-                R.drawable.card_clubs_4, ContextCompat.getColor(getApplicationContext(), R.color.black)));
-        addSlide(AppIntroFragment.newInstance("Winning", "If you think, your points are low enough, instead of drawing a card you can call CABO!\n" +
-                        "This will end your turn, and everyone else has 1 last turn\n" +
-                        "Afterwards the points of every player are summed up and the one with fewest points is the winner",
-                R.drawable.introduction_winning, ContextCompat.getColor(getApplicationContext(), R.color.black)));
+                        "Ace is worth 0 Points and the Joker is worth -1 Point",
+                R.drawable.card_clubs_4, ContextCompat.getColor(getApplicationContext(), R.color.dark_purple),
+                ContextCompat.getColor(getApplicationContext(), R.color.beige), ContextCompat.getColor(getApplicationContext(), R.color.beige)));
+        addSlide(AppIntroFragment.newInstance("Rounds", "If you think, your points are low enough, you can call CABO!\n" +
+                        "This will end your turn, and everyone else has 1 last turn.\n" +
+                        "Afterwards the points of every player are summed up and a new round begins.",
+                R.drawable.introduction_winning, ContextCompat.getColor(getApplicationContext(), R.color.dark_purple),
+                ContextCompat.getColor(getApplicationContext(), R.color.beige), ContextCompat.getColor(getApplicationContext(), R.color.beige)));
+        addSlide(AppIntroFragment.newInstance("Winning", "By default the game ends as soon as the first player has reached 100 points. The player with the lowest score at this point wins.\n" +
+                        "The max score can also be adjusted in the settings.",
+                R.drawable.introduction_winning, ContextCompat.getColor(getApplicationContext(), R.color.dark_purple),
+                ContextCompat.getColor(getApplicationContext(), R.color.beige), ContextCompat.getColor(getApplicationContext(), R.color.beige)));
         addSlide(AppIntroFragment.newInstance("Gameplay", "To interact in the game, you can click cards," +
-                        " swipe the table to move around, chat with other players, or show your emotions by changing your Emoji",
-                R.drawable.introduction_gameplay, ContextCompat.getColor(getApplicationContext(), R.color.black)));
+                        " swipe or pinch zoom the table to move around, chat with other players, or show your emotions by changing your emoji.",
+                R.drawable.introduction_gameplay, ContextCompat.getColor(getApplicationContext(), R.color.dark_purple),
+                ContextCompat.getColor(getApplicationContext(), R.color.beige), ContextCompat.getColor(getApplicationContext(), R.color.beige)));
     }
 
     @Override
