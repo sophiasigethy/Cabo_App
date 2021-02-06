@@ -56,8 +56,8 @@
     <string name="preference_music">music</string>
     <string name="preference_music_vol">music_vol</string>
     <string name="preference_sound">sound</string>
-    <string name="settings">Settings</string>
-    <string name="adjust_max_score">Adjust max Score:</string>
+    <string name="settings">Game Settings</string>
+    <string name="adjust_max_score">Max Score:</string>
     <string name="licenses">Licenses</string>
     <string name="logout">Logout</string>
 

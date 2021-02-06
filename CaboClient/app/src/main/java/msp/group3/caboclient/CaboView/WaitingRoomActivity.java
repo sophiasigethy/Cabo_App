@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -37,8 +38,8 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
 
     private EditText editText;
     private ImageButton sendButton;
-    private WebSocketClient webSocketClient;
-    private Communicator communicator;
+    WebSocketClient webSocketClient;
+    Communicator communicator;
     private TextView player1_name;
     private CircleImageView player1_image;
     private TextView player2_name;
@@ -444,7 +445,21 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
             showText(text, true, null);
         }
         if (jsonObject.has("maxPoints")) {
-            int maxPoints = (int) jsonObject.get("sendMAXPlayer");
+            int maxPoints = (int) jsonObject.get("maxPoints");
+
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(getApplicationContext(), "Max score was adjusted to "+maxPoints,
+                            Toast.LENGTH_LONG).show();
+                    SettingsFragment fragment_obj = (SettingsFragment) getSupportFragmentManager().
+                            findFragmentById(R.id.fragment_settings);
+                    fragment_obj.sliderValueText.setText(""+(int)maxPoints);
+                    fragment_obj.slider.setValue((float)maxPoints);
+                    fragment_obj.updateScoreButton.setAlpha(0.3f);
+                    fragment_obj.updateScoreButton.setEnabled(false);
+                }
+            });
             //TODO show max Points
             // vorher: communicator.sendMessage(JSON_commands.sendMaxPoints(100));
 

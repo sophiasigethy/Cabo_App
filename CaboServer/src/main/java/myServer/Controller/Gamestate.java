@@ -455,7 +455,8 @@ public class Gamestate {
             sendSmileyOfOnePlayerToAll(currentPlayer);
         }
         if (jsonObject.has("maxPoints")) {
-            maxPoints = (int) jsonObject.get("sendMAXPlayer");
+            //maxPoints = (int) jsonObject.get("sendMAXPlayer");
+            maxPoints = (int) jsonObject.get("maxPoints");
             sendToAll(JSON_commands.sendMaxPoints(maxPoints));
         }
         if (jsonObject.has("leaveGame")) {

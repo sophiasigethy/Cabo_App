@@ -27,7 +27,7 @@
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragment_settings"
         android:layout_width="500dp"
-        android:layout_height="150dp"
+        android:layout_height="120dp"
         android:layout_margin="12dp"
         android:translationZ="12dp"
         android:theme="@style/settingsTheme"

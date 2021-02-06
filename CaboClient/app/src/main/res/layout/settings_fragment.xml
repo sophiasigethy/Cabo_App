@@ -17,6 +17,10 @@
         android:text="@string/settings"
         android:textColor="@color/beige"
         android:textSize="14sp"
+        android:shadowDx="3"
+        android:shadowDy="3"
+        android:shadowColor="@color/beige"
+        android:shadowRadius="10"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -35,9 +39,22 @@
         android:text="@string/adjust_max_score"
         android:textColor="@color/beige"
         android:textSize="14sp"
-        android:layout_weight="0.3"
+        android:layout_weight="0.2"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@id/settings_title" />
+
+        <TextView
+            android:id="@+id/slider_value_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="6dp"
+            android:text="value"
+            android:textColor="@color/beige"
+            android:textSize="12sp"
+            android:layout_weight=".1"
+            app:layout_constraintBottom_toBottomOf="@id/max_score_slider"
+            app:layout_constraintRight_toLeftOf="@id/max_score_slider"
+            app:layout_constraintTop_toTopOf="@id/max_score_slider" />
 
     <com.google.android.material.slider.Slider
         android:id="@+id/max_score_slider"
@@ -58,21 +75,22 @@
         android:layout_weight=".5"
         android:theme="@style/settingsTheme"
         app:layout_constraintBottom_toBottomOf="@id/adjust_max_score_text"
-        app:layout_constraintLeft_toRightOf="@id/adjust_max_score_text"
+        app:layout_constraintLeft_toRightOf="@id/slider_value_text"
         app:layout_constraintTop_toTopOf="@id/adjust_max_score_text" />
 
-    <TextView
-        android:id="@+id/slider_value_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="6dp"
-        android:text="value"
-        android:textColor="@color/beige"
-        android:textSize="12sp"
-        android:layout_weight=".2"
-        app:layout_constraintBottom_toBottomOf="@id/max_score_slider"
-        app:layout_constraintLeft_toRightOf="@id/max_score_slider"
-        app:layout_constraintTop_toTopOf="@id/max_score_slider" />
+        <Button
+            android:id="@+id/update_score_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Update"
+            android:layout_marginRight="12dp"
+            android:background="@drawable/outlined_button"
+            android:textColor="@drawable/outlined_button_text"
+            app:layout_constraintBottom_toBottomOf="@id/adjust_max_score_text"
+            app:layout_constraintLeft_toRightOf="@id/max_score_slider"
+            app:layout_constraintTop_toTopOf="@id/adjust_max_score_text"/>
+
+
 
     </LinearLayout>
 
