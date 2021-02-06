@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/chat_bg"
     android:foregroundTint="#E91E63"
-    tools:context=".MainActivity">
+    tools:context=".CaboView.MainActivity">
 
     <TextView
         android:id="@+id/settings_title"

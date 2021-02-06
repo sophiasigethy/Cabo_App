@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="horizontal"
     android:background="@drawable/cabo_bg"
-    tools:context="msp.group3.caboclient.WaitingRoomActivity">
+    tools:context="msp.group3.caboclient.CaboView.WaitingRoomActivity">
 
     <ImageButton
         android:id="@+id/settings_button"
