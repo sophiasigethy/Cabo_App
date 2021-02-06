@@ -91,6 +91,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
     private Button switchButton;
     private LinearLayout pickedCardButtonContainer;
     private ImageView pickedCardBigImageview;
+    private TextView pickedCardText;
     private ImageButton ownEmojiButton;
     private LinearLayout emojiSelectionContainer;
     private ImageButton happyEmojiButton;
@@ -207,6 +208,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         pickedCardButtonContainer = (LinearLayout) findViewById(R.id.picked_card_button_container);
         pickedCardButtonContainer.setVisibility(View.INVISIBLE);
         pickedCardBigImageview = (ImageView) findViewById(R.id.picked_card_big_imageview);
+        pickedCardText = (TextView) findViewById(R.id.picked_card_big_text);
         ownEmojiButton = (ImageButton) findViewById(R.id.player1_emoji);
         emojiSelectionContainer = (LinearLayout) findViewById(R.id.emoji_selection_container);
         emojiSelectionContainer.setVisibility(View.INVISIBLE);
@@ -1020,6 +1022,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 playSound(R.raw.draw_card);
                 pickedCardBigImageview.setImageResource(R.drawable.card_back);
                 pickedCardButtonContainer.setVisibility(View.VISIBLE);
+                pickedCardText.setVisibility(View.INVISIBLE);
                 final ObjectAnimator oa1 = ObjectAnimator.ofFloat(pickedCardBigImageview, "scaleX", 1f, 0f);
                 final ObjectAnimator oa2 = ObjectAnimator.ofFloat(pickedCardBigImageview, "scaleX", 0f, 1f);
                 oa1.setInterpolator(new DecelerateInterpolator());
@@ -1029,6 +1032,8 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                     public void onAnimationEnd(Animator animation) {
                         super.onAnimationEnd(animation);
                         pickedCardBigImageview.setImageResource(getCardResource(card));
+                        showCardText(card);
+                        pickedCardText.setVisibility(View.VISIBLE);
                         oa2.start();
                         showCardAction(card);
                         if (cardDrawCount == 1) {
@@ -1173,6 +1178,41 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 return R.drawable.card_13;
         }
         return 0;
+    }
+
+    private void showCardText(Card card) {
+        switch (card.getValue()) {
+            case -1:
+                pickedCardText.setText("Chocolate to bribe"); break;
+            case 0:
+                pickedCardText.setText("Collected sea shell"); break;
+            case 1:
+                pickedCardText.setText("Secret love letters"); break;
+            case 2:
+                pickedCardText.setText("Rare coffee beans"); break;
+            case 3:
+                pickedCardText.setText("Illegal cigarettes"); break;
+            case 4:
+                pickedCardText.setText("Valuable whiskey"); break;
+            case 5:
+                pickedCardText.setText("Stolen phone"); break;
+            case 6:
+                pickedCardText.setText("Stacks of cash"); break;
+            case 7:
+                pickedCardText.setText("Fake passports"); break;
+            case 8:
+                pickedCardText.setText("Gold bars"); break;
+            case 9:
+                pickedCardText.setText("Computer virus"); break;
+            case 10:
+                pickedCardText.setText("Stolen painting"); break;
+            case 11:
+                pickedCardText.setText("Wanted person"); break;
+            case 12:
+                pickedCardText.setText("Top secret documents"); break;
+            case 13:
+                pickedCardText.setText("Diamonds"); break;
+        }
     }
 
     private void initiateCardAction(Card pickedCard) throws JSONException {
