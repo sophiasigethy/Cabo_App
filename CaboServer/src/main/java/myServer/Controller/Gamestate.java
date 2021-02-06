@@ -110,6 +110,7 @@ public class Gamestate {
             socketHandler.removeGamestate(this);
         }
         if (players.size() == 1 && playWithKI) {
+            players.clear();
             socketHandler.removeGamestate(this);
         }
 
@@ -464,9 +465,12 @@ public class Gamestate {
             afterConnectionClosed(session);
             disconnectedDuringGame = true;
             if (currentPlayerId == currPlayer.getId()) {
-                finishMove();
-                sendStatusupdateOfAllPlayer();
-                sendNextPlayer();
+                //TODO TEST this if statement
+                if (players.size() != 0 && players != null) {
+                    finishMove();
+                    sendStatusupdateOfAllPlayer();
+                    sendNextPlayer();
+                }
             }
 
         }
@@ -568,6 +572,7 @@ public class Gamestate {
     /**
      * this method is called, when the game is started before someone without account has typed a name in.
      * this player is then assigned to a new gamestate
+     *
      * @param session
      * @param message
      * @throws IOException
@@ -589,6 +594,7 @@ public class Gamestate {
     /**
      * this method is called, when someone leaves the waiting room
      * the player is then deleted of this gamestate, so that other players can join the waiting room
+     *
      * @param session
      * @throws IOException
      */
@@ -731,6 +737,7 @@ public class Gamestate {
 
     /**
      * this method sends all relevant information to the client when the game is started
+     *
      * @param player
      * @throws IOException
      */
@@ -865,6 +872,7 @@ public class Gamestate {
     /**
      * this method sends a statusupdate of all players to all players
      * this is for example necessary when a player finished his move and a new player has to pick a card
+     *
      * @throws IOException
      */
     public void sendStatusupdateOfAllPlayer() throws IOException {
@@ -877,6 +885,7 @@ public class Gamestate {
 
     /**
      * this method sends the avatar picture to all players
+     *
      * @param player
      * @throws IOException
      */
@@ -888,6 +897,7 @@ public class Gamestate {
 
     /**
      * this method sends the changes smiley icon to everyone
+     *
      * @param player
      * @throws IOException
      */
@@ -968,6 +978,7 @@ public class Gamestate {
      * before one of the players had to call cabo
      * then all points of the cards are calculated
      * it is either sent that a new round will start or that the whole game ends
+     *
      * @throws IOException
      */
     private void finishRound() throws IOException {
@@ -1017,6 +1028,7 @@ public class Gamestate {
 
     /**
      * this method returns an id which is the next in line to play when a player has left during the game
+     *
      * @param oldId
      * @return
      */
@@ -1042,6 +1054,7 @@ public class Gamestate {
     /**
      * this player returns if a player has already drawn a card
      * it is necessary to decide whether the player is allowed to end his move
+     *
      * @param id
      * @return
      */
@@ -1114,6 +1127,7 @@ public class Gamestate {
 
     /**
      * this method returns the winner of the gamne/round
+     *
      * @return
      */
     public Player getWinner() {
@@ -1134,34 +1148,50 @@ public class Gamestate {
 
     /**
      * this method handles what the KI has to do when it is its turn
+     *
      * @param action
      * @throws IOException
      */
     public void handleKI(String action) throws IOException {
-        Player me = players.get("KI");
-        if (action.equalsIgnoreCase("nextPlayer")) {
-            if (currentPlayerId == me.getId()) {
-                KIJsonObject = JSON_commands.sendPickCardKI("");
-                try {
-                    handleTextMessage(null, null);
-                } catch (IOException e) {
-                    e.printStackTrace();
+        //TODO Test this
+        if (players != null || players.size() != 0 || players.size() == 1) {
+            Player me = players.get("KI");
+            if (action.equalsIgnoreCase("nextPlayer")) {
+                if (currentPlayerId == me.getId()) {
+                    KIJsonObject = JSON_commands.sendPickCardKI("");
+                    try {
+                        handleTextMessage(null, null);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
-        }
-        if (action.equalsIgnoreCase("decideForMove")) {
-
-            pause(2);
-            if (currentPickedCard.getValue() >= 7 && currentPickedCard.getValue() != 13) {
-                KIJsonObject = JSON_commands.playPickedCardKI();
-                try {
-                    handleTextMessage(null, null);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+            if (action.equalsIgnoreCase("decideForMove")) {
 
                 pause(2);
-                if (!getRealPlayer().getCalledCabo()) {
+                if (currentPickedCard.getValue() >= 7 && currentPickedCard.getValue() != 13) {
+                    KIJsonObject = JSON_commands.playPickedCardKI();
+                    try {
+                        handleTextMessage(null, null);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    pause(2);
+                    if (!getRealPlayer().getCalledCabo()) {
+                        KIJsonObject = decideForMove(me);
+                        try {
+                            handleTextMessage(null, null);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+                        pause(3);
+                    }
+
+                    finishKIMove();
+
+                } else {
                     KIJsonObject = decideForMove(me);
                     try {
                         handleTextMessage(null, null);
@@ -1169,28 +1199,17 @@ public class Gamestate {
                         e.printStackTrace();
                     }
 
-                    pause(3);
+
+                    pause(2);
+                    finishKIMove();
                 }
-
-                finishKIMove();
-
-            } else {
-                KIJsonObject = decideForMove(me);
-                try {
-                    handleTextMessage(null, null);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-
-                pause(2);
-                finishKIMove();
             }
         }
     }
 
     /**
      * this method returns if it's the KI's move
+     *
      * @return
      */
     public boolean KIsTurn() {
@@ -1206,6 +1225,7 @@ public class Gamestate {
 
     /**
      * this method returns the player object of the KI
+     *
      * @return
      */
     public Player returnKI() {
@@ -1219,6 +1239,7 @@ public class Gamestate {
 
     /**
      * this method decides for the KI's move depending on the card which has been drawn
+     *
      * @param playerKI
      * @return
      * @throws IOException
@@ -1257,6 +1278,7 @@ public class Gamestate {
     /**
      * this method sends a smiley depending on the action of the real player
      * e.g. an angry smiley if the real player spyes a card of the KI
+     *
      * @param smiley
      * @throws IOException
      */
@@ -1283,6 +1305,7 @@ public class Gamestate {
 
     /**
      * this method updates the cards which are known by the KI after an action
+     *
      * @param playerKI
      */
     public void updateKnownCardsOfKI(Player playerKI) {
@@ -1292,6 +1315,7 @@ public class Gamestate {
 
     /**
      * his method updates the cards which are known by the KI after a swapping action
+     *
      * @param playerKI
      * @param highestCard
      * @param lowestCard
@@ -1322,6 +1346,7 @@ public class Gamestate {
 
     /**
      * this method returns the highest Card the KI knows
+     *
      * @param player
      * @return
      */
@@ -1346,6 +1371,7 @@ public class Gamestate {
 
     /**
      * this method returns the lowest Card the KI knows
+     *
      * @param ki
      * @return
      */
@@ -1370,6 +1396,7 @@ public class Gamestate {
 
     /**
      * this method finishes the KI move
+     *
      * @throws IOException
      */
     public void finishKIMove() throws IOException {
@@ -1389,6 +1416,7 @@ public class Gamestate {
 
     /**
      * this method returns which card the KI should peek depending on the cards he already knows
+     *
      * @param ki
      * @return
      */
@@ -1419,6 +1447,7 @@ public class Gamestate {
 
     /**
      * this method returns which card the KI should papy depending on the cards he already knows of the other player
+     *
      * @param ki
      * @return
      */
@@ -1468,7 +1497,7 @@ public class Gamestate {
      * Copy and Paste from CardSuiteManager
      ****************************************
      */
-    
+
 
     final static int CARD_NUMBER = 13 * 4;
     private final static int DISTRIBUTION_CARD_NUMBER_AT_BEGINNING = 4;
