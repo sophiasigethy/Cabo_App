@@ -386,39 +386,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
      * Set up all onClickListeners
      */
     private void setUpOnClickListeners() {
-        String msg = "Normal Cards:" +
-                "\n\nCards of the values 2 - 6 are normal cards. You can use these only to swap with your cards or simply discard them." +
-                "\n\nAction Cards:" +
-                "\nPeek: 7+8 Allow you to take a look at one of your cards" +
-                "\nSpy: 9+10 Allow you to take a look at any enemy card" +
-                "\nSwap: J+Q Allow you to swap any 2 cards on the field" +
-                "\n\nCard Values:" +
-                "\nEvery Card with a number is worth its indicated number." +
-                "\nJack is worth 11 Points, Queen is worth 12 Points and the King is worth 13 Points" +
-                "\nAce is worth 0 Points and the Joker is worth -1 Point" +
-                "\n\nRounds:" +
-                "\nIf you think, your points are low enough, you can call CABO!" +
-                "\nThis will end your turn, and everyone else has 1 last turn." +
-                "\nAfterwards the points of every player are summed up and a new round begins." +
-                "\n\nWinning:" +
-                "\nBy default the game ends as soon as the first player has reached 100 points. The player with the lowest score at this point wins." +
-                "\nThe max score can also be adjusted in the settings in the waiting room.";
 
-        builder = new AlertDialog.Builder(this);
-        builder
-                .setTitle("Cheat Sheet")
-                .setMessage(msg)
-                .setCancelable(false)
-                .setPositiveButton("Got it", new DialogInterface.OnClickListener()
-                {
-                    public void onClick(DialogInterface dialog, int id)
-                    {
-                        dialog.cancel();
-                    }
-                })
-                ;
-        ruleDialog = builder.create();
-        ruleDialog.getWindow().setBackgroundDrawableResource(R.color.beige);
 
 
         questionBtn.setOnClickListener(new View.OnClickListener() {
@@ -426,7 +394,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             public void onClick(View view) {
                 playSound(R.raw.select_sound);
                 //TODO show game rules
-                Log.d(TAG_SETTINGS, "Click Question Button");
+                makeRulesDialog();
                 ruleDialog.show();
             }
         });
@@ -611,6 +579,42 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             }
         });
 
+    }
+
+    private void makeRulesDialog(){
+        String msg = "Normal Cards:" +
+                "\n\nCards of the values 2 - 6 are normal cards. You can use these only to swap with your cards or simply discard them." +
+                "\n\nAction Cards:" +
+                "\nPeek: 7+8 Allow you to take a look at one of your cards" +
+                "\nSpy: 9+10 Allow you to take a look at any enemy card" +
+                "\nSwap: J+Q Allow you to swap any 2 cards on the field" +
+                "\n\nCard Values:" +
+                "\nEvery Card with a number is worth its indicated number." +
+                "\nJack is worth 11 Points, Queen is worth 12 Points and the King is worth 13 Points" +
+                "\nAce is worth 0 Points and the Joker is worth -1 Point" +
+                "\n\nRounds:" +
+                "\nIf you think, your points are low enough, you can call CABO!" +
+                "\nThis will end your turn, and everyone else has 1 last turn." +
+                "\nAfterwards the points of every player are summed up and a new round begins." +
+                "\n\nWinning:" +
+                "\nBy default the game ends as soon as the first player has reached 100 points. The player with the lowest score at this point wins." +
+                "\nThe max score can also be adjusted in the settings in the waiting room.";
+
+        builder = new AlertDialog.Builder(this);
+        builder
+                .setTitle("Cheat Sheet")
+                .setMessage(msg)
+                .setCancelable(false)
+                .setPositiveButton("Got it", new DialogInterface.OnClickListener()
+                {
+                    public void onClick(DialogInterface dialog, int id)
+                    {
+                        dialog.cancel();
+                    }
+                })
+        ;
+        ruleDialog = builder.create();
+        ruleDialog.getWindow().setBackgroundDrawableResource(R.color.beige);
     }
 
     private void leaveGameDialog() {
