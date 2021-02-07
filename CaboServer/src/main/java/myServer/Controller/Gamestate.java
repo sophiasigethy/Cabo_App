@@ -186,7 +186,7 @@ public class Gamestate {
                 startGame();
             } else {
                 if (players.size() == 1) {
-                    addKI("KI");
+                    addKI("AI");
                     state = TypeDefs.GAMESTART;
 
                     startGame();
@@ -545,7 +545,7 @@ public class Gamestate {
         playWithKI = true;
         this.countPlayer++;
         Player newPlayer = new Player(generateId(), name, this);
-        this.players.put("KI", newPlayer);
+        this.players.put("AI", newPlayer);
         sessions.add(null);
         //player is informed that he can join the game
         newPlayer.setAvatarID(1);
@@ -1162,7 +1162,7 @@ public class Gamestate {
     public void handleKI(String action) throws IOException {
         //TODO Test this
         if (players != null || players.size() != 0 || players.size() == 1) {
-            Player me = players.get("KI");
+            Player me = players.get("AI");
             if (action.equalsIgnoreCase("nextPlayer")) {
                 if (currentPlayerId == me.getId()) {
                     KIJsonObject = JSON_commands.sendPickCardKI("");

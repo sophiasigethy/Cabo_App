@@ -253,7 +253,7 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
                 String jsonString = welcome.get("Player").toString();
                 Gson gson = new Gson();
                 Player player = gson.fromJson(jsonString, Player.class);
-                String mes = "Hello " + player.getName() + " with id: " + player.getId();
+                String mes = "Hello " + player.getName() + " ! " ;
                 // String mes = "Hello " + player.getNick() + " with id: " + player.getNick();
                 me = player;
                 runOnUiThread(new Runnable() {
@@ -322,7 +322,7 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
                 Player player = gson.fromJson(jsonString, Player.class);
                 if (player.getId() != me.getId()) {
                     //String mes = TypeDefs.server + player.getNick() + " with id: " + player.getId() + "has already entered the game.";
-                    String mes = player.getName() + " with id: " + player.getId() + "has already entered the game.";
+                    String mes = player.getName() + " has already entered the game.";
                     players.add(player);
                     runOnUiThread(new Runnable() {
                         public void run() {
@@ -599,7 +599,7 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
                 }
 
                 if (!isParty) {
-                    mes = "Wait for other players or start the game now with a KI player.";
+                    mes = "Wait for other players or start the game now with an AI player.";
                 }
 
             } else {
