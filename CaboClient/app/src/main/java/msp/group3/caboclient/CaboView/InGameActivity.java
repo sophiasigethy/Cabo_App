@@ -224,7 +224,9 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.ingame_activity);
 
-        //Setup Sounds & Music
+        /**
+         * Setup Sounds & Music
+         */
         sharedPref = getApplicationContext().getSharedPreferences(
                 R.string.preference_file_key + "", Context.MODE_PRIVATE);
         musicService = new Intent(this, BackgroundSoundService.class);
@@ -243,7 +245,10 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             soundBtn.setImageResource(R.drawable.sound_off);
         }
 
-        //link layout
+        /**
+         * Link layout components. Components that first need to be set up according to server messages, are initially
+         * set invisible.
+         */
         zoomLayout = (com.otaliastudios.zoom.ZoomLayout) findViewById(R.id.zoomlayout);
         chatButton = (ImageButton) findViewById(R.id.chat_button);
         chatNotificationBubble = (ImageView) findViewById(R.id.chat_notification_bubble);
@@ -300,7 +305,6 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         endGameReturnButton = findViewById(R.id.end_game_return_button);
         endGameReturnButton.setVisibility(View.INVISIBLE);
         questionBtn = (ImageButton) findViewById(R.id.question_button);
-
         playedCardsStackButton = (ImageButton) findViewById(R.id.played_cards_imageButton);
         playedCardsStackGlow = findViewById(R.id.card_glow_imageview);
         playedCardsStackGlow.setVisibility(View.INVISIBLE);
@@ -308,12 +312,17 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         player1CardsGlow.setVisibility(View.INVISIBLE);
         pickCardsStackButton = (ImageButton) findViewById(R.id.pick_card_imageButton);
 
+        /**
+         * Setting up Player Stats, all onClickListeners and hiding overlays for the action cards
+         */
         setUpPlayerStats();
         setUpOnClickListeners();
         hideActionDisplay();
-
         pickCardsStackButton.setEnabled(false);
 
+        /**
+         * Set-up ChatFragment
+         */
         if (savedInstanceState == null) {
             Bundle bundle = new Bundle();
             bundle.putInt("some_int", 0);
@@ -322,24 +331,41 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                     .add(R.id.fragment_chat, InGameChatFragment.class, bundle)
                     .commit();
         }
-
         chatFragmentContainer = findViewById(R.id.fragment_chat);
         chatFragmentContainer.setVisibility(View.INVISIBLE);
 
+
+        /**
+         * Set up Server-Connection
+         */
         communicator = Communicator.getInstance(this);
         webSocketClient = communicator.getmWebSocketClient();
         communicator.setActivity(this);
 
+        /**
+         * Establish whether user is logged in via Intent
+         */
         readNoLogIn(getIntent());
 
+        /**
+         * Initial message to server
+         */
         try {
             communicator.sendMessage(JSON_commands.askForInitialSettings("text"));
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
+        /**
+         * Initial card shuffle sound
+         */
         playSound(R.raw.shuffle);
     }
 
+    /**
+     * Overrides the backButton
+     */
+    //TODO show pop-up instead
     @Override
     public void onBackPressed() {
         try {
@@ -349,6 +375,9 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         }
     }
 
+    /**
+     * Set up all onClickListeners
+     */
     private void setUpOnClickListeners() {
 
         questionBtn.setOnClickListener(new View.OnClickListener() {
@@ -375,6 +404,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 }
             }
         });
+
         soundBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -565,6 +595,19 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         });
     }
 
+    /**
+     * Sets up the onClickListeners for the cards of player 1 (me).
+     * Depending on which other function calls this function, the user is allowed to select a different number of cards.
+     * Once the user selects more than the cards that are allowed. The ones selected before are automatically deselected and
+     * the selection starts anew. The global field nrCardsSelected is counted up accordingly.
+     * In case multiple player card OnClickListeners are enabled, the cards of other players that are selected, are taken into account as well.
+     * Once the number of cards selected have reached the limit of allowed cards, peek- and switch-button are enabled and made fully visible.
+     * Once a card is clicked, the underlying glow also disappears.
+     *
+     * By changing the cards state to selected, the displayed card image changes, according to the card_button.xml to a displayed tickmark.
+     *
+     * @param cardsAllowed the number of cards that the user is allowed to select
+     */
     private void setPlayer1CardsOnClickListeners(int cardsAllowed) {
         Log.d("-----------ON CLICK LISTENER PLAYER 1", "initiating");
         for (ImageButton cardButton : player1CardButtons) {
@@ -578,8 +621,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                     if (cardButton.isSelected()) {
                         nrCardsSelected--;
                         cardButton.setSelected(false);
-                        /*Toast.makeText(getApplicationContext(),
-                                "Cards selected: "+nrCardsSelected, Toast.LENGTH_SHORT).show();*/
+
                     } else {
                         cardButton.setSelected(true);
                         nrCardsSelected++;
@@ -630,13 +672,24 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         }
     }
 
+    /**
+     * Sets up the onClickListeners for the cards of player 2.
+     * Depending on which other function calls this function, the user is allowed to select a different number of cards.
+     * Once the user selects more than the cards that are allowed. The ones selected before are automatically deselected and
+     * the selection starts anew. The global field nrCardsSelected is counted up accordingly.
+     * In case multiple player card OnClickListeners are enabled, the cards of other players that are selected, are taken into account as well.
+     * Once the number of cards selected have reached the limit of allowed cards, peek-, switch- and spy-button are enabled and made fully visible.
+     * Once a card is clicked, the underlying glow also disappears.
+     *
+     * By changing the cards state to selected, the displayed card image changes, according to the card_button.xml to a displayed tickmark.
+     *
+     * @param cardsAllowed the number of cards that the user is allowed to select
+     */
     private void setPlayer2CardsOnClickListeners(int cardsAllowed) {
         for (ImageButton cardButton : player2CardButtons) {
             cardButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                   /* Toast.makeText(getApplicationContext(),
-                            "Card clicked: "+getResources().getResourceEntryName(cardButton.getId()), Toast.LENGTH_SHORT).show();*/
                     playSound(R.raw.select_sound);
                     zoomInOnSelectedCard(cardButton);
 
@@ -687,15 +740,25 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         }
     }
 
+    /**
+     * Sets up the onClickListeners for the cards of player 3.
+     * Depending on which other function calls this function, the user is allowed to select a different number of cards.
+     * Once the user selects more than the cards that are allowed. The ones selected before are automatically deselected and
+     * the selection starts anew. The global field nrCardsSelected is counted up accordingly.
+     * In case multiple player card OnClickListeners are enabled, the cards of other players that are selected, are taken into account as well.
+     * Once the number of cards selected have reached the limit of allowed cards, peek-, switch- and spy-button are enabled and made fully visible.
+     * Once a card is clicked, the underlying glow also disappears.
+     *
+     * By changing the cards state to selected, the displayed card image changes, according to the card_button.xml to a displayed tickmark.
+     *
+     * @param cardsAllowed the number of cards that the user is allowed to select
+     */
     private void setPlayer3CardsOnClickListeners(int cardsAllowed) {
         for (ImageButton cardButton : player3CardButtons) {
             cardButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     playSound(R.raw.select_sound);
-                   /* Toast.makeText(getApplicationContext(),
-                            "Card clicked: "+getResources().getResourceEntryName(cardButton.getId()), Toast.LENGTH_SHORT).show();*/
-
                     zoomInOnSelectedCard(cardButton);
 
                     if (cardButton.isSelected()) {
@@ -745,14 +808,25 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         }
     }
 
+    /**
+     * Sets up the onClickListeners for the cards of player 4.
+     * Depending on which other function calls this function, the user is allowed to select a different number of cards.
+     * Once the user selects more than the cards that are allowed. The ones selected before are automatically deselected and
+     * the selection starts anew. The global field nrCardsSelected is counted up accordingly.
+     * In case multiple player card OnClickListeners are enabled, the cards of other players that are selected, are taken into account as well.
+     * Once the number of cards selected have reached the limit of allowed cards, peek-, switch- and spy-button are enabled and made fully visible.
+     * Once a card is clicked, the underlying glow also disappears.
+     *
+     * By changing the cards state to selected, the displayed card image changes, according to the card_button.xml to a displayed tickmark.
+     *
+     * @param cardsAllowed the number of cards that the user is allowed to select
+     */
     private void setPlayer4CardsOnClickListeners(int cardsAllowed) {
         for (ImageButton cardButton : player4CardButtons) {
             cardButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     playSound(R.raw.select_sound);
-                   /* Toast.makeText(getApplicationContext(),
-                            "Card clicked: "+getResources().getResourceEntryName(cardButton.getId()), Toast.LENGTH_SHORT).show();*/
 
                     zoomInOnSelectedCard(cardButton);
 
@@ -802,6 +876,9 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         }
     }
 
+    /**
+     * deactivates all player card onClickListeners in one go
+     */
     private void deactivateAllOnCardClickListeners() {
         deactivatePlayer1OnClickListeners();
         deactivatePlayer2OnClickListeners();
@@ -809,6 +886,9 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         deactivatePlayer4OnClickListeners();
     }
 
+    /**
+     * deactivates all buttons that the user is not allowed to click when it's not his turn
+     */
     private void deactivateAllButtons() {
         deactivateAllOnCardClickListeners();
         caboButton.setEnabled(false);
@@ -818,6 +898,9 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         tapPickCardAnimation.setVisibility(View.INVISIBLE);
     }
 
+    /**
+     * deactivated all cardButtons of player 1 (me) and sets the states to not selected
+     */
     private void deactivatePlayer1OnClickListeners() {
         for (ImageButton cardButton : player1CardButtons) {
             cardButton.setOnClickListener(null);
@@ -825,6 +908,9 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         }
     }
 
+    /**
+     * deactivated all cardButtons of player 2 and sets the states to not selected
+     */
     private void deactivatePlayer2OnClickListeners() {
         for (ImageButton cardButton : player2CardButtons) {
             cardButton.setOnClickListener(null);
@@ -832,6 +918,9 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         }
     }
 
+    /**
+     * deactivated all cardButtons of player 3 and sets the states to not selected
+     */
     private void deactivatePlayer3OnClickListeners() {
         for (ImageButton cardButton : player3CardButtons) {
             cardButton.setOnClickListener(null);
@@ -839,6 +928,9 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         }
     }
 
+    /**
+     * deactivated all cardButtons of player 4 and sets the states to not selected
+     */
     private void deactivatePlayer4OnClickListeners() {
         for (ImageButton cardButton : player4CardButtons) {
             cardButton.setOnClickListener(null);
@@ -846,6 +938,10 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         }
     }
 
+    /**
+     * sets all action displays, meaning the image overlays on the big card in the container
+     * to invisible
+     */
     private void hideActionDisplay() {
         cardContainerOverlaySwap.setVisibility(View.INVISIBLE);
         cardContainerOverlaySpy.setVisibility(View.INVISIBLE);
@@ -853,6 +949,12 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
 
     }
 
+    /**
+     * Displays the overlay image on the big card in the container indicating the card action, depending on the cardValue.
+     * A Countdowntimer is set to only display the image for 2 seconds and then disappear.
+     *
+     * @param pickedCard
+     */
     private void showCardAction(Card pickedCard) {
         int value = pickedCard.getValue();
         ImageView overlay = null;
@@ -894,7 +996,12 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         }.start();
     }
 
-
+    /**
+     * In this function all player-visualisations are linked to their ids and the corresponding Lists are filled. The lists serve the purpose of
+     * corresponding with the lists of player-objects and card-objects per player. In for-loops the corresponding button per card can be found.
+     * Also in a for loop, only the players that actually exist, can later be displayed.
+     * At this point all Stats are set to invisible and only later made visible upon a server message, indicating the number of players.
+     */
     private void setUpPlayerStats() {
 
         Collections.addAll(player1CardButtons, findViewById(R.id.player1_card1_imageButton), findViewById(R.id.player1_card2_imageButton), findViewById(R.id.player1_card3_imageButton), findViewById(R.id.player1_card4_imageButton));
@@ -941,6 +1048,11 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         }
     }
 
+    /**
+     * Here the player stats are actually made visible according to the nrPlayers parameter.
+     * The number of players is sent by the server and this function is called immediately as soon as this information is provided.
+     * @param nrPlayers
+     */
     private void visualizePlayerStats(int nrPlayers) {
         playerPics.get(0).setVisibility(View.VISIBLE);
         playerStats.get(0).setVisibility(View.VISIBLE);
@@ -962,32 +1074,43 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         }
     }
 
-    private void growCardGlowAnimation(ImageView card) {
+    /**
+     * This function animates a "glow" image underlay to grow a little bigger and fade in over the duration of 2s.
+     * @param glowImage
+     */
+    private void growCardGlowAnimation(ImageView glowImage) {
         //bounds remain the same only image changes
         AlphaAnimation fade_in = new AlphaAnimation(0f, 1f);
         fade_in.setDuration(2000);
         fade_in.setFillAfter(true);
-        card.startAnimation(fade_in);
+        glowImage.startAnimation(fade_in);
 
         ScaleAnimation grow_in = new ScaleAnimation(0.8f, 1f, 0.8f, 1f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
         grow_in.setDuration(1000);
         grow_in.setFillAfter(true);
-        card.startAnimation(grow_in);
+        glowImage.startAnimation(grow_in);
     }
 
-    private void growCardGlowAnimationOut(ImageView card) {
+    /**
+     * This function animates a "glow" image underlay to grow a little bigger and fade in over the duration of 2s.
+     * @param glowImage
+     */
+    private void growCardGlowAnimationOut(ImageView glowImage) {
         //bounds remain the same only image changes
         AlphaAnimation fade_out = new AlphaAnimation(1f, 0f);
         fade_out.setDuration(2000);
         fade_out.setFillAfter(true);
-        card.startAnimation(fade_out);
+        glowImage.startAnimation(fade_out);
 
         ScaleAnimation grow_out = new ScaleAnimation(1.0f, 0f, 1.0f, 0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
         grow_out.setDuration(1000);
         grow_out.setFillAfter(true);
-        card.startAnimation(grow_out);
+        glowImage.startAnimation(grow_out);
     }
 
+    /**
+     * This function shows "glow"-images behind the cards of all present other players.
+     */
     private void visualizeOtherPlayerCardGlows() {
         for (int i = 0; i < otherPlayers.size(); i++) {
             if (playerOverviews.get(i + 1).getVisibility() == View.VISIBLE) {
@@ -997,6 +1120,9 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         }
     }
 
+    /**
+     * This function hides the "glow"-images behind the cards of all present other players.
+     */
     private void hideOtherPlayerCardGlows() {
         for (int i = 0; i < otherPlayers.size(); i++) {
             if (playerOverviews.get(i + 1).getVisibility() == View.VISIBLE) {
