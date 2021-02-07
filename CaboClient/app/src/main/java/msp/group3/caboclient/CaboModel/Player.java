@@ -271,10 +271,11 @@ public class Player {
     }
 
     public void won(SharedPreferences sharedPref)   {
-        globalScore++;
+        this.globalScore += 1;
         SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putString(String.valueOf(R.string.preference_global_score), globalScore + "");
+        editor.putString(String.valueOf(R.string.preference_global_score), this.globalScore + "");
         editor.apply();
+        DatabaseOperation.getDao().getUserRef(this.dbID).child("globalScore").setValue(this.globalScore);
     }
 
     public Boolean getOnline() {
