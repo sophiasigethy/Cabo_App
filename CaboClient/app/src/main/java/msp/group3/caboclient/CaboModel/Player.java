@@ -275,6 +275,7 @@ public class Player {
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString(String.valueOf(R.string.preference_global_score), globalScore + "");
         editor.apply();
+        DatabaseOperation.getDao().getUserRef(this.dbID).child("globalScore").setValue(globalScore);
     }
 
     public Boolean getOnline() {
