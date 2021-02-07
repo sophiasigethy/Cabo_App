@@ -33,13 +33,6 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import msp.group3.caboclient.CaboController.BackgroundSoundService;
-import msp.group3.caboclient.CaboController.Communicator;
-import msp.group3.caboclient.CaboController.DatabaseOperation;
-import msp.group3.caboclient.CaboModel.Card;
-import msp.group3.caboclient.CaboController.JSON_commands;
-import msp.group3.caboclient.CaboModel.Player;
-import msp.group3.caboclient.R;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.google.gson.Gson;
@@ -54,6 +47,14 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import msp.group3.caboclient.CaboController.BackgroundSoundService;
+import msp.group3.caboclient.CaboController.Communicator;
+import msp.group3.caboclient.CaboController.DatabaseOperation;
+import msp.group3.caboclient.CaboController.JSON_commands;
+import msp.group3.caboclient.CaboModel.Card;
+import msp.group3.caboclient.CaboModel.Player;
+import msp.group3.caboclient.R;
+
 import static msp.group3.caboclient.CaboController.TypeDefs.angry;
 import static msp.group3.caboclient.CaboController.TypeDefs.laughing;
 import static msp.group3.caboclient.CaboController.TypeDefs.playing;
@@ -63,20 +64,51 @@ import static msp.group3.caboclient.CaboController.TypeDefs.tongueOut;
 import static msp.group3.caboclient.CaboController.TypeDefs.waiting;
 
 /**
- * this is an example for a zoomable and scrollable layout
+ * This is the activity of the actual gameplay. It contains in zoomable layout the player cards, the card stacks to draw from or
+ * to discard cards on. The player overviews are in a static place and along with the cards generated upon a server message
+ * depending on how many players are present. Interactions with the UI are illustrated via animations and the players are able
+ * to communicate via a chat and setting emojis.
  */
 public class InGameActivity extends AppCompatActivity implements Communicator.CommunicatorCallback {
-    private static final String TAG_CHAT = "chat_fragment";
-    private static final String TAG_SETTINGS = "settings_fragment";
+
+    /**
+     ***************************** SERVER CONNECTION ******************************
+     */
+
+    /**
+     * Fields needed for the client-server communication.
+     */
     protected WebSocketClient webSocketClient;
     private Communicator communicator;
+
+    /**
+     ******************************* MUSIC AND SOUND *******************************
+     */
+
+    /**
+     * Music service that is passed on from previous activities via an intent.
+     */
     private Intent musicService;
+    private MediaPlayer soundPlayer;
+
+    /**
+     ********************************** STORAGE *************************************
+     */
+
+
+    /**
+     * sharedPrefs from which the state of for example the music preferneces (like sound playing or not) are retrieved
+     */
     private SharedPreferences sharedPref;
-    private Activity activity;
-    private boolean caboCalled=false;
 
+    /**
+     ************************************ LAYOUT *************************************
+     */
+
+    /**
+     * General layout components
+     */
     private com.otaliastudios.zoom.ZoomLayout zoomLayout;
-
     private ImageButton chatButton;
     private ImageView chatNotificationBubble;
     private ImageButton leaveGameButton;
@@ -88,8 +120,27 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
     private Button peekButton;
     private Button spyButton;
     private Button switchButton;
+    private TextView updateText;
+    private TextView centerText;
+    private TextView hintTextCardStack;
+    private TextView hintTextOwnCards;
+    private TextView hintEmoji;
+    private ImageButton endGameReturnButton;
+    private ImageView cardSwapBg;
+    private androidx.fragment.app.FragmentContainerView chatFragmentContainer;
+
+    /**
+     * Layout components when picked card is shown
+     */
     private LinearLayout pickedCardButtonContainer;
     private ImageView pickedCardBigImageview;
+    private ImageView cardContainerOverlaySwap;
+    private ImageView cardContainerOverlayPeek;
+    private ImageView cardContainerOverlaySpy;
+
+    /**
+     * Emoji buttons
+     */
     private ImageButton ownEmojiButton;
     private LinearLayout emojiSelectionContainer;
     private ImageButton happyEmojiButton;
@@ -97,18 +148,10 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
     private ImageButton tongueEmojiButton;
     private ImageButton shockedEmojiButton;
     private ImageButton angryEmojiButton;
-    private TextView updateText;
-    private ImageView cardContainerOverlaySwap;
-    private ImageView cardContainerOverlayPeek;
-    private ImageView cardContainerOverlaySpy;
-    private TextView centerText;
-    private int round = 1;
-    private String noAccount = "";
-    private int cardDrawCount = 0;
-    private TextView hintTextCardStack;
-    private TextView hintTextOwnCards;
-    private TextView hintEmoji;
-    private ImageButton endGameReturnButton;
+
+    /**
+     * All animations from the Lottie Plugin
+     */
 
     private com.airbnb.lottie.LottieAnimationView cardSwapAnimation;
     private com.airbnb.lottie.LottieAnimationView tapPickCardAnimation;
@@ -118,49 +161,61 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
     private com.airbnb.lottie.LottieAnimationView hintEmojiArrow;
     private com.airbnb.lottie.LottieAnimationView endGameStars;
 
-
-    private ImageView cardSwapBg;
-    private int zoomBtnCount = 0;
-    private int chatButtonCount = 0;
-    private int nrCardsSelected = 0;
-
-
+    /**
+     * Buttons for the card stacks to pick a card and play a card. Including a glow to highlight it.
+     */
     private ImageButton playedCardsStackButton;
     private ImageView playedCardsStackGlow;
-    private ImageView player1CardsGlow;
     private ImageButton pickCardsStackButton;
 
-    private int MAX_PLAYERS = 0;
-    private boolean isParty = false;
-
-    private androidx.fragment.app.FragmentContainerView chatFragmentContainer;
-
+    /**
+     * ArrayLists with the cardButtons for each player and one nested ArrayList containing the cardButtons
+     */
     private final List<ImageButton> player1CardButtons = new ArrayList<>();
     private final List<ImageButton> player2CardButtons = new ArrayList<>();
     private final List<ImageButton> player3CardButtons = new ArrayList<>();
     private final List<ImageButton> player4CardButtons = new ArrayList<>();
     private final List<List<ImageButton>> otherPlayerButtonLists = new ArrayList<>();
+    private final List<ImageView> otherPlayersCardGlows = new ArrayList<>();
+    private ImageView player1CardsGlow;
 
+    /**
+     * Layout components of all the player overviews, also in the form of Lists
+     */
     private final List<de.hdodenhof.circleimageview.CircleImageView> playerPics = new ArrayList<>();
     private final List<TextView> playerStats = new ArrayList<>();
     private final List<TextView> playerNames = new ArrayList<>();
     private final List<com.airbnb.lottie.LottieAnimationView> playerHighlightAnimations = new ArrayList<>();
     private final List<com.airbnb.lottie.LottieAnimationView> playerCaboAnimations = new ArrayList<>();
     private final List<ImageView> otherPlayerEmojis = new ArrayList<>();
-    private final List<ImageView> otherPlayersCardGlows = new ArrayList<>();
     private final List<TextView> playerRanks = new ArrayList<>();
-
-
     private final List<ConstraintLayout> playerOverviews = new ArrayList<>();
 
+    /**
+     ********************************* GAME LOGIC ***********************************
+     */
+
+    /**
+     * Players me and a list of the other players, sent and updated by the server
+     */
     protected Player me;
     private ArrayList<Player> otherPlayers = new ArrayList<>();
-    private int playingPlayerId = 0;
-    protected String entireChatText = "";
 
+    /**
+     * Global fields of game logic
+     */
+    private int playingPlayerId = 0;
+    private int round = 1;
+    private String noAccount = "";
+    private int cardDrawCount = 0;
+    private boolean caboCalled=false;
+    private int zoomBtnCount = 0;
+    private int chatButtonCount = 0;
+    private int nrCardsSelected = 0;
+    protected String entireChatText = "";
     private boolean initialRound = true;
     private Player caboplayer = null;
-    private MediaPlayer soundPlayer;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -168,7 +223,6 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.ingame_activity);
-        activity = this;
 
         //Setup Sounds & Music
         sharedPref = getApplicationContext().getSharedPreferences(
@@ -266,9 +320,6 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             getSupportFragmentManager().beginTransaction()
                     .setReorderingAllowed(true)
                     .add(R.id.fragment_chat, InGameChatFragment.class, bundle)
-                    //.add(R.id.fragment_settings, SettingsFragment.class, bundle)
-                    //.add(R.id.fragment_chat, new InGameChatFragment(), TAG_CHAT)
-                    //.add(R.id.fragment_settings, new SettingsFragment(), TAG_SETTINGS)
                     .commit();
         }
 
@@ -1799,6 +1850,12 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         }
     }
 
+    /**
+     * Scale view.
+     *
+     * @param v      the v
+     * @param factor the factor
+     */
     public void scaleView(View v, float factor) {
         Animation anim = new ScaleAnimation(
                 1f, factor, // Start and end values for the X axis scaling
@@ -1825,6 +1882,11 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
     }
 
 
+    /**
+     * Process extra data.
+     *
+     * @throws JSONException the json exception
+     */
     public void processExtraData() throws JSONException {
         Intent intent = getIntent();
         String key = intent.getStringExtra("key");
@@ -1893,7 +1955,6 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
 
         if (jsonObject.has("sendMAXPlayer")) {
             int maxPlayer = (int) jsonObject.get("sendMAXPlayer");
-            MAX_PLAYERS = maxPlayer;
             Log.d("----------------------MAXPLAYERS", "playerNr: " + maxPlayer);
             runOnUiThread(new Runnable() {
                 @Override
@@ -2421,12 +2482,18 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         hintArrowCardStack.setVisibility(View.GONE);
     }
 
+    /**
+     * Show new round.
+     */
     public void showNewRound() {
         centerText.setVisibility(View.VISIBLE);
         centerText.setText("Round " + round);
         cardSwapBg.setVisibility(View.VISIBLE);
     }
 
+    /**
+     * Hide new round.
+     */
     public void hideNewRound() {
         centerText.setVisibility(View.INVISIBLE);
         cardSwapBg.setVisibility(View.INVISIBLE);
@@ -2449,6 +2516,11 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
 
     }
 
+    /**
+     * Next round.
+     *
+     * @param players the players
+     */
     public void nextRound(List<Player> players) {
         caboplayer = null;
         fadePlayerCardsRestore(1f);
@@ -2552,6 +2624,11 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
     }
 
 
+    /**
+     * Update cards.
+     *
+     * @param updatedPlayer the updated player
+     */
     public void updateCards(Player updatedPlayer) {
         runOnUiThread(new Runnable() {
             @Override
@@ -2590,6 +2667,12 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
     }
 
 
+    /**
+     * Contains player boolean.
+     *
+     * @param player the player
+     * @return the boolean
+     */
     public boolean containsPlayer(Player player) {
         for (Player otherPlayer : otherPlayers) {
             if (player.getId() == otherPlayer.getId()) {
@@ -2599,6 +2682,11 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         return false;
     }
 
+    /**
+     * Update scores.
+     *
+     * @param updatedPlayer the updated player
+     */
     public void updateScores(Player updatedPlayer) {
         if (updatedPlayer.getId() == me.getId()) {
             me.updateScore(updatedPlayer);
@@ -2612,6 +2700,11 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
     }
 
 
+    /**
+     * Gets name of winner.
+     *
+     * @return the name of winner
+     */
     public String getNameOfWinner() {
         ArrayList<Integer> scores = new ArrayList<>();
         scores.add(me.getScore());
@@ -2623,6 +2716,12 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         return getWinner(winnerScore);
     }
 
+    /**
+     * Gets winner.
+     *
+     * @param winnerScore the winner score
+     * @return the winner
+     */
     public String getWinner(int winnerScore) {
         if (me.getScore() == winnerScore) {
             return me.getName();
@@ -2636,6 +2735,12 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         return "";
     }
 
+    /**
+     * Gets player by id.
+     *
+     * @param id the id
+     * @return the player by id
+     */
     public Player getPlayerById(int id) {
         for (Player player : otherPlayers) {
             if (player.getId() == id) {
@@ -2698,6 +2803,11 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         });
     }
 
+    /**
+     * Leave game.
+     *
+     * @throws JSONException the json exception
+     */
     public void leaveGame() throws JSONException {
         communicator.sendMessage(JSON_commands.leaveGame());
         if (noAccount != null) {
@@ -2712,6 +2822,11 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
 
     }
 
+    /**
+     * Read no log in.
+     *
+     * @param intent the intent
+     */
     public void readNoLogIn(Intent intent) {
         String NO_LOGIN = intent.getStringExtra("NO_LOGIN");
         noAccount = NO_LOGIN;
@@ -2721,8 +2836,9 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
      * This function is responsible for playing sounds in this Activity
      * In case cabo was called, there is a flag that prevents the cabo sound from being interrupted
      * by the next players turn sound
-     * @param sound: The R.raw.*ID* of the sound you want to play
-     * */
+     *
+     * @param sound : The R.raw.*ID* of the sound you want to play
+     */
     public void playSound(int sound) {
         if (DatabaseOperation.getDao().getSoundsPlaying(sharedPref).equals("Play")) {
             if (soundPlayer != null) {
