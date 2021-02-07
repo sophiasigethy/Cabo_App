@@ -271,7 +271,7 @@ public class Player {
     }
 
     public void won(SharedPreferences sharedPref)   {
-        globalScore++;
+        globalScore += 1;
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString(String.valueOf(R.string.preference_global_score), globalScore + "");
         editor.apply();
