@@ -585,15 +585,13 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
 
     private void makeRulesDialog(){
         String msg = "Normal Cards:" +
-                "\n\nCards of the values 2 - 6 are normal cards. You can use these only to swap with your cards or simply discard them." +
+                "\n\nCards of the values -1 to 6 are normal cards. You can use these only to swap with your cards or simply discard them." +
                 "\n\nAction Cards:" +
                 "\nPeek: 7+8 Allow you to take a look at one of your cards" +
                 "\nSpy: 9+10 Allow you to take a look at any enemy card" +
-                "\nSwap: J+Q Allow you to swap any 2 cards on the field" +
+                "\nSwap: 11+12 Allow you to swap any 2 cards on the field" +
                 "\n\nCard Values:" +
-                "\nEvery Card with a number is worth its indicated number." +
-                "\nJack is worth 11 Points, Queen is worth 12 Points and the King is worth 13 Points" +
-                "\nAce is worth 0 Points and the Joker is worth -1 Point" +
+                "\nEvery Card is worth its indicated number." +
                 "\n\nRounds:" +
                 "\nIf you think, your points are low enough, you can call CABO!" +
                 "\nThis will end your turn, and everyone else has 1 last turn." +
