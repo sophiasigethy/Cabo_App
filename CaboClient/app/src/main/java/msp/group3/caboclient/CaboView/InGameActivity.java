@@ -372,14 +372,9 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
     /**
      * Overrides the backButton
      */
-    //TODO show pop-up instead
     @Override
     public void onBackPressed() {
-        try {
-            communicator.sendMessage(JSON_commands.leaveGame());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        leaveGameDialog();
     }
 
     /**
@@ -387,8 +382,9 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
      */
     private void setUpOnClickListeners() {
 
-
-
+        /**
+         * on button click, a dialog containing the game rules is shown
+         */
         questionBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -399,6 +395,9 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             }
         });
 
+        /**
+         *
+         */
         musicBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -415,7 +414,9 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 }
             }
         });
-
+        /**
+         *
+         */
         soundBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -431,6 +432,9 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             }
         });
 
+        /**
+         * on button click the chat fragment is made visible and in case a notification bubble was visible, this is made invisible
+         */
         chatButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -447,6 +451,9 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             }
         });
 
+        /**
+         * on button click a dialog is shown, asking for verification, if user really wants to leave the game
+         */
         leaveGameButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -454,10 +461,13 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             }
         });
 
+        /**
+         * if the layout is already zoomed in, it zooms back to 100% on button click, if not, it zooms to 130%
+         */
         zoomButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (zoomBtnCount % 2 == 0) {
+                if (zoomLayout.getZoom()==1.0f) {
                     zoomLayout.zoomTo(1.3f, true);
                     zoomButton.setImageResource(R.drawable.zoom_in);
                 } else {
@@ -468,6 +478,9 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             }
         });
 
+        /**
+         * Button is enabled when it's the user's (me) turn. Sends a server message, requesting "cabo" and finishing the round
+         */
         caboButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -481,6 +494,9 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             }
         });
 
+        /**
+         * 
+         */
         pickCardsStackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
