@@ -41,27 +41,25 @@ public class IntroActivity extends AppIntro {
                 ContextCompat.getColor(getApplicationContext(), R.color.beige), ContextCompat.getColor(getApplicationContext(), R.color.beige)));
         addSlide(AppIntroFragment.newInstance("The Game", "Every player has 4 cards." +
                         "The goal is to collect as few points as possible by swapping drawn cards with your own, or by using action-cards, to swap cards with the other players.\n",
-                R.drawable.card_clubs_3, ContextCompat.getColor(getApplicationContext(), R.color.dark_purple),
+                R.drawable.card_13, ContextCompat.getColor(getApplicationContext(), R.color.dark_purple),
                 ContextCompat.getColor(getApplicationContext(), R.color.beige), ContextCompat.getColor(getApplicationContext(), R.color.beige)));
         addSlide(AppIntroFragment.newInstance("Rules", "At the beginning of a round, every player can look at and memorize 2 cards.\n" +
                         "When it's your turn, you can draw a card.\n" +
                         "There are normal cards and action cards.",
                 R.drawable.introduction_rules, ContextCompat.getColor(getApplicationContext(), R.color.dark_purple),
                 ContextCompat.getColor(getApplicationContext(), R.color.beige), ContextCompat.getColor(getApplicationContext(), R.color.beige)));
-        addSlide(AppIntroFragment.newInstance("Normal Cards", "Cards of the values 2 - 6 are normal cards. You can use these only to swap with your cards or simply discard them.\n",
-                R.drawable.card_clubs_4, ContextCompat.getColor(getApplicationContext(), R.color.dark_purple),
+        addSlide(AppIntroFragment.newInstance("Normal Cards", "Cards of the values -1 - 6 are normal cards. You can use these only to swap with your cards or simply discard them.\n",
+                R.drawable.card_0, ContextCompat.getColor(getApplicationContext(), R.color.dark_purple),
                 ContextCompat.getColor(getApplicationContext(), R.color.beige), ContextCompat.getColor(getApplicationContext(), R.color.beige)));
         addSlide(AppIntroFragment.newInstance("Action Cards",
                         "Peek: 7+8 Allow you to take a look at one of your cards\n" +
                         "Spy: 9+10 Allow you to take a look at any enemy card\n" +
-                        "Swap: J+Q Allow you to swap any 2 cards on the field",
+                        "Swap: 11+12 Allow you to swap any 2 cards on the field",
                 R.drawable.introduction_card_types, ContextCompat.getColor(getApplicationContext(), R.color.dark_purple),
                 ContextCompat.getColor(getApplicationContext(), R.color.beige), ContextCompat.getColor(getApplicationContext(), R.color.beige)));
         addSlide(AppIntroFragment.newInstance("Card Values",
-                        "Every Card with a number is worth its indicated number.\n" +
-                        "Jack is worth 11 Points, Queen is worth 12 Points and the King is worth 13 Points\n" +
-                        "Ace is worth 0 Points and the Joker is worth -1 Point",
-                R.drawable.card_clubs_4, ContextCompat.getColor(getApplicationContext(), R.color.dark_purple),
+                        "Every Card is worth its indicated number.\n",
+                R.drawable.card_4, ContextCompat.getColor(getApplicationContext(), R.color.dark_purple),
                 ContextCompat.getColor(getApplicationContext(), R.color.beige), ContextCompat.getColor(getApplicationContext(), R.color.beige)));
         addSlide(AppIntroFragment.newInstance("Rounds", "If you think, your points are low enough, you can call CABO!\n" +
                         "This will end your turn, and everyone else has 1 last turn.\n" +

@@ -136,6 +136,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
      */
     private LinearLayout pickedCardButtonContainer;
     private ImageView pickedCardBigImageview;
+    private TextView pickedCardText;
     private ImageView cardContainerOverlaySwap;
     private ImageView cardContainerOverlayPeek;
     private ImageView cardContainerOverlaySpy;
@@ -272,6 +273,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         pickedCardButtonContainer = (LinearLayout) findViewById(R.id.picked_card_button_container);
         pickedCardButtonContainer.setVisibility(View.INVISIBLE);
         pickedCardBigImageview = (ImageView) findViewById(R.id.picked_card_big_imageview);
+        pickedCardText = (TextView) findViewById(R.id.picked_card_big_text);
         ownEmojiButton = (ImageButton) findViewById(R.id.player1_emoji);
         emojiSelectionContainer = (LinearLayout) findViewById(R.id.emoji_selection_container);
         emojiSelectionContainer.setVisibility(View.INVISIBLE);
@@ -599,15 +601,13 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
 
     private void makeRulesDialog(){
         String msg = "Normal Cards:" +
-                "\n\nCards of the values 2 - 6 are normal cards. You can use these only to swap with your cards or simply discard them." +
+                "\n\nCards of the values -1 to 6 are normal cards. You can use these only to swap with your cards or simply discard them." +
                 "\n\nAction Cards:" +
                 "\nPeek: 7+8 Allow you to take a look at one of your cards" +
                 "\nSpy: 9+10 Allow you to take a look at any enemy card" +
-                "\nSwap: J+Q Allow you to swap any 2 cards on the field" +
+                "\nSwap: 11+12 Allow you to swap any 2 cards on the field" +
                 "\n\nCard Values:" +
-                "\nEvery Card with a number is worth its indicated number." +
-                "\nJack is worth 11 Points, Queen is worth 12 Points and the King is worth 13 Points" +
-                "\nAce is worth 0 Points and the Joker is worth -1 Point" +
+                "\nEvery Card is worth its indicated number." +
                 "\n\nRounds:" +
                 "\nIf you think, your points are low enough, you can call CABO!" +
                 "\nThis will end your turn, and everyone else has 1 last turn." +
@@ -1262,6 +1262,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 playSound(R.raw.draw_card);
                 pickedCardBigImageview.setImageResource(R.drawable.card_back);
                 pickedCardButtonContainer.setVisibility(View.VISIBLE);
+                pickedCardText.setVisibility(View.INVISIBLE);
                 final ObjectAnimator oa1 = ObjectAnimator.ofFloat(pickedCardBigImageview, "scaleX", 1f, 0f);
                 final ObjectAnimator oa2 = ObjectAnimator.ofFloat(pickedCardBigImageview, "scaleX", 0f, 1f);
                 oa1.setInterpolator(new DecelerateInterpolator());
@@ -1271,6 +1272,8 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                     public void onAnimationEnd(Animator animation) {
                         super.onAnimationEnd(animation);
                         pickedCardBigImageview.setImageResource(getCardResource(card));
+                        showCardText(card);
+                        pickedCardText.setVisibility(View.VISIBLE);
                         oa2.start();
                         showCardAction(card);
                         if (cardDrawCount == 1) {
@@ -1384,37 +1387,72 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
     private int getCardResource(Card card) {
         switch (card.getValue()) {
             case -1:
-                return R.drawable.card_joker_1;
+                return R.drawable.card_minus1;
             case 0:
-                return R.drawable.card_hearts_k;
+                return R.drawable.card_0;
             case 1:
-                return R.drawable.card_hearts_a;
+                return R.drawable.card_1;
             case 2:
-                return R.drawable.card_clubs_2;
+                return R.drawable.card_2;
             case 3:
-                return R.drawable.card_clubs_3;
+                return R.drawable.card_3;
             case 4:
-                return R.drawable.card_clubs_4;
+                return R.drawable.card_4;
             case 5:
-                return R.drawable.card_clubs_5;
+                return R.drawable.card_5;
             case 6:
-                return R.drawable.card_clubs_6;
+                return R.drawable.card_6;
             case 7:
-                return R.drawable.card_clubs_7;
+                return R.drawable.card_7;
             case 8:
-                return R.drawable.card_clubs_8;
+                return R.drawable.card_8;
             case 9:
-                return R.drawable.card_clubs_9;
+                return R.drawable.card_9;
             case 10:
-                return R.drawable.card_clubs_10;
+                return R.drawable.card_10;
             case 11:
-                return R.drawable.card_clubs_j;
+                return R.drawable.card_11;
             case 12:
-                return R.drawable.card_clubs_q;
+                return R.drawable.card_12;
             case 13:
-                return R.drawable.card_clubs_k;
+                return R.drawable.card_13;
         }
         return 0;
+    }
+
+    private void showCardText(Card card) {
+        switch (card.getValue()) {
+            case -1:
+                pickedCardText.setText("Chocolate to bribe"); break;
+            case 0:
+                pickedCardText.setText("Collected sea shell"); break;
+            case 1:
+                pickedCardText.setText("Secret love letters"); break;
+            case 2:
+                pickedCardText.setText("Rare coffee beans"); break;
+            case 3:
+                pickedCardText.setText("Illegal cigarettes"); break;
+            case 4:
+                pickedCardText.setText("Valuable whiskey"); break;
+            case 5:
+                pickedCardText.setText("Stolen phone"); break;
+            case 6:
+                pickedCardText.setText("Stacks of cash"); break;
+            case 7:
+                pickedCardText.setText("Fake passports"); break;
+            case 8:
+                pickedCardText.setText("Gold bars"); break;
+            case 9:
+                pickedCardText.setText("Computer virus"); break;
+            case 10:
+                pickedCardText.setText("Stolen painting"); break;
+            case 11:
+                pickedCardText.setText("Wanted person"); break;
+            case 12:
+                pickedCardText.setText("Top secret documents"); break;
+            case 13:
+                pickedCardText.setText("Diamonds"); break;
+        }
     }
 
     private void initiateCardAction(Card pickedCard) throws JSONException {
@@ -1831,7 +1869,6 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                         setCountdownTimer(card);
                     }
                     peekButton.setVisibility(View.INVISIBLE);
-                    //playSound(R.raw.peek_action);
                     new CountDownTimer(10000, 1000) {
                         public void onTick(long millisUntilFinished) {
                         }

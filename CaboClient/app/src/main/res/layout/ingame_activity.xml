@@ -1319,6 +1319,7 @@
             android:layout_marginRight="6dp"
             android:text="This card is..."
             android:textSize="12sp"
+            android:layout_gravity="center_horizontal"
             android:fontFamily="sans-serif-black"
             android:textColor="@color/beige"/>
     </LinearLayout>

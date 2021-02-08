@@ -186,7 +186,7 @@ public class Gamestate {
                 startGame();
             } else {
                 if (players.size() == 1) {
-                    addKI("KI");
+                    addKI("AI");
                     state = TypeDefs.GAMESTART;
 
                     startGame();
@@ -238,6 +238,7 @@ public class Gamestate {
                 if (currPlayer != null) {
                     if (availableCards.size() != 0) {
                         currentPickedCard = availableCards.get(0);
+                       // currentPickedCard= new Card(getNumberinbetween(), "", "");
                         //currentPickedCard = new Card(11, "", "");
 
                     } else {
@@ -544,7 +545,7 @@ public class Gamestate {
         playWithKI = true;
         this.countPlayer++;
         Player newPlayer = new Player(generateId(), name, this);
-        this.players.put("KI", newPlayer);
+        this.players.put("AI", newPlayer);
         sessions.add(null);
         //player is informed that he can join the game
         newPlayer.setAvatarID(1);
@@ -857,6 +858,12 @@ public class Gamestate {
         }
         return id;
     }
+    public int getNumberinbetween() {
+        Random random = new Random();
+        int id = random.nextInt(2) + 10;
+
+        return id;
+    }
 
     /**
      * this method sends an update when the status changes
@@ -1155,7 +1162,7 @@ public class Gamestate {
     public void handleKI(String action) throws IOException {
         //TODO Test this
         if (players != null || players.size() != 0 || players.size() == 1) {
-            Player me = players.get("KI");
+            Player me = players.get("AI");
             if (action.equalsIgnoreCase("nextPlayer")) {
                 if (currentPlayerId == me.getId()) {
                     KIJsonObject = JSON_commands.sendPickCardKI("");
@@ -1391,7 +1398,11 @@ public class Gamestate {
                 }
             }
         }
-        return ki.getCards().get(0);
+        if (getRealPlayer() != null) {
+            return getRealPlayer().getCards().get(0);
+        } else {
+            return ki.getCards().get(0);
+        }
     }
 
     /**
@@ -1470,7 +1481,7 @@ public class Gamestate {
                 return getRealPlayer().getCards().get(3);
             }
             if (ki.getKnownCardsOfOther().size() == 4) {
-                ki.getKnownCardsOfOther().add(getRealPlayer().getCards().get(4));
+                ki.getKnownCardsOfOther().add(getRealPlayer().getCards().get(0));
                 return getRealPlayer().getCards().get(0);
             }
 
