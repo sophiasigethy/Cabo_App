@@ -501,6 +501,7 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
 
     /**
      * this method shows the received or typed in messages in the UI
+     * the object ChatMessage is created depending on the sender
      *
      * @param message
      */
@@ -510,8 +511,6 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                // mTextView.setText(mTextView.getText() + "\n" + getTextMessage());
-                //mTextView.setText(mTextView.getText() + "\n" + message);
                 if (sender == null && serverMsg) {
                     messageList.add(new ChatMessage("Server", message, false, R.drawable.robot));
                 }
@@ -527,12 +526,6 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
                 adapter.notifyDataSetChanged();
             }
         });
-        if (mMessage.contains("That username is already in use")) {
-            //start = false;
-            // mName.setText(" \n");
-        }
-
-
     }
 
     private void setAvatarImage(int i, Player newPlayer) {

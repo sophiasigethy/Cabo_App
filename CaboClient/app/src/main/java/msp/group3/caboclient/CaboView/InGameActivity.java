@@ -497,7 +497,9 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         });
 
         /**
-         * 
+         * when clicked, the user picks a card and the card has a little pop animation and the underlying hint to tap
+         * animation is set invisible. After it is clicked the button is disabled.
+         * sends a server message with the content sendPickCard("memorized") -> requesting to receive a picked card
          */
         pickCardsStackButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -522,7 +524,9 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
                 });
             }
         });
-
+        /**
+         * opens the container with all emojis for player 1 (me)
+         */
         ownEmojiButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -532,6 +536,9 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             }
         });
 
+        /**
+         * sets the emoji to smiling and forwards it to the server
+         */
         happyEmojiButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -545,6 +552,9 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             }
         });
 
+        /**
+         * sets the emoji to laughing and forwards it to the server
+         */
         veryHappyEmojiButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -558,6 +568,9 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             }
         });
 
+        /**
+         * sets the emoji to tongue out and forwards it to the server
+         */
         tongueEmojiButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -571,6 +584,9 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             }
         });
 
+        /**
+         * sets the emoji to shocked and forwards it to the server
+         */
         shockedEmojiButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -584,6 +600,9 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             }
         });
 
+        /**
+         * sets the emoji to angry and forwards it to the server
+         */
         angryEmojiButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -599,6 +618,10 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
 
     }
 
+    /**
+     * in this method the dialog showing the game rules is created
+     * the dialog contains a scrollview with the rules in textform and can be exited via the "got it" button
+     */
     private void makeRulesDialog(){
         String msg = "Normal Cards:" +
                 "\n\nCards of the values -1 to 6 are normal cards. You can use these only to swap with your cards or simply discard them." +
@@ -633,6 +656,11 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         ruleDialog.getWindow().setBackgroundDrawableResource(R.color.beige);
     }
 
+    /**
+     * in this method the custom dialog to leave the game is created
+     * the dialog is opened when the user clicks the leaveGameBtn and makes sure to verify whether the user really
+     * wants to leave the game. This has to be confirmed via the accept button. Only then the method leaveGame() is called.
+     */
     private void leaveGameDialog() {
         Activity activity = this;
         runOnUiThread(new Runnable() {
@@ -1194,6 +1222,10 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         }
     }
 
+    /**
+     * This function applies a short "pop"-animation on a button, having the button grow a litte over 500ms.
+     * @param button
+     */
     private void cardPopAnimation(ImageButton button) {
         ScaleAnimation grow_in = new ScaleAnimation(1f, 1.2f, 1f, 1.2f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
         grow_in.setDuration(500);
@@ -1205,6 +1237,14 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         button.startAnimation(grow_out);
     }
 
+    /**
+     * This function is responsible for animating the effect of a "card-turn" on a specific card ImageButton.
+     * It makes use of two ObjectAnimators (one ofFloat scaleX 1-0; the other ofFloat scaleX 0-1)
+     * The two are interpolated and the imageResource for the card front is exchanged according to the cardValue.
+     * Therefore the function getCardFromButton(cardButton) is called onAnimationEnd().
+     *
+     * @param cardButton
+     */
     private void animateCardTurn(ImageButton cardButton) {
         final ObjectAnimator oa1 = ObjectAnimator.ofFloat(cardButton, "scaleX", 1f, 0f);
         final ObjectAnimator oa2 = ObjectAnimator.ofFloat(cardButton, "scaleX", 0f, 1f);
@@ -1222,22 +1262,10 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         oa1.start();
     }
 
-    private Card getCardFromButton(ImageButton cardButton) {
-        if (player1CardButtons.contains(cardButton)) {
-            return me.getMyCards().get(player1CardButtons.indexOf(cardButton));
-        }
-        if (player2CardButtons.contains(cardButton)) {
-            return otherPlayers.get(0).getMyCards().get(player2CardButtons.indexOf(cardButton));
-        }
-        if (player3CardButtons.contains(cardButton)) {
-            return otherPlayers.get(1).getMyCards().get(player3CardButtons.indexOf(cardButton));
-        }
-        if (player4CardButtons.contains(cardButton)) {
-            return otherPlayers.get(2).getMyCards().get(player4CardButtons.indexOf(cardButton));
-        }
-        return null;
-    }
-
+    /**
+     * This is the counterpart for the animateCardTurn(cardButton) method and does the same in reverse.
+     * @param cardButton
+     */
     private void animateCardTurnBack(ImageButton cardButton) {
         final ObjectAnimator oa1 = ObjectAnimator.ofFloat(cardButton, "scaleX", 1f, 0f);
         final ObjectAnimator oa2 = ObjectAnimator.ofFloat(cardButton, "scaleX", 0f, 1f);
@@ -1255,6 +1283,46 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         oa1.start();
     }
 
+    /**
+     * This method takes a specific card-ImageButton and finds the corresponding Card object by first checking
+     * to which player the cardButton belongs to and then finding the corresponding card object in the players field myCards
+     * which contains an ArrayList of CardObjects. The index of the cardButton matches the index of the card-Object in the list
+     * and the card-Object is finally returned.
+     * @param cardButton
+     * @return card object
+     */
+    private Card getCardFromButton(ImageButton cardButton) {
+        if (player1CardButtons.contains(cardButton)) {
+            return me.getMyCards().get(player1CardButtons.indexOf(cardButton));
+        }
+        if (player2CardButtons.contains(cardButton)) {
+            return otherPlayers.get(0).getMyCards().get(player2CardButtons.indexOf(cardButton));
+        }
+        if (player3CardButtons.contains(cardButton)) {
+            return otherPlayers.get(1).getMyCards().get(player3CardButtons.indexOf(cardButton));
+        }
+        if (player4CardButtons.contains(cardButton)) {
+            return otherPlayers.get(2).getMyCards().get(player4CardButtons.indexOf(cardButton));
+        }
+        return null;
+    }
+
+    /**
+     * This method is called, once the picked card is sent by the server.
+     * It displays the picked card, with a turn animation in the big container on the left.
+     * showCardText(card) is called to indicate what kind of resource the card represents.
+     * showCardAction(card) makes sure to show an indicator image on top of the card if the card is an action card.
+     *
+     * if it is the first card drawn in the game (verified via the global cardDrawCount==1) showHint() which indicates what
+     * actions are possible is shown.
+     *
+     * Furthermore the cardStackButton to play/discard a card is enabled and the player1cards (own cards) to switch the cards are enabled.
+     * If the player wants to switch cards, the switch onClickListener is only enabled once enough cards are selected.
+     * If that is the case, on switch clicked, the selected card is sent to the server with the command swapPickedCardWithOwnCards and the swap animation is played.
+     * Additionally all cardOnClickListeners and buttons are deactivated and deselected again and animations are faded.
+     *
+     * @param card
+     */
     private void showPickedCardInContainer(Card card) {
         runOnUiThread(new Runnable() {
             @Override
@@ -1319,6 +1387,10 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         });
     }
 
+    /**
+     * This function enables the playedCardStackButton that is clicked when the user either wants to
+     * @param pickedCard
+     */
     private void enablePlayedCardStackButton(Card pickedCard) {
         playedCardsStackButton.setEnabled(true);
         playedCardsStackButton.setAlpha(1f);
@@ -1361,11 +1433,18 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         });
     }
 
+    /**
+     * This function hides the pickedCard Container.
+     */
     private void makePickedCardContainerDisappear() {
         pickedCardButtonContainer.setVisibility(View.INVISIBLE);
         pickedCardBigImageview.setImageResource(R.drawable.card_back);
     }
 
+    /**
+     * This function is currently not functional, but it attempted to zoom in on a specific card button.
+     * @param cardButton
+     */
     private void zoomInOnSelectedCard(ImageButton cardButton) {
         int[] location = new int[2];
         cardButton.getLocationOnScreen(location);
@@ -1383,7 +1462,12 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         //zoomLayout.panTo( 2*width-zoomLayout.getScaledPanX()+x, 2*height-zoomLayout.getScaledPanY()+y, true);
     }
 
-    //TODO replace resources
+    /**
+     * This method returns the int Resource id of a certain card, in order to replace the cardimage depending on the
+     * card value.
+     * @param card
+     * @return
+     */
     private int getCardResource(Card card) {
         switch (card.getValue()) {
             case -1:
@@ -1420,6 +1504,11 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         return 0;
     }
 
+    /**
+     * This method is called when the picked card is shown in the container and updates the displayed
+     * text under the card, indicating the card type.
+     * @param card
+     */
     private void showCardText(Card card) {
         switch (card.getValue()) {
             case -1:
@@ -1455,6 +1544,12 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         }
     }
 
+    /**
+     * This method is called as soon as a card is placed on the playedCardsStack and approved by the server.
+     * Depending on the different values, the different actions are initiated.
+     * @param pickedCard
+     * @throws JSONException
+     */
     private void initiateCardAction(Card pickedCard) throws JSONException {
         int value = pickedCard.getValue();
         switch (value) {
@@ -1483,6 +1578,11 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         }
     }
 
+    /**
+     * This method initiates the peek and swap action.
+     * It is currently not in use, but can be used in later extensions of the game. It works similarly to the blind swap action, but allowing the user to look
+     * at two cards first, before deciding to swap them.
+     */
     private void initiatePeekAndSwapAction() {
         peekButton.setVisibility(View.VISIBLE);
         updateText.setVisibility(View.VISIBLE);
@@ -1541,6 +1641,17 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         });
     }
 
+    /**
+     * This method initiates the blind swap (=swap) action.
+     * First it is checked, whether another player is available to swap with. This would for example not be
+     * the case if there are only two players in the game and the other player called cabo (meaning their cards are blocked).
+     * In that case, the round is automatically finished by sending the finish command to the server.
+     *
+     * If other players are available, the proceedings are similar as in all card actions. All clickable cards are highlighted
+     * with a glow and their onClickListeners are enabled. Once the required number of cards is reached, the switchbutton is enabled,
+     * the swap animation is played, all selected Buttons are added to a list and send to the server including their owners via the useFunctionalitySwap
+     * command and the selected buttons are deselected again.
+     */
     private void initiateBlindSwapAction() {
         if (caboplayer != null && otherPlayers.size() == 1 && otherPlayers.get(0).getId() == caboplayer.getId()) {
             updateText.setText("All other players are blocked");
@@ -1619,6 +1730,12 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         }
     }
 
+    /**
+     * This method returns the player that is the owner of a specific card in form of a cardButton
+     * by finding a match in the player property myCards via the index.
+     * @param cardButton
+     * @return the owning Player
+     */
     private Player getCardOwner(ImageButton cardButton) {
         if (player1CardButtons.contains(cardButton)) {
             int index = player1CardButtons.indexOf(cardButton);
@@ -1640,6 +1757,9 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
     }
 
 
+    /**
+     * This method only plays the swap animation when another player swaps, without sending a server message.
+     */
     private void playSwapAnimationOther() {
         playSound(R.raw.card_flip);
         cardSwapAnimation.setVisibility(View.VISIBLE);
@@ -1657,7 +1777,10 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
 
         }.start();
     }
-
+    /**
+     * This method only plays the swap animation when my player (me) swaps, it sends the finish message to the server
+     * after the animation ended after 2s.
+     */
     private void playSwapAnimation() {
         playSound(R.raw.card_flip);
         cardSwapAnimation.setVisibility(View.VISIBLE);
@@ -1683,6 +1806,17 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         }.start();
     }
 
+    /**
+     * This method initiates the spy action, meaning allowing the player to look at one enemy card.
+     * First it is checked, whether another player is available to swap with. This would for example not be
+     * the case if there are only two players in the game and the other player called cabo (meaning their cards are blocked).
+     * In that case, the round is automatically finished by sending the finish command to the server.
+     *
+     * If other players are available, the proceedings are similar as in all card actions. All clickable cards are highlighted
+     * with a glow and their onClickListeners are enabled. Once the required number of cards is reached, the peekButton is enabled,
+     * the card is turned and a timer is set, the selected Button is send to the server including their owners via the useFunctionalitySpy
+     * command and the selected buttons are deselected again.
+     */
     private void initiateSpyAction() {
         if (caboplayer != null && otherPlayers.size() == 1 && otherPlayers.get(0).getId() == caboplayer.getId()) {
             updateText.setText("All other players are blocked");
@@ -1755,6 +1889,9 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         }
     }
 
+    /**
+     * This method deactivates all interaction options with the cards of the player who called cabo.
+     */
     private void deactivateCaboPlayer() {
         if (caboplayer != null) {
             for (int i = 0; i < otherPlayers.size(); i++) {
@@ -1768,6 +1905,11 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         }
     }
 
+    /**
+     * This method removes the player including overviews and cards from the view. It also shows a short Toast message, informing the
+     * other players about the player leaving.
+     * @param player who left
+     */
     private void removePlayerWhoLeft(Player player) {
         runOnUiThread(new Runnable() {
             @Override
@@ -1785,6 +1927,9 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         });
     }
 
+    /**
+     * This method enables the player to peek at one of his cards, similarly to the initial card lookup.
+     */
     private void initiatePeekAction() {
         playSound(R.raw.select_sound);
         peekButton.setVisibility(View.VISIBLE);
@@ -1829,6 +1974,12 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         });
     }
 
+    /**
+     * This method gets the selected Card-object from a specific  buttonlist and owner.
+     * @param cardButtons
+     * @param owner
+     * @return card
+     */
     private Card getSelectedCard(List<ImageButton> cardButtons, Player owner) {
         for (int i = 0; i < cardButtons.size(); i++) {
             if (cardButtons.get(i).isSelected()) {
@@ -1838,6 +1989,18 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         return null;
     }
 
+    /**
+     * This method initiates the initial card look-up taking place in the beginning of each round when the user is allowed to look at two cards.
+     * Buttons, that the user is not allowed to click, are faded by setting down the alpha value and deactivating them.
+     * The update text is updated to tell the user what to do.
+     *
+     * For the selection the player1OnCardListeners are set, allowing to pick two cards. Only once the required number of cards is reached
+     * (when equal to the global nrCardsSelected), the peekButton is enabled within the player1CardsOnclickListener and set to full opacity.
+     *
+     * When the peekButton is clicked, the selected cards are turned via the cardTurnAnimation() function and the timer animation appears.
+     * In parallel a different timer with the same time is running, after which is finished the "memorized" message is send to
+     * the server to proceed.
+     */
     private void initiateInitialCardLookUp() {
         caboButton.setEnabled(false);
         caboButton.setAlpha(0.3f);
@@ -1889,6 +2052,10 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         });
     }
 
+    /**
+     * In this method the timer anination is shown and after it is finished, the given card is animated to turn back.
+     * @param cardButton
+     */
     private void setCountdownTimer(ImageButton cardButton) {
         timerAnimation.setVisibility(View.VISIBLE);
         timerAnimation.playAnimation();
@@ -1910,6 +2077,13 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         }.start();
     }
 
+    /**
+     * This method is responsible for showing the spy symbol on the card that is currently being spied on
+     * depending in a given spied on player and the spied on card-object. The symbol is shown for 10s established by a CountdownTimer.
+     * At the same time the update text in the top left corner is updated to indicate which player is spying.
+     * @param spiedOnPlayer
+     * @param card
+     */
     private void showSpiedOnCard(Player spiedOnPlayer, Card card) {
         if (spiedOnPlayer.getId() == me.getId()) {
             ImageButton cardButton = player1CardButtons.get(getCardIndex(me, card));
@@ -1948,6 +2122,15 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         }
     }
 
+    /**
+     * This method is responsible for showing the swap symbol on the card that is currently being swapped
+     * depending in a given swappingplayer and the swapped on card-object. The symbol is shown for 10s established by a CountdownTimer.
+     * At the same time the update text in the top left corner is updated to indicate which player is swapping.
+     *
+     * If the swapping player was not me, additionally the card swap animation is played.
+     * @param swappingPlayer
+     * @param card
+     */
     private void showSwappedCards(Player swappingPlayer, Card card) {
         if (swappingPlayer == me) {
             int cardIndex = me.getMyCards().indexOf(card);
@@ -1988,6 +2171,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         }
     }
 
+    /*
     private void showTwoSwappedCards(Player player1, Card card1, Player player2, Card card2) {
 
         ImageButton card1Button = getButtonFromCard(player1, card1);
@@ -2007,7 +2191,14 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
             }
 
         }.start();
-    }
+    }*/
+
+    /**
+     * This method finds and returns the corresponding ImageButton to a certain Card-object by a certain owner.
+     * @param owner
+     * @param card
+     * @return
+     */
 
     private ImageButton getButtonFromCard(Player owner, Card card) {
         if (owner.getId() == me.getId()) {
@@ -2029,6 +2220,13 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         return null;
     }
 
+    /**
+     * This method is responsible for showing the peek symbol on the card that is currently being spied on
+     * depending in a given peeking player and the peeked on card-object. The symbol is shown for 10s established by a CountdownTimer.
+     * At the same time the update text in the top left corner is updated to indicate which player is peeking.
+     * @param peekingPlayer
+     * @param card
+     */
     private void showPeekedOnCard(Player peekingPlayer, Card card) {
         int playerIndex = otherPlayers.indexOf(peekingPlayer);
         //int cardIndex = peekingPlayer.getMyCards().indexOf(card); //for some reason returns -1
@@ -2052,6 +2250,12 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
 
     }
 
+    /**
+     * Custom function to return the index of a card peeked on by a player.
+     * @param peekingPlayer
+     * @param card
+     * @return int card index
+     */
     private int getCardIndex(Player peekingPlayer, Card card) {
         for (int i = 0; i < peekingPlayer.getMyCards().size(); i++) {
             if (peekingPlayer.getMyCards().get(i).equalsCard(card)) {
@@ -2061,6 +2265,11 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         return 0;
     }
 
+    /**
+     * This method indicates the player's turn by showing the highlight animation behind
+     * the player's avatar image. It at the same time cancels the animation of all other players.
+     * @param player whose turn it is
+     */
     private void indicatePlayerTurn(Player player) {
         for (com.airbnb.lottie.LottieAnimationView animation : playerHighlightAnimations) {
             animation.setVisibility(View.INVISIBLE);
@@ -2092,6 +2301,10 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         v.startAnimation(anim);
     }
 
+    /**
+     * This method displays the discarded card on the playedCardsStackButton by replacing the imageResource.
+     * @param card
+     */
     private void displayDiscardedCard(Card card) {
         playedCardsStackButton.setImageResource(getCardResource(card));
     }
@@ -2133,7 +2346,12 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         }
     }
 
-
+    /**
+     * Central method that processes all incoming server messages.
+     * Depending on the method, different UI actions are initiated, it therefore regulates the gameflow.
+     * @param message
+     * @throws JSONException
+     */
     @Override
     public void handleTextMessage(String message) throws JSONException {
         JSONObject jsonObject = new JSONObject(message);
@@ -2645,6 +2863,10 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         }
     }
 
+    /**
+     * This animation is the first step in starting a new round. First all the player's cards are revealed by playing the turn animation,
+     * shown for 4s via a CountdownTimer before being turned back. CaboAnimations are hidden.
+     */
     private void nextRoundAnimation() {
         updateText.setText("Revealing cards");
         for(LottieAnimationView caboAnimation : playerCaboAnimations){
@@ -2678,6 +2900,9 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         }.start();
     }
 
+    /**
+     * This method first calculates and therm displays each player's rank after a round based on the players' points.
+     */
     @SuppressLint("SetTextI18n")
     private void showPlayerRanks() {
         ArrayList<Player> tempPlayers = new ArrayList<>();
@@ -2694,6 +2919,9 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         }
     }
 
+    /**
+     * This method shows the hint texts with arrows after the first drawn card, indicating to the user what to do.
+     */
     private void showHint() {
         hintTextOwnCards.setVisibility(View.VISIBLE);
         hintTextCardStack.setVisibility(View.VISIBLE);
@@ -2701,6 +2929,9 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         hintArrowCardStack.setVisibility(View.VISIBLE);
     }
 
+    /**
+     * This method hides the hint texts with arrows after the first drawn card, indicating to the user what to do.
+     */
     private void hideHint() {
         hintTextOwnCards.setVisibility(View.GONE);
         hintTextCardStack.setVisibility(View.GONE);
@@ -2709,7 +2940,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
     }
 
     /**
-     * Show new round.
+     * Show new round. Sets the center text indicating the round visible.
      */
     public void showNewRound() {
         centerText.setVisibility(View.VISIBLE);
@@ -2725,6 +2956,10 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         cardSwapBg.setVisibility(View.INVISIBLE);
     }
 
+    /**
+     * updates the emoji image resource depending on the player's smiley property.
+     * @param player
+     */
     private void showPlayerSmiley(Player player) {
         int playerIndex = otherPlayers.indexOf(player);
 
@@ -2743,7 +2978,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
     }
 
     /**
-     * Next round.
+     * Next round. This method first shows the newRound text and after a short timer replaces the player objects for the new round.
      *
      * @param players the players
      */
@@ -2774,6 +3009,9 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         }.start();
     }
 
+    /**
+     * In this method the overviews including avatar image, names etc. are set for each of the other players in the game.
+     */
     private void showPlayers() {
         runOnUiThread(new Runnable() {
             @Override
@@ -2792,6 +3030,9 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         });
     }
 
+    /**
+     * This method updates the text in the score display in the player overviews.
+     */
     private void updateScoreDisplays() {
         runOnUiThread(new Runnable() {
             @Override
@@ -2809,6 +3050,11 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         });
     }
 
+    /**
+     * This function is called when a player called cabo. The cards are set to the given alpha value
+     * and the megaphone animation is made visible.
+     * @param alpha
+     */
     private void fadeCaboPlayerCardsAndShowAnimation(float alpha) {
         runOnUiThread(new Runnable() {
             @Override
@@ -2831,6 +3077,10 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
         });
     }
 
+    /**
+     * This inverses the cabo animation, setting the megaphone back to invisible and making the card fully visible again.
+     * @param alpha
+     */
     private void fadePlayerCardsRestore(float alpha) {
         runOnUiThread(new Runnable() {
             @Override
