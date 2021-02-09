@@ -20,10 +20,10 @@ import com.google.gson.internal.LinkedTreeMap;
 import java.util.ArrayList;
 
 public class DatabaseOperation {
+    private static DatabaseOperation dao;
     private FirebaseDatabase database;
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
-    private static DatabaseOperation dao;
     private boolean isDBLoad = false;
 
     private DatabaseOperation() {
@@ -37,7 +37,7 @@ public class DatabaseOperation {
      */
     public static synchronized DatabaseOperation getDao() {
         if (dao == null) {
-            return new DatabaseOperation();
+            dao = new DatabaseOperation();
         }
         return dao;
     }
@@ -67,7 +67,6 @@ public class DatabaseOperation {
                     for (int i = 0; i < deserializedFriends.size(); i++) {
                         String dbID = (String) ((LinkedTreeMap) deserializedFriends.get(i)).get("dbID").toString().replace("\"", "").replace("\\", "");
                         String nick = (String) ((LinkedTreeMap) deserializedFriends.get(i)).get("nick").toString().replace("\"", "").replace("\\", "");
-                        //TODO Find out why double is read here
                         int avatarId = (int) Double.parseDouble((String) ((LinkedTreeMap) deserializedFriends.get(i)).get("avatarID").toString().replace("\"", "").replace("\\", ""));
                         int globalScore = (int) Double.parseDouble((String) ((LinkedTreeMap) deserializedFriends.get(i)).get("globalScore").toString().replace("\"", "").replace("\\", ""));
                         friendList.add(new Player(dbID, nick, avatarId, globalScore));
@@ -187,7 +186,9 @@ public class DatabaseOperation {
         myref.addListenerForSingleValueEvent(readPlayerEvent);
     }
 
-
+    /**
+     * Write all relevant fields of a Player Object to sharedPref
+     * */
     public boolean writePlayerToSharedPref(Player player, SharedPreferences sharedPref) {
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString(String.valueOf(R.string.preference_userdbid), player.getDbID());
@@ -330,6 +331,9 @@ public class DatabaseOperation {
         return null;
     }
 
+    /**
+     * Returns a boolean indicating if user deactivated music
+     * */
     public String getMusicPlaying(SharedPreferences sharedPref) {
         String preferenceKey = String.valueOf(R.string.preference_music);
         if (sharedPref.contains(preferenceKey)) {
@@ -341,12 +345,19 @@ public class DatabaseOperation {
         return "Play";
     }
 
+    /**
+     * enable/disable music
+     * */
     public void setMusicPlaying(String playStop, SharedPreferences sharedPref) {
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString(String.valueOf(R.string.preference_music), playStop);
         editor.apply();
     }
 
+
+    /**
+     * Returns a boolean indicating if user deactivated sounds
+     * */
     public String getSoundsPlaying(SharedPreferences sharedPref) {
         String preferenceKey = String.valueOf(R.string.preference_sound);
         if (sharedPref.contains(preferenceKey)) {
@@ -358,6 +369,9 @@ public class DatabaseOperation {
         return "Play";
     }
 
+    /**
+     * enable/disable sounds
+     * */
     public void setSoundPlaying(String playStop, SharedPreferences sharedPref) {
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString(String.valueOf(R.string.preference_sound), playStop);
