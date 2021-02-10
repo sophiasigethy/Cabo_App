@@ -1637,6 +1637,10 @@ public class Gamestate {
                             if (_player.getScore() >= maxPoints) {
                                 this.terminate();
                             }
+                        } else {
+                            if (_player.getScore() == 50) {
+                                _player.setScore(_player.getScore() / 2);
+                            }
                         }
                     }
                     // Inside speical case
