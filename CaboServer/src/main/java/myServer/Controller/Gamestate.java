@@ -177,11 +177,7 @@ public class Gamestate {
             sendToAll(jsonObject);
         }
         if (jsonObject.has("askForStart")) {
-            /*if (players.size()>1){
-                startGame();
-            }else{
-                socketHandler.sendMessage(session, JSON_commands.noStartYet());
-            }*/
+
             if (players.size() > 1) {
                 startGame();
             } else {
@@ -466,7 +462,7 @@ public class Gamestate {
             afterConnectionClosed(session);
             disconnectedDuringGame = true;
             if (currentPlayerId == currPlayer.getId()) {
-                //TODO TEST this if statement
+
                 if (players.size() != 0 && players != null) {
                     finishMove();
                     sendStatusupdateOfAllPlayer();
@@ -1160,7 +1156,6 @@ public class Gamestate {
      * @throws IOException
      */
     public void handleKI(String action) throws IOException {
-        //TODO Test this
         if (players != null || players.size() != 0 || players.size() == 1) {
             Player me = players.get("AI");
             if (action.equalsIgnoreCase("nextPlayer")) {

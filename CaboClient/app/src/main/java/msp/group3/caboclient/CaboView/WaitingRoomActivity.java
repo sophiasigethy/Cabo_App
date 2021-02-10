@@ -229,7 +229,7 @@ public class WaitingRoomActivity extends AppCompatActivity implements Communicat
 
         //this is received when client is allowed to join the game
         if (jsonObject.has("Hallo")) {
-            //String mes = TypeDefs.server + jsonObject.get("Hallo").toString();
+
             String mes = jsonObject.get("Hallo").toString();
             if (me.getNick().equalsIgnoreCase("") || me.getNick() == null || me.getNick().equalsIgnoreCase("None")) {
                 runOnUiThread(new Runnable() {

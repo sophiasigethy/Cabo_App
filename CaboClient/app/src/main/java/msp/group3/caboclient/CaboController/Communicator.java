@@ -21,9 +21,6 @@ public class Communicator {
 
 
     private WebSocketClient mWebSocketClient;
-
-    private int test=0;
-
     private CommunicatorCallback activity;
     private static Communicator instance;
 
@@ -59,11 +56,6 @@ public class Communicator {
             @Override
             public void onOpen(ServerHandshake serverHandshake) {
                 Log.i("Websocket", "Opened");
-                /*try {
-                    activity.handelTextMessage("startMatching");
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }*/
             }
 
             @Override
@@ -74,8 +66,6 @@ public class Communicator {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
-
             }
 
             @Override

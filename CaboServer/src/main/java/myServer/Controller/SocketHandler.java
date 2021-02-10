@@ -306,7 +306,6 @@ public class SocketHandler extends TextWebSocketHandler {
 
 
     public void sendMessage(WebSocketSession webSocketSession, JSONObject jsonMsg) throws IOException {
-        //TODO TEST THIS SOLUTION
         if (webSocketSession != null) {
             try {
                 webSocketSession.sendMessage(new TextMessage(jsonMsg.toString()));
