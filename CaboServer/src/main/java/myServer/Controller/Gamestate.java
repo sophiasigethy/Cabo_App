@@ -234,7 +234,7 @@ public class Gamestate {
                 if (currPlayer != null) {
                     if (availableCards.size() != 0) {
                         currentPickedCard = availableCards.get(0);
-                       // currentPickedCard= new Card(getNumberinbetween(), "", "");
+                        // currentPickedCard= new Card(getNumberinbetween(), "", "");
                         //currentPickedCard = new Card(11, "", "");
 
                     } else {
@@ -391,14 +391,16 @@ public class Gamestate {
                 if (hasPlayerDrawn(player.getId())) {
                     finishMove();
 
-                    if (getPlayerById(currentPlayerId).getCalledCabo()) {
+                    if (getPlayerById(currentPlayerId) == null) {
                         finishRound();
                     } else {
-                        sendStatusupdateOfAllPlayer();
-                        // sendToAll(JSON_commands.sendNextPlayer(currentPlayerId));
-                        sendNextPlayer();
+                        if (getPlayerById(currentPlayerId).getCalledCabo()) {
+                            finishRound();
+                        } else {
+                            sendStatusupdateOfAllPlayer();
+                            sendNextPlayer();
+                        }
                     }
-
                 }
 
             }
@@ -854,6 +856,7 @@ public class Gamestate {
         }
         return id;
     }
+
     public int getNumberinbetween() {
         Random random = new Random();
         int id = random.nextInt(2) + 10;
@@ -1188,7 +1191,7 @@ public class Gamestate {
                             e.printStackTrace();
                         }
 
-                        pause(3);
+                        pause(9);
                     }
 
                     finishKIMove();
@@ -1202,7 +1205,7 @@ public class Gamestate {
                     }
 
 
-                    pause(2);
+                    pause(4);
                     finishKIMove();
                 }
             }
