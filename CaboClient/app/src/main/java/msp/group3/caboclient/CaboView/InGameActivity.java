@@ -1818,6 +1818,7 @@ public class InGameActivity extends AppCompatActivity implements Communicator.Co
      * command and the selected buttons are deselected again.
      */
     private void initiateSpyAction() {
+
         if (caboplayer != null && otherPlayers.size() == 1 && otherPlayers.get(0).getId() == caboplayer.getId()) {
             updateText.setText("All other players are blocked");
             try {
