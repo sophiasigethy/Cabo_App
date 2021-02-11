@@ -2,7 +2,6 @@ package msp.group3.caboclient.CaboView;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -39,8 +38,16 @@ public class IntroActivity extends AppIntro {
         addSlide(AppIntroFragment.newInstance("Cabo", "Cabo is a round-based Online-Multiplayer Cardgame for up to 4 Players.",
                 R.drawable.cabo_logo, ContextCompat.getColor(getApplicationContext(), R.color.dark_purple),
                 ContextCompat.getColor(getApplicationContext(), R.color.beige), ContextCompat.getColor(getApplicationContext(), R.color.beige)));
-        addSlide(AppIntroFragment.newInstance("The Game", "Every player has 4 cards." +
-                        "The goal is to collect as few points as possible by swapping drawn cards with your own, or by using action-cards, to swap cards with the other players.\n",
+        addSlide(AppIntroFragment.newInstance("Story", "You are a smuggler of goods." +
+                        "But make sure to carry items that are of the lowest value possible....\n",
+                R.drawable.cards_intro, ContextCompat.getColor(getApplicationContext(), R.color.dark_purple),
+                ContextCompat.getColor(getApplicationContext(), R.color.beige), ContextCompat.getColor(getApplicationContext(), R.color.beige)));
+        addSlide(AppIntroFragment.newInstance("Story", "Because at any moment, someone could call 'Cabo' on you!\n"+
+                "You are punished with higher points for more valuable goods and are more likely to lose.",
+                R.drawable.cabo_intro, ContextCompat.getColor(getApplicationContext(), R.color.dark_purple),
+                ContextCompat.getColor(getApplicationContext(), R.color.beige), ContextCompat.getColor(getApplicationContext(), R.color.beige)));
+        addSlide(AppIntroFragment.newInstance("The Game", "Every player has 4 cards of goods." +
+                        "To collect as few points as possible swap drawn cards with your own, or use action-cards, to swap cards with the other players.\n",
                 R.drawable.card_13, ContextCompat.getColor(getApplicationContext(), R.color.dark_purple),
                 ContextCompat.getColor(getApplicationContext(), R.color.beige), ContextCompat.getColor(getApplicationContext(), R.color.beige)));
         addSlide(AppIntroFragment.newInstance("Rules", "At the beginning of a round, every player can look at and memorize 2 cards.\n" +
