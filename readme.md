@@ -27,20 +27,24 @@ Afterwards, the most interesting: a round showing how to play the game.
 And finally, our special feature: playing with an AI player. 
 
 These slides only appear when downloading the app the first time. However, rules can be looked up at any time within the app...
+
 https://user-images.githubusercontent.com/44975883/119234312-943ed400-bb2d-11eb-8a1f-b75b67f88830.mp4
 
 
 When a user has an account, it is possible to add friends ans invite them to play the game in privates 'parties'... 
+
 https://user-images.githubusercontent.com/44975883/119234319-9d2fa580-bb2d-11eb-9749-2b4000ecc23d.mp4
 
 
 If it is your turn, the draw pile is highlighted. If you have drawn a special action card, this will be highlighted. 
 In addition, hints on what to do are displayed for the first few turns.
 You can also chat with other players or show your mood through changing the emoji next to your profil picture...
+
 https://user-images.githubusercontent.com/44975883/119234981-a40be780-bb30-11eb-8e8c-b0170adf533a.mp4
 
 
 The AI player tries to make logical moves. It can also show its emotions via the emojis...
+
 https://user-images.githubusercontent.com/44975883/119234325-a882d100-bb2d-11eb-8727-5585712b1da6.mp4
 
 
