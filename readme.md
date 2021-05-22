@@ -1,7 +1,7 @@
 Cabo - A multiplayer online Card Game for Android OS
 ====================================================
 
-This is a project developed within a practical Master Course "Mobile und verteilte Systeme" at LMU Munich in Winter term 20/21.  
+This is a project developed within the practical Master Course "Mobile und verteilte Systeme" at LMU Munich in Winter term 20/21.  
 We created a Multiplayer Online Card game for Android OS called Cabo.  
 As this project was developed during the COVID 19 pandemic, our vision was to connect people in lonely times with a refreshing online-card game, while preserving the “feeling” of real life card games. 
 
