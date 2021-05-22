@@ -20,7 +20,7 @@ In the following videos and explanations about the project are provided, but fir
 VIDEOS
 ------
 
-Four videos showing how the app works are provided below. 
+Four videos showing the app's functionality and feartures are provided below. 
 Intro & slides are displayed after downloading the app to explain the rules and features. 
 Next, registering to create an account is shown. 
 Afterwards, the most interesting: a round showing how to play the game.
