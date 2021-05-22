@@ -23,7 +23,7 @@ VIDEOS
 Four videos showing how the app works are provided below. 
 Intro & slides are displayed after downloading the app to explain the rules and features. 
 Next, registering to create an account is shown. 
-Finally, the most interesting: a round showing how to play the game.
+Afterwards, the most interesting: a round showing how to play the game.
 And finally, our special feature: playing with an AI player. 
 
 https://user-images.githubusercontent.com/44975883/119234312-943ed400-bb2d-11eb-8a1f-b75b67f88830.mp4
