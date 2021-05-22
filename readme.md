@@ -17,5 +17,5 @@ In the following videos and explanations about the project are provided, but fir
   However, it is also possible to play without an account, just press the skip button in the lower right corner.
   
   
-  <img width="540" alt="image" src="https://user-images.githubusercontent.com/44975883/119233747-b97e1300-bb2a-11eb-8810-82c704369117.png">
+  <img width="540" alt="video" src="https://user-images.githubusercontent.com/44975883/119233747-b97e1300-bb2a-11eb-8810-82c704369117.png">
 
