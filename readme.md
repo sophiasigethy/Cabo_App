@@ -7,9 +7,9 @@ As this project was developed during the COVID 19 pandemic, our vision was to co
 
 In the following videos and explanations about the project are provided, but first brief technical notes:
 
-   This repository contains 2 projects, which are neede for the game.  
+   This repository contains 2 projects, which are needed for the game.  
 
-   - **CaboServer** is a Java-Project containing a SpringServer and everything else needed to deploy a Server enabling communication between the Clients.
+   - **CaboServer** is a Java-Project containing a SpringServer and everything else needed to enable communication between the Clients.
    - **CaboClient** contains the Android App.  
 
   If you want to play the game and create an account, make sure, that you have added your SHA1 fingerprint to our Google Cloud API-Key.   
