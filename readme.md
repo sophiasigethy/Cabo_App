@@ -23,7 +23,7 @@ VIDEOS
 Four videos showing the app's functionality and feartures are provided below. 
 **Intro slides** are displayed after downloading the app to explain the rules and features. 
 Next, **registering** to create an account is shown. 
-Afterwards, the most interesting: an **exapmple round** showing how to play the game.
+Afterwards, the most interesting: an **example round** showing how to play the game.
 And finally, our special feature: **playing with an AI player**. 
 
 
